@@ -1,8 +1,17 @@
-# React + Vite
+# To run for the first time:
+* Install diesel_cli
+    ```bash
+    $ cargo install diesel_cli --no-default-features --features sqlite
+    ```
+* Run the following command
+    ```bash
+    $ diesel setup
+    $ diesel migration run
+    ```
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This will setup the database for the first run.
+Now to simply run the backend:
+```bash
+$ cargo run
+```
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

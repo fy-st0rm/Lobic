@@ -27,3 +27,6 @@ dist-ssr
 # Added by cargo
 
 /target
+
+# Added by st0rm
+database.db
