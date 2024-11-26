@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 axum = { version = "0.7.9", features = ["ws"] }
 diesel = { version = "2.2.5", features = ["sqlite", "r2d2"] }
+diesel_migrations = "2.0"
 dotenv = "0.15.0"
 jsonwebtoken = "9.3.0"
 pwhash = "1.0.0"
