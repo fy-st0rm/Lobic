@@ -5,15 +5,19 @@ use crate::lobic_db::{
 use crate::schema::users::dsl::*;
 use crate::auth::{ jwt, exp };
 
+use time::Duration;
 use diesel::prelude::*;
 use serde::{ Serialize, Deserialize };
-use serde_json::json;
 use axum::{
 	Json,
 	response::Response,
-	http::status::StatusCode,
+	http::{
+		header,
+		status::StatusCode,
+	},
 };
 use pwhash::bcrypt;
+use cookie::Cookie;
 
 #[derive(Debug, Serialize, Deserialize )]
 pub struct LoginPayload {
@@ -25,6 +29,7 @@ pub async fn login(
 	Json(payload): Json<LoginPayload>,
 	db_pool: DatabasePool
 ) -> Response<String> {
+	println!("{:#?}", payload);
 	// Getting db from pool
 	let mut db_conn = match db_pool.get() {
 		Ok(conn) => conn,
@@ -96,15 +101,24 @@ pub async fn login(
 		}
 	};
 
-	// Response
-	let json_obj = json!({
-		"access_token": access_token,
-		"request_token": refresh_token
-	});
-	let response_msg = serde_json::to_string_pretty(&json_obj).unwrap();
+	// Create cookies for access and refresh tokens
+	let access_cookie = Cookie::build(("access_token", access_token))
+			.http_only(true)
+			.secure(true)
+			.max_age(Duration::new(3600, 0)) // 1 hour
+			.build();
 
+	let refresh_cookie = Cookie::build(("refresh_token", refresh_token))
+			.http_only(true)
+			.secure(true)
+			.max_age(Duration::new(604800, 0)) // 7 days
+			.build();
+
+	// Response
 	Response::builder()
 		.status(StatusCode::OK)
-		.body(response_msg)
+		.header(header::SET_COOKIE, access_cookie.to_string())
+		.header(header::SET_COOKIE, refresh_cookie.to_string())
+		.body("Login successful".to_string())
 		.unwrap()
 }

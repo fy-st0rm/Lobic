@@ -17,6 +17,7 @@ use tokio::net::TcpListener;
 use tracing::Level;
 use tower_http::{
 	trace,
+	cors::CorsLayer,
 	trace::TraceLayer,
 };
 use axum::{
@@ -67,6 +68,7 @@ async fn main() {
 			let pool = db_pool.clone();
 			|payload| login(payload, pool)
 		}))
+		.layer(CorsLayer::permissive())
 		.layer(TraceLayer::new_for_http()
 			.make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
 			.on_response(trace::DefaultOnResponse::new().level(Level::INFO)),

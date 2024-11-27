@@ -7,6 +7,7 @@ name = "Lobic"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "cookie",
  "diesel",
  "diesel_migrations",
  "dotenv",
@@ -14,6 +15,7 @@ dependencies = [
  "pwhash",
  "serde",
  "serde_json",
+ "time",
  "tokio",
  "tower-http",
  "tracing",
@@ -213,6 +215,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12f8e7987cbd042a63249497f41aed09f8e65add917ea6566effbc56578d6801"
 dependencies = [
  "generic-array",
+]
+
+[[package]]
+name = "cookie"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ddef33a339a91ea89fb53151bd0a4689cfce27055c291dfa69945475d22c747"
+dependencies = [
+ "time",
+ "version_check",
 ]
 
 [[package]]
