@@ -6,7 +6,10 @@ mod schema;
 
 use config::{IP, PORT};
 use lobic_db::db::*;
-use routes::signup::signup;
+use routes::{
+	login::login,
+	signup::signup,
+};
 
 use diesel::prelude::*;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
@@ -59,6 +62,10 @@ async fn main() {
 		.route("/signup", post({
 			let pool = db_pool.clone();
 			|payload| signup(payload, pool)
+		}))
+		.route("/login", post({
+			let pool = db_pool.clone();
+			|payload| login(payload, pool)
 		}))
 		.layer(TraceLayer::new_for_http()
 			.make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
