@@ -3,12 +3,14 @@ mod lobic_db;
 mod routes;
 mod auth;
 mod schema;
+mod utils;
 
-use config::{IP, PORT};
+use config::{ IP, PORT, ORIGIN };
 use lobic_db::db::*;
 use routes::{
 	login::login,
 	signup::signup,
+	verify::verify,
 };
 
 use diesel::prelude::*;
@@ -24,6 +26,14 @@ use axum::{
 	routing::{ get, post },
 	response::Response,
 	Router,
+	http::{
+		Method,
+		HeaderValue,
+		header::{
+			AUTHORIZATION,
+			CONTENT_TYPE,
+		},
+	},
 };
 use dotenv::dotenv;
 
@@ -58,6 +68,12 @@ async fn main() {
 	// Pool of database connections
 	let db_pool = generate_db_pool();
 
+	let cors = CorsLayer::new()
+		.allow_origin(ORIGIN.parse::<HeaderValue>().unwrap())
+		.allow_credentials(true)
+		.allow_methods([Method::GET, Method::POST])
+		.allow_headers([AUTHORIZATION, CONTENT_TYPE]);
+
 	let app = Router::new()
 		.route("/", get(index))
 		.route("/signup", post({
@@ -68,7 +84,8 @@ async fn main() {
 			let pool = db_pool.clone();
 			|payload| login(payload, pool)
 		}))
-		.layer(CorsLayer::permissive())
+		.route("/verify", get(verify))
+		.layer(cors)
 		.layer(TraceLayer::new_for_http()
 			.make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
 			.on_response(trace::DefaultOnResponse::new().level(Level::INFO)),

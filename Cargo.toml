@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.7.9", features = ["ws"] }
+axum-extra = { version = "0.9.6", features = ["cookie"] }
 cookie = "0.18.1"
 diesel = { version = "2.2.5", features = ["sqlite", "r2d2"] }
 diesel_migrations = "2.0"

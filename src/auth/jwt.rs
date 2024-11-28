@@ -21,7 +21,7 @@ pub fn generate(claims: Claims, secret_key: &str) -> Result<String> {
 	)
 }
 
-pub fn verify(token: String, secret_key: &str) -> Result<TokenData<Claims>> {
+pub fn verify(token: &str, secret_key: &str) -> Result<TokenData<Claims>> {
 	decode::<Claims>(
 		&token,
 		&DecodingKey::from_secret(secret_key.as_bytes()),
