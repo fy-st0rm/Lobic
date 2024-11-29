@@ -7,6 +7,7 @@ import {
 import Login from './routes/login/Login.jsx'
 import Home from "./routes/home/Home.jsx"
 import Auth from "./routes/auth/Auth.jsx"
+import Signup from './routes/signup/Signup.jsx'
 
 function App() {
 	const navigate = useNavigate();
@@ -14,6 +15,7 @@ function App() {
 	return (
 		<Routes>
 			<Route path = "/" element = { <Login/> } />
+			{/* <Route path = "/signup" element = { <Signup/> } /> */}
 			<Route path = "/home" element = {
 				<Auth>
 					<Home/>
