@@ -1,0 +1,102 @@
+*{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.music-player{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    border-radius: 120px;
+    margin: 30px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 1rem;
+    background-color: #072631;
+    color: white;
+  
+}
+.song-info{
+    align-self: center;
+}
+.cover-image{
+    padding-top: 2px;
+    border-radius: 100%;
+    height: 80px;
+    width: 80px;
+
+}
+.song-name{
+    font-weight: bold;
+}
+.artist-name{
+    font-size: auto;
+}
+.control-container{
+    flex-grow: 1;
+    width: 50%;
+    align-self: center;
+}
+.volume-status{
+    margin-right: 20px;
+    align-self:center;
+    display: flex;
+}
+.volume-control-bar{
+    align-self:center;
+    margin-right: 10px;
+    appearance: none;
+    height: 2px; 
+}
+.status-bar{
+    align-self: center;
+    display: block;
+    margin-right: auto;
+    width: 50%;
+    appearance: none;
+    height: 2px;
+    
+}
+.status-bar::-webkit-slider-thumb{
+    appearance: none;
+    height: 10px;
+    width: 10px;
+    background-color: white;
+    border-radius: 100%;
+}
+.volume-control-bar::-webkit-slider-thumb{
+    appearance: none;
+    height: 10px;
+    width: 10px;
+    background-color: white;
+    border-radius: 100%;
+}
+.control-bar{
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    
+}
+.button-group{
+    margin: 0px 10px 10px 10px;
+    cursor: pointer;
+}
+.status{
+    display: flex;
+    justify-content: center;
+}
+.music-status{
+    padding-right: 5px;
+    display: block;
+    margin-left: auto;
+}
+.control-button{
+    background: none;
+    border: none;
+}
+.volume-button{
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 8px;
+}
