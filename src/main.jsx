@@ -8,9 +8,9 @@ import Home from './routes/home/Home.jsx'
 
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
-		{/* <Router>
+		<Router>
 			<App/>
-		</Router> */}
-		<Home/>
+		</Router>
+		{/* <Home/> */}
 	</StrictMode>
 )
