@@ -6,16 +6,19 @@ edition = "2021"
 [dependencies]
 axum = { version = "0.7.9", features = ["ws"] }
 axum-extra = { version = "0.9.6", features = ["cookie"] }
+colored = "2.1.0"
 cookie = "0.18.1"
 diesel = { version = "2.2.5", features = ["sqlite", "r2d2"] }
 diesel_migrations = "2.0"
 dotenv = "0.15.0"
+futures = "0.3.31"
 jsonwebtoken = "9.3.0"
 pwhash = "1.0.0"
 serde = { version = "1.0.215", features = ["derive"] }
 serde_json = "1.0.133"
 time = "0.3.36"
 tokio = { version = "1.41.1", features = ["full"] }
+tokio-util = { version = "0.7.13", features = ["io"] }
 tower-http = { version = "0.6.2", features = ["cors", "trace"] }
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
