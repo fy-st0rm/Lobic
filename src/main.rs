@@ -11,6 +11,7 @@ use routes::{
 	login::login,
 	signup::signup,
 	verify::verify,
+	save_music::save_music,
 };
 
 use diesel::prelude::*;
@@ -85,6 +86,10 @@ async fn main() {
 			|payload| login(payload, pool)
 		}))
 		.route("/verify", get(verify))
+		.route("/save_music", post({
+			let pool = db_pool.clone();
+			|payload| save_music(payload, pool)
+		}))
 		.layer(cors)
 		.layer(TraceLayer::new_for_http()
 			.make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
