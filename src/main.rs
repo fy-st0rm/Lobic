@@ -22,6 +22,7 @@ use routes::{
 	signup::signup,
 	verify::verify,
 	socket::websocket_handler,
+	save_music::save_music,
 };
 
 use diesel::prelude::*;
@@ -124,7 +125,6 @@ async fn main() {
 
 	let app = Router::new()
 		.route("/", get(index))
-
 		.route("/signup", post({
 			let db_pool = db_pool.clone();
 			|payload| signup(payload, db_pool)
@@ -134,13 +134,15 @@ async fn main() {
 			|payload| login(payload, db_pool)
 		}))
 		.route("/verify", get(verify))
-
+		.route("/save_music", post({
+			let pool = db_pool.clone();
+			|payload| save_music(payload, pool)
+		}))
 		.route("/ws", get({
 			let lobby_pool = lobby_pool.clone();
 			let db_pool = db_pool.clone();
 			|payload| websocket_handler(payload, db_pool, lobby_pool)
 		}))
-
 		.layer(axum::middleware::from_fn(logger))
 		.layer(cors);
 
