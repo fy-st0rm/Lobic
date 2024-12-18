@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
+import React, { useState } from "react";
 
 function NavBar() {
-    const [showMessage, setShowMessage] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [inputValue, setInput] = useState("");
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
@@ -46,6 +46,7 @@ function NavBar() {
   return (
     <>
       <div className="navbar">
+        <div className="blur"></div>
         <div className="logo-container">
           <a href="/home" className={isDisabled ? "disabled-link" : ""}>
             <img src="./public/lobic_logo.png" className="logo" alt="Logo" />
@@ -59,7 +60,7 @@ function NavBar() {
               className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
             >
               <img
-                className="navbar-icons"
+                className="navbar-home"
                 src="./public/home.png"
                 alt="Home Icon"
               />
@@ -95,7 +96,7 @@ function NavBar() {
               className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
             >
               <img
-                className="navbar-icons"
+                className="navbar-bell"
                 src="./public/bell.png"
                 alt="Notifications Icon"
               />
@@ -177,9 +178,6 @@ function NavBar() {
                 <button onClick={() => navigateAndClose("/profile")}>
                   Profile
                 </button>
-                <button onCLick={() => navigateAndClose("/logout")}>
-                  Logout
-                </button>
               </div>
             </div>
           </>
@@ -202,3 +200,5 @@ function NavBar() {
     </>
   );
 }
+
+export default NavBar;
