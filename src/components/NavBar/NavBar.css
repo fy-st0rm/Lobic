@@ -1,0 +1,241 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-left: 10px;
+  }
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  .logo {
+    width: 70px;
+    height: 70px;
+    margin-right: 0;
+    margin-left: 10px; 
+  }
+  .navbar-items {
+    list-style: none;
+    gap: 50px;
+    display: flex;
+    margin-left: 0;
+    padding-left: 10px;
+  }
+  .navbar-icons {
+    width: 30px;  
+  }
+  .navbar-button {
+    border: none;
+    width: 30px;
+    color: white;
+  }
+  .navbar-link {
+    text-decoration: none;
+  }
+  .searchbar-container {
+    max-width: 800px;
+    min-width: 10px;
+    flex-grow: 1; 
+    position: relative;
+    display: flex;
+  }
+  .search-bar {
+    border-radius: 20px;
+    width: 95%;
+    border: none;
+    padding-top: 12px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 12px;
+  }
+  .clear-button {
+    position: absolute;
+    border: none;
+    right: 2%;
+    top: 30%;
+    background-color: white;
+  }
+  .clear-button:hover {
+    cursor: pointer;
+  }
+  .clear-png {
+    width: 10px;
+  }
+  .search-bar:hover {
+    border: solid red 1px;
+  }
+  .user-icon {
+    display: flex;
+    padding-left: 30px;
+  }
+  .profile-button {
+    border: none;
+    background: none;
+  }
+  .profile-pic {
+    height: 40px;
+    border-radius: 20px;
+  }
+  .logout {
+    display: flex;
+    padding-right: 10px;
+  }
+  .logout-button {
+    border: none;
+    background-color: white;
+  }
+  .floating-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    padding: 20px;
+    transform: translate(-50%, -50%);
+    background-color: blue;
+    border: 1px solid blue;
+    border-radius: 5px;
+    z-index: 999;
+    text-align: left;
+  }
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .hamburger {
+    z-index: 10;
+  }
+  .hamburger-button {
+    border: none;
+    background-color: transparent;
+    padding-right: 20px;
+    cursor: pointer;
+  }
+  .hamburger-icon {
+    height: 28px;
+  }
+  .dashboard {
+    position: fixed;
+    top: 0;
+    right: -200px;
+    width: 175px;
+    height: 100px;
+    transition: right 0.6 ease-in-out;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 23%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 5;
+  }
+  .dashboard.open {
+    right: 0;
+  }
+  .dashboard h2 {
+     margin-top: 70px; 
+  }
+  .dashboard ul {
+    list-style-type: none;
+  }
+  .buttons-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0; 
+  }
+  .buttons-list li {
+    margin: 10px 0;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  .disabled-link,
+  .disabled-link:hover {
+    pointer-events: none;
+  }
+  input[disabled] {
+    cursor: not-allowed;
+  }
+  button[disabled] {
+    cursor: not-allowed;
+  }
+  .logout-button:hover {
+    cursor: pointer;
+  }
+  .confirm-button {
+    margin-left: 20px;
+    padding: 10px;
+  }
+  
+  .dashboard.open{
+    right: 0;
+  }
+  .dashboard-content button {
+    border: none;
+    background-color: transparent;
+    display: flex;
+    padding-top: 20px;
+    margin-left: 20px;
+    font-size: 13pt;
+  }
+  
+  @media (max-width: 1920px) {
+    .hamburger-button {
+      display: none;
+    }
+    .dashboard {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+  
+    .navbar-items {
+      display: none;
+    }
+  
+    .logo {
+      margin-left: 10px;
+    }
+  
+    .navbar-items {
+      gap: 10px; 
+    }
+  
+    .searchbar-container {
+      max-width: 400px; 
+    }
+  
+    .clear-button {
+      right: 1%;
+    }
+  
+    .hamburger-button {
+      display: none;
+    }
+  
+    .user-icon {
+      display: none;
+    }
+  
+    .logout {
+      display: none;
+    }
+  
+    .hamburger-button {
+      display: flex;
+    }
+    
+    .dashboard {
+      display: block;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .overlay {
+      display: none;
+    }
+  }
+  
+  
