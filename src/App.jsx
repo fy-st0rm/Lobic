@@ -23,7 +23,7 @@ function App() {
 				path="/lobby"
 				element={
 					<Auth>
-						<Lobby />
+						<Lobby key={location.pathname} />
 					</Auth>
 				}
 			/>

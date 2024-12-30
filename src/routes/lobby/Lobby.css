@@ -13,6 +13,12 @@
 	padding-left: 10%;
 	margin-top: 1.3rem;
 	box-sizing: border-box;
+	overflow: hidden;
+	opacity: 0;
+}
+
+.grid-container.show {
+	opacity: 1;
 }
 
 .lobby-card-canvas {
@@ -23,8 +29,36 @@
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-	overflow: hidden;
+	overflow: visible;
 	color: white;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lobby-card-canvas:hover .lobby-card-bg {
+	transform: translateY(-10px);
+	animation: border-animation 1s ease forwards;
+}
+
+@keyframes border-animation {
+	0% {
+		box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8);
+	}
+	100% {
+		box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+	}
+}
+
+.lobby-card-canvas.animate {
+	opacity: 0;
+	transform: translateX(-100%);
+	animation: slide-in 0.5s ease-out forwards;
+}
+
+@keyframes slide-in {
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
 }
 
 .lobby-card-bg {
@@ -35,6 +69,8 @@
 	filter: blur(1px);
 	border-radius: 21px;
 	visibility: visible;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	z-index: -1;
 }
 
 .lobby-card-icon-canvas {
@@ -62,6 +98,7 @@
 	margin-top: 5px;
 	white-space: nowrap;
 	max-width: 190px;
+	overflow: hidden;
 }
 
 @keyframes scroll-text {
@@ -69,7 +106,7 @@
 		transform: translateX(0%);
 	}
 	100% {
-		transform: translateX(-300%);
+		transform: translateX(-100%);
 	}
 }
 

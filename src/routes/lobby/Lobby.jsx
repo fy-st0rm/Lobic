@@ -8,11 +8,13 @@ const LobbyCard = ({
 	listeners_cnt,
 	song_name,
 	artist_name,
-	lobby_icon
+	lobby_icon,
+	card_index
 }) => {
 	const [isLobbyNameOF, setLobbyNameOF] = useState(false);
 	const [isSongNameOF, setSongNameOF] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
+	const [animate, setAnimate] = useState(false);
 	const cardRef = useRef(null);
 	const lobbyNameRef = useRef(null);
 	const songCardRef = useRef(null);
@@ -20,6 +22,11 @@ const LobbyCard = ({
 
 	const handleMouseEnter = () => setIsHovered(true);
 	const handleMouseLeave = () => setIsHovered(false);
+
+	useEffect(() => {
+		const timer = setTimeout(() => setAnimate(true), 0);
+		return () => clearTimeout(timer);
+	}, []);
 
 	useEffect(() => {
 		const checkOverflow = () => {
@@ -41,9 +48,10 @@ const LobbyCard = ({
 		<>
 			<div>
 				<div
-					ref={cardRef} className="lobby-card-canvas"
+					className={`lobby-card-canvas ${animate ? "animate": ""}`}
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}
+					style={{ animationDelay: `${card_index * 0.1}s` }}
 				>
 
 					{/* Blurry background */}
@@ -63,24 +71,23 @@ const LobbyCard = ({
 
 						{ /* Lobby name */ }
 						<div
+							ref={cardRef}
 							className="lobby-card-lobby-name"
-							style={{
-								animationName: isLobbyNameOF && isHovered ? "scroll-text" : "none",
-								animationDuration: "10s",
-								animationTimingFunction: "linear",
-								animationIterationCount: "infinite",
-								animationPlayState: "running"
-							}}
 						>
 							<div
 								ref={lobbyNameRef}
 								style={{
-									paddingRight: "15%",
+									display: "flex",
+									animationName: isLobbyNameOF && isHovered ? "scroll-text" : "none",
+									animationDuration: "10s",
+									animationTimingFunction: "linear",
+									animationIterationCount: "infinite",
+									animationPlayState: "running",
 								}}
 							>
 								{lobby_name}
+								{isLobbyNameOF && <div style={{paddingLeft: "15%"}}> {lobby_name} </div>}
 							</div>
-							{isLobbyNameOF && <div> {lobby_name} </div>}
 						</div>
 
 						{ /* Listener count */ }
@@ -128,15 +135,24 @@ const LobbyCard = ({
 }
 
 function Lobby() {
+	const [showContent, setShowContent] = useState(false);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setShowContent(true);
+		}, 100); // Delay to ensure content is rendered before animation
+	}, []);
+
 	return (
 		<>
-			<div className="grid-container">
+			<div className={`grid-container ${showContent ? "show" : ""}`}>
 				<LobbyCard
 					lobby_name="Lobby Name that is long"
 					listeners_cnt="3"
 					song_name="Some song"
 					artist_name="Artist"
 					lobby_icon={test_logo}
+					card_index="1"
 				/>
 				<LobbyCard
 					lobby_name="Lobby Name that is long"
@@ -144,6 +160,7 @@ function Lobby() {
 					song_name="Some song"
 					artist_name="Artist"
 					lobby_icon={test_logo}
+					card_index="2"
 				/>
 				<LobbyCard
 					lobby_name="Lobby Name that is long"
@@ -151,6 +168,7 @@ function Lobby() {
 					song_name="Some song"
 					artist_name="Artist"
 					lobby_icon={test_logo}
+					card_index="3"
 				/>
 				<LobbyCard
 					lobby_name="Lobby Name that is long"
@@ -158,6 +176,7 @@ function Lobby() {
 					song_name="Some song"
 					artist_name="Artist"
 					lobby_icon={test_logo}
+					card_index="4"
 				/>
 				<LobbyCard
 					lobby_name="Lobby Name"
@@ -165,6 +184,7 @@ function Lobby() {
 					song_name="Some song that is very long"
 					artist_name="Artist"
 					lobby_icon={test_logo}
+					card_index="5"
 				/>
 			</div>
 		</>
