@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import previousButton from "/controlbar/Button Previous.png"
-import playButton from "/controlbar/Button Play.png"
-import pauseButton from "/controlbar/Button Pause.png"
-import NextButton from "/controlbar/ButtonNext.png"
+import previousButton from "/controlbar/PreviousButton.svg"
+import playButton from "/controlbar/ButtonPlay.svg"
+import pauseButton from "/controlbar/ButtonPause.svg"
+import NextButton from "/controlbar/ButtonNext.svg"
 import VolumeLow from "/volumecontrols/Volume Level Low.png"
 import Mute from "/volumecontrols/Volume Mute.png"
 import VolumeHigh from "/volumecontrols/Volume Level High.png"
