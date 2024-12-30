@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
+import NavBar from "../../components/NavBar/Navbar.jsx"
 
 function Home() {
 	const navigate = useNavigate();
@@ -11,9 +12,7 @@ function Home() {
 
 	return (
 		<>
-			<button onClick={handleClick}>
-				Lobby
-			</button>
+			<NavBar />
 			<MusicPlayer />
 		</>
 	);

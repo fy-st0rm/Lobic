@@ -14,17 +14,17 @@ function App() {
 			<Route
 				path="/home"
 				element={
-					
+					<Auth>
 						<Home />
-				
+					</Auth>
 				}
 			/>
 			<Route
 				path="/lobby"
 				element={
-					
+					<Auth>
 						<Lobby key={location.pathname} />
-				
+					</Auth>
 				}
 			/>
 			<Route path="/" element={<Navigate to="/login" replace />} />
