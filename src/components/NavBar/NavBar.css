@@ -61,7 +61,7 @@
 .search-bar {
   border-radius: 20px;
   width: 95%;
-  border: none;
+  border: transparent;
   padding-top: 12px;
   padding-left: 15px;
   padding-right: 15px;
@@ -81,7 +81,7 @@
   width: 10px;
 }
 .search-bar:hover {
-  border: solid red 1px;
+  border: none;
 }
 .user-icon {
   display: flex;
@@ -254,6 +254,5 @@ button[disabled] {
     display: none;
   }
 }
-
 
 
