@@ -5,6 +5,7 @@ import Home from "./routes/home/Home.jsx";
 import Auth from "./routes/auth/Auth.jsx";
 import Signup from './routes/signup/Signup.jsx';
 import ForgotPassword from './routes/login/ForgotPassword.jsx';
+import Lobby from "./routes/lobby/Lobby.jsx";
 
 function App() {
 	return (
@@ -15,6 +16,14 @@ function App() {
 				element={
 					<Auth>
 						<Home />
+					</Auth>
+				}
+			/>
+			<Route
+				path="/lobby"
+				element={
+					<Auth>
+						<Lobby key={location.pathname} />
 					</Auth>
 				}
 			/>
