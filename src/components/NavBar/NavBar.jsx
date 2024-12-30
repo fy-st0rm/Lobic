@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import './NavBar.css'
 
 function NavBar() {
   const [showMessage, setShowMessage] = useState(false);
@@ -68,7 +69,7 @@ function NavBar() {
           </li>
           <li>
             <a
-              href="/friends"
+              href="/lobby"
               className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
             >
               <img
@@ -172,8 +173,8 @@ function NavBar() {
                 <button onClick={() => navigateAndClose("/notifications")}>
                   Notifications
                 </button>
-                <button onClick={() => navigateAndClose("/friends")}>
-                  Friends
+                <button onClick={() => navigateAndClose("/lobby")}>
+                  Lobby
                 </button>
                 <button onClick={() => navigateAndClose("/profile")}>
                   Profile
