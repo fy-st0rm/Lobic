@@ -2,12 +2,12 @@
 
 diesel::table! {
     music (id) {
-        id -> Integer,
-        title -> Text,
-        artist -> Text,
-        album -> Text,
-        file_path -> Text,
-        duration -> Integer,
+        id -> Nullable<Text>,
+        filename -> Text,
+        artist -> Nullable<Text>,
+        title -> Nullable<Text>,
+        album -> Nullable<Text>,
+        genre -> Nullable<Text>,
     }
 }
 
