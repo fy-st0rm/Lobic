@@ -17,6 +17,7 @@ mod utils;
 use config::{IP, ORIGIN, PORT};
 use futures::poll;
 use lobby::*;
+use config::{ IP, PORT, allowed_origins };
 use lobic_db::db::*;
 use routes::{
 	get_music::{get_all_music, get_music_by_title},
@@ -27,6 +28,10 @@ use routes::{
 	verify::verify,
 };
 
+use diesel::prelude::*;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+use tokio::net::TcpListener;
+use tower_http::cors::{ AllowOrigin, CorsLayer };
 use axum::{
 	body::Body,
 	http::{header, HeaderValue, Method, Request},
@@ -113,7 +118,8 @@ async fn main() {
 	let lobby_pool: LobbyPool = LobbyPool::new();
 
 	let cors = CorsLayer::new()
-		.allow_origin(ORIGIN.parse::<HeaderValue>().unwrap())
+		//.allow_origin(ORIGIN.parse::<HeaderValue>().unwrap())
+		.allow_origin(AllowOrigin::predicate(allowed_origins))
 		.allow_credentials(true)
 		.allow_methods([Method::GET, Method::POST, Method::OPTIONS])
 		.allow_headers([header::AUTHORIZATION, header::CONTENT_TYPE]);
