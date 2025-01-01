@@ -10,22 +10,14 @@ pub struct User {
     pub pwd_hash: String,
 }
 
-#[derive(Queryable)]
-pub struct Music {
-    pub id: i32,
-    pub title: String,
-    pub artist: String,
-    pub album: String,
-    pub file_path: String,
-    pub duration: i32,
-}
-
-#[derive(Insertable)]
+#[derive(Insertable, Queryable, Debug)]
 #[diesel(table_name = music)]
-pub struct NewMusic<'a> {
-    pub title: &'a str,
-    pub artist: &'a str,
-    pub album: &'a str,
-    pub file_path: &'a str,
-    pub duration: i32,
+
+pub struct Music {
+    pub id: String,
+    pub filename: String,
+    pub artist: String,
+    pub title: String,
+    pub album: String,
+    pub genre: String,
 }
