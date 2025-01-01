@@ -90,10 +90,63 @@
 
   .type-field {
     border-radius: 20px;
-    width: 95%;
+    width: 90.5%;
     border: transparent;
     padding-top: 8px;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 40px;
+    padding-right: 40px;
     padding-bottom: 8px;
   }
+
+  .leave-lobby-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.leave-lobby{
+    background-color: transparent;
+    border: none;
+    margin-left: auto;
+}
+
+.image-input{
+    position: absolute;
+    right: 3%; /* Positions the image button inside the text input */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.image-input-icon{
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.emoji-button{
+    position: absolute;
+    left: 2.5%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.emoji-button-icon{
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.emoji-picker {
+    position: absolute;
+    bottom: 70px; /* Adjust based on your layout */
+    left: 20px;   /* Adjust based on your layout */
+    z-index: 1000;
+    background: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+
