@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
-import NavBar from "../../components/NavBar/Navbar.jsx";
+import NavBar from "../../components/NavBar/NavBar.jsx";
 import "./Chats.css";
 
 function Chats() {
