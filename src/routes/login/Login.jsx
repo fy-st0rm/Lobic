@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import logo from '/lobic_logo.png';
 import './Login.css';
-import { SERVER_IP } from "../../conf.jsx";
+import { SERVER_IP } from "../../const.jsx";
 
 function Login() {
 	const [email, setEmail] = useState("");
