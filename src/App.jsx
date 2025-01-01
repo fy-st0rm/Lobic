@@ -6,10 +6,14 @@ import Auth from "./routes/auth/Auth.jsx";
 import Signup from './routes/signup/Signup.jsx';
 import ForgotPassword from './routes/login/ForgotPassword.jsx';
 import Lobby from "./routes/lobby/Lobby.jsx";
+import Chats from "./routes/chats/Chats.jsx";
+
 
 function App() {
 	return (
 		<Routes>
+			{/* <Route path="/" element={<Navigate to="/chats" replace />} />
+			<Route path="/chats" element={<Chats />} /> */}
 			<Route path="/signup" element={<Signup />} />
 			<Route
 				path="/home"
@@ -30,6 +34,8 @@ function App() {
 			<Route path="/" element={<Navigate to="/login" replace />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/forgotpassword" element={<ForgotPassword />} />
+			<Route path="/chats" element={<Chats />} />
+
 		</Routes>
 	);
 }
