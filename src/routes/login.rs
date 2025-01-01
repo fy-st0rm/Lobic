@@ -100,11 +100,13 @@ pub async fn login(
 	};
 
 	// Create cookies for access and refresh tokens
-	let access_cookie = cookie::create("access_token", &access_token, 60 * 60);
-	let refresh_cookie = cookie::create("refresh_token", &refresh_token, 7 * 24 * 60 * 60);
+	let user_cookie = cookie::create("user_id", &user.id, 60 * 60, false);
+	let access_cookie = cookie::create("access_token", &access_token, 60 * 60, true);
+	let refresh_cookie = cookie::create("refresh_token", &refresh_token, 7 * 24 * 60 * 60, true);
 
 	Response::builder()
 		.status(StatusCode::OK)
+		.header(header::SET_COOKIE, user_cookie)
 		.header(header::SET_COOKIE, access_cookie)
 		.header(header::SET_COOKIE, refresh_cookie)
 		.body("OK".to_string())

@@ -8,9 +8,10 @@ use axum::{
 		status::StatusCode,
 	},
 };
+use serde_json::json;
 use axum_extra::extract::cookie::CookieJar;
 
-pub async fn verify(jar: CookieJar) -> Response<String> {
+pub async fn get_user(jar: CookieJar) -> Response<String> {
 	let access_token = match jar.get("access_token") {
 		Some(token) => token,
 		None => {
@@ -38,11 +39,13 @@ pub async fn verify(jar: CookieJar) -> Response<String> {
 	match jwt::verify(access_token.value(), &secret_key) {
 		Ok(data) => {
 			let claims = data.claims;
-			let user_cookie = cookie::create("user_id", &claims.id, 60 * 60, false);
+			let response = json!({
+				"user_id": claims.id
+			}).to_string();
+
 			return Response::builder()
 				.status(StatusCode::OK)
-				.header(header::SET_COOKIE, user_cookie)
-				.body("OK".to_string())
+				.body(response)
 				.unwrap();
 		},
 		Err(_) => ()
@@ -68,13 +71,15 @@ pub async fn verify(jar: CookieJar) -> Response<String> {
 				}
 			};
 
-			let user_cookie = cookie::create("user_id", &claims.id, 60 * 60, false);
 			let access_cookie = cookie::create("access_token", &access_token, 60 * 60, true);
+			let response = json!({
+			"user_id": claims.id
+			}).to_string();
+
 			return Response::builder()
 				.status(StatusCode::OK)
-				.header(header::SET_COOKIE, user_cookie)
 				.header(header::SET_COOKIE, access_cookie)
-				.body("OK".to_string())
+				.body(response)
 				.unwrap();
 		},
 		Err(_) => ()

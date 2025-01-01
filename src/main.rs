@@ -23,6 +23,7 @@ use routes::{
 	verify::verify,
 	socket::websocket_handler,
 	save_music::save_music,
+	get_user::get_user,
 };
 
 use diesel::prelude::*;
@@ -118,7 +119,6 @@ async fn main() {
 	let lobby_pool: LobbyPool = LobbyPool::new();
 
 	let cors = CorsLayer::new()
-		//.allow_origin(ORIGIN.parse::<HeaderValue>().unwrap())
 		.allow_origin(AllowOrigin::predicate(allowed_origins))
 		.allow_credentials(true)
 		.allow_methods([Method::GET, Method::POST, Method::OPTIONS])
@@ -134,6 +134,7 @@ async fn main() {
 			let db_pool = db_pool.clone();
 			|payload| login(payload, db_pool)
 		}))
+		.route("/get_user", get(get_user))
 		.route("/verify", get(verify))
 		.route("/save_music", post({
 			let pool = db_pool.clone();

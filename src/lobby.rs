@@ -26,6 +26,11 @@ impl LobbyPool {
 		}
 	}
 
+	pub fn get_ids(&self) -> Vec<String> {
+		let inner = self.inner.lock().unwrap();
+		inner.clone().into_keys().collect()
+	}
+
 	pub fn get(&self, key: &str) -> Option<Lobby> {
 		let inner = self.inner.lock().unwrap();
 		inner.get(key).cloned()

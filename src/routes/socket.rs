@@ -25,6 +25,8 @@ enum OpCode {
 	LEAVE_LOBBY,
 	#[allow(non_camel_case_types)]
 	DELETE_LOBBY,
+	#[allow(non_camel_case_types)]
+	GET_LOBBY_IDS,
 	MESSAGE,
 }
 
@@ -69,6 +71,7 @@ fn handle_create_lobby(
 		Ok(ok) => {
 			let response = json!({
 				"op_code": OpCode::OK,
+				"for": OpCode::CREATE_LOBBY,
 				"value": ok
 			}).to_string();
 			let _ = tx.send(Message::Text(response));
@@ -118,6 +121,7 @@ fn handle_join_lobby(
 		Ok(ok) => {
 			let response = json!({
 				"op_code": OpCode::OK,
+				"for": OpCode::JOIN_LOBBY,
 				"value": ok
 			}).to_string();
 			let _ = tx.send(Message::Text(response));
@@ -205,10 +209,24 @@ fn handle_message(
 		});
 		let response = json!({
 			"op_code": OpCode::MESSAGE,
+			"for": OpCode::MESSAGE,
 			"value": inner
 		}).to_string();
 		let _ = client_conn.send(Message::Text(response));
 	}
+}
+
+fn handle_get_lobby_ids(
+	tx: &broadcast::Sender<Message>,
+	lobby_pool: &LobbyPool
+) {
+	let ids = lobby_pool.get_ids();
+	let response = json!({
+		"op_code": OpCode::OK,
+		"for": OpCode::GET_LOBBY_IDS,
+		"ids": ids
+	}).to_string();
+	let _ = tx.send(Message::Text(response));
 }
 
 pub async fn handle_socket(
@@ -228,6 +246,7 @@ pub async fn handle_socket(
 					OpCode::CREATE_LOBBY => handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool),
 					OpCode::JOIN_LOBBY => handle_join_lobby(&tx, &payload.value, &db_pool, &lobby_pool),
 					OpCode::MESSAGE => handle_message(&tx, &payload.value, &db_pool, &lobby_pool),
+					OpCode::GET_LOBBY_IDS => handle_get_lobby_ids(&tx, &lobby_pool),
 					_ => ()
 				};
 			}
