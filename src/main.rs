@@ -6,24 +6,26 @@
  * [ ] Implement verify route as middleware (if needed)
  */
 
+mod auth;
 mod config;
+mod lobby;
 mod lobic_db;
 mod routes;
-mod auth;
 mod schema;
 mod utils;
-mod lobby;
 
+use futures::poll;
 use lobby::*;
 use config::{ IP, PORT, allowed_origins };
 use lobic_db::db::*;
 use routes::{
+	get_music::{get_all_music, get_music_by_title},
 	login::login,
-	signup::signup,
-	verify::verify,
-	socket::websocket_handler,
 	save_music::save_music,
 	get_user::get_user,
+	signup::signup,
+	socket::websocket_handler,
+	verify::verify,
 };
 
 use diesel::prelude::*;
@@ -32,28 +34,23 @@ use tokio::net::TcpListener;
 use tower_http::cors::{ AllowOrigin, CorsLayer };
 use axum::{
 	body::Body,
-	routing::{ get, post },
-	response::Response,
-	Router,
+	http::{header, HeaderValue, Method, Request},
 	middleware::Next,
-	http::{
-		Request,
-		Method,
-		HeaderValue,
-		header,
-	},
+	response::Response,
+	routing::{get, post},
+	Router,
 };
+use colored::*;
+use diesel::prelude::*;
 use dotenv::dotenv;
 use std::time::Instant;
-use colored::*;
 
 // Embed migrations into the binary
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 /// Runs embedded migrations on the database connection
 fn run_migrations(db_url: &str) {
-	let mut conn = SqliteConnection::establish(db_url)
-		.expect("Failed to connect to the database");
+	let mut conn = SqliteConnection::establish(db_url).expect("Failed to connect to the database");
 
 	conn.run_pending_migrations(MIGRATIONS)
 		.expect("Failed to run migrations");
@@ -108,8 +105,7 @@ async fn main() {
 	dotenv().ok();
 	tracing_subscriber::fmt().pretty().init();
 
-	let db_url = std::env::var("DATABASE_URL")
-		.expect("DATABASE_URL must be set in .env file");
+	let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env file");
 	run_migrations(&db_url);
 
 	// Pool of database connections
@@ -126,25 +122,58 @@ async fn main() {
 
 	let app = Router::new()
 		.route("/", get(index))
-		.route("/signup", post({
-			let db_pool = db_pool.clone();
-			|payload| signup(payload, db_pool)
-		}))
-		.route("/login", post({
-			let db_pool = db_pool.clone();
-			|payload| login(payload, db_pool)
-		}))
 		.route("/get_user", get(get_user))
+		.route(
+			"/signup",
+			post({
+				let db_pool = db_pool.clone();
+				|payload| signup(payload, db_pool)
+			}),
+		)
+		.route(
+			"/login",
+			post({
+				let db_pool = db_pool.clone();
+				|payload| login(payload, db_pool)
+			}),
+		)
 		.route("/verify", get(verify))
-		.route("/save_music", post({
-			let pool = db_pool.clone();
-			|payload| save_music(payload, pool)
-		}))
-		.route("/ws", get({
-			let lobby_pool = lobby_pool.clone();
-			let db_pool = db_pool.clone();
-			|payload| websocket_handler(payload, db_pool, lobby_pool)
-		}))
+		.route(
+			"/save_music",
+			post({
+				let pool = db_pool.clone();
+				|payload| save_music(payload, pool)
+			}),
+		)
+		.route(
+			"/music_by_title",
+			get({
+				let db_pool = db_pool.clone();
+				|payload| get_music_by_title(payload, db_pool)
+			}),
+		)
+		.route(
+			"/music",
+			get({
+				let db_pool = db_pool.clone();
+				move || async { get_all_music(db_pool).await }
+			}),
+		)
+		// .route(  //this can only handle one response not all of the songs in the db
+		// 	"/music",
+		// 	get({
+		// 		let db_pool = db_pool.clone();
+		// 		get_all_music(db_pool).await
+		// 	}),
+		// )
+		.route(
+			"/ws",
+			get({
+				let lobby_pool = lobby_pool.clone();
+				let db_pool = db_pool.clone();
+				|payload| websocket_handler(payload, db_pool, lobby_pool)
+			}),
+		)
 		.layer(axum::middleware::from_fn(logger))
 		.layer(cors);
 

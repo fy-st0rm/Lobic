@@ -1,23 +1,17 @@
-use crate::lobic_db::{
-	db::DatabasePool,
-	models::User,
-};
+use crate::auth::{exp, jwt};
+use crate::lobic_db::{db::DatabasePool, models::User};
 use crate::schema::users::dsl::*;
-use crate::auth::{ jwt, exp };
 use crate::utils::cookie;
 
-use diesel::prelude::*;
-use serde::{ Serialize, Deserialize };
 use axum::{
-	Json,
+	http::{header, status::StatusCode},
 	response::Response,
-	http::{
-		header,
-		status::StatusCode,
-	},
+	Json,
 };
-use uuid::Uuid;
+use diesel::prelude::*;
 use pwhash::bcrypt;
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SignupPayload {
@@ -26,10 +20,7 @@ pub struct SignupPayload {
 	pub password: String,
 }
 
-pub async fn signup(
-	Json(payload): Json<SignupPayload>,
-	db_pool: DatabasePool
-) -> Response<String> {
+pub async fn signup(Json(payload): Json<SignupPayload>, db_pool: DatabasePool) -> Response<String> {
 	// Getting db from pool
 	let mut db_conn = match db_pool.get() {
 		Ok(conn) => conn,
@@ -64,7 +55,7 @@ pub async fn signup(
 		id: user_id.clone(),
 		username: payload.username,
 		email: payload.email,
-		pwd_hash: bcrypt::hash(payload.password).unwrap()
+		pwd_hash: bcrypt::hash(payload.password).unwrap(),
 	};
 
 	// Insert into the database
@@ -74,12 +65,12 @@ pub async fn signup(
 		.unwrap();
 
 	// Generate jwt
-	let jwt_secret_key = std::env::var("JWT_SECRET_KEY")
-		.expect("JWT_SECRET_KEY must be set in .env file");
+	let jwt_secret_key =
+		std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
 
 	let access_claims = jwt::Claims {
 		id: user_id.clone(),
-		exp: exp::expiration_from_min(60)
+		exp: exp::expiration_from_min(60),
 	};
 	let access_token = match jwt::generate(access_claims, &jwt_secret_key) {
 		Ok(token) => token,
@@ -93,7 +84,7 @@ pub async fn signup(
 
 	let refresh_claims = jwt::Claims {
 		id: user_id.clone(),
-		exp: exp::expiration_from_days(7)
+		exp: exp::expiration_from_days(7),
 	};
 	let refresh_token = match jwt::generate(refresh_claims, &jwt_secret_key) {
 		Ok(token) => token,

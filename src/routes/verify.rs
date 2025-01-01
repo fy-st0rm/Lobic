@@ -1,12 +1,9 @@
-use crate::auth::{ jwt, exp };
+use crate::auth::{exp, jwt};
 use crate::utils::cookie;
 
 use axum::{
+	http::{header, status::StatusCode},
 	response::Response,
-	http::{
-		header,
-		status::StatusCode,
-	},
 };
 use axum_extra::extract::cookie::CookieJar;
 
@@ -31,8 +28,8 @@ pub async fn verify(jar: CookieJar) -> Response<String> {
 		}
 	};
 
-	let secret_key = std::env::var("JWT_SECRET_KEY")
-		.expect("JWT_SECRET_KEY must be set in .env file");
+	let secret_key =
+		std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
 
 	// Verifying the access token
 	match jwt::verify(access_token.value(), &secret_key) {
@@ -44,8 +41,8 @@ pub async fn verify(jar: CookieJar) -> Response<String> {
 				.header(header::SET_COOKIE, user_cookie)
 				.body("OK".to_string())
 				.unwrap();
-		},
-		Err(_) => ()
+		}
+		Err(_) => (),
 	};
 
 	// Verifying the refresh token
@@ -56,7 +53,7 @@ pub async fn verify(jar: CookieJar) -> Response<String> {
 			// Generating new access token
 			let access_claims = jwt::Claims {
 				id: claims.id.clone(),
-				exp: exp::expiration_from_sec(10)
+				exp: exp::expiration_from_sec(10),
 			};
 			let access_token = match jwt::generate(access_claims, &secret_key) {
 				Ok(token) => token,
@@ -76,8 +73,8 @@ pub async fn verify(jar: CookieJar) -> Response<String> {
 				.header(header::SET_COOKIE, access_cookie)
 				.body("OK".to_string())
 				.unwrap();
-		},
-		Err(_) => ()
+		}
+		Err(_) => (),
 	};
 
 	Response::builder()
