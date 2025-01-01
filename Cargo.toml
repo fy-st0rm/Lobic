@@ -8,7 +8,7 @@ axum = { version = "0.7.9", features = ["ws"] }
 axum-extra = { version = "0.9.6", features = ["cookie"] }
 colored = "2.1.0"
 cookie = "0.18.1"
-diesel = { version = "2.2.5", features = ["sqlite", "r2d2"] }
+diesel = { version = "2.2.6", features = ["sqlite", "r2d2"] }
 diesel_migrations = "2.0"
 dotenv = "0.15.0"
 futures = "0.3.31"
