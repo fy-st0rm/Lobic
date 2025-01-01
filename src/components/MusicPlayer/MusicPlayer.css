@@ -19,6 +19,14 @@
   
 }
 .song-info{
+    mask-image: none;
+    -webkit-mask-image: linear-gradient(90deg, #072631 60%, transparent);
+    
+  }
+.song-info{
+
+    width: 15%;
+    padding: 5px;
     align-self: center;
 }
 .cover-image{
@@ -29,12 +37,17 @@
 
 }
 .song-name{
+    overflow: hidden;
+    white-space: nowrap;
     font-weight: bold;
 }
 .artist-name{
+    overflow: hidden;
+    white-space: nowrap;
     font-size: auto;
 }
 .control-container{
+  
     flex-grow: 1;
     width: 50%;
     align-self: center;
@@ -45,6 +58,7 @@
     display: flex;
 }
 .volume-control-bar{
+    width: 100%;
     align-self:center;
     margin-right: 10px;
     appearance: none;
@@ -74,8 +88,11 @@
     border-radius: 100%;
 }
 .control-bar{
+    
     display: flex;
-    padding: 10px;
+    margin: 5px;
+    height: 100%;
+    width: 100%;
     justify-content: center;
     
 }
@@ -86,15 +103,20 @@
     cursor: pointer;
 }
 .status{
+    margin: 5px;
+    height: 80%;
+    width: 100%;
     display: flex;
     justify-content: center;
 }
 .music-status{
+    font-size: 90%;
     padding-right: 5px;
     display: block;
     margin-left: auto;
 }
 .control-button{
+    margin:2px;
     background: none;
     border: none;
 }
