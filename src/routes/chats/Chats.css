@@ -25,7 +25,7 @@
 }
 
 .sidebar {
-    width: 280px;
+    width: 320px;
     background-color: rgba(0, 0, 0, 0.6);
     height: 100%;
     overflow-y: auto;
@@ -35,8 +35,65 @@
 
 .chat-container {
     flex: 1;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.6);
     height: 100%;
     overflow-y: auto;
     border-radius: 10px 10px 10px 10px;
 }
+
+.chat-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 10px 10px 0 0;
+    height: 5vh;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px 10px 0 0;
+    height: 5vh;
+}
+
+.sidebar-title{
+    color: white;
+    font-size: 1.5rem;
+    margin-left: 20px;
+    font-weight: 600;
+}
+
+.type-box-container{
+    display: flex;
+    /* flex-direction: column; */
+
+    align-items: center;
+    padding: 10px;
+    height: 5vh;
+    width: 71.5%;
+    /* overflow-y: auto; */
+    /* background-color: rosybrown; */
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 20px;
+}
+
+.type-box {
+    width: 100%;
+    padding-left: 10px;
+  }
+
+  .type-field {
+    border-radius: 20px;
+    width: 95%;
+    border: transparent;
+    padding-top: 8px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 8px;
+  }
