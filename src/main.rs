@@ -14,7 +14,6 @@ mod routes;
 mod schema;
 mod utils;
 
-use config::{IP, ORIGIN, PORT};
 use futures::poll;
 use lobby::*;
 use config::{ IP, PORT, allowed_origins };
@@ -42,11 +41,8 @@ use axum::{
 };
 use colored::*;
 use diesel::prelude::*;
-use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use dotenv::dotenv;
 use std::time::Instant;
-use tokio::net::TcpListener;
-use tower_http::cors::CorsLayer;
 
 // Embed migrations into the binary
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
