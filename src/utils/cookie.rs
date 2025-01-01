@@ -1,7 +1,4 @@
-use cookie::{
-	Cookie,
-	SameSite,
-};
+use cookie::{Cookie, SameSite};
 use time::Duration;
 
 pub fn create(key: &str, value: &str, exp_in_sec: i64) -> String {
@@ -14,4 +11,3 @@ pub fn create(key: &str, value: &str, exp_in_sec: i64) -> String {
 		.build()
 		.to_string()
 }
-

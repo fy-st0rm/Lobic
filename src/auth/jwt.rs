@@ -1,11 +1,8 @@
 use jsonwebtoken::{
-	encode, decode,
-	Header, Validation,
-	EncodingKey, DecodingKey,
-	Algorithm, TokenData,
-	errors::Result,
+	decode, encode, errors::Result, Algorithm, DecodingKey, EncodingKey, Header, TokenData,
+	Validation,
 };
-use serde::{ Serialize, Deserialize };
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -17,7 +14,7 @@ pub fn generate(claims: Claims, secret_key: &str) -> Result<String> {
 	encode(
 		&Header::default(),
 		&claims,
-		&EncodingKey::from_secret(secret_key.as_bytes())
+		&EncodingKey::from_secret(secret_key.as_bytes()),
 	)
 }
 
@@ -25,6 +22,6 @@ pub fn verify(token: &str, secret_key: &str) -> Result<TokenData<Claims>> {
 	decode::<Claims>(
 		&token,
 		&DecodingKey::from_secret(secret_key.as_bytes()),
-		&Validation::new(Algorithm::HS256)
+		&Validation::new(Algorithm::HS256),
 	)
 }
