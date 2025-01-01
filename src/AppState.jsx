@@ -3,9 +3,9 @@ import { WS_SERVER_IP, OpCode } from "./const.jsx";
 
 const AppStateContext = createContext(null);
 
-// Load from localstorage
+// Load from session storage
 const loadInitialState = () => {
-	const savedState = localStorage.getItem("appState");
+	const savedState = sessionStorage.getItem("appState");
 	return savedState
 		? JSON.parse(savedState)
 		: {
@@ -26,7 +26,7 @@ export const AppStateProvider = ({ children }) => {
 				lobby_id,
 				in_lobby
 			};
-			localStorage.setItem(
+			sessionStorage.setItem(
 				"appState",
 				JSON.stringify(newState)
 			);
