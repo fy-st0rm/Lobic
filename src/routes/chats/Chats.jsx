@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
-import NavBar from "../../components/NavBar/Navbar.jsx";
+import NavBar from "../../components/NavBar/NavBar.jsx";
 import "./Chats.css";
 import EmojiPicker from "emoji-picker-react";
 
