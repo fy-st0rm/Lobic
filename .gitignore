@@ -27,6 +27,7 @@ dist-ssr
 # Added by cargo
 
 /target
+/cover_images
 
 # Added by st0rm
 database.db
