@@ -14,9 +14,11 @@ use uuid::Uuid;
 use walkdir::WalkDir;
 
 #[derive(Debug, Serialize, Deserialize)]
+// a correct name would be MusicOrFolderPath but ehh
 pub struct MusicPath {
 	pub path: String, //     "path" : "/home/rain/Lobic/music/Sunsetz.mp3"
 }
+
 pub async fn save_music(Json(payload): Json<MusicPath>, db_pool: DatabasePool) -> Response<String> {
 	let path = Path::new(&payload.path);
 	let mut saved_count = 0;

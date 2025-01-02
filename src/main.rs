@@ -19,7 +19,9 @@ use futures::poll;
 use lobby::*;
 use lobic_db::db::*;
 use routes::{
-	get_music::{get_all_music, get_cover_image, get_music_by_title},
+	get_music::{
+		get_all_music, get_cover_image, get_music_by_title, get_music_by_uuid, send_music,
+	},
 	get_user::get_user,
 	login::login,
 	save_music::save_music,
@@ -145,20 +147,31 @@ async fn main() {
 			}),
 		)
 		.route(
-			"/music_by_title",
+			"/music_data_by_title",
 			get({
 				let db_pool = db_pool.clone();
 				|payload| get_music_by_title(payload, db_pool)
 			}),
 		)
 		.route(
-			"/music",
+			"/music_data_by_uuid",
+			get({
+				let db_pool = db_pool.clone();
+				|payload| get_music_by_uuid(payload, db_pool)
+			}),
+		)
+		.route(
+			"/musics_data",
 			get({
 				let db_pool = db_pool.clone();
 				move || async { get_all_music(db_pool).await }
 			}),
 		)
-		.route("/image/:filename", get(get_cover_image))
+		.route("/music", get(send_music)) //to test just vlc http://127.0.0.1:8080/music/
+		.route(
+			"/image/:filename",
+			get(|music_uuid| get_cover_image(music_uuid)),
+		)
 		.route(
 			"/ws",
 			get({
