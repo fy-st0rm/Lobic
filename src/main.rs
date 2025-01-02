@@ -19,6 +19,7 @@ mod routes;
 mod schema;
 mod utils;
 mod app_state;
+mod user_pool;
 
 use config::{ IP, PORT, allowed_origins };
 use routes::{

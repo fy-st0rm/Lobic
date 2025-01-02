@@ -1,6 +1,7 @@
 use crate::lobby::*;
 use crate::lobic_db::db::*;
 use crate::app_state::AppState;
+use crate::user_pool::UserPool;
 
 use axum::{
 	extract::ws::{Message, WebSocket, WebSocketUpgrade},
@@ -43,7 +44,31 @@ pub async fn websocket_handler(
 	ws.on_upgrade(|socket| handle_socket(socket, State(app_state)))
 }
 
-fn handle_connect(tx: &broadcast::Sender<Message>, value: &Value) {
+fn handle_connect(
+	tx: &broadcast::Sender<Message>,
+	value: &Value,
+	user_pool: &UserPool
+) {
+	let user_id = match value.get("user_id") {
+		Some(id) => id.as_str().unwrap(),
+		None => {
+			let response = json!({
+				"op_code": OpCode::ERROR,
+				"value": "\"user_id\" field is missing.".to_string()
+			}).to_string();
+			let _ = tx.send(Message::Text(response));
+			return;
+		}
+	};
+
+	let response = json!({
+		"op_code": OpCode::OK,
+		"for": OpCode::CONNECT,
+		"value": "Sucessfully connected to ws."
+	}).to_string();
+	let _ = tx.send(Message::Text(response));
+
+	user_pool.insert(user_id, tx);
 }
 
 fn handle_create_lobby(
@@ -51,6 +76,7 @@ fn handle_create_lobby(
 	value: &Value,
 	db_pool: &DatabasePool,
 	lobby_pool: &LobbyPool,
+	user_pool: &UserPool
 ) {
 	let host_id = match value.get("host_id") {
 		Some(v) => v.as_str().unwrap(),
@@ -65,7 +91,7 @@ fn handle_create_lobby(
 		}
 	};
 
-	let res = lobby_pool.create_lobby(host_id, tx.clone(), db_pool);
+	let res = lobby_pool.create_lobby(host_id, db_pool);
 	match res {
 		Ok(ok) => {
 			let response = json!({
@@ -85,6 +111,21 @@ fn handle_create_lobby(
 			let _ = tx.send(Message::Text(response));
 		}
 	};
+
+	// TODO: Broadcast to friends only
+	// Broadcasting to every clients
+	let users = user_pool.get_ids();
+	let ids = lobby_pool.get_ids();
+	for user in users {
+		let msg = json!({
+			"op_code": OpCode::OK,
+			"for": OpCode::GET_LOBBY_IDS,
+			"value": ids
+		}).to_string();
+
+		let conn = user_pool.get(&user).unwrap();
+		let _ = conn.send(Message::Text(msg));
+	}
 }
 
 fn handle_join_lobby(
@@ -119,7 +160,7 @@ fn handle_join_lobby(
 		}
 	};
 
-	let res = lobby_pool.join_lobby(lobby_id, user_id, tx.clone(), db_pool);
+	let res = lobby_pool.join_lobby(lobby_id, user_id, db_pool);
 	match res {
 		Ok(ok) => {
 			let response = json!({
@@ -146,6 +187,7 @@ fn handle_message(
 	value: &Value,
 	db_pool: &DatabasePool,
 	lobby_pool: &LobbyPool,
+	user_pool: &UserPool
 ) {
 	let lobby_id = match value.get("lobby_id") {
 		Some(v) => v.as_str().unwrap(),
@@ -209,7 +251,7 @@ fn handle_message(
 		return;
 	}
 
-	for (client_id, client_conn) in lobby.clients.iter() {
+	for client_id in lobby.clients.iter() {
 		if user_id == client_id {
 			continue;
 		}
@@ -223,6 +265,9 @@ fn handle_message(
 			"value": inner
 		})
 		.to_string();
+
+		// NOTE: Can blow up (idk what im doing)
+		let client_conn = user_pool.get(&client_id).unwrap();
 		let _ = client_conn.send(Message::Text(response));
 	}
 }
@@ -235,7 +280,7 @@ fn handle_get_lobby_ids(
 	let response = json!({
 		"op_code": OpCode::OK,
 		"for": OpCode::GET_LOBBY_IDS,
-		"ids": ids
+		"value": ids
 	}).to_string();
 	let _ = tx.send(Message::Text(response));
 }
@@ -249,6 +294,7 @@ pub async fn handle_socket(
 
 	let db_pool = app_state.db_pool;
 	let lobby_pool = app_state.lobby_pool;
+	let user_pool = app_state.user_pool;
 
 	// Receiving msg through sockets
 	tokio::spawn(async move {
@@ -257,16 +303,16 @@ pub async fn handle_socket(
 				let payload: SocketPayload = serde_json::from_str(&text).unwrap();
 				match payload.op_code {
 					OpCode::CONNECT => {
-						handle_connect(&tx, &payload.value)
+						handle_connect(&tx, &payload.value, &user_pool)
 					}
 					OpCode::CREATE_LOBBY => {
-						handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool)
+						handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
 					}
 					OpCode::JOIN_LOBBY => {
 						handle_join_lobby(&tx, &payload.value, &db_pool, &lobby_pool)
 					}
 					OpCode::MESSAGE => {
-						handle_message(&tx, &payload.value, &db_pool, &lobby_pool)
+						handle_message(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
 					}
 					OpCode::GET_LOBBY_IDS => {
 						handle_get_lobby_ids(&tx, &lobby_pool)

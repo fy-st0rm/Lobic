@@ -1,17 +1,15 @@
 use crate::lobic_db::db::*;
 
-use axum::extract::ws::Message;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-use tokio::sync::broadcast;
 use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct Lobby {
 	pub id: String,
 	pub host_id: String,
-	pub clients: HashMap<String, broadcast::Sender<Message>>,
+	pub clients: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -49,7 +47,6 @@ impl LobbyPool {
 	pub fn create_lobby(
 		&self,
 		host_id: &str,
-		conn: broadcast::Sender<Message>,
 		db_pool: &DatabasePool,
 	) -> Result<Value, String> {
 		if !user_exists(host_id, db_pool) {
@@ -66,7 +63,7 @@ impl LobbyPool {
 		let lobby = Lobby {
 			id: lobby_id.clone(),
 			host_id: host_id.to_string(),
-			clients: HashMap::from([(host_id.to_string(), conn)]),
+			clients: vec![host_id.to_string()]
 		};
 		self.insert(&lobby_id, lobby);
 
@@ -82,7 +79,6 @@ impl LobbyPool {
 		&self,
 		lobby_id: &str,
 		client_id: &str,
-		conn: broadcast::Sender<Message>,
 		db_pool: &DatabasePool,
 	) -> Result<String, String> {
 		if !user_exists(client_id, db_pool) {
@@ -98,7 +94,7 @@ impl LobbyPool {
 		};
 
 		// Adding the client and pushing into the pool
-		lobby.clients.insert(client_id.to_string(), conn);
+		lobby.clients.push(client_id.to_string());
 		self.insert(lobby_id, lobby);
 
 		Ok("Sucessfully joined lobby".to_string())
