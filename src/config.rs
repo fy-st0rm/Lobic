@@ -1,4 +1,4 @@
-use axum::http::{ HeaderValue, request::Parts };
+use axum::http::{request::Parts, HeaderValue};
 
 pub const IP: &str = "127.0.0.1";
 pub const PORT: &str = "8080";
@@ -14,5 +14,3 @@ pub fn allowed_origins(origin: &HeaderValue, _request: &Parts) -> bool {
 	];
 	origins.iter().any(|&allowed| origin == allowed)
 }
-
-

@@ -25,9 +25,11 @@ dist-ssr
 
 
 # Added by cargo
-
 /target
+
+#added by rain
 /cover_images
+/music
 
 # Added by st0rm
 database.db

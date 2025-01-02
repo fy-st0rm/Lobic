@@ -1,12 +1,12 @@
+use crate::app_state::AppState;
 use crate::lobby::*;
 use crate::lobic_db::db::*;
-use crate::app_state::AppState;
 use crate::user_pool::UserPool;
 
 use axum::{
 	extract::ws::{Message, WebSocket, WebSocketUpgrade},
-	response::IntoResponse,
 	extract::State,
+	response::IntoResponse,
 };
 use futures::{sink::SinkExt, stream::StreamExt};
 use serde::{Deserialize, Serialize};
@@ -39,7 +39,7 @@ struct SocketPayload {
 
 pub async fn websocket_handler(
 	ws: WebSocketUpgrade,
-	State(app_state): State<AppState>
+	State(app_state): State<AppState>,
 ) -> impl IntoResponse {
 	ws.on_upgrade(|socket| handle_socket(socket, State(app_state)))
 }
@@ -272,10 +272,7 @@ fn handle_message(
 	}
 }
 
-fn handle_get_lobby_ids(
-	tx: &broadcast::Sender<Message>,
-	lobby_pool: &LobbyPool
-) {
+fn handle_get_lobby_ids(tx: &broadcast::Sender<Message>, lobby_pool: &LobbyPool) {
 	let ids = lobby_pool.get_ids();
 	let response = json!({
 		"op_code": OpCode::OK,
@@ -285,10 +282,7 @@ fn handle_get_lobby_ids(
 	let _ = tx.send(Message::Text(response));
 }
 
-pub async fn handle_socket(
-	socket: WebSocket,
-	State(app_state): State<AppState>
-) {
+pub async fn handle_socket(socket: WebSocket, State(app_state): State<AppState>) {
 	let (mut sender, mut receiver) = socket.split();
 	let (tx, mut rx) = broadcast::channel(100);
 
@@ -317,7 +311,7 @@ pub async fn handle_socket(
 					OpCode::GET_LOBBY_IDS => {
 						handle_get_lobby_ids(&tx, &lobby_pool)
 					}
-					_ => ()
+					_ => (),
 				};
 			}
 		}
