@@ -1,8 +1,10 @@
-use crate::lobic_db::db::DatabasePool;
+use crate::app_state::AppState;
 use crate::lobic_db::models::Music;
+
 use axum::{
 	body::Body,
 	extract::Path,
+	extract::State,
 	http::{
 		header::{self, CONTENT_DISPOSITION, CONTENT_TYPE},
 		StatusCode,
@@ -34,10 +36,10 @@ pub struct MusicRequest {
 }
 
 pub async fn get_music_by_title(
+	State(app_state): State<AppState>,
 	Json(payload): Json<MusicRequest>,
-	db_pool: DatabasePool,
 ) -> Response<String> {
-	let mut db_conn = match db_pool.get() {
+	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
 			let msg = format!("Failed to get DB from pool: {err}");
@@ -109,9 +111,9 @@ pub async fn get_music_by_title(
 			.unwrap(),
 	}
 }
-
-pub async fn get_all_music(db_pool: DatabasePool) -> Response<String> {
-	let mut db_conn = match db_pool.get() {
+// Get all music entries
+pub async fn get_all_music(State(app_state): State<AppState>) -> Response<String> {
+	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
 			let msg = format!("Failed to get DB from pool: {err}");
