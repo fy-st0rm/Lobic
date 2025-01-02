@@ -1,16 +1,23 @@
-use crate::lobic_db::models::Music;
 use crate::app_state::AppState;
+use crate::lobic_db::models::Music;
 
 use axum::{
-	http::{header, status::StatusCode},
-	response::Response,
-	Json,
+	body::Body,
+	extract::Path,
 	extract::State,
+	http::{
+		header::{self, CONTENT_DISPOSITION, CONTENT_TYPE},
+		StatusCode,
+	},
+	response::{IntoResponse, Response},
+	Json,
 };
 use diesel::prelude::*;
-
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::path::PathBuf;
+use tokio::{fs::File, io::AsyncReadExt};
+use tokio_util::io::ReaderStream;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MusicResponse {
@@ -30,7 +37,7 @@ pub struct MusicRequest {
 
 pub async fn get_music_by_title(
 	State(app_state): State<AppState>,
-	Json(payload): Json<MusicRequest>
+	Json(payload): Json<MusicRequest>,
 ) -> Response<String> {
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
@@ -170,4 +177,135 @@ pub async fn get_all_music(State(app_state): State<AppState>) -> Response<String
 			.body(format!("Database error: {err}"))
 			.unwrap(),
 	}
+}
+
+#[derive(Deserialize)]
+pub struct UuidRequest {
+	uuid: String,
+}
+pub async fn get_music_by_uuid(
+	State(app_state): State<AppState>,
+	Json(payload): Json<UuidRequest>,
+) -> Response<String> {
+	let mut db_conn = match app_state.db_pool.get() {
+		Ok(conn) => conn,
+		Err(err) => {
+			let msg = format!("Failed to get DB from pool: {err}");
+			return Response::builder()
+				.status(StatusCode::INTERNAL_SERVER_ERROR)
+				.body(msg)
+				.unwrap();
+		}
+	};
+
+	use crate::schema::music::dsl::*;
+
+	let result = music
+		.filter(id.eq(&payload.uuid))
+		.load::<Music>(&mut db_conn);
+
+	match result {
+		Ok(music_entries) => {
+			if music_entries.is_empty() {
+				return Response::builder()
+					.status(StatusCode::NOT_FOUND)
+					.body("No music entry found with the given UUID".to_string())
+					.unwrap();
+			}
+
+			let responses: Vec<MusicResponse> = music_entries
+				.into_iter()
+				.map(|entry| {
+					let cover_art_path = format!("./cover_images/{}.png", entry.id);
+					let has_cover = fs::metadata(&cover_art_path).is_ok();
+
+					MusicResponse {
+						id: entry.id,
+						filename: entry.filename,
+						artist: entry.artist,
+						title: entry.title,
+						album: entry.album,
+						genre: entry.genre,
+						cover_art_path: has_cover.then_some(cover_art_path),
+					}
+				})
+				.collect();
+
+			match serde_json::to_string(&responses) {
+				Ok(json) => Response::builder()
+					.status(StatusCode::OK)
+					.header(header::CONTENT_TYPE, "application/json")
+					.body(json)
+					.unwrap(),
+				Err(err) => Response::builder()
+					.status(StatusCode::INTERNAL_SERVER_ERROR)
+					.body(format!("Failed to serialize response: {err}"))
+					.unwrap(),
+			}
+		}
+		Err(diesel::NotFound) => Response::builder()
+			.status(StatusCode::NOT_FOUND)
+			.body("No music entry found with the given UUID".to_string())
+			.unwrap(),
+		Err(err) => Response::builder()
+			.status(StatusCode::INTERNAL_SERVER_ERROR)
+			.body(format!("Database error: {err}"))
+			.unwrap(),
+	}
+}
+
+pub async fn get_cover_image(Path(filename): Path<String>) -> Response {
+	let mut path = PathBuf::from("cover_images");
+	path.push(filename);
+
+	match File::open(&path).await {
+		Ok(file) => {
+			let stream = ReaderStream::new(file);
+			let body = Body::from_stream(stream);
+
+			let mime_type = match path.extension().and_then(|ext| ext.to_str()) {
+				Some("jpg") | Some("jpeg") => "image/jpeg",
+				Some("png") => "image/png",
+				Some("gif") => "image/gif",
+				Some("webp") => "image/webp",
+				_ => "application/octet-stream",
+			};
+
+			Response::builder()
+				.status(StatusCode::OK)
+				.header(header::CONTENT_TYPE, mime_type)
+				.body(body)
+				.unwrap()
+		}
+		Err(_) => Response::builder()
+			.status(StatusCode::NOT_FOUND)
+			.header(header::CONTENT_TYPE, "text/plain")
+			.body(Body::from("Image not found"))
+			.unwrap(),
+	}
+}
+
+pub async fn send_music() -> impl IntoResponse {
+	let music_path = "music/Afraid.mp3";
+
+	let mut file = match File::open(music_path).await {
+		Ok(file) => file,
+		Err(_) => return (axum::http::StatusCode::NOT_FOUND, "File not found").into_response(),
+	};
+
+	// Read the file asynchronously into a byte vector
+	let mut file_bytes = Vec::new();
+	if let Err(_) = file.read_to_end(&mut file_bytes).await {
+		return (
+			axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+			"Failed to read file",
+		)
+			.into_response();
+	}
+
+	Response::builder()
+		.header(CONTENT_TYPE, "audio/mpeg")
+		.header(CONTENT_DISPOSITION, "attachment; filename=\"music.mp3\"")
+		.body(file_bytes.into())
+		.unwrap()
 }
