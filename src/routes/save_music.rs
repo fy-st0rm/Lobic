@@ -1,15 +1,17 @@
 // [ ] TODO : the remove redundancy while storing images and the music
 
-use crate::lobic_db::db::DatabasePool;
 use crate::lobic_db::models::Music;
 use crate::schema::music::dsl::*;
+use crate::app_state::AppState;
+
 use axum::{
-	http::{header, status::StatusCode},
+	http::status::StatusCode,
 	response::Response,
 	Json,
+	extract::State,
 };
 use diesel::prelude::*;
-use id3::{frame::PictureType, Frame, Tag, TagLike};
+use id3::{frame::PictureType, Tag, TagLike};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
@@ -19,9 +21,12 @@ use uuid::Uuid;
 pub struct MusicPath {
 	pub path: String, //     "path" : "/home/rain/Lobic/music/Sunsetz.mp3"
 }
-pub async fn save_music(Json(payload): Json<MusicPath>, db_pool: DatabasePool) -> Response<String> {
+pub async fn save_music(
+	State(app_state): State<AppState>,
+	Json(payload): Json<MusicPath>
+) -> Response<String> {
 	// Getting db from pool
-	let mut db_conn = match db_pool.get() {
+	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
 			let msg = format!("Failed to get DB from pool: {err}");

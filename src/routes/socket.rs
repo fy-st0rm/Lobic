@@ -1,9 +1,11 @@
 use crate::lobby::*;
 use crate::lobic_db::db::*;
+use crate::app_state::AppState;
 
 use axum::{
 	extract::ws::{Message, WebSocket, WebSocketUpgrade},
 	response::IntoResponse,
+	extract::State,
 };
 use futures::{sink::SinkExt, stream::StreamExt};
 use serde::{Deserialize, Serialize};
@@ -14,6 +16,7 @@ use tokio::sync::broadcast;
 enum OpCode {
 	OK,
 	ERROR,
+	CONNECT,
 	#[allow(non_camel_case_types)]
 	CREATE_LOBBY,
 	#[allow(non_camel_case_types)]
@@ -35,10 +38,12 @@ struct SocketPayload {
 
 pub async fn websocket_handler(
 	ws: WebSocketUpgrade,
-	db_pool: DatabasePool,
-	lobby_pool: LobbyPool,
+	State(app_state): State<AppState>
 ) -> impl IntoResponse {
-	ws.on_upgrade(|socket| handle_socket(socket, db_pool, lobby_pool))
+	ws.on_upgrade(|socket| handle_socket(socket, State(app_state)))
+}
+
+fn handle_connect(tx: &broadcast::Sender<Message>, value: &Value) {
 }
 
 fn handle_create_lobby(
@@ -237,11 +242,13 @@ fn handle_get_lobby_ids(
 
 pub async fn handle_socket(
 	socket: WebSocket,
-	db_pool: DatabasePool,
-	lobby_pool: LobbyPool
+	State(app_state): State<AppState>
 ) {
 	let (mut sender, mut receiver) = socket.split();
 	let (tx, mut rx) = broadcast::channel(100);
+
+	let db_pool = app_state.db_pool;
+	let lobby_pool = app_state.lobby_pool;
 
 	// Receiving msg through sockets
 	tokio::spawn(async move {
@@ -249,14 +256,21 @@ pub async fn handle_socket(
 			if let Message::Text(text) = message {
 				let payload: SocketPayload = serde_json::from_str(&text).unwrap();
 				match payload.op_code {
+					OpCode::CONNECT => {
+						handle_connect(&tx, &payload.value)
+					}
 					OpCode::CREATE_LOBBY => {
 						handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool)
 					}
 					OpCode::JOIN_LOBBY => {
 						handle_join_lobby(&tx, &payload.value, &db_pool, &lobby_pool)
 					}
-					OpCode::MESSAGE => handle_message(&tx, &payload.value, &db_pool, &lobby_pool),
-					OpCode::GET_LOBBY_IDS => handle_get_lobby_ids(&tx, &lobby_pool),
+					OpCode::MESSAGE => {
+						handle_message(&tx, &payload.value, &db_pool, &lobby_pool)
+					}
+					OpCode::GET_LOBBY_IDS => {
+						handle_get_lobby_ids(&tx, &lobby_pool)
+					}
 					_ => ()
 				};
 			}

@@ -1,12 +1,14 @@
 use crate::auth::{exp, jwt};
-use crate::lobic_db::{db::DatabasePool, models::User};
+use crate::lobic_db::models::User;
 use crate::schema::users::dsl::*;
 use crate::utils::cookie;
+use crate::app_state::AppState;
 
 use axum::{
 	http::{header, status::StatusCode},
 	response::Response,
 	Json,
+	extract::State,
 };
 use diesel::prelude::*;
 use pwhash::bcrypt;
@@ -18,9 +20,12 @@ pub struct LoginPayload {
 	pub password: String,
 }
 
-pub async fn login(Json(payload): Json<LoginPayload>, db_pool: DatabasePool) -> Response<String> {
+pub async fn login(
+	State(app_state): State<AppState>,
+	Json(payload): Json<LoginPayload>
+) -> Response<String> {
 	// Getting db from pool
-	let mut db_conn = match db_pool.get() {
+	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
 			let msg = format!("Failed to get DB from pool: {err}");
