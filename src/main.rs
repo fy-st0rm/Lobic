@@ -14,24 +14,20 @@ mod routes;
 mod schema;
 mod utils;
 
+use config::{allowed_origins, IP, PORT};
 use futures::poll;
 use lobby::*;
-use config::{ IP, PORT, allowed_origins };
 use lobic_db::db::*;
 use routes::{
-	get_music::{get_all_music, get_music_by_title},
+	get_music::{get_all_music, get_cover_image, get_music_by_title},
+	get_user::get_user,
 	login::login,
 	save_music::save_music,
-	get_user::get_user,
 	signup::signup,
 	socket::websocket_handler,
 	verify::verify,
 };
 
-use diesel::prelude::*;
-use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
-use tokio::net::TcpListener;
-use tower_http::cors::{ AllowOrigin, CorsLayer };
 use axum::{
 	body::Body,
 	http::{header, HeaderValue, Method, Request},
@@ -42,8 +38,11 @@ use axum::{
 };
 use colored::*;
 use diesel::prelude::*;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use dotenv::dotenv;
 use std::time::Instant;
+use tokio::net::TcpListener;
+use tower_http::cors::{AllowOrigin, CorsLayer};
 
 // Embed migrations into the binary
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
@@ -159,13 +158,7 @@ async fn main() {
 				move || async { get_all_music(db_pool).await }
 			}),
 		)
-		// .route(  //this can only handle one response not all of the songs in the db
-		// 	"/music",
-		// 	get({
-		// 		let db_pool = db_pool.clone();
-		// 		get_all_music(db_pool).await
-		// 	}),
-		// )
+		.route("/image/:filename", get(get_cover_image))
 		.route(
 			"/ws",
 			get({

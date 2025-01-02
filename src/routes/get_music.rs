@@ -1,15 +1,18 @@
 use crate::lobic_db::db::DatabasePool;
 use crate::lobic_db::models::Music;
-use crate::schema::music::dsl::*;
 use axum::{
-	http::{header, status::StatusCode},
+	body::Body,
+	extract::Path,
+	http::{header, StatusCode},
 	response::Response,
 	Json,
 };
 use diesel::prelude::*;
-
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::path::PathBuf;
+use tokio::fs::File;
+use tokio_util::io::ReaderStream;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MusicResponse {
@@ -167,6 +170,37 @@ pub async fn get_all_music(db_pool: DatabasePool) -> Response<String> {
 		Err(err) => Response::builder()
 			.status(StatusCode::INTERNAL_SERVER_ERROR)
 			.body(format!("Database error: {err}"))
+			.unwrap(),
+	}
+}
+
+pub async fn get_cover_image(Path(filename): Path<String>) -> Response {
+	let mut path = PathBuf::from("cover_images");
+	path.push(filename);
+
+	match File::open(&path).await {
+		Ok(file) => {
+			let stream = ReaderStream::new(file);
+			let body = Body::from_stream(stream);
+
+			let mime_type = match path.extension().and_then(|ext| ext.to_str()) {
+				Some("jpg") | Some("jpeg") => "image/jpeg",
+				Some("png") => "image/png",
+				Some("gif") => "image/gif",
+				Some("webp") => "image/webp",
+				_ => "application/octet-stream",
+			};
+
+			Response::builder()
+				.status(StatusCode::OK)
+				.header(header::CONTENT_TYPE, mime_type)
+				.body(body)
+				.unwrap()
+		}
+		Err(_) => Response::builder()
+			.status(StatusCode::NOT_FOUND)
+			.header(header::CONTENT_TYPE, "text/plain")
+			.body(Body::from("Image not found"))
 			.unwrap(),
 	}
 }

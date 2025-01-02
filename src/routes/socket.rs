@@ -222,24 +222,18 @@ fn handle_message(
 	}
 }
 
-fn handle_get_lobby_ids(
-	tx: &broadcast::Sender<Message>,
-	lobby_pool: &LobbyPool
-) {
+fn handle_get_lobby_ids(tx: &broadcast::Sender<Message>, lobby_pool: &LobbyPool) {
 	let ids = lobby_pool.get_ids();
 	let response = json!({
 		"op_code": OpCode::OK,
 		"for": OpCode::GET_LOBBY_IDS,
 		"ids": ids
-	}).to_string();
+	})
+	.to_string();
 	let _ = tx.send(Message::Text(response));
 }
 
-pub async fn handle_socket(
-	socket: WebSocket,
-	db_pool: DatabasePool,
-	lobby_pool: LobbyPool
-) {
+pub async fn handle_socket(socket: WebSocket, db_pool: DatabasePool, lobby_pool: LobbyPool) {
 	let (mut sender, mut receiver) = socket.split();
 	let (tx, mut rx) = broadcast::channel(100);
 
@@ -257,7 +251,7 @@ pub async fn handle_socket(
 					}
 					OpCode::MESSAGE => handle_message(&tx, &payload.value, &db_pool, &lobby_pool),
 					OpCode::GET_LOBBY_IDS => handle_get_lobby_ids(&tx, &lobby_pool),
-					_ => ()
+					_ => (),
 				};
 			}
 		}
