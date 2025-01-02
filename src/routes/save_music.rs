@@ -19,6 +19,7 @@ use walkdir::WalkDir;
 pub struct MusicPath {
 	pub path: String, //     "path" : "/home/rain/Lobic/music/Sunsetz.mp3"
 }
+
 pub async fn save_music(
 	State(app_state): State<AppState>,
 	Json(payload): Json<MusicPath>,
@@ -33,6 +34,10 @@ pub async fn save_music(
 				.unwrap();
 		}
 	};
+	let path = Path::new(&payload.path);
+
+	let mut saved_count = 0;
+	let mut errors = Vec::new();
 
 	if path.is_dir() {
 		for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {

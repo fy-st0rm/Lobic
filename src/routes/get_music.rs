@@ -184,15 +184,16 @@ pub struct UuidRequest {
 	uuid: String,
 }
 pub async fn get_music_by_uuid(
+	State(app_state): State<AppState>,
 	Json(payload): Json<UuidRequest>,
-	db_pool: DatabasePool,
 ) -> Response<String> {
-	let mut db_conn = match db_pool.get() {
+	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
+			let msg = format!("Failed to get DB from pool: {err}");
 			return Response::builder()
 				.status(StatusCode::INTERNAL_SERVER_ERROR)
-				.body(format!("Failed to get DB from pool: {err}"))
+				.body(msg)
 				.unwrap();
 		}
 	};
@@ -285,7 +286,7 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> Response {
 }
 
 pub async fn send_music() -> impl IntoResponse {
-	let music_path = "music/Burn.mp3";
+	let music_path = "music/Afraid.mp3";
 
 	let mut file = match File::open(music_path).await {
 		Ok(file) => file,
