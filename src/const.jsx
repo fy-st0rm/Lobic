@@ -4,6 +4,7 @@ export const WS_SERVER_IP = "ws://127.0.0.1:8080/ws";
 export const OpCode = Object.freeze({
 	OK: "OK",
 	ERROR: "ERROR",
+	CONNECT: "CONNECT",
 	CREATE_LOBBY: "CREATE_LOBBY",
 	JOIN_LOBBY: "JOIN_LOBBY",
 	LEAVE_LOBBY: "LEAVE_LOBBY",

@@ -28,7 +28,7 @@ function Lobby() {
 
 		// Handling the response
 		addMsgHandler(OpCode.GET_LOBBY_IDS, (res) => {
-			setLobbyIds(res.ids);
+			setLobbyIds(res.value);
 		});
 
 		// Requesting the lobby ids
@@ -40,21 +40,7 @@ function Lobby() {
 	}, []);
 
 	const handleCreateLobby = async () => {
-		// Getting the user data
-		let response = await fetch(SERVER_IP + "/get_user", {
-			method: "GET",
-			credentials: "include",
-		});
-
-		if (!response.ok) {
-			let err = await response.text();
-			console.log(err);
-			return;
-		}
-
-		// Creating the lobby with the user id
-		let data = await response.json();
-		let user_id = data.user_id;
+		let user_id = appState.user_id;
 
 		if (ws.current === null) {
 			console.log("Websocket is null!");
@@ -71,7 +57,7 @@ function Lobby() {
 		const payload = {
 			op_code: OpCode.CREATE_LOBBY,
 			value: {
-				"host_id": user_id
+				host_id: user_id
 			}
 		};
 		wsSend(ws, payload);

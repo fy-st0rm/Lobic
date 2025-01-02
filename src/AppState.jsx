@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
-import { WS_SERVER_IP, OpCode } from "./const.jsx";
+import { WS_SERVER_IP, OpCode, wsSend } from "./const.jsx";
 
 const AppStateContext = createContext(null);
 
@@ -9,13 +9,14 @@ const loadInitialState = () => {
 	return savedState
 		? JSON.parse(savedState)
 		: {
+				user_id: "",
 				lobby_id: "",
 				in_lobby: false,
 			};
 };
 
 export const AppStateProvider = ({ children }) => {
-	const ws = useRef(new WebSocket(WS_SERVER_IP));
+	const ws = useRef(null);
 	const msgHandlers = useRef({});
 	const [appState, setAppState] = useState(loadInitialState);
 
@@ -23,8 +24,22 @@ export const AppStateProvider = ({ children }) => {
 		setAppState(prevState => {
 			const newState = {
 				...prevState,
-				lobby_id,
-				in_lobby
+				lobby_id: lobby_id,
+				in_lobby: in_lobby,
+			};
+			sessionStorage.setItem(
+				"appState",
+				JSON.stringify(newState)
+			);
+			return newState;
+		});
+	};
+
+	const updateUserId = (user_id) => {
+		setAppState(prevState => {
+			const newState = {
+				...prevState,
+				user_id: user_id,
 			};
 			sessionStorage.setItem(
 				"appState",
@@ -39,8 +54,21 @@ export const AppStateProvider = ({ children }) => {
 	}
 
 	useEffect(() => {
+		if (ws.current === null) {
+			ws.current = new WebSocket(WS_SERVER_IP);
+			console.log("New websocket");
+		}
+
 		ws.current.onopen = () => {
 			console.log("From Handler: Connection Open");
+	
+			const payload = {
+				op_code: OpCode.CONNECT,
+				value: {
+					user_id: appState.user_id
+				}
+			};
+			ws.current.send(JSON.stringify(payload));
 		}
 
 		ws.current.onmessage = (event) => {
@@ -68,7 +96,11 @@ export const AppStateProvider = ({ children }) => {
 	}, []);
 
 	return (
-		<AppStateContext.Provider value={{appState, ws, updateLobbyState, addMsgHandler}}>
+		<AppStateContext.Provider value={{
+			appState, ws,
+			updateLobbyState, addMsgHandler,
+			updateUserId
+		}}>
 			{children}
 		</AppStateContext.Provider>
 	);
