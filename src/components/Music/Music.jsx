@@ -1,16 +1,16 @@
 import React from 'react'
 import './Music.css'
 
-function Music(){
+function Music({ title, artist, coverArt}){
     return (
     <>
         <div className="music-container">
             <div className="music-photo-container"> 
-                <img className="music-photo" src="./public/music-cover.png" /> 
+                <img className="music-photo" src={coverArt} /> 
             </div>
             <div className="music-info">
-                <h2 className="music-title"> Bhool </h2>
-                <h3 className="artist-name"> Albatross </h3>
+                <h2 className="music-title"> {title} </h2>
+                <h3 className="artist-name"> {artist} </h3>
             </div>
         </div>
     
