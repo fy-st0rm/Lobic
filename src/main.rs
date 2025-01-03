@@ -12,14 +12,13 @@
 // Change the lobby client storage to only store id and use the sender from the above mentioned hashmap
 
 mod app_state;
-mod auth;
 mod config;
 mod lobby;
 mod lobic_db;
 mod routes;
 mod schema;
-mod utils;
 mod user_pool;
+mod utils;
 
 use app_state::AppState;
 use config::{allowed_origins, IP, PORT};

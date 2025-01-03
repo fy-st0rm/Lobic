@@ -1,5 +1,8 @@
+use crate::config::OpCode;
 use crate::lobic_db::db::*;
+use crate::user_pool::UserPool;
 
+use axum::extract::ws::Message;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -44,11 +47,7 @@ impl LobbyPool {
 		inner.insert(key.to_string(), lobby);
 	}
 
-	pub fn create_lobby(
-		&self,
-		host_id: &str,
-		db_pool: &DatabasePool,
-	) -> Result<Value, String> {
+	pub fn create_lobby(&self, host_id: &str, db_pool: &DatabasePool) -> Result<Value, String> {
 		if !user_exists(host_id, db_pool) {
 			return Err(format!("Invalid host id: {}", host_id));
 		}
@@ -63,7 +62,7 @@ impl LobbyPool {
 		let lobby = Lobby {
 			id: lobby_id.clone(),
 			host_id: host_id.to_string(),
-			clients: vec![host_id.to_string()]
+			clients: vec![host_id.to_string()],
 		};
 		self.insert(&lobby_id, lobby);
 
@@ -80,7 +79,7 @@ impl LobbyPool {
 		lobby_id: &str,
 		client_id: &str,
 		db_pool: &DatabasePool,
-	) -> Result<String, String> {
+	) -> Result<Value, String> {
 		if !user_exists(client_id, db_pool) {
 			return Err(format!("Invalid client id: {}", client_id));
 		}
@@ -93,10 +92,75 @@ impl LobbyPool {
 			}
 		};
 
+		// Check if client is already joined
+		if lobby.clients.contains(&client_id.to_string()) {
+			return Err(format!(
+				"Client: {} is already in lobby: {}",
+				client_id, lobby_id
+			));
+		}
+
 		// Adding the client and pushing into the pool
 		lobby.clients.push(client_id.to_string());
 		self.insert(lobby_id, lobby);
 
-		Ok("Sucessfully joined lobby".to_string())
+		// Constructing response
+		let response = json!({
+			"lobby_id": lobby_id
+		});
+
+		Ok(response)
+	}
+
+	pub fn leave_lobby(
+		&self,
+		lobby_id: &str,
+		client_id: &str,
+		db_pool: &DatabasePool,
+	) -> Result<String, String> {
+		if !user_exists(client_id, db_pool) {
+			return Err(format!("Invalid client id: {}", client_id));
+		}
+
+		// Getting the lobby to leave
+		let mut inner = self.inner.lock().unwrap();
+		let lobby = match inner.get_mut(lobby_id) {
+			Some(lobby) => lobby,
+			None => {
+				return Err(format!("Invalid lobby id: {}", lobby_id));
+			}
+		};
+
+		lobby.clients.retain(|id| id != client_id);
+		Ok("Sucessfully left lobby".to_string())
+	}
+
+	pub fn delete_lobby(&self, lobby_id: &str, user_pool: &UserPool) -> Result<String, String> {
+		// Getting the lobby to leave
+		let lobby = match self.get(lobby_id) {
+			Some(lobby) => lobby,
+			None => {
+				return Err(format!("Invalid lobby id: {}", lobby_id));
+			}
+		};
+
+		// Notifying all the clients in the lobby to leave
+		for client in lobby.clients {
+			if let Some(conn) = user_pool.get(&client) {
+				let response = json!({
+					"op_code": OpCode::OK,
+					"for": OpCode::LEAVE_LOBBY,
+					"value": "Host disconnected"
+				})
+				.to_string();
+				let _ = conn.send(Message::Text(response));
+			}
+		}
+
+		// Deleting the lobby
+		let mut inner = self.inner.lock().unwrap();
+		let _ = inner.remove(lobby_id);
+
+		Ok("Sucessfully deleted lobby".to_string())
 	}
 }

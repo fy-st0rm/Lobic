@@ -1,5 +1,5 @@
-use crate::lobic_db::db::*;
 use crate::lobby::LobbyPool;
+use crate::lobic_db::db::*;
 use crate::user_pool::UserPool;
 
 #[derive(Debug, Clone)]
@@ -18,4 +18,3 @@ impl AppState {
 		}
 	}
 }
-

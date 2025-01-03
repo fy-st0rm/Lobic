@@ -1,4 +1,5 @@
 use crate::app_state::AppState;
+use crate::config::OpCode;
 use crate::lobby::*;
 use crate::lobic_db::db::*;
 use crate::user_pool::UserPool;
@@ -14,24 +15,6 @@ use serde_json::{json, Value};
 use tokio::sync::broadcast;
 
 #[derive(Debug, Serialize, Deserialize)]
-enum OpCode {
-	OK,
-	ERROR,
-	CONNECT,
-	#[allow(non_camel_case_types)]
-	CREATE_LOBBY,
-	#[allow(non_camel_case_types)]
-	JOIN_LOBBY,
-	#[allow(non_camel_case_types)]
-	LEAVE_LOBBY,
-	#[allow(non_camel_case_types)]
-	DELETE_LOBBY,
-	#[allow(non_camel_case_types)]
-	GET_LOBBY_IDS,
-	MESSAGE,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 struct SocketPayload {
 	pub op_code: OpCode,
 	pub value: Value,
@@ -44,18 +27,15 @@ pub async fn websocket_handler(
 	ws.on_upgrade(|socket| handle_socket(socket, State(app_state)))
 }
 
-fn handle_connect(
-	tx: &broadcast::Sender<Message>,
-	value: &Value,
-	user_pool: &UserPool
-) {
+fn handle_connect(tx: &broadcast::Sender<Message>, value: &Value, user_pool: &UserPool) {
 	let user_id = match value.get("user_id") {
 		Some(id) => id.as_str().unwrap(),
 		None => {
 			let response = json!({
 				"op_code": OpCode::ERROR,
 				"value": "\"user_id\" field is missing.".to_string()
-			}).to_string();
+			})
+			.to_string();
 			let _ = tx.send(Message::Text(response));
 			return;
 		}
@@ -65,7 +45,8 @@ fn handle_connect(
 		"op_code": OpCode::OK,
 		"for": OpCode::CONNECT,
 		"value": "Sucessfully connected to ws."
-	}).to_string();
+	})
+	.to_string();
 	let _ = tx.send(Message::Text(response));
 
 	user_pool.insert(user_id, tx);
@@ -76,7 +57,7 @@ fn handle_create_lobby(
 	value: &Value,
 	db_pool: &DatabasePool,
 	lobby_pool: &LobbyPool,
-	user_pool: &UserPool
+	user_pool: &UserPool,
 ) {
 	let host_id = match value.get("host_id") {
 		Some(v) => v.as_str().unwrap(),
@@ -114,17 +95,9 @@ fn handle_create_lobby(
 
 	// TODO: Broadcast to friends only
 	// Broadcasting to every clients
-	let users = user_pool.get_ids();
-	let ids = lobby_pool.get_ids();
-	for user in users {
-		let msg = json!({
-			"op_code": OpCode::OK,
-			"for": OpCode::GET_LOBBY_IDS,
-			"value": ids
-		}).to_string();
-
-		let conn = user_pool.get(&user).unwrap();
-		let _ = conn.send(Message::Text(msg));
+	let conns = user_pool.get_conns();
+	for conn in conns {
+		handle_get_lobby_ids(&conn, lobby_pool);
 	}
 }
 
@@ -182,12 +155,91 @@ fn handle_join_lobby(
 	};
 }
 
+fn handle_leave_lobby(
+	tx: &broadcast::Sender<Message>,
+	value: &Value,
+	db_pool: &DatabasePool,
+	lobby_pool: &LobbyPool,
+	user_pool: &UserPool,
+) {
+	let lobby_id = match value.get("lobby_id") {
+		Some(v) => v.as_str().unwrap(),
+		None => {
+			let response = json!({
+				"op_code": OpCode::ERROR,
+				"value": "\"lobby_id\" field is missing.".to_string()
+			})
+			.to_string();
+			let _ = tx.send(Message::Text(response));
+			return;
+		}
+	};
+
+	let user_id = match value.get("user_id") {
+		Some(v) => v.as_str().unwrap(),
+		None => {
+			let response = json!({
+				"op_code": OpCode::ERROR,
+				"value": "\"user_id\" field is missing.".to_string()
+			})
+			.to_string();
+			let _ = tx.send(Message::Text(response));
+			return;
+		}
+	};
+
+	let lobby = match lobby_pool.get(lobby_id) {
+		Some(lobby) => lobby,
+		None => {
+			let response = json!({
+				"op_code": OpCode::ERROR,
+				"value": format!("Invalid lobby id: {}", lobby_id)
+			})
+			.to_string();
+			let _ = tx.send(Message::Text(response));
+			return;
+		}
+	};
+
+	let res: Result<String, String>;
+	if lobby.host_id == user_id {
+		res = lobby_pool.delete_lobby(lobby_id, user_pool);
+
+		let conns = user_pool.get_conns();
+		for conn in conns {
+			handle_get_lobby_ids(&conn, lobby_pool);
+		}
+	} else {
+		res = lobby_pool.leave_lobby(lobby_id, user_id, db_pool);
+	}
+
+	match res {
+		Ok(ok) => {
+			let response = json!({
+				"op_code": OpCode::OK,
+				"for": OpCode::LEAVE_LOBBY,
+				"value": ok
+			})
+			.to_string();
+			let _ = tx.send(Message::Text(response));
+		}
+		Err(err) => {
+			let response = json!({
+				"op_code": OpCode::ERROR,
+				"value": err
+			})
+			.to_string();
+			let _ = tx.send(Message::Text(response));
+		}
+	};
+}
+
 fn handle_message(
 	tx: &broadcast::Sender<Message>,
 	value: &Value,
 	db_pool: &DatabasePool,
 	lobby_pool: &LobbyPool,
-	user_pool: &UserPool
+	user_pool: &UserPool,
 ) {
 	let lobby_id = match value.get("lobby_id") {
 		Some(v) => v.as_str().unwrap(),
@@ -278,7 +330,8 @@ fn handle_get_lobby_ids(tx: &broadcast::Sender<Message>, lobby_pool: &LobbyPool)
 		"op_code": OpCode::OK,
 		"for": OpCode::GET_LOBBY_IDS,
 		"value": ids
-	}).to_string();
+	})
+	.to_string();
 	let _ = tx.send(Message::Text(response));
 }
 
@@ -296,21 +349,20 @@ pub async fn handle_socket(socket: WebSocket, State(app_state): State<AppState>)
 			if let Message::Text(text) = message {
 				let payload: SocketPayload = serde_json::from_str(&text).unwrap();
 				match payload.op_code {
-					OpCode::CONNECT => {
-						handle_connect(&tx, &payload.value, &user_pool)
-					}
+					OpCode::CONNECT => handle_connect(&tx, &payload.value, &user_pool),
 					OpCode::CREATE_LOBBY => {
 						handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
 					}
 					OpCode::JOIN_LOBBY => {
 						handle_join_lobby(&tx, &payload.value, &db_pool, &lobby_pool)
 					}
+					OpCode::LEAVE_LOBBY => {
+						handle_leave_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
+					}
 					OpCode::MESSAGE => {
 						handle_message(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
 					}
-					OpCode::GET_LOBBY_IDS => {
-						handle_get_lobby_ids(&tx, &lobby_pool)
-					}
+					OpCode::GET_LOBBY_IDS => handle_get_lobby_ids(&tx, &lobby_pool),
 					_ => (),
 				};
 			}
