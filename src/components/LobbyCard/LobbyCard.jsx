@@ -1,15 +1,20 @@
 import { useState, useEffect, useRef } from "react";
+import Cookies from 'js-cookie';
+
 import equalizer_logo from "/music_equalizer.png";
-import "./LobbyCard.css"
 import PlusIcon from "/plus.svg";
 
+import "./LobbyCard.css"
+
 export const LobbyCard = ({
+	lobby_id,
 	lobby_name,
 	listeners_cnt,
 	song_name,
 	artist_name,
 	lobby_icon,
-	card_index
+	card_index,
+	onClick
 }) => {
 	const [isLobbyNameOF, setLobbyNameOF] = useState(false);
 	const [isSongNameOF, setSongNameOF] = useState(false);
@@ -89,6 +94,7 @@ export const LobbyCard = ({
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}
 				style={{ animationDelay: `${card_index * 0.1}s` }}
+				onClick={() => onClick(lobby_id)}
 			>
 
 				{/* Blurry background */}
@@ -138,7 +144,7 @@ export const LobbyCard = ({
 	);
 }
 
-export const CreateLobbyButton = ({card_index}) => {
+export const CreateLobbyButton = ({card_index, onClick}) => {
 	const [isHovered, setIsHovered] = useState(false);
 	const [animate, setAnimate] = useState(false);
 
@@ -150,10 +156,6 @@ export const CreateLobbyButton = ({card_index}) => {
 		return () => clearTimeout(timer);
 	}, []);
 
-	const handleClick = () => {
-		console.log("Clicked");
-	}
-
 	return (
 		<>
 			<div
@@ -161,7 +163,7 @@ export const CreateLobbyButton = ({card_index}) => {
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}
 				style={{ animationDelay: `${card_index * 0.1}s` }}
-				onClick={handleClick}
+				onClick={onClick}
 			>
 				<div className="lobby-card-bg">
 				</div>

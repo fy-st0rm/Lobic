@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react"
-import Cookie from "js-cookie"
 import { useNavigate } from "react-router-dom"
 
-import { SERVER_IP } from "../../conf.jsx"
+import { SERVER_IP } from "../../const.jsx"
 
 function Auth({ children }) {
 	const [auth, setAuth] = useState(false);

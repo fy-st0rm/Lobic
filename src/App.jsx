@@ -7,6 +7,7 @@ import Signup from './routes/signup/Signup.jsx';
 import ForgotPassword from './routes/login/ForgotPassword.jsx';
 import Lobby from "./routes/lobby/Lobby.jsx";
 import Chats from "./routes/chats/Chats.jsx";
+import Playlist from "./routes/playlist/Playlist.jsx";	
 
 
 function App() {
@@ -18,9 +19,9 @@ function App() {
 			<Route
 				path="/home"
 				element={
-					
-						<Home />
-				
+					<Auth>
+						<Home/>
+					</Auth>
 				}
 			/>
 			<Route
@@ -35,6 +36,7 @@ function App() {
 			<Route path="/login" element={<Login />} />
 			<Route path="/forgotpassword" element={<ForgotPassword />} />
 			<Route path="/chats" element={<Chats />} />
+			<Route path="/playlist" element={<Playlist />} />
 
 		</Routes>
 	);
