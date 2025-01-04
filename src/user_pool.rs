@@ -1,7 +1,7 @@
+use axum::extract::ws::Message;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use tokio::sync::broadcast;
-use axum::extract::ws::Message;
 
 #[derive(Debug, Clone)]
 pub struct UserPool {

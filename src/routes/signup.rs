@@ -1,14 +1,13 @@
-use crate::auth::{exp, jwt};
+use crate::app_state::AppState;
 use crate::lobic_db::models::User;
 use crate::schema::users::dsl::*;
-use crate::utils::cookie;
-use crate::app_state::AppState;
+use crate::utils::{cookie, exp, jwt};
 
 use axum::{
+	extract::State,
 	http::{header, status::StatusCode},
 	response::Response,
 	Json,
-	extract::State,
 };
 use diesel::prelude::*;
 use pwhash::bcrypt;
@@ -24,7 +23,7 @@ pub struct SignupPayload {
 
 pub async fn signup(
 	State(app_state): State<AppState>,
-	Json(payload): Json<SignupPayload>
+	Json(payload): Json<SignupPayload>,
 ) -> Response<String> {
 	// Getting db from pool
 	let mut db_conn = match app_state.db_pool.get() {

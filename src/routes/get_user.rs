@@ -1,5 +1,4 @@
-use crate::auth::{exp, jwt};
-use crate::utils::cookie;
+use crate::utils::{cookie, exp, jwt};
 
 use axum::{
 	http::{header, status::StatusCode},

@@ -12,7 +12,6 @@
 // Change the lobby client storage to only store id and use the sender from the above mentioned hashmap
 
 mod app_state;
-mod auth;
 mod config;
 mod lobby;
 mod lobic_db;
