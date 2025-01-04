@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Music from '../Music/Music';
 import './MusicList.css';
+import { SERVER_IP } from "../../const.jsx"
 
-function MusicList({list_title}) {
+function MusicList({ list_title }) {
     const [musicItems, setMusicItems] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedSongId, setSelectedSongId] = useState(null); // Track selected song
 
     useEffect(() => {
         fetchMusicData();
@@ -13,7 +15,7 @@ function MusicList({list_title}) {
 
     const fetchMusicData = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8080/get_music');
+            const response = await fetch(SERVER_IP+'/get_music');
             if (!response.ok) throw new Error('Failed to fetch music data');
             const data = await response.json();
             setMusicItems(data);
@@ -24,19 +26,11 @@ function MusicList({list_title}) {
         }
     };
 
-    const getImageUrl = (songId) => `http://127.0.0.1:8080/image/${songId}.png`;
+    const getImageUrl = (songId) => `${SERVER_IP}/image/${songId}.png`;
 
-    const addMusicItem = () => {
-        const newItem = {
-            id: crypto.randomUUID(),
-            title: `New Song ${musicItems.length + 1}`,
-            artist: "New Artist",
-        };
-        setMusicItems([...musicItems, newItem]);
-    };
-
-    const removeMusicItems = (id) => {
-        setMusicItems(musicItems.filter((item) => item.id !== id));
+    const handleMusicClick = (item) => {
+        console.log('Clicked Song Details:', item);
+        setSelectedSongId(item.id);
     };
 
     if (isLoading) return <div>Loading music...</div>;
@@ -47,8 +41,14 @@ function MusicList({list_title}) {
             <h2 className="list-title"> {list_title} </h2>
             <div className="music-list">
                 {musicItems.map((item) => (
-                    <div key={item.id} className="music-item-wrapper">
-                        <Music 
+                    <div
+                        key={item.id}
+                        className={`music-item-wrapper ${
+                            selectedSongId === item.id ? 'selected' : ''
+                        }`} // Add conditional class
+                        onClick={() => handleMusicClick(item)}
+                    >
+                        <Music
                             title={item.title}
                             artist={item.artist}
                             coverArt={getImageUrl(item.id)}
