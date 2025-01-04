@@ -5,7 +5,6 @@
   right: 0;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
 }
 .blur {
   background-color: rgba(0,0,0,0.3);
@@ -16,21 +15,22 @@
   z-index: -1;
 }
 .logo-container {
-  display: flex;
+  display: block;
   align-items: center;
+  margin-right: 100px;
 }
 .logo {
   width: 70px;
   height: 70px;
-  margin-right: 0;
   margin-left: 10px; 
 }
 .navbar-items {
   list-style: none;
-  gap: 50px;
+  gap: 40px;
   display: flex;
   margin-left: 0;
   padding-left: 10px;
+  margin-right: 10px;
 }
 .navbar-icons {
   width: 30px;  
@@ -57,6 +57,8 @@
   flex-grow: 1; 
   position: relative;
   display: flex;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .search-bar {
   border-radius: 20px;
@@ -85,7 +87,8 @@
 }
 .user-icon {
   display: flex;
-  padding-left: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .profile-button {
   border: none;
@@ -97,7 +100,7 @@
 }
 .logout {
   display: flex;
-  padding-right: 10px;
+  margin-right: 10px;
 }
 .logout-button {
   border: none;
@@ -180,10 +183,6 @@ button[disabled] {
 .logout-button:hover {
   cursor: pointer;
 }
-.confirm-button {
-  margin-left: 20px;
-  padding: 10px;
-}
 
 .dashboard.open{
   right: 0;
@@ -206,7 +205,7 @@ button[disabled] {
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
 
   .navbar-items {
     display: none;
