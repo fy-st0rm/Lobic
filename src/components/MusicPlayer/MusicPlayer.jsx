@@ -39,7 +39,7 @@ function MusicPlayer() {
       setIsLoading(true);
       setError('');
       
-      const response = await fetch(SERVER_IP + "/music", {
+      const response = await fetch(SERVER_IP + "/get_music", {
         method: "GET",
       });
       
