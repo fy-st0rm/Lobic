@@ -55,18 +55,9 @@ function MusicList() {
                             album={item.album}
                             genre={item.genre}
                         />
-                        <button
-                            className="remove-button"
-                            onClick={() => removeMusicItems(item.id)}
-                        >
-                            Remove
-                        </button>
                     </div>
                 ))}
             </div>
-            <button className="add-button" onClick={addMusicItem}>
-                Add Music
-            </button>
         </div>
     );
 }
