@@ -189,7 +189,7 @@ function NavBar() {
         <div className="floating-message">
           <p>Are you sure you want to logout?</p>
           <div className="button-group">
-            <button className="confirm-button" onClick={handleConfirm}>
+            <button className="confirm-button" onClick={() => navigateAndClose("/login")}>
               Confirm
             </button>
             <button className="cancel-button" onClick={handleCancel}>

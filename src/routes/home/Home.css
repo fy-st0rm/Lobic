@@ -1,0 +1,14 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+
+.scrollable-area {
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: none;
+}
