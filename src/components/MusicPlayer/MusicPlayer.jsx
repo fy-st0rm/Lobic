@@ -11,7 +11,6 @@ import MusicList from '../MusicList/MusicList.jsx';
 import "./MusicPlayer.css";
 import { SERVER_IP } from "../../const.jsx";
 
-
 function MusicPlayer({ selectedSong }) {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -25,7 +24,6 @@ function MusicPlayer({ selectedSong }) {
 
   // Log the selected song whenever it changes
   useEffect(() => {
-    
     if (selectedSong) {
       console.log('Selected Song in MusicPlayer:', selectedSong);
     }
@@ -43,11 +41,11 @@ function MusicPlayer({ selectedSong }) {
       const response = await fetch(url, {
         method: "GET",
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const blob = await response.blob();
       const audioUrl = URL.createObjectURL(blob);
       return audioUrl;
@@ -56,36 +54,74 @@ function MusicPlayer({ selectedSong }) {
       throw error;
     }
   };
-  
+
   // Use fetchMusic in handlePlayMusic
   const handlePlayMusic = async () => {
     try {
       if (isPlaying) {
+        console.log('Pausing current song');
         audioRef.current.pause();
         setIsPlaying(false);
         return;
       }
-  
+
       setIsLoading(true);
       setError('');
-  
+
       if (!selectedSong) {
         throw new Error('No song selected');
       }
-  
+
+      console.log('Fetching music for:', selectedSong.title);
       const audioUrl = await fetchMusic(selectedSong.filename);
-  
+      console.log('Music fetched, URL:', audioUrl);
+
       if (audioRef.current) {
+        // Reset the audio element
+        audioRef.current.pause();
+        audioRef.current.src = ''; // Clear the previous source
+        audioRef.current.load(); // Reset the audio element
+
+        // Set the new source and wait for it to load
         audioRef.current.src = audioUrl;
+        await new Promise((resolve) => {
+          audioRef.current.onloadeddata = resolve; // Wait for the new source to load
+        });
+
+        console.log('Audio source set, attempting to play...');
         await audioRef.current.play();
         setIsPlaying(true);
+        console.log('Song is now playing');
       }
     } catch (err) {
+      console.error('Failed to load music:', err);
       setError('Failed to load music: ' + err.message);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Auto-play the new song when selectedSong changes
+  useEffect(() => {
+    if (selectedSong) {
+      console.log('Resetting audio element for new song:', selectedSong.title);
+
+      // Pause and reset the current song
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = ''; // Clear the previous source
+        audioRef.current.load(); // Reset the audio element
+      }
+
+      setIsPlaying(false); // Reset the playing state
+      setCurrentTime(0); // Reset the current time
+      setDuration(0); // Reset the duration
+      setError(''); // Clear any errors
+
+      // Play the new song
+      handlePlayMusic();
+    }
+  }, [selectedSong]); // Trigger this effect when selectedSong changes
 
   const handleVolumeChange = (e) => {
     const newVolume = e.target.value;
@@ -141,16 +177,6 @@ function MusicPlayer({ selectedSong }) {
       audioElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
   }, [seeking]);
-
-  useEffect(() => {
-    if (selectedSong) {
-      // Reset player state when a new song is selected
-      setIsPlaying(false);
-      setCurrentTime(0);
-      setDuration(0);
-      setError('');
-    }
-  }, [selectedSong]);
 
   return (
     <div className="music-player">
