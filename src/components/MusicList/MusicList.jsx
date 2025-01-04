@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Music from '../Music/Music';
 import './MusicList.css';
 
-function MusicList() {
+function MusicList({list_title}) {
     const [musicItems, setMusicItems] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +44,7 @@ function MusicList() {
 
     return (
         <div className="music-list-container">
-            <h2 className="list-title">Featured Music</h2>
+            <h2 className="list-title"> {list_title} </h2>
             <div className="music-list">
                 {musicItems.map((item) => (
                     <div key={item.id} className="music-item-wrapper">
