@@ -1,4 +1,6 @@
 
+@tailwind components;
+@tailwind utilities;
 :root {
   background: linear-gradient(0deg, #157697, #072631);
   height: 100vh;

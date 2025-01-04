@@ -108,7 +108,7 @@ function MusicPlayer(){
         <img src={logo} alt="" className="cover-image"/>
       </div>
       <div className="song-info">
-        <div className="song-name">Pretty Boy</div>
+        <div className="song-name ">Pretty Boy</div>
         <div className="artist-name">The Neighbourhood</div>
       </div>
       <div className="control-container">
