@@ -3,8 +3,7 @@ use crate::lobic_db::models::Music;
 
 use axum::{
 	body::Body,
-	extract::Path,
-	extract::State,
+	extract::{Path, Query, State},
 	http::{
 		header::{self, CONTENT_DISPOSITION, CONTENT_TYPE},
 		StatusCode,
@@ -18,6 +17,8 @@ use std::fs;
 use std::path::PathBuf;
 use tokio::{fs::File, io::AsyncReadExt};
 use tokio_util::io::ReaderStream;
+
+use super::save_music::MusicPath;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MusicResponse {
@@ -285,15 +286,19 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> Response {
 	}
 }
 
-pub async fn send_music() -> impl IntoResponse {
-	let music_path = "music/Afraid.mp3";
+pub async fn send_music(
+	State(app_state): State<AppState>,
+	Query(payload): Query<MusicPath>,
+) -> impl IntoResponse {
+	let music_path = payload.path;
 
-	let mut file = match File::open(music_path).await {
+	// Open the file
+	let mut file = match File::open(&music_path).await {
 		Ok(file) => file,
 		Err(_) => return (axum::http::StatusCode::NOT_FOUND, "File not found").into_response(),
 	};
 
-	// Read the file asynchronously into a byte vector
+	// Read the file into a byte vector
 	let mut file_bytes = Vec::new();
 	if let Err(_) = file.read_to_end(&mut file_bytes).await {
 		return (
@@ -303,9 +308,10 @@ pub async fn send_music() -> impl IntoResponse {
 			.into_response();
 	}
 
+	// Serve the file as a response
 	Response::builder()
-		.header(CONTENT_TYPE, "audio/mpeg")
-		.header(CONTENT_DISPOSITION, "attachment; filename=\"music.mp3\"")
+		.header("Content-Type", "audio/mpeg")
+		.header("Content-Disposition", "attachment; filename=\"music.mp3\"")
 		.body(file_bytes.into())
 		.unwrap()
 }
