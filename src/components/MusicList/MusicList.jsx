@@ -13,7 +13,7 @@ function MusicList({list_title}) {
 
     const fetchMusicData = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8080/all_music');
+            const response = await fetch('http://127.0.0.1:8080/get_music');
             if (!response.ok) throw new Error('Failed to fetch music data');
             const data = await response.json();
             setMusicItems(data);
