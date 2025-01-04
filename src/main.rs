@@ -126,7 +126,7 @@ async fn main() {
 		.route("/signup", post(signup))
 		.route("/login", post(login))
 		.route("/verify", get(verify))
-		.route("/music", get(send_music)) //to test just vlc http://127.0.0.1:8080/music/
+		.route("/music/:path", get(send_music))
 		.route(
 			"/image/:filename",
 			get(|music_uuid| get_cover_image(music_uuid)),
