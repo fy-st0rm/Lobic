@@ -9,6 +9,7 @@ import MusicList from "../../components/MusicList/MusicList.jsx"
 import SongContainer from "../../components/SongContainer/SongContainer.jsx";
 import './Home.css'
 
+
 function Home() {
 	const { appState, ws, updateUserId, addMsgHandler } = useAppState();
 	console.log("FROM HOME: ", appState);
