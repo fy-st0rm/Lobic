@@ -10,7 +10,7 @@ use id3::{frame::PictureType, Tag, TagLike};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use uuid::Uuid;
 use walkdir::WalkDir;
 
@@ -24,7 +24,6 @@ pub async fn save_music(
 	State(app_state): State<AppState>,
 	Json(payload): Json<MusicPath>,
 ) -> Response<String> {
-	// Getting db from pool
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
@@ -34,7 +33,10 @@ pub async fn save_music(
 				.unwrap();
 		}
 	};
-	let path = Path::new(&payload.path);
+
+	// Convert Windows path to WSL path if needed
+	let path = normalize_path(&payload.path);
+	let path = Path::new(&path);
 
 	let mut saved_count = 0;
 	let mut errors = Vec::new();
@@ -75,6 +77,32 @@ pub async fn save_music(
 		.unwrap()
 }
 
+fn normalize_path(path: &str) -> String {
+	if cfg!(windows) {
+		// On Windows, convert forward slashes to backslashes
+		path.replace('/', "\\")
+	} else {
+		// If running under WSL, convert Windows paths to WSL paths
+		if path.contains('\\') || path.contains(':') {
+			convert_windows_to_wsl_path(path)
+		} else {
+			path.to_string()
+		}
+	}
+}
+
+fn convert_windows_to_wsl_path(windows_path: &str) -> String {
+	let path = windows_path.replace('\\', "/");
+
+	// Check if it's a Windows-style path (e.g., C:\...)
+	if path.chars().nth(1) == Some(':') {
+		let drive_letter = path.chars().next().unwrap().to_lowercase().to_string();
+		format!("/mnt/{}/{}", drive_letter, &path[3..])
+	} else {
+		path
+	}
+}
+
 fn is_music_file(path: &Path) -> bool {
 	match path.extension() {
 		Some(ext) => matches!(
@@ -113,20 +141,17 @@ fn process_music_file(
 
 fn extract_cover_art(mp3_path: &str, uuid: &Uuid) -> Result<(), Box<dyn std::error::Error>> {
 	let tag = Tag::read_from_path(mp3_path)?;
-
-	// Collect all pictures into a Vec to avoid lifetime issues
 	let pictures: Vec<_> = tag.pictures().collect();
 
-	// Look for the cover art in the collected pictures
 	if let Some(picture) = pictures
 		.iter()
 		.find(|pic| pic.picture_type == PictureType::CoverFront)
 	{
-		// Create the cover_images directory if it doesn't exist
-		fs::create_dir_all("./cover_images")?;
+		// Create platform-independent path for cover_images directory
+		let cover_dir = PathBuf::from("cover_images");
+		fs::create_dir_all(&cover_dir)?;
 
-		let output_path = format!("./cover_images/{}.png", uuid);
-
+		let output_path = cover_dir.join(format!("{}.png", uuid));
 		let mut file = fs::File::create(&output_path)?;
 		file.write_all(&picture.data)?;
 

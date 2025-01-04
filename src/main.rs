@@ -18,15 +18,13 @@ mod lobby;
 mod lobic_db;
 mod routes;
 mod schema;
-mod utils;
 mod user_pool;
+mod utils;
 
 use app_state::AppState;
 use config::{allowed_origins, IP, PORT};
 use routes::{
-	get_music::{
-		get_all_music, get_cover_image, get_music_by_title, get_music_by_uuid, send_music,
-	},
+	get_music::{get_cover_image, get_music, send_music},
 	get_user::get_user,
 	login::login,
 	save_music::save_music,
@@ -135,9 +133,7 @@ async fn main() {
 			get(|music_uuid| get_cover_image(music_uuid)),
 		)
 		.route("/save_music", post(save_music))
-		.route("/music_by_title", get(get_music_by_title))
-		.route("/music_by_uuid", get(get_music_by_uuid))
-		.route("/all_music", get(get_all_music))
+		.route("/get_music", get(get_music))
 		.route("/ws", get(websocket_handler))
 		.with_state(app_state)
 		.layer(axum::middleware::from_fn(logger))
