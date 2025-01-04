@@ -5,11 +5,10 @@ use axum::{
 	body::Body,
 	extract::{Path, Query, State},
 	http::{
-		header::{self, CONTENT_DISPOSITION, CONTENT_TYPE},
+		header::{self},
 		StatusCode,
 	},
 	response::{IntoResponse, Response},
-	Json,
 };
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -32,13 +31,14 @@ pub struct MusicResponse {
 }
 
 #[derive(Deserialize)]
-pub struct MusicRequest {
-	pub title: String, //"title" : "K."
+pub struct MusicQuery {
+	title: Option<String>,
+	uuid: Option<String>,
 }
 
-pub async fn get_music_by_title(
+pub async fn get_music(
 	State(app_state): State<AppState>,
-	Json(payload): Json<MusicRequest>,
+	Query(params): Query<MusicQuery>,
 ) -> Response<String> {
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
@@ -53,164 +53,35 @@ pub async fn get_music_by_title(
 
 	use crate::schema::music::dsl::*;
 
-	// Fetch all music entries that match the title
-	let result = music
-		.filter(title.eq(&payload.title))
-		.load::<Music>(&mut db_conn);
+	let mut query = music.into_boxed();
+
+	// Build query based on provided parameters
+	match (params.title, params.uuid) {
+		(Some(title_val), None) => {
+			query = query.filter(title.eq(title_val));
+		}
+		(None, Some(uuid_val)) => {
+			query = query.filter(id.eq(uuid_val));
+		}
+		(None, None) => {
+			// No parameters - return all music
+		}
+		(Some(_), Some(_)) => {
+			return Response::builder()
+				.status(StatusCode::BAD_REQUEST)
+				.body("Please provide either title or uuid, not both".to_string())
+				.unwrap();
+		}
+	}
+
+	let result = query.load::<Music>(&mut db_conn);
 
 	match result {
 		Ok(music_entries) => {
 			if music_entries.is_empty() {
 				return Response::builder()
 					.status(StatusCode::NOT_FOUND)
-					.body("No music entries found with the given title".to_string())
-					.unwrap();
-			}
-
-			// Map through the music entries to create responses
-			let responses: Vec<MusicResponse> = music_entries
-				.into_iter()
-				.map(|music_entry| {
-					let cover_art_path = format!("./cover_images/{}.png", music_entry.id);
-					let has_cover = fs::metadata(&cover_art_path).is_ok();
-
-					MusicResponse {
-						id: music_entry.id,
-						filename: music_entry.filename,
-						artist: music_entry.artist,
-						title: music_entry.title,
-						album: music_entry.album,
-						genre: music_entry.genre,
-						cover_art_path: if has_cover {
-							Some(cover_art_path)
-						} else {
-							None
-						},
-					}
-				})
-				.collect();
-
-			match serde_json::to_string(&responses) {
-				Ok(json) => Response::builder()
-					.status(StatusCode::OK)
-					.header(header::CONTENT_TYPE, "application/json")
-					.body(json)
-					.unwrap(),
-				Err(err) => Response::builder()
-					.status(StatusCode::INTERNAL_SERVER_ERROR)
-					.body(format!("Failed to serialize response: {err}"))
-					.unwrap(),
-			}
-		}
-		Err(diesel::NotFound) => Response::builder()
-			.status(StatusCode::NOT_FOUND)
-			.body("No music entries found with the given title".to_string())
-			.unwrap(),
-		Err(err) => Response::builder()
-			.status(StatusCode::INTERNAL_SERVER_ERROR)
-			.body(format!("Database error: {err}"))
-			.unwrap(),
-	}
-}
-// Get all music entries
-pub async fn get_all_music(State(app_state): State<AppState>) -> Response<String> {
-	let mut db_conn = match app_state.db_pool.get() {
-		Ok(conn) => conn,
-		Err(err) => {
-			let msg = format!("Failed to get DB from pool: {err}");
-			return Response::builder()
-				.status(StatusCode::INTERNAL_SERVER_ERROR)
-				.body(msg)
-				.unwrap();
-		}
-	};
-
-	use crate::schema::music::dsl::*;
-
-	let result = music.load::<Music>(&mut db_conn);
-
-	match result {
-		Ok(music_entries) => {
-			if music_entries.is_empty() {
-				println!("No music entries found");
-				return Response::builder()
-					.status(StatusCode::OK)
-					.header(header::CONTENT_TYPE, "application/json")
-					.body("There is no music in the db ".to_string())
-					.unwrap();
-			}
-
-			let responses: Vec<MusicResponse> = music_entries
-				.into_iter()
-				.map(|entry| {
-					let cover_art_path = format!("./cover_images/{}.png", entry.id);
-					let has_cover = fs::metadata(&cover_art_path).is_ok();
-
-					MusicResponse {
-						id: entry.id,
-						filename: entry.filename,
-						artist: entry.artist,
-						title: entry.title,
-						album: entry.album,
-						genre: entry.genre,
-						cover_art_path: if has_cover {
-							Some(cover_art_path)
-						} else {
-							None
-						},
-					}
-				})
-				.collect();
-			match serde_json::to_string(&responses) {
-				Ok(json) => Response::builder()
-					.status(StatusCode::OK)
-					.header(header::CONTENT_TYPE, "application/json")
-					.body(json)
-					.unwrap(),
-				Err(err) => Response::builder()
-					.status(StatusCode::INTERNAL_SERVER_ERROR)
-					.body(format!("Failed to serialize response: {err}"))
-					.unwrap(),
-			}
-		}
-		Err(err) => Response::builder()
-			.status(StatusCode::INTERNAL_SERVER_ERROR)
-			.body(format!("Database error: {err}"))
-			.unwrap(),
-	}
-}
-
-#[derive(Deserialize)]
-pub struct UuidRequest {
-	uuid: String,
-}
-pub async fn get_music_by_uuid(
-	State(app_state): State<AppState>,
-	Json(payload): Json<UuidRequest>,
-) -> Response<String> {
-	let mut db_conn = match app_state.db_pool.get() {
-		Ok(conn) => conn,
-		Err(err) => {
-			let msg = format!("Failed to get DB from pool: {err}");
-			return Response::builder()
-				.status(StatusCode::INTERNAL_SERVER_ERROR)
-				.body(msg)
-				.unwrap();
-		}
-	};
-
-	use crate::schema::music::dsl::*;
-
-	let result = music
-		.filter(id.eq(&payload.uuid))
-		.load::<Music>(&mut db_conn);
-
-	match result {
-		Ok(music_entries) => {
-			if music_entries.is_empty() {
-				return Response::builder()
-					.status(StatusCode::NOT_FOUND)
-					.body("No music entry found with the given UUID".to_string())
+					.body("No music entries found".to_string())
 					.unwrap();
 			}
 
@@ -246,7 +117,7 @@ pub async fn get_music_by_uuid(
 		}
 		Err(diesel::NotFound) => Response::builder()
 			.status(StatusCode::NOT_FOUND)
-			.body("No music entry found with the given UUID".to_string())
+			.body("No music entries found".to_string())
 			.unwrap(),
 		Err(err) => Response::builder()
 			.status(StatusCode::INTERNAL_SERVER_ERROR)
