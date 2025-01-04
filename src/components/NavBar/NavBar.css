@@ -255,4 +255,12 @@ button[disabled] {
   }
 }
 
+:root {
+  background: linear-gradient(0deg, #157697, #072631);
+  height: 100vh;
+  /*display: flex;
+  justify-content: center;
+  align-items: center;*/
+}
+
 
