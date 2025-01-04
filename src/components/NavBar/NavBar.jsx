@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import './NavBar.css'
+import { useNavigate } from "react-router-dom";
 
 function NavBar() {
   const [showMessage, setShowMessage] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [inputValue, setInput] = useState("");
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleLogoutClick = () => {
     setShowMessage(true);
@@ -15,7 +18,8 @@ function NavBar() {
   const handleConfirm = () => {
     setShowMessage(false);
     setIsDisabled(false);
-    alert("You have logged out successfully.");
+
+    navigate('/login');
   };
 
   const handleCancel = () => {
