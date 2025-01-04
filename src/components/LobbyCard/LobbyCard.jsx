@@ -7,12 +7,14 @@ import PlusIcon from "/plus.svg";
 import "./LobbyCard.css"
 
 export const LobbyCard = ({
+	lobby_id,
 	lobby_name,
 	listeners_cnt,
 	song_name,
 	artist_name,
 	lobby_icon,
-	card_index
+	card_index,
+	onClick
 }) => {
 	const [isLobbyNameOF, setLobbyNameOF] = useState(false);
 	const [isSongNameOF, setSongNameOF] = useState(false);
@@ -92,6 +94,7 @@ export const LobbyCard = ({
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}
 				style={{ animationDelay: `${card_index * 0.1}s` }}
+				onClick={() => onClick(lobby_id)}
 			>
 
 				{/* Blurry background */}

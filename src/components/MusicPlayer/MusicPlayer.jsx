@@ -7,17 +7,20 @@ import VolumeLow from "/volumecontrols/Volume Level Low.png"
 import Mute from "/volumecontrols/Volume Mute.png"
 import VolumeHigh from "/volumecontrols/Volume Level High.png"
 import logo from "/covers/cover.jpg";
-import song from "/music/song.mp3";
 import "./MusicPlayer.css"
+import { SERVER_IP } from "../../const.jsx"
 
-function MusicPlayer(){
+
+function MusicPlayer() {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(50);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [seeking, setSeeking] = useState(false);
-  const [initialVolume, setinitialVolume] = useState(volume);
+  const [initialVolume, setInitialVolume] = useState(volume);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -25,13 +28,37 @@ function MusicPlayer(){
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
-  const PlayMusic = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
+  const handlePlayMusic = async () => {
+    try {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError('');
+      
+      const response = await fetch(SERVER_IP + "/music", {
+        method: "GET",
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const blob = await response.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      
+      if (audioRef.current) {
+        audioRef.current.src = audioUrl;
+        await audioRef.current.play();
+        setIsPlaying(true);
+      }
+    } catch (err) {
+      setError('Failed to load music: ' + err.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -40,24 +67,19 @@ function MusicPlayer(){
     setVolume(newVolume);
     audioRef.current.volume = newVolume / 100;
   }
-  const volumeToggle = () =>{
-    if (audioRef.current.volume != 0){
-      setinitialVolume
-(audioRef.current.volume)
+
+  const volumeToggle = () => {
+    if (audioRef.current.volume != 0) {
+      setInitialVolume(audioRef.current.volume);
       audioRef.current.volume = 0;
       setVolume(0);
-      
-    }else{
-      audioRef.current.volume = initialVolume
-;
-      setVolume(initialVolume
-  *100);
-
+    } else {
+      audioRef.current.volume = initialVolume;
+      setVolume(initialVolume * 100);
     }
   }
 
   const handleTimeUpdate = () => {
-    // Only update current time if not seeking
     if (!seeking) {
       setCurrentTime(audioRef.current.currentTime);
     }
@@ -65,7 +87,6 @@ function MusicPlayer(){
 
   const handleLoadedMetadata = () => {
     setDuration(audioRef.current.duration);
-    
     audioRef.current.volume = 0.5;
   }
 
@@ -81,7 +102,6 @@ function MusicPlayer(){
   }
 
   const handleSeekMove = (e) => {
-    // Only update visual progress while seeking
     const seekTime = (e.target.value / 100) * duration;
     setCurrentTime(seekTime);
   }
@@ -99,10 +119,7 @@ function MusicPlayer(){
 
   return(
     <div className="music-player">
-      <audio 
-        ref={audioRef} 
-        src={song} 
-      />
+      <audio ref={audioRef} />
 
       <div>
         <img src={logo} alt="" className="cover-image"/>
@@ -111,17 +128,22 @@ function MusicPlayer(){
         <div className="song-name ">Pretty Boy</div>
         <div className="artist-name">The Neighbourhood</div>
       </div>
+      {error && <div className="error-message">{error}</div>}
       <div className="control-container">
         <div className="control-bar">
-          <button className="control-button"><img src={previousButton} alt="" className="button-group" /></button>
-          <button className="control-button" onClick={PlayMusic}>
+          <button className="control-button" disabled={isLoading}>
+            <img src={previousButton} alt="" className="button-group" />
+          </button>
+          <button className="control-button" onClick={handlePlayMusic} disabled={isLoading}>
             <img 
               src={isPlaying ? pauseButton : playButton} 
               alt={isPlaying ? "pause" : "play"} 
               className="button-group"
             />
           </button>
-          <button className="control-button"><img src={NextButton} alt="" className="button-group"/></button>
+          <button className="control-button" disabled={isLoading}>
+            <img src={NextButton} alt="" className="button-group"/>
+          </button>
         </div>
 
         <div className="status">
@@ -139,12 +161,15 @@ function MusicPlayer(){
             onTouchStart={handleSeekStart}
             onTouchEnd={handleSeekEnd}
             className="status-bar"
+            disabled={isLoading}
           />
         </div>
       </div>
       
       <div className="volume-status">
-        <button className='volume-button' onClick={volumeToggle}><img  className = "volume-image" src={volume == 0? Mute : (volume > 40 ? VolumeHigh :VolumeLow)} /></button>
+        <button className='volume-button' onClick={volumeToggle} disabled={isLoading}>
+          <img className="volume-image" src={volume == 0 ? Mute : (volume > 40 ? VolumeHigh : VolumeLow)} />
+        </button>
         <input 
           type="range" 
           min="0" 
@@ -152,11 +177,11 @@ function MusicPlayer(){
           value={volume}
           onChange={handleVolumeChange}
           className="volume-control-bar"
+          disabled={isLoading}
         />
-       
       </div>
     </div>
   );
 }
 
-export default MusicPlayer; 
+export default MusicPlayer;
