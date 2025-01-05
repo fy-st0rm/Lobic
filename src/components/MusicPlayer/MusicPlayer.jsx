@@ -21,30 +21,41 @@ function MusicPlayer({ selectedSong }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // First useEffect to reset the player when song changes
   useEffect(() => {
     if (selectedSong) {
       console.log('Resetting audio element for new song:', selectedSong.title);
-  
+      setIsLoading(true);
+
       // Pause and reset the current song
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = ''; // Clear the previous source
         audioRef.current.load(); // Reset the audio element
       }
-  
+
       setIsPlaying(false); // Reset the playing state
       setCurrentTime(0); // Reset the current time
       setDuration(0); // Reset the duration
       setError(''); // Clear any errors
+
+      // Automatically start playing the new song
+      const playNewSong = async () => {
+        try {
+          audioRef.current.src = selectedSong.audioUrl;
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (err) {
+          console.error('Failed to autoplay:', err);
+          setError('Failed to autoplay: ' + err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      playNewSong();
     }
-  }, [selectedSong]); // Trigger this effect when selectedSong changes
-  
-  // Use a separate useEffect to handle auto-play after isPlaying is set to false
-  useEffect(() => {
-    if (selectedSong && !isPlaying) {
-      handlePlayMusic();
-    }
-  }, [selectedSong, isPlaying]); // Trigger this effect when selectedSong or isPlaying changes
+  }, [selectedSong]); // Only dependency is selectedSong
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -54,66 +65,34 @@ function MusicPlayer({ selectedSong }) {
 
   const handlePlayMusic = async () => {
     try {
-      if (isPlaying) {
-        console.log('Pausing current song');
-        audioRef.current.pause();
-        setIsPlaying(false);
-        return;
-      }
-  
-      setIsLoading(true);
-      setError('');
-  
       if (!selectedSong) {
         throw new Error('No song selected');
       }
-  
+
       if (audioRef.current) {
-        // Reset the audio element
-        audioRef.current.pause();
-        audioRef.current.src = ''; // Clear the previous source
-        audioRef.current.load(); // Reset the audio element
-  
-        // Set the new source and wait for it to load
-        audioRef.current.src = selectedSong.audioUrl;
-        await new Promise((resolve) => {
-          audioRef.current.onloadeddata = resolve; // Wait for the new source to load
-        });
-  
+        if (isPlaying) {
+          console.log('Pausing current song');
+          await audioRef.current.pause();
+          setIsPlaying(false);
+          return; // Exit early after pausing
+        }
+
+        setIsLoading(true);
+        setError('');
+
         console.log('Audio source set, attempting to play...');
         await audioRef.current.play();
         setIsPlaying(true);
         console.log('Song is now playing');
       }
     } catch (err) {
-      console.error('Failed to load music:', err);
+      console.error('Failed to load/play music:', err);
       setError('Failed to load music: ' + err.message);
+      setIsPlaying(false);
     } finally {
       setIsLoading(false);
     }
   };
-
-  // Auto-play the new song when selectedSong changes
-  useEffect(() => {
-    if (selectedSong) {
-      console.log('Resetting audio element for new song:', selectedSong.title);
-
-      // Pause and reset the current song
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = ''; // Clear the previous source
-        audioRef.current.load(); // Reset the audio element
-      }
-
-      setIsPlaying(false); // Reset the playing state
-      setCurrentTime(0); // Reset the current time
-      setDuration(0); // Reset the duration
-      setError(''); // Clear any errors
-
-      // Play the new song automatically
-      handlePlayMusic();
-    }
-  }, [selectedSong]); // Trigger this effect when selectedSong changes
 
   const handleVolumeChange = (e) => {
     const newVolume = e.target.value;
@@ -181,7 +160,6 @@ function MusicPlayer({ selectedSong }) {
         <div className="song-name">{selectedSong ? selectedSong.title : 'No Song Selected'}</div>
         <div className="artist-name">{selectedSong ? selectedSong.artist : ''}</div>
       </div>
-      {error && <div className="error-message">{error}</div>}
       <div className="control-container">
         <div className="control-bar">
           <button className="control-button" disabled={isLoading}>
@@ -220,7 +198,7 @@ function MusicPlayer({ selectedSong }) {
 
       <div className="volume-status">
         <button className='volume-button' onClick={volumeToggle} disabled={isLoading}>
-          <img className="volume-image" src={volume == 0 ? Mute : (volume > 40 ? VolumeHigh : VolumeLow)} />
+          <img className="volume-image" src={volume == 0 ? Mute : (volume > 40 ? VolumeHigh : VolumeLow)} alt="volume" />
         </button>
         <input
           type="range"
