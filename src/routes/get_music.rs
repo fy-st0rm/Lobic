@@ -61,7 +61,7 @@ pub async fn get_music(
 			query = query.filter(title.eq(title_val));
 		}
 		(None, Some(uuid_val)) => {
-			query = query.filter(id.eq(uuid_val));
+			query = query.filter(music_id.eq(uuid_val));
 		}
 		(None, None) => {
 			// No parameters - return all music
@@ -88,11 +88,11 @@ pub async fn get_music(
 			let responses: Vec<MusicResponse> = music_entries
 				.into_iter()
 				.map(|entry| {
-					let cover_art_path = format!("./cover_images/{}.png", entry.id);
+					let cover_art_path = format!("./cover_images/{}.png", entry.music_id);
 					let has_cover = fs::metadata(&cover_art_path).is_ok();
 
 					MusicResponse {
-						id: entry.id,
+						id: entry.music_id,
 						filename: entry.filename,
 						artist: entry.artist,
 						title: entry.title,

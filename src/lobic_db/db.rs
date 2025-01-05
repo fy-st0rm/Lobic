@@ -17,7 +17,7 @@ pub fn generate_db_pool() -> DatabasePool {
 		.expect("Failed to create pool")
 }
 
-pub fn user_exists(user_id: &str, db_pool: &DatabasePool) -> bool {
+pub fn user_exists(id: &str, db_pool: &DatabasePool) -> bool {
 	let mut db_conn = match db_pool.get() {
 		Ok(conn) => conn,
 		Err(_) => {
@@ -26,7 +26,7 @@ pub fn user_exists(user_id: &str, db_pool: &DatabasePool) -> bool {
 		}
 	};
 
-	let query = users.filter(id.eq(user_id)).first::<User>(&mut db_conn);
+	let query = users.filter(user_id.eq(id)).first::<User>(&mut db_conn);
 
 	query.is_ok()
 }
