@@ -122,7 +122,7 @@ fn process_music_file(
 	let curr_music_id = Uuid::new_v4();
 
 	let curr_music = Music {
-		id: curr_music_id.to_string(),
+		music_id: curr_music_id.to_string(),
 		filename: path_str.to_string(),
 		artist: tag.artist().unwrap_or("Unknown Artist").to_string(),
 		title: tag.title().unwrap_or("Unknown Title").to_string(),

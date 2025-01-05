@@ -54,9 +54,9 @@ pub async fn signup(
 	}
 
 	// Create new user
-	let user_id = Uuid::new_v4().to_string();
+	let new_user_id = Uuid::new_v4().to_string();
 	let new_user = User {
-		id: user_id.clone(),
+		user_id: new_user_id.clone(),
 		username: payload.username,
 		email: payload.email,
 		pwd_hash: bcrypt::hash(payload.password).unwrap(),
@@ -73,7 +73,7 @@ pub async fn signup(
 		std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
 
 	let access_claims = jwt::Claims {
-		id: user_id.clone(),
+		id: new_user_id.clone(),
 		exp: exp::expiration_from_min(60),
 	};
 	let access_token = match jwt::generate(access_claims, &jwt_secret_key) {
@@ -87,7 +87,7 @@ pub async fn signup(
 	};
 
 	let refresh_claims = jwt::Claims {
-		id: user_id.clone(),
+		id: new_user_id.clone(),
 		exp: exp::expiration_from_days(7),
 	};
 	let refresh_token = match jwt::generate(refresh_claims, &jwt_secret_key) {
@@ -101,7 +101,7 @@ pub async fn signup(
 	};
 
 	// Create cookies for access and refresh tokens
-	let user_cookie = cookie::create("user_id", &user_id, 60 * 60, false);
+	let user_cookie = cookie::create("user_id", &new_user_id, 60 * 60, false);
 	let access_cookie = cookie::create("access_token", &access_token, 60 * 60, true);
 	let refresh_cookie = cookie::create("refresh_token", &refresh_token, 7 * 24 * 60 * 60, true);
 

@@ -15,9 +15,6 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use tokio::{fs::File, io::AsyncReadExt};
-use tokio_util::io::ReaderStream;
-
-use super::save_music::MusicPath;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MusicResponse {
@@ -61,7 +58,7 @@ pub async fn get_music(
 			query = query.filter(title.eq(title_val));
 		}
 		(None, Some(uuid_val)) => {
-			query = query.filter(id.eq(uuid_val));
+			query = query.filter(music_id.eq(uuid_val));
 		}
 		(None, None) => {
 			// No parameters - return all music
@@ -88,11 +85,11 @@ pub async fn get_music(
 			let responses: Vec<MusicResponse> = music_entries
 				.into_iter()
 				.map(|entry| {
-					let cover_art_path = format!("./cover_images/{}.png", entry.id);
+					let cover_art_path = format!("./cover_images/{}.png", entry.music_id);
 					let has_cover = fs::metadata(&cover_art_path).is_ok();
 
 					MusicResponse {
-						id: entry.id,
+						id: entry.music_id,
 						filename: entry.filename,
 						artist: entry.artist,
 						title: entry.title,
@@ -126,39 +123,47 @@ pub async fn get_music(
 	}
 }
 
-pub async fn get_cover_image(Path(filename): Path<String>) -> Response {
+pub async fn get_cover_image(Path(filename): Path<String>) -> impl IntoResponse {
+	// Construct the path to the cover image
 	let mut path = PathBuf::from("cover_images");
-	path.push(filename);
+	path.push(&filename);
 
-	match File::open(&path).await {
-		Ok(file) => {
-			let stream = ReaderStream::new(file);
-			let body = Body::from_stream(stream);
-
-			let mime_type = match path.extension().and_then(|ext| ext.to_str()) {
-				Some("jpg") | Some("jpeg") => "image/jpeg",
-				Some("png") => "image/png",
-				Some("gif") => "image/gif",
-				Some("webp") => "image/webp",
-				_ => "application/octet-stream",
-			};
-
-			Response::builder()
-				.status(StatusCode::OK)
-				.header(header::CONTENT_TYPE, mime_type)
-				.body(body)
-				.unwrap()
+	// Open the file
+	let mut file = match File::open(&path).await {
+		Ok(file) => file,
+		Err(_) => {
+			return (StatusCode::NOT_FOUND, "Image not found").into_response();
 		}
-		Err(_) => Response::builder()
-			.status(StatusCode::NOT_FOUND)
-			.header(header::CONTENT_TYPE, "text/plain")
-			.body(Body::from("Image not found"))
-			.unwrap(),
+	};
+
+	// Read the file into a byte vector
+	let mut file_bytes = Vec::new();
+	if let Err(_) = file.read_to_end(&mut file_bytes).await {
+		return (
+			StatusCode::INTERNAL_SERVER_ERROR,
+			"Failed to read image file",
+		)
+			.into_response();
 	}
+
+	// Determine the MIME type based on the file extension
+	let mime_type = match path.extension().and_then(|ext| ext.to_str()) {
+		Some("jpg") | Some("jpeg") => "image/jpeg",
+		Some("png") => "image/png",
+		Some("gif") => "image/gif",
+		Some("webp") => "image/webp",
+		_ => "application/octet-stream", // Fallback MIME type
+	};
+
+	// Serve the file as a response using Body
+	Response::builder()
+		.status(StatusCode::OK)
+		.header(header::CONTENT_TYPE, mime_type)
+		.body(Body::from(file_bytes)) // Use Body::from to create the response body
+		.unwrap()
 }
 
 pub async fn send_music(
-	State(app_state): State<AppState>,
 	Path(music_path): Path<String>, // Extract `path` from the URL path
 ) -> impl IntoResponse {
 	// Open the file
