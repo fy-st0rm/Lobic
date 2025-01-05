@@ -127,10 +127,7 @@ async fn main() {
 		.route("/login", post(login))
 		.route("/verify", get(verify))
 		.route("/music/:path", get(send_music))
-		.route(
-			"/image/:filename",
-			get(|music_uuid| get_cover_image(music_uuid)),
-		)
+		.route("/image/:filename", get(get_cover_image))
 		.route("/save_music", post(save_music))
 		.route("/get_music", get(get_music))
 		.route("/ws", get(websocket_handler))
