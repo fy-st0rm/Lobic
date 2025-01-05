@@ -159,10 +159,8 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> Response {
 
 pub async fn send_music(
 	State(app_state): State<AppState>,
-	Query(payload): Query<MusicPath>,
+	Path(music_path): Path<String>, // Extract `path` from the URL path
 ) -> impl IntoResponse {
-	let music_path = payload.path;
-
 	// Open the file
 	let mut file = match File::open(&music_path).await {
 		Ok(file) => file,
