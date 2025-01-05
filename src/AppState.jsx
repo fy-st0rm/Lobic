@@ -72,16 +72,20 @@ export const AppStateProvider = ({ children }) => {
 		}
 
 		ws.current.onmessage = (event) => {
-			console.log("From Handler:", event.data);
-
 			let res = JSON.parse(event.data);
 			if (res.op_code == OpCode.ERROR) {
 				console.log(res.value);
 				return;
 			}
 
+			let found = false;
 			if (res.for in msgHandlers.current) {
 				msgHandlers.current[res.for](res);
+				found = true;
+			}
+
+			if (!found) {
+				console.log("From Handler:", event.data);
 			}
 		}
 

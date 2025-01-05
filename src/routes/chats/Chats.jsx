@@ -12,6 +12,7 @@ function Chats() {
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [inputValue, setInputValue] = useState("");
 	const [selectedUser, setSelectedUser] = useState(null);
+	const [messages, setMessages] = useState(null);
 
 	const navigate = useNavigate();
 	const { appState, ws, updateLobbyState, addMsgHandler } = useAppState();
@@ -25,6 +26,26 @@ function Chats() {
 	const handleUserClick = (user) => {
 		setSelectedUser(user);
 	};
+
+	// Chat fetch signal handler
+	useEffect(() => {
+		addMsgHandler(OpCode.GET_MESSAGES, (res) => {
+			console.log(res);
+			setMessages(res.value);
+		});
+
+		// Fetch the chat whenever joined the lobby
+		// Using timeout to wait for socket to connect
+		setTimeout(() => {
+			const payload = {
+				op_code: OpCode.GET_MESSAGES,
+				value: {
+					lobby_id: appState.lobby_id,
+				}
+			};
+			wsSend(ws, payload);
+		}, 1000);
+	}, []);
 
 	// Leave lobby signal handler
 	useEffect(() => {
@@ -45,6 +66,19 @@ function Chats() {
 		wsSend(ws, payload);
 	};
 
+	const handleSendMsg = () => {
+		const payload = {
+			op_code: OpCode.MESSAGE,
+			value: {
+				lobby_id: appState.lobby_id,
+				user_id: appState.user_id,
+				message: inputValue,
+			}
+		}
+		wsSend(ws, payload);
+		setInputValue("");
+	}
+
 	const toggleEmojiPicker = () => {
 		setShowEmojiPicker(!showEmojiPicker);
 	};
@@ -58,6 +92,24 @@ function Chats() {
 		const fileNames = files.map((file) => file.name).join(", ");
 		setInputValue(fileNames);
 	};
+
+	const renderTextBubble = (msg) => {
+		if (msg.user_id === appState.user_id) {
+			return (
+				<div className="message outgoing">
+					<p>{msg.message}</p>
+					<div className="timestamp">{msg.timestamp}</div>
+				</div>
+			);
+		} else {
+			return (
+				<div className="message incoming">
+					<p>{msg.message}</p>
+					<div className="timestamp">{msg.timestamp}</div>
+				</div>
+			);
+		}
+	}
 
 	return (
 		<>
@@ -101,18 +153,9 @@ function Chats() {
 						</div>
 
 						{/* Messages */}
-						<div className="message incoming">
-							<p>Aldus PageMaker including versions of Lorem Ipsum.</p>
-							<div className="timestamp">10:30 AM</div>
-						</div>
-						<div className="message outgoing">
-							<p>I have 'em tho</p>
-							<div className="timestamp">10:31 AM</div>
-						</div>
-						<div className="message outgoing">
-							<p>I have 'em tho</p>
-							<div className="timestamp">10:31 AM</div>
-						</div>
+						{
+							messages && messages.map((text, idx) => renderTextBubble(text))
+						}
 
 						{/* Type Box */}
 						<div className="type-box-container">
@@ -145,6 +188,11 @@ function Chats() {
 									className="type-field"
 									value={inputValue}
 									onChange={(e) => setInputValue(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											handleSendMsg();
+										}
+									}}
 								/>
 							</div>
 						</div>
