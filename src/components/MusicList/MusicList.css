@@ -7,13 +7,14 @@
 .list-title  {
     text-align: left;
     font-family: Arial;
+    margin-bottom: 10px;
 }
 
 .music-list {
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    gap: 20px;
+    gap: 10px;
     overflow-x: scroll;
     padding-bottom: 10px; 
     -ms-overflow-style: none;

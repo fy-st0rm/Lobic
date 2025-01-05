@@ -130,7 +130,7 @@ function NavBar() {
         </div>
 
         <div className="user-icon">
-          <button className="profile-button">
+          <button className="profile-button" onClick={() => {navigateAndClose('/profile')}}>
             <img src="/public/sadit.jpg" className="profile-pic" alt="Profile" />
           </button>
         </div>

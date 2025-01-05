@@ -23,6 +23,7 @@
   width: 70px;
   height: 70px;
   margin-left: 10px; 
+  padding-top: 6px;
 }
 .navbar-items {
   list-style: none;
@@ -31,6 +32,7 @@
   margin-left: 0;
   padding-left: 10px;
   margin-right: 10px;
+  padding-top: 8px;
 }
 .navbar-icons {
   width: 30px;  
@@ -59,6 +61,7 @@
   display: flex;
   margin-left: 10px;
   margin-right: 10px;
+  align-items: center;
 }
 .search-bar {
   border-radius: 20px;
@@ -68,13 +71,14 @@
   padding-left: 15px;
   padding-right: 15px;
   padding-bottom: 12px;
+  background-color: none;
 }
 .clear-button {
   position: absolute;
   border: none;
-  right: 2%;
-  top: 30%;
-  background-color: white;
+  right: 3%;
+  top: 25%;
+  background-color: transparent;
 }
 .clear-button:hover {
   cursor: pointer;
@@ -89,10 +93,12 @@
   display: flex;
   margin-left: 10px;
   margin-right: 10px;
+  padding-top: 10px;
 }
 .profile-button {
   border: none;
   background: none;
+  cursor: pointer;
 }
 .profile-pic {
   height: 40px;
@@ -101,6 +107,7 @@
 .logout {
   display: flex;
   margin-right: 10px;
+  padding-top: 10px;
 }
 .logout-button {
   border: none;

@@ -18,12 +18,15 @@
 .scrollable-area {
     flex: 1;
     overflow-y: auto;
-    scrollbar-width: none;
+    scrollbar-width: thin;
     -ms-overflow-style: none;
-    margin-top: 83px;
+    margin-top: 82px;
     padding: 0;
+    z-index: 1;
+    margin-right: 5px;
 }
 
 .music-player {
     width: 96.7%;
+    z-index: 2;  
 }
