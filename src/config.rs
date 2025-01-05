@@ -20,6 +20,8 @@ pub enum OpCode {
 	#[allow(non_camel_case_types)]
 	GET_LOBBY_IDS,
 	MESSAGE,
+	#[allow(non_camel_case_types)]
+	GET_MESSAGES,
 }
 
 pub fn allowed_origins(origin: &HeaderValue, _request: &Parts) -> bool {
