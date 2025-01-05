@@ -15,9 +15,6 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use tokio::{fs::File, io::AsyncReadExt};
-use tokio_util::io::ReaderStream;
-
-use super::save_music::MusicPath;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MusicResponse {
@@ -167,7 +164,6 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> impl IntoResponse 
 }
 
 pub async fn send_music(
-	State(app_state): State<AppState>,
 	Path(music_path): Path<String>, // Extract `path` from the URL path
 ) -> impl IntoResponse {
 	// Open the file
