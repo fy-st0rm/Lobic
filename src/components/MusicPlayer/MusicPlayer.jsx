@@ -7,7 +7,6 @@ import VolumeLow from "/volumecontrols/Volume Level Low.png";
 import Mute from "/volumecontrols/Volume Mute.png";
 import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import logo from "/covers/cover.jpg";
-import MusicList from '../MusicList/MusicList.jsx';
 import "./MusicPlayer.css";
 import { SERVER_IP } from "../../const.jsx";
 
@@ -22,12 +21,30 @@ function MusicPlayer({ selectedSong }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Log the selected song whenever it changes
   useEffect(() => {
     if (selectedSong) {
-      console.log('Selected Song in MusicPlayer:', selectedSong);
+      console.log('Resetting audio element for new song:', selectedSong.title);
+  
+      // Pause and reset the current song
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = ''; // Clear the previous source
+        audioRef.current.load(); // Reset the audio element
+      }
+  
+      setIsPlaying(false); // Reset the playing state
+      setCurrentTime(0); // Reset the current time
+      setDuration(0); // Reset the duration
+      setError(''); // Clear any errors
     }
-  }, [selectedSong]);
+  }, [selectedSong]); // Trigger this effect when selectedSong changes
+  
+  // Use a separate useEffect to handle auto-play after isPlaying is set to false
+  useEffect(() => {
+    if (selectedSong && !isPlaying) {
+      handlePlayMusic();
+    }
+  }, [selectedSong, isPlaying]); // Trigger this effect when selectedSong or isPlaying changes
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -35,27 +52,6 @@ function MusicPlayer({ selectedSong }) {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  const fetchMusic = async (musicPath) => {
-    try {
-      const url = `${SERVER_IP}/music/${encodeURIComponent(musicPath)}`;
-      const response = await fetch(url, {
-        method: "GET",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const blob = await response.blob();
-      const audioUrl = URL.createObjectURL(blob);
-      return audioUrl;
-    } catch (error) {
-      console.error("Failed to fetch music:", error);
-      throw error;
-    }
-  };
-
-  // Use fetchMusic in handlePlayMusic
   const handlePlayMusic = async () => {
     try {
       if (isPlaying) {
@@ -64,30 +60,26 @@ function MusicPlayer({ selectedSong }) {
         setIsPlaying(false);
         return;
       }
-
+  
       setIsLoading(true);
       setError('');
-
+  
       if (!selectedSong) {
         throw new Error('No song selected');
       }
-
-      console.log('Fetching music for:', selectedSong.title);
-      const audioUrl = await fetchMusic(selectedSong.filename);
-      console.log('Music fetched, URL:', audioUrl);
-
+  
       if (audioRef.current) {
         // Reset the audio element
         audioRef.current.pause();
         audioRef.current.src = ''; // Clear the previous source
         audioRef.current.load(); // Reset the audio element
-
+  
         // Set the new source and wait for it to load
-        audioRef.current.src = audioUrl;
+        audioRef.current.src = selectedSong.audioUrl;
         await new Promise((resolve) => {
           audioRef.current.onloadeddata = resolve; // Wait for the new source to load
         });
-
+  
         console.log('Audio source set, attempting to play...');
         await audioRef.current.play();
         setIsPlaying(true);
@@ -118,7 +110,7 @@ function MusicPlayer({ selectedSong }) {
       setDuration(0); // Reset the duration
       setError(''); // Clear any errors
 
-      // Play the new song
+      // Play the new song automatically
       handlePlayMusic();
     }
   }, [selectedSong]); // Trigger this effect when selectedSong changes
@@ -206,7 +198,6 @@ function MusicPlayer({ selectedSong }) {
             <img src={NextButton} alt="" className="button-group" />
           </button>
         </div>
-
         <div className="status">
           <div className="music-status">
             {formatTime(currentTime)}

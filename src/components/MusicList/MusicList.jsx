@@ -28,21 +28,48 @@ function MusicList({ list_title, onSongClick }) {
     }
   };
 
+  // Fetch the music file URL
+  const fetchMusicUrl = async (filename) => {
+    try {
+      const url = `${SERVER_IP}/music/${encodeURIComponent(filename)}`;
+      const response = await fetch(url, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      return audioUrl;
+    } catch (error) {
+      console.error("Failed to fetch music:", error);
+      throw error;
+    }
+  };
+
   // Get the URL for the cover art image
   const getImageUrl = (songId) => `${SERVER_IP}/image/${songId}.png`;
 
   // Handle click on a music item
-  const handleMusicClick = (item) => {
-    console.log('Clicked Song Details:', item);
-    setSelectedSongId(item.id);
-    onSongClick(item); // Call the onSongClick function passed from the parent
+  const handleMusicClick = async (item) => {
+    try {
+      setIsLoading(true);
+      const audioUrl = await fetchMusicUrl(item.filename);
+      const coverArt = getImageUrl(item.id); // Get the cover art URL
+      const songWithUrl = { ...item, audioUrl, coverArt }; // Include coverArt in the song object
+      setSelectedSongId(item.id);
+      onSongClick(songWithUrl); // Pass the song details along with the audio URL and cover art
+    } catch (err) {
+      console.error('Failed to fetch music URL:', err);
+      setError('Failed to fetch music URL: ' + err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Show loading state while fetching data
-  if (isLoading) return <div>Loading music...</div>;
-
-  // Show error message if there's an error
-  if (error) return <div>Error: {error}</div>;
+  if (error) return console.log(eror);
 
   return (
     <div className="music-list-container">
@@ -59,7 +86,7 @@ function MusicList({ list_title, onSongClick }) {
             <Music
               title={item.title}
               artist={item.artist}
-              coverArt={getImageUrl(item.id)}
+              coverArt={getImageUrl(item.id)} // Pass the cover art URL to the Music component
               album={item.album}
               genre={item.genre}
             />
