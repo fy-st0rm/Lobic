@@ -1,18 +1,29 @@
 use crate::config::OpCode;
 use crate::lobic_db::db::*;
 use crate::user_pool::UserPool;
+use crate::utils::timestamp;
 
 use axum::extract::ws::Message;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use uuid::Uuid;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChatValue {
+	pub user_id: String,
+	pub message: String,
+	pub timestamp: String,
+}
+type Chat = Vec<ChatValue>;
 
 #[derive(Debug, Clone)]
 pub struct Lobby {
 	pub id: String,
 	pub host_id: String,
 	pub clients: Vec<String>,
+	pub chat: Chat,
 }
 
 #[derive(Debug, Clone)]
@@ -27,6 +38,11 @@ impl LobbyPool {
 		}
 	}
 
+	pub fn exists(&self, key: &str) -> bool {
+		let inner = self.inner.lock().unwrap();
+		inner.contains_key(key)
+	}
+
 	pub fn get_ids(&self) -> Vec<String> {
 		let inner = self.inner.lock().unwrap();
 		inner.clone().into_keys().collect()
@@ -37,9 +53,12 @@ impl LobbyPool {
 		inner.get(key).cloned()
 	}
 
-	pub fn exists(&self, key: &str) -> bool {
-		let inner = self.inner.lock().unwrap();
-		inner.contains_key(key)
+	pub fn get_msgs(&self, lobby_id: &str) -> Option<Chat> {
+		if !self.exists(lobby_id) {
+			return None;
+		}
+		let lobby = self.get(lobby_id).unwrap();
+		Some(lobby.chat)
 	}
 
 	pub fn insert(&self, key: &str, lobby: Lobby) {
@@ -63,6 +82,7 @@ impl LobbyPool {
 			id: lobby_id.clone(),
 			host_id: host_id.to_string(),
 			clients: vec![host_id.to_string()],
+			chat: Vec::new(),
 		};
 		self.insert(&lobby_id, lobby);
 
@@ -162,5 +182,39 @@ impl LobbyPool {
 		let _ = inner.remove(lobby_id);
 
 		Ok("Sucessfully deleted lobby".to_string())
+	}
+
+	pub fn append_message(
+		&self,
+		lobby_id: &str,
+		client_id: &str,
+		msg: &str,
+		db_pool: &DatabasePool,
+	) -> Result<(), String> {
+		if !user_exists(client_id, db_pool) {
+			return Err(format!("Invalid client id: {}", client_id));
+		}
+
+		let mut inner = self.inner.lock().unwrap();
+		let lobby = match inner.get_mut(lobby_id) {
+			Some(lobby) => lobby,
+			None => {
+				return Err(format!("Invalid lobby id: {}", lobby_id));
+			}
+		};
+
+		if !lobby.clients.contains(&client_id.to_string()) {
+			return Err(format!(
+				"Client: {} is not a member in lobby: {}",
+				client_id, lobby_id
+			));
+		}
+
+		lobby.chat.push(ChatValue {
+			user_id: client_id.to_string(),
+			message: msg.to_string(),
+			timestamp: timestamp::now(),
+		});
+		Ok(())
 	}
 }

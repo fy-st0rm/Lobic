@@ -280,12 +280,12 @@ fn handle_message(
 		}
 	};
 
-	let lobby = match lobby_pool.get(lobby_id) {
-		Some(lobby) => lobby,
-		None => {
+	match lobby_pool.append_message(lobby_id, user_id, message, db_pool) {
+		Ok(_) => (),
+		Err(e) => {
 			let response = json!({
 				"op_code": OpCode::ERROR,
-				"value": format!("Invalid lobby id: {}", lobby_id)
+				"value": e,
 			})
 			.to_string();
 			let _ = tx.send(Message::Text(response));
@@ -293,35 +293,56 @@ fn handle_message(
 		}
 	};
 
-	if !user_exists(user_id, db_pool) {
-		let response = json!({
-			"op_code": OpCode::ERROR,
-			"value": format!("Invalid user id: {}", user_id)
-		})
-		.to_string();
-		let _ = tx.send(Message::Text(response));
-		return;
-	}
+	let lobby = lobby_pool.get(lobby_id).unwrap();
+	let msgs = lobby.chat;
 
-	for client_id in lobby.clients.iter() {
-		if user_id == client_id {
-			continue;
-		}
-		let inner = json!({
-			"from": user_id.to_string(),
-			"message": message.to_string()
-		});
+	for client_id in lobby.clients {
 		let response = json!({
-			"op_code": OpCode::MESSAGE,
-			"for": OpCode::MESSAGE,
-			"value": inner
+			"op_code": OpCode::OK,
+			"for": OpCode::GET_MESSAGES,
+			"value": msgs
 		})
 		.to_string();
 
-		// NOTE: Can blow up (idk what im doing)
 		let client_conn = user_pool.get(&client_id).unwrap();
 		let _ = client_conn.send(Message::Text(response));
 	}
+}
+
+fn handle_get_messages(tx: &broadcast::Sender<Message>, value: &Value, lobby_pool: &LobbyPool) {
+	let lobby_id = match value.get("lobby_id") {
+		Some(v) => v.as_str().unwrap(),
+		None => {
+			let response = json!({
+				"op_code": OpCode::ERROR,
+				"value": "\"lobby_id\" field is missing.".to_string()
+			})
+			.to_string();
+			let _ = tx.send(Message::Text(response));
+			return;
+		}
+	};
+
+	let msgs = match lobby_pool.get_msgs(lobby_id) {
+		Some(msgs) => msgs,
+		None => {
+			let response = json!({
+				"op_code": OpCode::ERROR,
+				"value": format!("Invalid lobby id: {}", lobby_id),
+			})
+			.to_string();
+			let _ = tx.send(Message::Text(response));
+			return;
+		}
+	};
+
+	let response = json!({
+		"op_code": OpCode::OK,
+		"for": OpCode::GET_MESSAGES,
+		"value": msgs
+	})
+	.to_string();
+	let _ = tx.send(Message::Text(response));
 }
 
 fn handle_get_lobby_ids(tx: &broadcast::Sender<Message>, lobby_pool: &LobbyPool) {
@@ -362,6 +383,7 @@ pub async fn handle_socket(socket: WebSocket, State(app_state): State<AppState>)
 					OpCode::MESSAGE => {
 						handle_message(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
 					}
+					OpCode::GET_MESSAGES => handle_get_messages(&tx, &payload.value, &lobby_pool),
 					OpCode::GET_LOBBY_IDS => handle_get_lobby_ids(&tx, &lobby_pool),
 					_ => (),
 				};
