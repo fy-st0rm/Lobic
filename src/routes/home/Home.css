@@ -3,9 +3,9 @@
 .home-container {
 	display: flex;
 	flex-direction: column;
-	height: 80vh;
+	height: 83vh;
 	overflow: hidden;
-	margin-top: 82px;
+	margin-top: 90px;
 }
 
 .music-player {
