@@ -31,9 +31,9 @@ function MusicPlayer() {
 	const { audioRef, musicState, updateMusicState } = useAppState();
 
 	// Creates a blob url for audio
-	const fetchMusicUrl = async (filename) => {
+	const fetchMusicUrl = async (id) => {
 		try {
-			const url = `${SERVER_IP}/music/${encodeURIComponent(filename)}`;
+			const url = `${SERVER_IP}/music/${encodeURIComponent(id)}`;
 			const response = await fetch(url, {
 				method: "GET",
 			});
@@ -81,7 +81,7 @@ function MusicPlayer() {
 			const playNewSong = async () => {
 				try {
 					await resetAudioRef();
-					audioRef.current.src = await fetchMusicUrl(musicState.filename);
+					audioRef.current.src = await fetchMusicUrl(musicState.id);
 					await audioRef.current.play();
 
 					// Set the volume only once when the song is loaded
