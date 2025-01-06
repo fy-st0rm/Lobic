@@ -115,12 +115,21 @@ fn is_music_file(path: &Path) -> bool {
 fn process_music_file(path: &Path, db_conn: &mut SqliteConnection) -> Result<(), Box<dyn std::error::Error>> {
 	let path_str = path.to_str().ok_or("Invalid path")?;
 	let tag = Tag::read_from_path(path_str).unwrap_or_default();
-	// let curr_music_id = Uuid::new_v4();
 	let curr_music_id = generate_uuid_from_file_path(path);
+
+	// Create the music_db directory if it doesn't exist
+	let music_db_dir = PathBuf::from("music_db");
+	fs::create_dir_all(&music_db_dir)?;
+
+	let new_file_path = music_db_dir.join(format!("{}.mp3", curr_music_id));
+
+	// Copy the music file to the new location
+	fs::copy(path, &new_file_path)?;
+
+	let new_file_path_str = new_file_path.to_str().ok_or("Invalid new file path")?;
 
 	let curr_music = Music {
 		music_id: curr_music_id.to_string(),
-		filename: path_str.to_string(),
 		artist: tag.artist().unwrap_or("Unknown Artist").to_string(),
 		title: tag.title().unwrap_or("Unknown Title").to_string(),
 		album: tag.album().unwrap_or("Unknown Album").to_string(),

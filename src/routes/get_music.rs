@@ -86,8 +86,8 @@ pub async fn get_music(State(app_state): State<AppState>, Query(params): Query<M
 					let has_cover = fs::metadata(&cover_art_path).is_ok();
 
 					MusicResponse {
-						id: entry.music_id,
-						filename: entry.filename,
+						id: entry.music_id.clone(),
+						filename: { format!("./music_db/{}.mp3", entry.music_id) },
 						artist: entry.artist,
 						title: entry.title,
 						album: entry.album,
@@ -156,10 +156,14 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> impl IntoResponse 
 		.unwrap()
 }
 
-pub async fn send_music(Path(music_path): Path<String>, // Extract `path` from the URL path
+pub async fn send_music(Path(music_id): Path<String>, // Extract `path` from the URL path
 ) -> impl IntoResponse {
 	// Open the file
-	let mut file = match File::open(&music_path).await {
+
+	let mut path = PathBuf::from("music_db");
+	path.push(format!("{}.mp3", music_id));
+
+	let mut file = match File::open(&path).await {
 		Ok(file) => file,
 		Err(_) => return (axum::http::StatusCode::NOT_FOUND, "File not found").into_response(),
 	};

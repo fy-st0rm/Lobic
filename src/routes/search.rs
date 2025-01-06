@@ -13,7 +13,6 @@ use strsim::jaro_winkler; // Fuzzy string matching
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MusicResponse {
 	pub id: String,
-	pub filename: String,
 	pub artist: String,
 	pub title: String,
 	pub album: String,
@@ -116,7 +115,6 @@ pub async fn search_music(State(app_state): State<AppState>, Query(params): Quer
 
 			MusicResponse {
 				id: entry.music_id,
-				filename: entry.filename,
 				artist: entry.artist,
 				title: entry.title,
 				album: entry.album,
