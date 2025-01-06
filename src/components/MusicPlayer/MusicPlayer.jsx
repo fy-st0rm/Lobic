@@ -9,7 +9,7 @@ import Mute from "/volumecontrols/Volume Mute.png";
 import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
 import "./MusicPlayer.css";
-import { SERVER_IP, MPState } from "../../const.jsx";
+import { SERVER_IP, MPState, fetchMusicUrl } from "../../const.jsx";
 
 function debounce(func, wait) {
 	let timeout;
@@ -29,27 +29,6 @@ function MusicPlayer() {
 	const [error, setError] = useState('');
 
 	const { audioRef, musicState, updateMusicState } = useAppState();
-
-	// Creates a blob url for audio
-	const fetchMusicUrl = async (filename) => {
-		try {
-			const url = `${SERVER_IP}/music/${encodeURIComponent(filename)}`;
-			const response = await fetch(url, {
-				method: "GET",
-			});
-
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-
-			const blob = await response.blob();
-			const audioUrl = URL.createObjectURL(blob);
-			return audioUrl;
-		} catch (error) {
-			console.error("Failed to fetch music:", error);
-			throw error;
-		}
-	};
 
 	const formatTime = (time) => {
 		const minutes = Math.floor(time / 60);
@@ -81,7 +60,7 @@ function MusicPlayer() {
 			const playNewSong = async () => {
 				try {
 					await resetAudioRef();
-					audioRef.current.src = await fetchMusicUrl(musicState.filename);
+					audioRef.current.src = await fetchMusicUrl(musicState.id);
 					await audioRef.current.play();
 
 					// Set the volume only once when the song is loaded

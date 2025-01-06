@@ -104,21 +104,11 @@ export const AppStateProvider = ({ children }) => {
 	}
 
 	useEffect(() => {
-		if (ws.current === null) {
-			ws.current = new WebSocket(WS_SERVER_IP);
-			console.log("New websocket");
-		}
+		ws.current = new WebSocket(WS_SERVER_IP);
+		console.log("New websocket");
 
 		ws.current.onopen = () => {
 			console.log("From Handler: Connection Open");
-	
-			const payload = {
-				op_code: OpCode.CONNECT,
-				value: {
-					user_id: appState.user_id
-				}
-			};
-			ws.current.send(JSON.stringify(payload));
 		}
 
 		ws.current.onmessage = (event) => {
@@ -143,9 +133,10 @@ export const AppStateProvider = ({ children }) => {
 			console.log("From Handler: Connection Closed");
 		}
 
-		// Optionally handle WebSocket reconnections on refresh
-		if (!ws.current || ws.current.readyState === WebSocket.CLOSED) {
-			ws.current = new WebSocket(WS_SERVER_IP);
+		return () => {
+			if (ws.current && ws.current.readyState == WebSocket.OPEN) {
+				ws.current.close();
+			}
 		}
 	}, []);
 
