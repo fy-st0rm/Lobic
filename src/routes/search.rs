@@ -98,7 +98,7 @@ pub async fn search_music(State(app_state): State<AppState>, Query(params): Quer
 
 			(entry, weighted_score)
 		})
-		.filter(|(_, score)| *score > 2.0) // Filter out low similarity results
+		.filter(|(_, score)| *score > 6.0) // Filter out low similarity results
 		.collect::<Vec<_>>();
 
 	// Sort results by weighted score (descending order)
