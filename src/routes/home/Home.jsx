@@ -30,6 +30,15 @@ function Home() {
 			let data = await response.json();
 			let user_id = data.user_id;
 			updateUserId(user_id);
+
+			// Registering owerself to the backend
+			const payload = {
+				op_code: OpCode.CONNECT,
+				value: {
+					user_id: user_id
+				}
+			};
+			wsSend(ws, payload);
 		};
 
 		init();
