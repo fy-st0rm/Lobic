@@ -11,21 +11,10 @@ import Chats from "./routes/chats/Chats.jsx";
 import Playlist from "./routes/playlist/Playlist.jsx";
 import MusicPlayer from './components/MusicPlayer/MusicPlayer.jsx';
 import NavBar from './components/NavBar/NavBar.jsx';
+import { useAppState } from "./AppState.jsx";
 
 function App() {
-	const [selectedSong, setSelectedSong] = useState(null); // State for selected song
-	const [isPlaying, setIsPlaying] = useState(false); // State for play/pause
 	const location = useLocation(); // Get the current route location
-
-	// Handler for when a song is clicked
-	const handleSongClick = (song) => {
-		setSelectedSong(song); // Update selected song
-	};
-
-	// Handler for play/pause
-	const handlePlayPause = (playing) => {
-		setIsPlaying(playing);
-	};
 
 	// List of routes where MusicPlayer should NOT be rendered
 	const excludedRoutes = ['/login', '/signup', '/forgotpassword'];
@@ -40,13 +29,7 @@ function App() {
 			{ shouldRenderNavBar && <NavBar className="navbar" /> }
 
 			{/* Render MusicPlayer globally if the route is not excluded */}
-			{shouldRenderMusicPlayer && (
-				<MusicPlayer
-					selectedSong={selectedSong}
-					isPlaying={isPlaying}
-					onPlayPause={handlePlayPause}
-				/>
-			)}
+			{ shouldRenderMusicPlayer && <MusicPlayer/> }
 
 			{/* Routes */}
 			<Routes>
@@ -63,7 +46,7 @@ function App() {
 					path="/home"
 					element={
 						<Auth>
-							<Home onSongClick={handleSongClick} />
+							<Home/>
 						</Auth>
 					}
 				/>
@@ -71,7 +54,7 @@ function App() {
 					path="/lobby"
 					element={
 						<Auth>
-							<Lobby key={location.pathname} onSongClick={handleSongClick} />
+							<Lobby key={location.pathname} />
 						</Auth>
 					}
 				/>

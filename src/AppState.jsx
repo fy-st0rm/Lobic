@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
-import { WS_SERVER_IP, OpCode, wsSend } from "./const.jsx";
+import { WS_SERVER_IP, OpCode, MPState, wsSend } from "./const.jsx";
 
 const AppStateContext = createContext(null);
 
 // Load from session storage
-const loadInitialState = () => {
+const loadInitialAppState = () => {
 	const savedState = sessionStorage.getItem("appState");
 	return savedState
 		? JSON.parse(savedState)
@@ -15,10 +15,27 @@ const loadInitialState = () => {
 			};
 };
 
+const loadInitialMusicState = () => {
+	const savedState = sessionStorage.getItem("musicState");
+	return savedState
+		? JSON.parse(savedState)
+		: {
+				id: "",
+				filename: "",
+				title: "",
+				artist: "",
+				cover_img: "",
+				state: MPState.PAUSE,
+				has_item: false,
+			};
+};
+
 export const AppStateProvider = ({ children }) => {
 	const ws = useRef(null);
 	const msgHandlers = useRef({});
-	const [appState, setAppState] = useState(loadInitialState);
+	const audioRef =useRef(null);
+	const [appState, setAppState] = useState(loadInitialAppState);
+	const [musicState, setMusicState] = useState(loadInitialMusicState);
 
 	const updateLobbyState = (lobby_id, in_lobby) => {
 		setAppState(prevState => {
@@ -34,6 +51,39 @@ export const AppStateProvider = ({ children }) => {
 			return newState;
 		});
 	};
+
+	const updateMusicData = (id, filename, title, artist, cover_img, state) => {
+		setMusicState(prevState => {
+			const newMusicState = {
+				id: id,
+				filename: filename,
+				title: title,
+				artist: artist,
+				cover_img: cover_img,
+				state: state,
+				has_item: (id.length === 0) ? false : true,
+			};
+			sessionStorage.setItem(
+				"musicState",
+				JSON.stringify(newMusicState)
+			);
+			return newMusicState;
+		});
+	}
+
+	const updateMusicState = (state) => {
+		setMusicState(prevState => {
+			const newMusicState = {
+				...prevState,
+				state: state,
+			};
+			sessionStorage.setItem(
+				"musicState",
+				JSON.stringify(newMusicState)
+			);
+			return newMusicState;
+		});
+	}
 
 	const updateUserId = (user_id) => {
 		setAppState(prevState => {
@@ -101,8 +151,14 @@ export const AppStateProvider = ({ children }) => {
 
 	return (
 		<AppStateContext.Provider value={{
-			appState, ws,
-			updateLobbyState, addMsgHandler,
+			appState,
+			musicState,
+			ws,
+			audioRef,
+			updateLobbyState,
+			updateMusicData,
+			updateMusicState,
+			addMsgHandler,
 			updateUserId
 		}}>
 			{children}

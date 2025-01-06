@@ -14,6 +14,12 @@ export const OpCode = Object.freeze({
 	GET_LOBBY_IDS: "GET_LOBBY_IDS",
 });
 
+export const MPState = Object.freeze({
+	PLAYING: "PLAYING",
+	CHANGE: "CHANGE",
+	PAUSE: "PAUSE",
+});
+
 export const wsSend = (ws, data) => {
 	if (ws.current === null) {
 		console.log("Websocket is null");
