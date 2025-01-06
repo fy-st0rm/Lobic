@@ -128,7 +128,7 @@ async fn main() {
 		.route("/signup", post(signup))
 		.route("/login", post(login))
 		.route("/verify", get(verify))
-		.route("/music/:path", get(send_music))
+		.route("/music/:music_id", get(send_music))
 		.route("/image/:filename", get(get_cover_image))
 		.route("/save_music", post(save_music))
 		.route("/get_music", get(get_music))

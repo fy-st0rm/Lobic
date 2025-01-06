@@ -87,7 +87,7 @@ pub async fn get_music(State(app_state): State<AppState>, Query(params): Query<M
 
 					MusicResponse {
 						id: entry.music_id.clone(),
-						filename: format!("./music_db/{}.mp3", entry.music_id),
+						filename: { format!("./music_db/{}.mp3", entry.music_id) },
 						artist: entry.artist,
 						title: entry.title,
 						album: entry.album,
@@ -159,6 +159,7 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> impl IntoResponse 
 pub async fn send_music(Path(music_id): Path<String>, // Extract `path` from the URL path
 ) -> impl IntoResponse {
 	// Open the file
+
 	let mut path = PathBuf::from("music_db");
 	path.push(format!("{}.mp3", music_id));
 

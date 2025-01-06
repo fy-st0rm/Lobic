@@ -16,7 +16,6 @@ pub struct User {
 #[diesel(table_name = music)]
 pub struct Music {
 	pub music_id: String,
-	pub filename: String,
 	pub artist: String,
 	pub title: String,
 	pub album: String,

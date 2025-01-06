@@ -29,6 +29,7 @@ dist-ssr
 
 #added by rain
 /cover_images
+/music_db
 
 # Added by st0rm
 database.db

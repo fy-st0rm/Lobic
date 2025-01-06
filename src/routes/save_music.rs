@@ -130,7 +130,6 @@ fn process_music_file(path: &Path, db_conn: &mut SqliteConnection) -> Result<(),
 
 	let curr_music = Music {
 		music_id: curr_music_id.to_string(),
-		filename: new_file_path_str.to_string(), // Save the new path in the database
 		artist: tag.artist().unwrap_or("Unknown Artist").to_string(),
 		title: tag.title().unwrap_or("Unknown Title").to_string(),
 		album: tag.album().unwrap_or("Unknown Album").to_string(),
