@@ -129,6 +129,7 @@ function MusicPlayer() {
 
 	const onVolumeChange = (e) => {
 		const newVolume = e.target.value;
+		
 		setVolume(newVolume); // Update the volume state
 		if (audioRef.current) {
 			audioRef.current.volume = newVolume / 100; // Update volume directly without restarting
@@ -234,7 +235,7 @@ function MusicPlayer() {
 				<button className="volume-button" onClick={volumeToggle} disabled={isLoading}>
 					<img
 						className="volume-image"
-						src={volume === 0 ? Mute : volume > 40 ? VolumeHigh : VolumeLow}
+						src={volume == 0 ? Mute : volume > 40 ? VolumeHigh : VolumeLow}
 						alt="Volume"
 					/>
 				</button>

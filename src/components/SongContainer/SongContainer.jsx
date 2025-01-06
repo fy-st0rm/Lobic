@@ -1,5 +1,5 @@
 import SongInfo from "../SongInfo/SongInfo";
-
+import cover from "/covers/cover.jpg";
 function SongContainer() {
   return (
     <div className="absolute top-[11%] right-[4%] bg-primary-100 opacity-65 rounded-[18px] h-[75%] w-[40%] min-w-[300px] flex flex-col pb-5">
@@ -14,8 +14,8 @@ function SongContainer() {
       
       
       <div className="overflow-y-auto flex-1">
-        <SongInfo />
-        <SongInfo />
+        <SongInfo coverImg= {cover} songName = "Pretty Boy"  artistName = "The Neighbourhood" duration = "3:08" addedBy = "Manish"/>
+        <SongInfo songName = "Cry Baby"  artistName = "The Neighbourhood" duration = "3:08" addedBy = "Manish"/>
         <SongInfo />
         <SongInfo />
         <SongInfo />
