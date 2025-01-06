@@ -1,7 +1,7 @@
 .music-container {
     position: relative;
     width: 223px;
-    height: 256px;
+    height: 270px;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     border-radius: 15px;
@@ -83,7 +83,7 @@
 }
 
 .artist-name {
-    font-size: 0.9rem;
+    font-size: 9pt;
     font-weight: normal;
     margin: 5px 0 0;
     color: white;
