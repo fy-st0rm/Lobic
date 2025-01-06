@@ -36,7 +36,7 @@ function Lobby() {
 		// Requesting the lobby ids
 		const payload = {
 			op_code: OpCode.GET_LOBBY_IDS,
-			value: ""
+			value: "empty"
 		};
 		wsSend(ws, payload);
 	}, []);

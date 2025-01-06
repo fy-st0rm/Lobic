@@ -29,3 +29,25 @@ export const wsSend = (ws, data) => {
 		ws.current.send(JSON.stringify(data));
 	}
 }
+
+// Creates a blob url for audio
+export const fetchMusicUrl = async (filename) => {
+	try {
+		const url = `${SERVER_IP}/music/${encodeURIComponent(filename)}`;
+		const response = await fetch(url, {
+			method: "GET",
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		const blob = await response.blob();
+		const audioUrl = URL.createObjectURL(blob);
+		return audioUrl;
+	} catch (error) {
+		console.error("Failed to fetch music:", error);
+		throw error;
+	}
+}
+

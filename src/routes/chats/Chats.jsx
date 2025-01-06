@@ -76,6 +76,7 @@ function Chats() {
 			}
 		}
 		wsSend(ws, payload);
+		console.log(payload);
 		setInputValue("");
 	}
 
