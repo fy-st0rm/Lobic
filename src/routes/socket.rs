@@ -296,7 +296,17 @@ fn handle_message(
 		})
 		.to_string();
 
-		let client_conn = user_pool.get(&client_id).unwrap();
+		let client_conn = match user_pool.get(&client_id) {
+			Some(conn) => conn,
+			None => {
+				let response = json!({
+					"op_code": OpCode::ERROR,
+					"value": format!("Cannot find user {} in a lobby {} (in \"handle_message\" this shouldnt occure)", client_id, lobby_id)
+				}).to_string();
+				let _ = tx.send(Message::Text(response));
+				return;
+			}
+		};
 		let _ = client_conn.send(Message::Text(response));
 	}
 }
@@ -360,7 +370,19 @@ pub async fn handle_socket(socket: WebSocket, State(app_state): State<AppState>)
 	tokio::spawn(async move {
 		while let Some(Ok(message)) = receiver.next().await {
 			if let Message::Text(text) = message {
-				let payload: SocketPayload = serde_json::from_str(&text).unwrap();
+				let payload: SocketPayload = match serde_json::from_str(&text) {
+					Ok(value) => value,
+					Err(err) => {
+						let response = json!({
+							"op_code": OpCode::ERROR,
+							"value": err.to_string()
+						})
+						.to_string();
+						let _ = tx.send(Message::Text(response));
+						return;
+					}
+				};
+
 				match payload.op_code {
 					OpCode::CONNECT => handle_connect(&tx, &payload.value, &user_pool),
 					OpCode::CREATE_LOBBY => handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool),
