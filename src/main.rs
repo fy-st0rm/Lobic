@@ -27,6 +27,7 @@ use routes::{
 	get_user::get_user,
 	login::login,
 	save_music::save_music,
+	search::search_music,
 	signup::signup,
 	socket::websocket_handler,
 	verify::verify,
@@ -130,6 +131,7 @@ async fn main() {
 		.route("/image/:filename", get(get_cover_image))
 		.route("/save_music", post(save_music))
 		.route("/get_music", get(get_music))
+		.route("/search", get(search_music))
 		.route("/ws", get(websocket_handler))
 		.with_state(app_state)
 		.layer(axum::middleware::from_fn(logger))

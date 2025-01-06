@@ -27,3 +27,4 @@ uuid = { version = "1.11.0", features = ["v4"] }
 rusqlite = { version = "0.32.0", features = ["bundled"] }
 walkdir = "2.5.0"
 chrono = "0.4.39"
+strsim = "0.11.1"
