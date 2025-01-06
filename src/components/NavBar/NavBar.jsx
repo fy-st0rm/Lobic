@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './NavBar.css'
 import { useNavigate, Link } from "react-router-dom";
+import SearchBar from "../SearchBar/SearchBar";
 
 function NavBar() {
 	const [showMessage, setShowMessage] = useState(false);
@@ -109,25 +110,12 @@ function NavBar() {
 					</li>
 				</ul>
 
-				<div className="searchbar-container">
-					<input
-						type="text"
-						placeholder="Search for your music"
-						className="search-bar"
-						disabled={isDisabled}
-						style={{ pointerEvents: isDisabled ? "none" : "auto" }}
-						value={inputValue}
-						onChange={handleInputChange}
-					/>
-					<button className="clear-button">
-						<img
-							src="./public/close.png"
-							className="clear-png"
-							onClick={handleClearButton}
-							alt="Clear Button"
-						/>
-					</button>
-				</div>
+				<SearchBar
+					isDisabled={isDisabled}
+					inputValue={inputValue}
+					onInputChange={handleInputChange}
+					onClearInput={handleClearButton}
+				/>
 
 				<div className="user-icon">
 					<button className="profile-button" onClick={() => {navigateAndClose('/profile')}}>
