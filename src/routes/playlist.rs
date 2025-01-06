@@ -57,7 +57,7 @@ pub async fn create_playlist(State(app_state): State<AppState>, Json(payload): J
 post : http://127.0.0.1:8080/playlist/new
 {
 	"playlist_name": "getting bored",
-	"user_id": "80354d79-95cc-451d-a8f1-138b3f9027ea",
+	"user_id": "80354d79-95cc-451d-a8f1-138b3f9027ea", //must be a valid one
 	"description": "mfff"
 }
  */
@@ -131,11 +131,11 @@ pub async fn add_song_to_playlist(
 }
 
 /*
+//run playlist/new first to get playlist_id in the db
 post : http://127.0.0.1:8080/playlist/add_song
 
 {
-   "playlist_id":"4f537410-d5e0-4507-859b-88ecdabafd96",
-   "music_id": "b846a188-46a9-4fa4-bb7b-1b1527e7f5bd",
-//    "postion": i32
+   "playlist_id":"4f537410-d5e0-4507-859b-88ecdabafd96", //must be valid
+   "music_id": "b846a188-46a9-4fa4-bb7b-1b1527e7f5bd", //must be valid
 }
 */

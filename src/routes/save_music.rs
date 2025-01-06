@@ -8,7 +8,9 @@ use axum::{extract::State, http::status::StatusCode, response::Response, Json};
 use diesel::prelude::*;
 use id3::{frame::PictureType, Tag, TagLike};
 use serde::{Deserialize, Serialize};
+use std::collections::hash_map::DefaultHasher;
 use std::fs;
+use std::hash::{Hash, Hasher};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use uuid::Uuid;
@@ -113,7 +115,8 @@ fn is_music_file(path: &Path) -> bool {
 fn process_music_file(path: &Path, db_conn: &mut SqliteConnection) -> Result<(), Box<dyn std::error::Error>> {
 	let path_str = path.to_str().ok_or("Invalid path")?;
 	let tag = Tag::read_from_path(path_str).unwrap_or_default();
-	let curr_music_id = Uuid::new_v4();
+	// let curr_music_id = Uuid::new_v4();
+	let curr_music_id = generate_uuid_from_file_path(path);
 
 	let curr_music = Music {
 		music_id: curr_music_id.to_string(),
@@ -148,4 +151,12 @@ fn extract_cover_art(mp3_path: &str, uuid: &Uuid) -> Result<(), Box<dyn std::err
 	} else {
 		Err("No cover art found in the MP3 file".into())
 	}
+}
+
+fn generate_uuid_from_file_path(file_path: &Path) -> Uuid {
+	let path_str = file_path.to_string_lossy().to_string();
+	let mut hasher = DefaultHasher::new();
+	path_str.hash(&mut hasher);
+	let hash = hasher.finish();
+	Uuid::from_u64_pair(hash, hash) // Use the hash to generate a UUID
 }
