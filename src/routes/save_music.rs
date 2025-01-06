@@ -20,10 +20,7 @@ pub struct MusicPath {
 	pub path: String, //     "path" : "/home/rain/Lobic/music/Sunsetz.mp3"
 }
 
-pub async fn save_music(
-	State(app_state): State<AppState>,
-	Json(payload): Json<MusicPath>,
-) -> Response<String> {
+pub async fn save_music(State(app_state): State<AppState>, Json(payload): Json<MusicPath>) -> Response<String> {
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
@@ -113,10 +110,7 @@ fn is_music_file(path: &Path) -> bool {
 	}
 }
 
-fn process_music_file(
-	path: &Path,
-	db_conn: &mut SqliteConnection,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn process_music_file(path: &Path, db_conn: &mut SqliteConnection) -> Result<(), Box<dyn std::error::Error>> {
 	let path_str = path.to_str().ok_or("Invalid path")?;
 	let tag = Tag::read_from_path(path_str).unwrap_or_default();
 	let curr_music_id = Uuid::new_v4();
@@ -132,9 +126,7 @@ fn process_music_file(
 
 	extract_cover_art(path_str, &curr_music_id)?;
 
-	diesel::insert_into(music)
-		.values(&curr_music)
-		.execute(db_conn)?;
+	diesel::insert_into(music).values(&curr_music).execute(db_conn)?;
 
 	Ok(())
 }
@@ -143,10 +135,7 @@ fn extract_cover_art(mp3_path: &str, uuid: &Uuid) -> Result<(), Box<dyn std::err
 	let tag = Tag::read_from_path(mp3_path)?;
 	let pictures: Vec<_> = tag.pictures().collect();
 
-	if let Some(picture) = pictures
-		.iter()
-		.find(|pic| pic.picture_type == PictureType::CoverFront)
-	{
+	if let Some(picture) = pictures.iter().find(|pic| pic.picture_type == PictureType::CoverFront) {
 		// Create platform-independent path for cover_images directory
 		let cover_dir = PathBuf::from("cover_images");
 		fs::create_dir_all(&cover_dir)?;

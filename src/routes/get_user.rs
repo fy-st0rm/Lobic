@@ -28,8 +28,7 @@ pub async fn get_user(jar: CookieJar) -> Response<String> {
 		}
 	};
 
-	let secret_key =
-		std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
+	let secret_key = std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
 
 	// Verifying the access token
 	match jwt::verify(access_token.value(), &secret_key) {
@@ -40,10 +39,7 @@ pub async fn get_user(jar: CookieJar) -> Response<String> {
 			})
 			.to_string();
 
-			return Response::builder()
-				.status(StatusCode::OK)
-				.body(response)
-				.unwrap();
+			return Response::builder().status(StatusCode::OK).body(response).unwrap();
 		}
 		Err(_) => (),
 	};

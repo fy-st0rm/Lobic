@@ -27,10 +27,7 @@ pub struct SearchQuery {
 	no_results_to_gen: Option<usize>,
 }
 
-pub async fn search_music(
-	State(app_state): State<AppState>,
-	Query(params): Query<SearchQuery>,
-) -> Response<String> {
+pub async fn search_music(State(app_state): State<AppState>, Query(params): Query<SearchQuery>) -> Response<String> {
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
@@ -70,17 +67,34 @@ pub async fn search_music(
 			let album_score = jaro_winkler(&entry.album, &params.search_string);
 			let genre_score = jaro_winkler(&entry.genre, &params.search_string);
 
-			// Assign weights to each field based on priority
-			let weighted_score = if exact_match {
-				// Assign a very high score for exact matches
-				1000.0
-			} else {
-				// Use weighted scores for non-exact matches
-				(title_score * 10.0) // Title has the highest weight
-                    + (artist_score * 8.0) // Artist has the second highest weight
-                    + (album_score * 8.0) // Album has the third highest weight
-                    + (genre_score * 1.0) // Genre has the lowest weight
-			};
+			let weighted_score =
+				if exact_match {
+					10000.0 // Exact matches get highest priority
+				} else {
+					// Field similarity scores with weights
+					let weighted_artist = artist_score * 15.0;
+					let weighted_title = title_score * 12.0;
+					let weighted_album = album_score * 6.0;
+					let weighted_genre = genre_score * 2.0;
+
+					//bonus weights for partial match in artist and title
+					let search_term = params.search_string.to_lowercase();
+					let contains_search_term = |field: &str| -> f64 {
+						match field.to_lowercase().contains(&search_term) {
+							true => 8.0,
+							false => 0.0,
+						}
+					};
+
+					let artist_contains_bonus = contains_search_term(&entry.artist);
+					let title_contains_bonus = contains_search_term(&entry.title) * 0.75;
+
+					// Sum all components
+					weighted_artist
+						+ weighted_title + weighted_album
+						+ weighted_genre + artist_contains_bonus
+						+ title_contains_bonus
+				};
 
 			(entry, weighted_score)
 		})

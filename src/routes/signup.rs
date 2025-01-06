@@ -21,10 +21,7 @@ pub struct SignupPayload {
 	pub password: String,
 }
 
-pub async fn signup(
-	State(app_state): State<AppState>,
-	Json(payload): Json<SignupPayload>,
-) -> Response<String> {
+pub async fn signup(State(app_state): State<AppState>, Json(payload): Json<SignupPayload>) -> Response<String> {
 	// Getting db from pool
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
@@ -38,9 +35,7 @@ pub async fn signup(
 	};
 
 	// Searching if the email already exists
-	let query = users
-		.filter(email.eq(&payload.email))
-		.first::<User>(&mut db_conn);
+	let query = users.filter(email.eq(&payload.email)).first::<User>(&mut db_conn);
 
 	// Email already registered
 	if query.is_ok() {
@@ -69,8 +64,7 @@ pub async fn signup(
 		.unwrap();
 
 	// Generate jwt
-	let jwt_secret_key =
-		std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
+	let jwt_secret_key = std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
 
 	let access_claims = jwt::Claims {
 		id: new_user_id.clone(),
