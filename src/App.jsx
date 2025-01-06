@@ -9,6 +9,7 @@ import ForgotPassword from './routes/login/ForgotPassword.jsx';
 import Lobby from "./routes/lobby/Lobby.jsx";
 import Chats from "./routes/chats/Chats.jsx";
 import Playlist from "./routes/playlist/Playlist.jsx";
+import Profile from "./routes/profile/Profile.jsx";
 import MusicPlayer from './components/MusicPlayer/MusicPlayer.jsx';
 import NavBar from './components/NavBar/NavBar.jsx';
 import { useAppState } from "./AppState.jsx";
@@ -66,7 +67,22 @@ function App() {
 						</Auth>
 					}
 				/>
-				<Route path="/playlist" element={<Playlist />} />
+				<Route 
+					path="/playlist" 
+					element={	
+						<Auth>
+							<Playlist />
+						</Auth>
+							} 
+				/>
+				<Route 
+					path="/profile"
+					element={
+						<Auth>
+							<Profile />
+						</Auth>
+					}
+				/>
 			</Routes>
 		</div>
 	);
