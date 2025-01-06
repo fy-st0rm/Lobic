@@ -69,7 +69,7 @@ function MusicList({ list_title, onSongClick }) {
     }
   };
 
-  if (error) return console.log(eror);
+  if (error) return console.log(error);
 
   return (
     <div className="music-list-container">

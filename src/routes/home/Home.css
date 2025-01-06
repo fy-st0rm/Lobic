@@ -1,32 +1,14 @@
+@import url("../../commons/style.css");
+
 .home-container {
-    display: flex;
-    flex-direction: column;
-    height: 95vh;
-    overflow: hidden;
-}
-
-.navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    height: 60px;
-    align-items: center;
-    padding-top: 10px;
-}
-
-.scrollable-area {
-    flex: 1;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    -ms-overflow-style: none;
-    margin-top: 82px;
-    padding: 0;
-    z-index: 1;
-    margin-right: 5px;
+	display: flex;
+	flex-direction: column;
+	height: 80vh;
+	overflow: hidden;
+	margin-top: 82px;
 }
 
 .music-player {
-    width: 96.7%;
-    z-index: 2;  
+	width: 96.7%;
+	z-index: 2;  
 }

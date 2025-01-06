@@ -39,7 +39,6 @@ function Home({ onSongClick }) {
   return (
     <>
       <div className="home-container">
-        <NavBar className="navbar" />
         <div className="scrollable-area">
           <MusicList className="music-list" list_title="Featured Music" onSongClick={onSongClick} />
           <MusicList className="music-list" list_title="Recently Played" onSongClick={onSongClick} />

@@ -113,7 +113,6 @@ function Chats() {
 
 	return (
 		<>
-			<NavBar />
 			<div className="chats-page">
 				<div className="main-content">
 					{/* Sidebar */}
@@ -199,7 +198,6 @@ function Chats() {
 					</div>
 				</div>
 			</div>
-			<MusicPlayer />
 		</>
 	);
 }
