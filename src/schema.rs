@@ -54,10 +54,4 @@ diesel::joinable!(playlist_songs -> music (music_id));
 diesel::joinable!(playlist_songs -> playlists (playlist_id));
 diesel::joinable!(playlists -> users (user_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-	music,
-	playlist_shares,
-	playlist_songs,
-	playlists,
-	users,
-);
+diesel::allow_tables_to_appear_in_same_query!(music, playlist_shares, playlist_songs, playlists, users,);

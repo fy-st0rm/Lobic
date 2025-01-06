@@ -94,12 +94,7 @@ impl LobbyPool {
 		Ok(response)
 	}
 
-	pub fn join_lobby(
-		&self,
-		lobby_id: &str,
-		client_id: &str,
-		db_pool: &DatabasePool,
-	) -> Result<Value, String> {
+	pub fn join_lobby(&self, lobby_id: &str, client_id: &str, db_pool: &DatabasePool) -> Result<Value, String> {
 		if !user_exists(client_id, db_pool) {
 			return Err(format!("Invalid client id: {}", client_id));
 		}
@@ -114,10 +109,7 @@ impl LobbyPool {
 
 		// Check if client is already joined
 		if lobby.clients.contains(&client_id.to_string()) {
-			return Err(format!(
-				"Client: {} is already in lobby: {}",
-				client_id, lobby_id
-			));
+			return Err(format!("Client: {} is already in lobby: {}", client_id, lobby_id));
 		}
 
 		// Adding the client and pushing into the pool
@@ -132,12 +124,7 @@ impl LobbyPool {
 		Ok(response)
 	}
 
-	pub fn leave_lobby(
-		&self,
-		lobby_id: &str,
-		client_id: &str,
-		db_pool: &DatabasePool,
-	) -> Result<String, String> {
+	pub fn leave_lobby(&self, lobby_id: &str, client_id: &str, db_pool: &DatabasePool) -> Result<String, String> {
 		if !user_exists(client_id, db_pool) {
 			return Err(format!("Invalid client id: {}", client_id));
 		}
@@ -204,10 +191,7 @@ impl LobbyPool {
 		};
 
 		if !lobby.clients.contains(&client_id.to_string()) {
-			return Err(format!(
-				"Client: {} is not a member in lobby: {}",
-				client_id, lobby_id
-			));
+			return Err(format!("Client: {} is not a member in lobby: {}", client_id, lobby_id));
 		}
 
 		lobby.chat.push(ChatValue {

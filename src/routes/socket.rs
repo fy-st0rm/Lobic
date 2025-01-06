@@ -20,10 +20,7 @@ struct SocketPayload {
 	pub value: Value,
 }
 
-pub async fn websocket_handler(
-	ws: WebSocketUpgrade,
-	State(app_state): State<AppState>,
-) -> impl IntoResponse {
+pub async fn websocket_handler(ws: WebSocketUpgrade, State(app_state): State<AppState>) -> impl IntoResponse {
 	ws.on_upgrade(|socket| handle_socket(socket, State(app_state)))
 }
 
@@ -101,12 +98,7 @@ fn handle_create_lobby(
 	}
 }
 
-fn handle_join_lobby(
-	tx: &broadcast::Sender<Message>,
-	value: &Value,
-	db_pool: &DatabasePool,
-	lobby_pool: &LobbyPool,
-) {
+fn handle_join_lobby(tx: &broadcast::Sender<Message>, value: &Value, db_pool: &DatabasePool, lobby_pool: &LobbyPool) {
 	let lobby_id = match value.get("lobby_id") {
 		Some(v) => v.as_str().unwrap(),
 		None => {
@@ -371,18 +363,10 @@ pub async fn handle_socket(socket: WebSocket, State(app_state): State<AppState>)
 				let payload: SocketPayload = serde_json::from_str(&text).unwrap();
 				match payload.op_code {
 					OpCode::CONNECT => handle_connect(&tx, &payload.value, &user_pool),
-					OpCode::CREATE_LOBBY => {
-						handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
-					}
-					OpCode::JOIN_LOBBY => {
-						handle_join_lobby(&tx, &payload.value, &db_pool, &lobby_pool)
-					}
-					OpCode::LEAVE_LOBBY => {
-						handle_leave_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
-					}
-					OpCode::MESSAGE => {
-						handle_message(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool)
-					}
+					OpCode::CREATE_LOBBY => handle_create_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool),
+					OpCode::JOIN_LOBBY => handle_join_lobby(&tx, &payload.value, &db_pool, &lobby_pool),
+					OpCode::LEAVE_LOBBY => handle_leave_lobby(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool),
+					OpCode::MESSAGE => handle_message(&tx, &payload.value, &db_pool, &lobby_pool, &user_pool),
 					OpCode::GET_MESSAGES => handle_get_messages(&tx, &payload.value, &lobby_pool),
 					OpCode::GET_LOBBY_IDS => handle_get_lobby_ids(&tx, &lobby_pool),
 					_ => (),

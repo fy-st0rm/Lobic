@@ -33,10 +33,7 @@ pub struct MusicQuery {
 	uuid: Option<String>,
 }
 
-pub async fn get_music(
-	State(app_state): State<AppState>,
-	Query(params): Query<MusicQuery>,
-) -> Response<String> {
+pub async fn get_music(State(app_state): State<AppState>, Query(params): Query<MusicQuery>) -> Response<String> {
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
@@ -139,11 +136,7 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> impl IntoResponse 
 	// Read the file into a byte vector
 	let mut file_bytes = Vec::new();
 	if let Err(_) = file.read_to_end(&mut file_bytes).await {
-		return (
-			StatusCode::INTERNAL_SERVER_ERROR,
-			"Failed to read image file",
-		)
-			.into_response();
+		return (StatusCode::INTERNAL_SERVER_ERROR, "Failed to read image file").into_response();
 	}
 
 	// Determine the MIME type based on the file extension
@@ -163,8 +156,7 @@ pub async fn get_cover_image(Path(filename): Path<String>) -> impl IntoResponse 
 		.unwrap()
 }
 
-pub async fn send_music(
-	Path(music_path): Path<String>, // Extract `path` from the URL path
+pub async fn send_music(Path(music_path): Path<String>, // Extract `path` from the URL path
 ) -> impl IntoResponse {
 	// Open the file
 	let mut file = match File::open(&music_path).await {
@@ -175,11 +167,7 @@ pub async fn send_music(
 	// Read the file into a byte vector
 	let mut file_bytes = Vec::new();
 	if let Err(_) = file.read_to_end(&mut file_bytes).await {
-		return (
-			axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-			"Failed to read file",
-		)
-			.into_response();
+		return (axum::http::StatusCode::INTERNAL_SERVER_ERROR, "Failed to read file").into_response();
 	}
 
 	// Serve the file as a response

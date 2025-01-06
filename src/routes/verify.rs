@@ -27,8 +27,7 @@ pub async fn verify(jar: CookieJar) -> Response<String> {
 		}
 	};
 
-	let secret_key =
-		std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
+	let secret_key = std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
 
 	// Verifying the access token
 	match jwt::verify(access_token.value(), &secret_key) {

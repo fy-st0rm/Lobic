@@ -19,10 +19,7 @@ pub struct LoginPayload {
 	pub password: String,
 }
 
-pub async fn login(
-	State(app_state): State<AppState>,
-	Json(payload): Json<LoginPayload>,
-) -> Response<String> {
+pub async fn login(State(app_state): State<AppState>, Json(payload): Json<LoginPayload>) -> Response<String> {
 	// Getting db from pool
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
@@ -36,9 +33,7 @@ pub async fn login(
 	};
 
 	// Searching if the email exists
-	let query = users
-		.filter(email.eq(&payload.email))
-		.first::<User>(&mut db_conn);
+	let query = users.filter(email.eq(&payload.email)).first::<User>(&mut db_conn);
 
 	// Getting the user
 	let user = match query {
@@ -46,10 +41,7 @@ pub async fn login(
 		Err(_) => {
 			return Response::builder()
 				.status(StatusCode::BAD_REQUEST)
-				.body(format!(
-					"Account with email {} doesn't exists",
-					&payload.email
-				))
+				.body(format!("Account with email {} doesn't exists", &payload.email))
 				.unwrap();
 		}
 	};
@@ -63,8 +55,7 @@ pub async fn login(
 	}
 
 	// Generate jwt
-	let jwt_secret_key =
-		std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
+	let jwt_secret_key = std::env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set in .env file");
 
 	let access_claims = jwt::Claims {
 		id: user.user_id.clone(),
