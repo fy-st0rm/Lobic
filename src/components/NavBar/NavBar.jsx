@@ -46,7 +46,7 @@ function NavBar() {
 
 	const navigateAndClose = (url) => {
 		closeDashboard();
-		window.location.href = url;
+		navigate(url);
 	};
 
 	return (
@@ -54,7 +54,7 @@ function NavBar() {
 			<div className="navbar">
 				<div className="blur"></div>
 				<div className="logo-container">
-					<Link href="/home" className={isDisabled ? "disabled-link" : ""}>
+					<Link to="/home" className={isDisabled ? "disabled-link" : ""}>
 						<img src="./public/lobic_logo.png" className="logo" alt="Logo" />
 					</Link>
 				</div>
