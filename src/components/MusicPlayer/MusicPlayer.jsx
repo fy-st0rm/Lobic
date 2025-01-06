@@ -60,7 +60,7 @@ function MusicPlayer() {
 			const playNewSong = async () => {
 				try {
 					await resetAudioRef();
-					audioRef.current.src = await fetchMusicUrl(musicState.filename);
+					audioRef.current.src = await fetchMusicUrl(musicState.id);
 					await audioRef.current.play();
 
 					// Set the volume only once when the song is loaded

@@ -31,9 +31,9 @@ export const wsSend = (ws, data) => {
 }
 
 // Creates a blob url for audio
-export const fetchMusicUrl = async (filename) => {
+export const fetchMusicUrl = async (id) => {
 	try {
-		const url = `${SERVER_IP}/music/${encodeURIComponent(filename)}`;
+		const url = `${SERVER_IP}/music/${encodeURIComponent(id)}`;
 		const response = await fetch(url, {
 			method: "GET",
 		});
