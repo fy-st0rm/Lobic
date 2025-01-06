@@ -1,0 +1,9 @@
+.info-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.profilepic {
+    width: 100px;
+    border-radius: 50px;
+}

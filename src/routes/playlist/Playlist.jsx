@@ -8,9 +8,9 @@ import { Dot } from 'lucide-react';
 function Playlist() {
     return(
         <>
-        <NavBar />
+        
         <SongContainer />
-        <MusicPlayer />
+        
         </>       
     );
 }
