@@ -8,7 +8,9 @@ use axum::{extract::State, http::status::StatusCode, response::Response, Json};
 use diesel::prelude::*;
 use id3::{frame::PictureType, Tag, TagLike};
 use serde::{Deserialize, Serialize};
+use std::collections::hash_map::DefaultHasher;
 use std::fs;
+use std::hash::{Hash, Hasher};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use uuid::Uuid;
@@ -20,10 +22,7 @@ pub struct MusicPath {
 	pub path: String, //     "path" : "/home/rain/Lobic/music/Sunsetz.mp3"
 }
 
-pub async fn save_music(
-	State(app_state): State<AppState>,
-	Json(payload): Json<MusicPath>,
-) -> Response<String> {
+pub async fn save_music(State(app_state): State<AppState>, Json(payload): Json<MusicPath>) -> Response<String> {
 	let mut db_conn = match app_state.db_pool.get() {
 		Ok(conn) => conn,
 		Err(err) => {
@@ -113,13 +112,11 @@ fn is_music_file(path: &Path) -> bool {
 	}
 }
 
-fn process_music_file(
-	path: &Path,
-	db_conn: &mut SqliteConnection,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn process_music_file(path: &Path, db_conn: &mut SqliteConnection) -> Result<(), Box<dyn std::error::Error>> {
 	let path_str = path.to_str().ok_or("Invalid path")?;
 	let tag = Tag::read_from_path(path_str).unwrap_or_default();
-	let curr_music_id = Uuid::new_v4();
+	// let curr_music_id = Uuid::new_v4();
+	let curr_music_id = generate_uuid_from_file_path(path);
 
 	let curr_music = Music {
 		music_id: curr_music_id.to_string(),
@@ -132,9 +129,7 @@ fn process_music_file(
 
 	extract_cover_art(path_str, &curr_music_id)?;
 
-	diesel::insert_into(music)
-		.values(&curr_music)
-		.execute(db_conn)?;
+	diesel::insert_into(music).values(&curr_music).execute(db_conn)?;
 
 	Ok(())
 }
@@ -143,10 +138,7 @@ fn extract_cover_art(mp3_path: &str, uuid: &Uuid) -> Result<(), Box<dyn std::err
 	let tag = Tag::read_from_path(mp3_path)?;
 	let pictures: Vec<_> = tag.pictures().collect();
 
-	if let Some(picture) = pictures
-		.iter()
-		.find(|pic| pic.picture_type == PictureType::CoverFront)
-	{
+	if let Some(picture) = pictures.iter().find(|pic| pic.picture_type == PictureType::CoverFront) {
 		// Create platform-independent path for cover_images directory
 		let cover_dir = PathBuf::from("cover_images");
 		fs::create_dir_all(&cover_dir)?;
@@ -159,4 +151,12 @@ fn extract_cover_art(mp3_path: &str, uuid: &Uuid) -> Result<(), Box<dyn std::err
 	} else {
 		Err("No cover art found in the MP3 file".into())
 	}
+}
+
+fn generate_uuid_from_file_path(file_path: &Path) -> Uuid {
+	let path_str = file_path.to_string_lossy().to_string();
+	let mut hasher = DefaultHasher::new();
+	path_str.hash(&mut hasher);
+	let hash = hasher.finish();
+	Uuid::from_u64_pair(hash, hash) // Use the hash to generate a UUID
 }
