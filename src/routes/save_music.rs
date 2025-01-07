@@ -1,5 +1,3 @@
-// [ ] TODO : the remove redundancy while storing images and the music
-
 use crate::app_state::AppState;
 use crate::lobic_db::models::Music;
 use crate::schema::music::dsl::*;
@@ -115,7 +113,12 @@ fn is_music_file(path: &Path) -> bool {
 fn process_music_file(path: &Path, db_conn: &mut SqliteConnection) -> Result<(), Box<dyn std::error::Error>> {
 	let path_str = path.to_str().ok_or("Invalid path")?;
 	let tag = Tag::read_from_path(path_str).unwrap_or_default();
-	let curr_music_id = generate_uuid_from_file_path(path);
+
+	let curr_artist = tag.artist().unwrap_or("Unknown Artist");
+	let curr_title = tag.title().unwrap_or("Unknown Title");
+	let curr_album = tag.album().unwrap_or("Unknown Album");
+
+	let curr_music_id = generate_uuid_from_metadata(curr_artist, curr_title, curr_album);
 
 	// Create the music_db directory if it doesn't exist
 	let music_db_dir = PathBuf::from("music_db");
@@ -126,13 +129,11 @@ fn process_music_file(path: &Path, db_conn: &mut SqliteConnection) -> Result<(),
 	// Copy the music file to the new location
 	fs::copy(path, &new_file_path)?;
 
-	let new_file_path_str = new_file_path.to_str().ok_or("Invalid new file path")?;
-
 	let curr_music = Music {
 		music_id: curr_music_id.to_string(),
-		artist: tag.artist().unwrap_or("Unknown Artist").to_string(),
-		title: tag.title().unwrap_or("Unknown Title").to_string(),
-		album: tag.album().unwrap_or("Unknown Album").to_string(),
+		artist: curr_artist.to_string(),
+		title: curr_title.to_string(),
+		album: curr_album.to_string(),
 		genre: tag.genre().unwrap_or("Unknown Genre").to_string(),
 	};
 
@@ -162,10 +163,14 @@ fn extract_cover_art(mp3_path: &str, uuid: &Uuid) -> Result<(), Box<dyn std::err
 	}
 }
 
-fn generate_uuid_from_file_path(file_path: &Path) -> Uuid {
-	let path_str = file_path.to_string_lossy().to_string();
+//assumes all mp3 have unique sets of metadata
+fn generate_uuid_from_metadata(curr_artist: &str, curr_title: &str, curr_album: &str) -> Uuid {
 	let mut hasher = DefaultHasher::new();
-	path_str.hash(&mut hasher);
+	curr_artist.hash(&mut hasher);
+	curr_title.hash(&mut hasher);
+	curr_album.hash(&mut hasher);
 	let hash = hasher.finish();
-	Uuid::from_u64_pair(hash, hash) // Use the hash to generate a UUID
+
+	// Convert the hash to a UUID
+	Uuid::from_u64_pair(hash, hash)
 }
