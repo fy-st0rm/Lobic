@@ -20,7 +20,7 @@ const AudioElement = () => {
 			updateMusicState(MPState.PAUSE);
 
 			if (!audioRef.current) return;
-			audioRef.current.src = await fetchMusicUrl(musicState.filename);
+			audioRef.current.src = await fetchMusicUrl(musicState.id);
 			await audioRef.current.pause();
 		}
 		init_audio();
