@@ -84,9 +84,7 @@ function App() {
 				<Route 
 					path="/profile"
 					element={
-						<Auth>
 							<Profile />
-						</Auth>
 					}
 				/>
 			</Routes>

@@ -1,0 +1,23 @@
+.search-list-card {
+    background: linear-gradient(0deg, #157697, #E0E0E0);
+    height: 600px;
+    width: 400px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.search-bar-container {
+    align-items: center;
+    padding-top: 20px;
+}
+
+.search-bar-container input {
+    border-radius: 10px;
+    border: none;
+    width: 300px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
