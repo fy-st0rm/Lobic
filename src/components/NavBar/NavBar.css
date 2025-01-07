@@ -204,6 +204,10 @@ button[disabled] {
   font-size: 13pt;
 }
 
+.dashboard-buttons {
+  color: white;
+}
+
 @media (max-width: 1920px) {
   .hamburger-button {
     display: none;
