@@ -44,7 +44,6 @@ function MusicList({ list_title }) {
 			// Updating Music State globally
 			updateMusicData(
 				item.id,
-				item.filename,
 				item.title,
 				item.artist,
 				coverArt,
