@@ -31,6 +31,7 @@ function App() {
 				<title> Lobic </title>
 				<link rel='icon' href='public\lobic_logo.png'/>
 			</Helmet>
+			
 			{/* Globally rendering navbar */}
 			{ shouldRenderNavBar && <NavBar className="navbar" /> }
 
@@ -83,9 +84,7 @@ function App() {
 				<Route 
 					path="/profile"
 					element={
-						<Auth>
 							<Profile />
-						</Auth>
 					}
 				/>
 			</Routes>

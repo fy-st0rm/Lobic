@@ -158,17 +158,17 @@ function NavBar() {
 						<div className="dashboard open">
 							<div className="dashboard-content">
 								<h2>Dashboard</h2>
-								<button onClick={() => navigateAndClose("/home")}>Home</button>
-								<button onClick={() => navigateAndClose("/playlists")}>
+								<button className='dashboard-buttons' onClick={() => navigateAndClose("/home")}>Home</button>
+								<button className='dashboard-buttons' onClick={() => navigateAndClose("/playlists")}>
 									Playlists
 								</button>
-								<button onClick={() => navigateAndClose("/notifications")}>
+								<button className='dashboard-buttons' onClick={() => navigateAndClose("/notifications")}>
 									Notifications
 								</button>
-								<button onClick={() => navigateAndClose("/lobby")}>
+								<button className='dashboard-buttons' onClick={() => navigateAndClose("/lobby")}>
 									Lobby
 								</button>
-								<button onClick={() => navigateAndClose("/profile")}>
+								<button className='dashboard-buttons' onClick={() => navigateAndClose("/profile")}>
 									Profile
 								</button>
 							</div>
