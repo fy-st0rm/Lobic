@@ -13,6 +13,7 @@ import Profile from "./routes/profile/Profile.jsx";
 import MusicPlayer from './components/MusicPlayer/MusicPlayer.jsx';
 import NavBar from './components/NavBar/NavBar.jsx';
 import { useAppState } from "./AppState.jsx";
+import { Helmet } from 'react-helmet'
 
 function App() {
 	const location = useLocation(); // Get the current route location
@@ -26,6 +27,10 @@ function App() {
 
 	return (
 		<div>
+			<Helmet>
+				<title> Lobic </title>
+				<link rel='icon' href='public\lobic_logo.png'/>
+			</Helmet>
 			{/* Globally rendering navbar */}
 			{ shouldRenderNavBar && <NavBar className="navbar" /> }
 
