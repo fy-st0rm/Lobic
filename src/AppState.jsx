@@ -21,7 +21,6 @@ const loadInitialMusicState = () => {
 		? JSON.parse(savedState)
 		: {
 				id: "",
-				filename: "",
 				title: "",
 				artist: "",
 				cover_img: "",
@@ -52,11 +51,10 @@ export const AppStateProvider = ({ children }) => {
 		});
 	};
 
-	const updateMusicData = (id, filename, title, artist, cover_img, state) => {
+	const updateMusicData = (id, title, artist, cover_img, state) => {
 		setMusicState(prevState => {
 			const newMusicState = {
 				id: id,
-				filename: filename,
 				title: title,
 				artist: artist,
 				cover_img: cover_img,
