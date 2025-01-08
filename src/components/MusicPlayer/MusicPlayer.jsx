@@ -9,7 +9,7 @@ import Mute from "/volumecontrols/Volume Mute.png";
 import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
 import "./MusicPlayer.css";
-import { SERVER_IP, MPState, fetchMusicUrl } from "../../const.jsx";
+import { SERVER_IP, wsSend, OpCode, MPState, fetchMusicUrl } from "../../const.jsx";
 
 function debounce(func, wait) {
 	let timeout;
@@ -28,7 +28,7 @@ function MusicPlayer() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 
-	const { audioRef, musicState, updateMusicState } = useAppState();
+	const { ws, appState, audioRef, addMsgHandler, musicState, updateMusicData, updateMusicTs, updateMusicState } = useAppState();
 
 	const formatTime = (time) => {
 		const minutes = Math.floor(time / 60);
@@ -49,10 +49,62 @@ function MusicPlayer() {
 	}
 
 	useEffect(() => {
+		addMsgHandler(OpCode.SYNC_MUSIC, (res) => {
+			console.log(res);
+			let music = res.value;
+			updateMusicData(
+				music.id,
+				music.title,
+				music.artist,
+				music.cover_img,
+				music.timestamp,
+				music.state
+			);
+
+			if (audioRef.current) {
+				audioRef.current.currentTime = music.timestamp;
+			}
+		});
+
+		if (!appState.in_lobby) return;
+
+		const payload = {
+			op_code: OpCode.SYNC_MUSIC,
+			value: {
+				lobby_id: appState.lobby_id
+			}
+		}
+		wsSend(ws, payload);
+	}, []);
+
+	// Responsible to set the music state of the lobby as a host
+	useEffect(() => {
+		if (!appState.in_lobby) return;
 		if (!musicState.has_item) return;
 
+		const payload = {
+			op_code: OpCode.SET_MUSIC_STATE,
+			value: {
+				lobby_id: appState.lobby_id,
+				user_id: appState.user_id,
+				music_id: musicState.id,
+				title: musicState.title,
+				artist: musicState.artist,
+				cover_img: musicState.cover_img,
+				timestamp: musicState.timestamp,
+				state: musicState.state,
+			}
+		}
+		wsSend(ws, payload);
+	}, [musicState]);
+
+	// Responsible for playing a song whenever the music state is changed
+	useEffect(() => {
+		if (!musicState.has_item) return;
+		if (!audioRef.current) return;
+
 		if (musicState.state === MPState.PLAYING) {
-			console.log("IN PLAY STATE");
+			audioRef.current.play();
 		}
 		else if (musicState.state === MPState.CHANGE) {
 			setIsLoading(true);
@@ -61,8 +113,6 @@ function MusicPlayer() {
 				try {
 					await resetAudioRef();
 					audioRef.current.src = await fetchMusicUrl(musicState.id);
-					await audioRef.current.play();
-
 					// Set the volume only once when the song is loaded
 					audioRef.current.volume = volume / 100; // Set volume after loading song
 				} catch (err) {
@@ -70,14 +120,13 @@ function MusicPlayer() {
 					setError('Failed to autoplay: ' + err.message);
 				} finally {
 					setIsLoading(false);
-
 					updateMusicState(MPState.PLAYING);
 				}
 			};
 			playNewSong();
 		}
 		else if (musicState.state === MPState.PAUSE) {
-			console.log("IN PAUSE STATE");
+			audioRef.current.pause();
 		}
 	}, [musicState]);
 
@@ -88,13 +137,13 @@ function MusicPlayer() {
 			}
 
 			if (musicState.state == MPState.PLAYING) {
-				await audioRef.current.pause();
+				updateMusicTs(audioRef.current.currentTime);
 				updateMusicState(MPState.PAUSE);
 			}
 			else if (musicState.state == MPState.PAUSE) {
 				setIsLoading(true);
 				setError('');
-				await audioRef.current.play();
+				updateMusicTs(audioRef.current.currentTime);
 				updateMusicState(MPState.PLAYING);
 			}
 		} catch (err) {
@@ -145,11 +194,13 @@ function MusicPlayer() {
 		const seekTime = (e.target.value / 100) * duration;
 		audioRef.current.currentTime = seekTime;
 		setCurrentTime(seekTime);
+		updateMusicTs(seekTime);
 	};
 
 	const handleSeekMove = (e) => {
 		const seekTime = (e.target.value / 100) * duration;
 		setCurrentTime(seekTime);
+		updateMusicTs(seekTime);
 	};
 
 	useEffect(() => {

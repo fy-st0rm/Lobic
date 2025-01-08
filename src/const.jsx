@@ -12,6 +12,8 @@ export const OpCode = Object.freeze({
 	MESSAGE: "MESSAGE",
 	GET_MESSAGES: "GET_MESSAGES",
 	GET_LOBBY_IDS: "GET_LOBBY_IDS",
+	SET_MUSIC_STATE: "SET_MUSIC_STATE",
+	SYNC_MUSIC: "SYNC_MUSIC",
 });
 
 export const MPState = Object.freeze({

@@ -24,6 +24,7 @@ const loadInitialMusicState = () => {
 				title: "",
 				artist: "",
 				cover_img: "",
+				timestamp: 0,
 				state: MPState.PAUSE,
 				has_item: false,
 			};
@@ -51,15 +52,30 @@ export const AppStateProvider = ({ children }) => {
 		});
 	};
 
-	const updateMusicData = (id, title, artist, cover_img, state) => {
+	const updateMusicData = (id, title, artist, cover_img, timestamp, state) => {
 		setMusicState(prevState => {
 			const newMusicState = {
 				id: id,
 				title: title,
 				artist: artist,
 				cover_img: cover_img,
+				timestamp: timestamp,
 				state: state,
 				has_item: (id.length === 0) ? false : true,
+			};
+			sessionStorage.setItem(
+				"musicState",
+				JSON.stringify(newMusicState)
+			);
+			return newMusicState;
+		});
+	}
+
+	const updateMusicTs = (timestamp) => {
+		setMusicState(prevState => {
+			const newMusicState = {
+				...prevState,
+				timestamp: timestamp,
 			};
 			sessionStorage.setItem(
 				"musicState",
@@ -146,6 +162,7 @@ export const AppStateProvider = ({ children }) => {
 			audioRef,
 			updateLobbyState,
 			updateMusicData,
+			updateMusicTs,
 			updateMusicState,
 			addMsgHandler,
 			updateUserId

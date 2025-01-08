@@ -47,6 +47,7 @@ function MusicList({ list_title }) {
 				item.title,
 				item.artist,
 				coverArt,
+				0,
 				MPState.CHANGE
 			);
 		} catch (err) {

@@ -29,6 +29,7 @@ function Home() {
 			// Updating the user id in app state
 			let data = await response.json();
 			let user_id = data.user_id;
+			console.log(user_id);
 			updateUserId(user_id);
 
 			// Registering owerself to the backend

@@ -11,13 +11,14 @@ import './index.css'
 
 // Global audio element
 const AudioElement = () => {
-	const { audioRef, musicState, updateMusicState } = useAppState();
+	const { audioRef, musicState, updateMusicTs, updateMusicState } = useAppState();
 
 	useEffect(() => {
 		// Initializing the audio if the music exists in state
 		const init_audio = async () => {
 			if (!musicState.has_item) return;
 			updateMusicState(MPState.PAUSE);
+			updateMusicTs(0);
 
 			if (!audioRef.current) return;
 			audioRef.current.src = await fetchMusicUrl(musicState.id);
