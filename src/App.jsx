@@ -1,96 +1,100 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import React, { useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
 
-import Login from './routes/login/Login.jsx';
+import Login from "./routes/login/Login.jsx";
 import Home from "./routes/home/Home.jsx";
 import Auth from "./routes/auth/Auth.jsx";
-import Signup from './routes/signup/Signup.jsx';
-import ForgotPassword from './routes/login/ForgotPassword.jsx';
+import Signup from "./routes/signup/Signup.jsx";
+import ForgotPassword from "./routes/login/ForgotPassword.jsx";
 import Lobby from "./routes/lobby/Lobby.jsx";
 import Chats from "./routes/chats/Chats.jsx";
 import Playlist from "./routes/playlist/Playlist.jsx";
+import Playlists from "./routes/playlists/playlists.jsx";
+
 import Profile from "./routes/profile/Profile.jsx";
-import MusicPlayer from './components/MusicPlayer/MusicPlayer.jsx';
-import NavBar from './components/NavBar/NavBar.jsx';
+import MusicPlayer from "./components/MusicPlayer/MusicPlayer.jsx";
+import NavBar from "./components/NavBar/NavBar.jsx";
 import { useAppState } from "./AppState.jsx";
-import { Helmet } from 'react-helmet'
+import { Helmet } from "react-helmet";
 
 function App() {
-	const location = useLocation(); // Get the current route location
+  const location = useLocation(); // Get the current route location
 
-	// List of routes where MusicPlayer should NOT be rendered
-	const excludedRoutes = ['/login', '/signup', '/forgotpassword'];
+  // List of routes where MusicPlayer should NOT be rendered
+  const excludedRoutes = ["/login", "/signup", "/forgotpassword"];
 
-	// Check if the current route is excluded
-	const shouldRenderMusicPlayer = !excludedRoutes.includes(location.pathname);
-	const shouldRenderNavBar = shouldRenderMusicPlayer;
+  // Check if the current route is excluded
+  const shouldRenderMusicPlayer = !excludedRoutes.includes(location.pathname);
+  const shouldRenderNavBar = shouldRenderMusicPlayer;
 
-	return (
-		<div>
-			<Helmet>
-				<title> Lobic </title>
-				<link rel='icon' href='public\lobic_logo.png'/>
-			</Helmet>
-			{/* Globally rendering navbar */}
-			{ shouldRenderNavBar && <NavBar className="navbar" /> }
+  return (
+    <div>
+      <Helmet>
+        <title> Lobic </title>
+        <link rel="icon" href="public\lobic_logo.png" />
+      </Helmet>
 
-			{/* Render MusicPlayer globally if the route is not excluded */}
-			{ shouldRenderMusicPlayer && <MusicPlayer/> }
+      {/* Globally rendering navbar */}
+      {shouldRenderNavBar && <NavBar className="navbar" />}
 
-			{/* Routes */}
-			<Routes>
-				{/* Default route */}
-				<Route path="/" element={<Navigate to="/login" replace />} />
+      {/* Render MusicPlayer globally if the route is not excluded */}
+      {shouldRenderMusicPlayer && <MusicPlayer />}
 
-				{/* Public routes */}
-				<Route path="/login" element={<Login />} />
-				<Route path="/signup" element={<Signup />} />
-				<Route path="/forgotpassword" element={<ForgotPassword />} />
+      {/* Routes */}
+      <Routes>
+        {/* Default route */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-				{/* Protected routes */}
-				<Route
-					path="/home"
-					element={
-						<Auth>
-							<Home/>
-						</Auth>
-					}
-				/>
-				<Route
-					path="/lobby"
-					element={
-						<Auth>
-							<Lobby key={location.pathname} />
-						</Auth>
-					}
-				/>
-				<Route
-					path="/chats"
-					element={
-						<Auth>
-							<Chats />
-						</Auth>
-					}
-				/>
-				<Route 
-					path="/playlist" 
-					element={	
-						<Auth>
-							<Playlist />
-						</Auth>
-							} 
-				/>
-				<Route 
-					path="/profile"
-					element={
-						<Auth>
-							<Profile />
-						</Auth>
-					}
-				/>
-			</Routes>
-		</div>
-	);
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/home"
+          element={
+            <Auth>
+              <Home />
+            </Auth>
+          }
+        />
+        <Route
+          path="/lobby"
+          element={
+            <Auth>
+              <Lobby key={location.pathname} />
+            </Auth>
+          }
+        />
+        <Route
+          path="/chats"
+          element={
+            <Auth>
+              <Chats />
+            </Auth>
+          }
+        />
+        <Route
+          path="/playlist"
+          element={
+            <Auth>
+              <Playlist />
+            </Auth>
+          }
+        />
+        <Route
+          path="/playlists"
+          element={
+            <Auth>
+              <Playlists />
+            </Auth>
+          }
+        />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </div>
+  );
 }
 
 export default App;

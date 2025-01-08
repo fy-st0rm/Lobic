@@ -1,0 +1,22 @@
+.profile-page-container {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.profile-info {
+    margin-top: 160px;
+    margin-left: 100px;
+    margin-right: 50px;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.search-list-container {
+    margin-top: 150px;
+    display: flex;
+    flex: 0.4;
+    align-items: flex-start;
+    margin-right: 100px;
+}
