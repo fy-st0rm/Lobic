@@ -55,14 +55,14 @@ function SongContainer() {
 
       <div className="overflow-y-auto flex-1">
         {musicItems.map((item) => (
-          <div onClick={() => handleMusicClick(item)}>
+          <div>
             <SongInfo
               songName={item.title}
               artistName={item.artist}
               duration={item.album}
               addedBy={item.addedBy}
               coverImg={`${SERVER_IP}/image/${item.id}.png`}
-
+              onClick={() => handleMusicClick(item)}
             />
           </div>
         ))}
