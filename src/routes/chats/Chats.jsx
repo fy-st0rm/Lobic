@@ -50,7 +50,7 @@ function Chats() {
 	// Leave lobby signal handler
 	useEffect(() => {
 		addMsgHandler(OpCode.LEAVE_LOBBY, (res) => {
-			updateLobbyState("", false);
+			updateLobbyState("", false, false);
 			navigate("/lobby");
 		})
 	}, [])

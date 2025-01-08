@@ -82,7 +82,7 @@
     width: 50%;
     appearance: none;
     height: 2px;
-
+    background-color: white;
 }
 
 .status-bar::-webkit-slider-thumb {
@@ -91,6 +91,16 @@
     width: 10px;
     background-color: white;
     border-radius: 100%;
+}
+
+.status-bar:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.status-bar:disabled::-webkit-slider-thumb {
+    background-color: white;
+    cursor: not-allowed;
 }
 
 .volume-control-bar::-webkit-slider-thumb {
@@ -112,10 +122,15 @@
 }
 
 .button-group {
-
     height: 25px;
     width: 25px;
     cursor: pointer;
+}
+
+.button-group.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .status {

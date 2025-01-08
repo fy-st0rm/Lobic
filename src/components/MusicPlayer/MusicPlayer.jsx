@@ -26,9 +26,19 @@ function MusicPlayer() {
 	const [seeking, setSeeking] = useState(false);
 	const [initialVolume, setInitialVolume] = useState(50); // For mute toggle
 	const [isLoading, setIsLoading] = useState(false);
+	const [accessControls, setAccessControls] = useState(true);
 	const [error, setError] = useState('');
 
-	const { ws, appState, audioRef, addMsgHandler, musicState, updateMusicData, updateMusicTs, updateMusicState } = useAppState();
+	const {
+		ws,
+		appState,
+		musicState,
+		audioRef,
+		addMsgHandler,
+		updateMusicData,
+		updateMusicTs,
+		updateMusicState
+	} = useAppState();
 
 	const formatTime = (time) => {
 		const minutes = Math.floor(time / 60);
@@ -48,6 +58,12 @@ function MusicPlayer() {
 		setError(''); // Clear any errors
 	}
 
+	// Disables the controls for listeners in lobby
+	useEffect(() => {
+		setAccessControls(!appState.is_host && appState.in_lobby);
+	}, [appState]);
+
+	// Responsible for syncronizing the music state
 	useEffect(() => {
 		addMsgHandler(OpCode.SYNC_MUSIC, (res) => {
 			console.log(res);
@@ -229,18 +245,26 @@ function MusicPlayer() {
 			</div>
 			<div className="control-container">
 				<div className="control-bar">
-					<button className="control-button" disabled={isLoading}>
-						<img src={previousButton} alt="Previous" className="button-group" />
+					<button className="control-button" disabled={isLoading || accessControls}>
+						<img
+							src={previousButton}
+							alt="Previous"
+							className={`button-group ${accessControls ? "disabled" : ""}`}
+						/>
 					</button>
-					<button className="control-button" onClick={handlePlayMusic} disabled={isLoading}>
+					<button className="control-button" onClick={handlePlayMusic} disabled={isLoading || accessControls}>
 						<img
 							src={musicState.state === MPState.PLAYING ? pauseButton : playButton }
 							alt={musicState.state === MPState.PLAYING ? "Pause" : "Play"}
-							className="button-group"
+							className={`button-group ${accessControls ? "disabled" : ""}`}
 						/>
 					</button>
-					<button className="control-button" disabled={isLoading}>
-						<img src={NextButton} alt="Next" className="button-group" />
+					<button className="control-button" disabled={isLoading || accessControls}>
+						<img
+							src={NextButton}
+							alt="Next"
+							className={`button-group ${accessControls ? "disabled" : ""}`}
+						/>
 					</button>
 				</div>
 				<div className="status">
@@ -256,7 +280,7 @@ function MusicPlayer() {
 						onTouchStart={handleSeekStart}
 						onTouchEnd={handleSeekEnd}
 						className="status-bar"
-						disabled={isLoading}
+						disabled={isLoading || accessControls}
 					/>
 				</div>
 			</div>

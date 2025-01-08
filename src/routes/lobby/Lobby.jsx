@@ -59,7 +59,7 @@ function Lobby() {
 		// Handling the response
 		addMsgHandler(OpCode.CREATE_LOBBY, (res) => {
 			// Tagging the user as joined in lobby
-			updateLobbyState(res.value.lobby_id, true);
+			updateLobbyState(res.value.lobby_id, true, true);
 
 			// Switching to chat page when sucessfully created lobby
 			navigate("/chats");
@@ -78,7 +78,7 @@ function Lobby() {
 	const handleJoinLobby = (lobby_id) => {
 		// Join Lobby Handler
 		addMsgHandler(OpCode.JOIN_LOBBY, (res) => {
-			updateLobbyState(res.value.lobby_id, true);
+			updateLobbyState(res.value.lobby_id, true, false);
 			navigate("/chats");
 		});
 

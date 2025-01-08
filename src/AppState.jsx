@@ -12,6 +12,7 @@ const loadInitialAppState = () => {
 				user_id: "",
 				lobby_id: "",
 				in_lobby: false,
+				is_host: false,
 			};
 };
 
@@ -37,12 +38,13 @@ export const AppStateProvider = ({ children }) => {
 	const [appState, setAppState] = useState(loadInitialAppState);
 	const [musicState, setMusicState] = useState(loadInitialMusicState);
 
-	const updateLobbyState = (lobby_id, in_lobby) => {
+	const updateLobbyState = (lobby_id, in_lobby, is_host) => {
 		setAppState(prevState => {
 			const newState = {
 				...prevState,
 				lobby_id: lobby_id,
 				in_lobby: in_lobby,
+				is_host: is_host,
 			};
 			sessionStorage.setItem(
 				"appState",
