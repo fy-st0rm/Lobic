@@ -9,7 +9,7 @@ async function saveMusicRequest() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        path: "/home/rain/Music",
+        path: "demo_songs/",
       }),
     });
 
