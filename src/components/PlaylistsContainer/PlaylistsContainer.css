@@ -1,0 +1,16 @@
+.playlists-container {
+    margin-left: 40px;
+    margin-top: 20px;
+}
+
+.playlists {
+    display: flex;
+    overflow-x: scroll;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+}
+
+.playlists-container h2 {
+    color: white;
+    margin-bottom: 10px;
+}

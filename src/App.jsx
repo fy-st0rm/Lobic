@@ -91,7 +91,12 @@ function App() {
             </Auth>
           }
         />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={
+          <Auth>
+          <Profile />
+          </Auth>
+          } 
+        />
       </Routes>
     </div>
   );

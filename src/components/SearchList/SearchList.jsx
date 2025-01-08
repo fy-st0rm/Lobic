@@ -1,8 +1,9 @@
 import React from 'react'
 import './SearchList.css'
-import SearchBar from "../SearchBar/SearchBar";
+import ClearButton from '/public/close.png'
 
 function SearchList() {
+
     return (
         <>
             <div className="search-list-card">
@@ -10,7 +11,9 @@ function SearchList() {
                     <input 
                         type="text"
                         placeholder="Search for People"
+                        className="profile-searchbar"
                     />
+                    <button className='profile-clear-button'> <img className="profile-clear-png" src={ClearButton} /> </button>
                 </div>
             </div>
         </>
