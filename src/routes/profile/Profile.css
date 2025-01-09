@@ -1,22 +1,42 @@
 .profile-page-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    column-gap: 50px;
+    justify-content: start;
+    width: 100%;
+    flex: 1;
+	overflow-y: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	z-index: 1;
+	margin-right: 5px;
+	padding-right: 10px;
+    height: 90vh;
+}
+
+.main-content {
     display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.profile-info {
+    margin-top: 90px;
+    margin-right: 0;
+    margin-left: 200px;
+    width: 100%;
+}
+
+.search-list-container {
+    margin-top: 70px;
+    margin-right: 40px;
+    display: flex;
+    flex: 0.4;
     align-items: flex-start;
     width: 100%;
 }
 
-.profile-info {
-    margin-top: 160px;
-    margin-left: 100px;
-    margin-right: 50px;
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-}
-
-.search-list-container {
-    margin-top: 150px;
-    display: flex;
-    flex: 0.4;
-    align-items: flex-start;
-    margin-right: 100px;
+.playlists-container {
+    margin-top: 60px;
+    width: 100%;
 }

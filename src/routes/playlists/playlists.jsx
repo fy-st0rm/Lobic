@@ -1,19 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAppState } from "../../AppState.jsx";
+import { SERVER_IP } from "../../const.jsx";
+
 
 function Playlists() {
   const { appState } = useAppState();
   const currentUserId = appState.user_id;
 
+  const [playlists, setPlaylists] = useState([]); // State to store playlists
+
+  // Function to fetch playlists for the current user
+  const fetchPlaylists = async () => {
+    try {
+      const response = await fetch(
+        `${SERVER_IP}/playlist/get_users_playlists?user_uuid=${encodeURIComponent(currentUserId)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.status !== 200) {
+        throw new Error(result.message || "Failed to fetch playlists");
+      }
+
+      // Log and store the playlists
+      console.log("Playlists fetched successfully:", result.playlists);
+      setPlaylists(result.playlists || []);
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
+    }
+  };
+
+  // Fetch playlists when the component mounts
+  useEffect(() => {
+    if (currentUserId) {
+      fetchPlaylists();
+    }
+  }, [currentUserId]);
+
   const handleAddPlaylistClick = async () => {
     const playlistData = {
-      playlist_name: "12 00 pm", // Replace with dynamic input if needed
+      playlist_name: "my playlisst 3", // Replace with dynamic input if needed
       user_id: currentUserId, // Use the current user ID from global state
-      description: "mfff", // Replace with dynamic input if needed
+      description: "asf", // Replace with dynamic input if needed
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8080/playlist/new", {
+      const response = await fetch(SERVER_IP+"/playlist/new", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,6 +66,9 @@ function Playlists() {
       }
 
       console.log("Playlist created successfully:", result.message);
+
+      // Refresh the playlists after creating a new one
+      fetchPlaylists();
     } catch (error) {
       console.error("Error creating playlist:", error);
     }
@@ -41,6 +82,28 @@ function Playlists() {
       >
         Add Playlist
       </button>
+
+      {/* Display the playlists */}
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-4">Your Playlists</h2>
+        {playlists.length > 0 ? (
+          <ul>
+            {playlists.map((playlist) => (
+              <li key={playlist.playlist_id} className="mb-2">
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <h3 className="font-semibold">{playlist.playlist_name}</h3>
+                  <p>{playlist.description || "No description"}</p>
+                  <p className="text-sm text-gray-500">
+                    Created: {new Date(playlist.creation_date_time).toLocaleString()}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No playlists found.</p>
+        )}
+      </div>
     </div>
   );
 }
