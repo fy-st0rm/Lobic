@@ -125,6 +125,17 @@ export const AppStateProvider = ({ children }) => {
 
 		ws.current.onopen = () => {
 			console.log("From Handler: Connection Open");
+
+			// Performs connection whenever the page is refreshed and when userid exists
+			if (appState.user_id !== "") {
+				const payload = {
+					op_code: OpCode.CONNECT,
+					value: {
+						user_id: appState.user_id
+					}
+				};
+				wsSend(ws, payload);
+			}
 		}
 
 		ws.current.onmessage = (event) => {

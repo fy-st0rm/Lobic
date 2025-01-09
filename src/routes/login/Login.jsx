@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import logo from '/lobic_logo.png';
 import './Login.css';
 import { SERVER_IP } from "../../const.jsx";
+import { useAppState } from "../../AppState.jsx";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -13,10 +14,9 @@ function Login() {
 	const [errorMsg, setErrorMsg] = useState("");
 
 	const navigate = useNavigate();
+	const { updateUserId } = useAppState();
 
-	const handleLogin = async (event) => {
-		event.preventDefault();
-
+	const performLogin = async () => {
 		const payload = {
 			email: email,
 			password: password,
@@ -35,10 +35,47 @@ function Login() {
 			let msg = await response.text();
 			setIsError(true);
 			setErrorMsg(msg);
+		}
+	}
+
+	const initClientState = async () => {
+		// Getting the user data
+		let response = await fetch(SERVER_IP + "/get_user", {
+			method: "GET",
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			let err = await response.text();
+			console.log(err);
+			setIsError(true);
+			setErrorMsg(err)
 			return;
 		}
 
-		navigate("/home");
+		// Updating the user id in app state
+		let data = await response.json();
+		let user_id = data.user_id;
+		updateUserId(user_id);
+	}
+
+	const handleLogin = async (event) => {
+		event.preventDefault();
+
+		await performLogin();
+		if (isError) {
+			return;
+		}
+
+		await initClientState();
+		if (isError) {
+			return;
+		}
+
+		// Intentionally performing a refresh to connect to backend
+		// ps: idk what im doing
+		window.location.href = "/home";
+		//navigate("/home");
 	};
 
 	const handleSignupRedirect = () => {

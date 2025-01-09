@@ -15,7 +15,15 @@ function Chats() {
 	const [messages, setMessages] = useState(null);
 
 	const navigate = useNavigate();
-	const { appState, ws, updateLobbyState, addMsgHandler } = useAppState();
+	const {
+		ws,
+		audioRef,
+		appState,
+		musicState,
+		addMsgHandler,
+		updateMusicData,
+		updateLobbyState,
+	} = useAppState();
 
 	const users = [
 		{ id: 1, name: "Coolboy", image: "/user_images/sameep.jpg" },
@@ -30,7 +38,6 @@ function Chats() {
 	// Chat fetch signal handler
 	useEffect(() => {
 		addMsgHandler(OpCode.GET_MESSAGES, (res) => {
-			console.log(res);
 			setMessages(res.value);
 		});
 
@@ -45,6 +52,36 @@ function Chats() {
 			};
 			wsSend(ws, payload);
 		}, 1000);
+	}, []);
+
+	// Responsible for syncronizing the music state
+	useEffect(() => {
+		addMsgHandler(OpCode.SYNC_MUSIC, (res) => {
+			console.log(res);
+			let music = res.value;
+			updateMusicData(
+				music.id,
+				music.title,
+				music.artist,
+				music.cover_img,
+				music.timestamp,
+				music.state
+			);
+
+			if (audioRef.current) {
+				audioRef.current.currentTime = music.timestamp;
+			}
+		});
+
+		if (!appState.in_lobby) return;
+
+		const payload = {
+			op_code: OpCode.SYNC_MUSIC,
+			value: {
+				lobby_id: appState.lobby_id
+			}
+		}
+		wsSend(ws, payload);
 	}, []);
 
 	// Leave lobby signal handler
@@ -94,17 +131,17 @@ function Chats() {
 		setInputValue(fileNames);
 	};
 
-	const renderTextBubble = (msg) => {
+	const renderTextBubble = (msg, idx) => {
 		if (msg.user_id === appState.user_id) {
 			return (
-				<div className="message outgoing">
+				<div className="message outgoing" key={idx}>
 					<p>{msg.message}</p>
 					<div className="timestamp">{msg.timestamp}</div>
 				</div>
 			);
 		} else {
 			return (
-				<div className="message incoming">
+				<div className="message incoming" key={idx}>
 					<p>{msg.message}</p>
 					<div className="timestamp">{msg.timestamp}</div>
 				</div>
@@ -154,7 +191,7 @@ function Chats() {
 
 						{/* Messages */}
 						{
-							messages && messages.map((text, idx) => renderTextBubble(text))
+							messages && messages.map((text, idx) => renderTextBubble(text, idx))
 						}
 
 						{/* Type Box */}

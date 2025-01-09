@@ -63,36 +63,6 @@ function MusicPlayer() {
 		setAccessControls(!appState.is_host && appState.in_lobby);
 	}, [appState]);
 
-	// Responsible for syncronizing the music state
-	useEffect(() => {
-		addMsgHandler(OpCode.SYNC_MUSIC, (res) => {
-			console.log(res);
-			let music = res.value;
-			updateMusicData(
-				music.id,
-				music.title,
-				music.artist,
-				music.cover_img,
-				music.timestamp,
-				music.state
-			);
-
-			if (audioRef.current) {
-				audioRef.current.currentTime = music.timestamp;
-			}
-		});
-
-		if (!appState.in_lobby) return;
-
-		const payload = {
-			op_code: OpCode.SYNC_MUSIC,
-			value: {
-				lobby_id: appState.lobby_id
-			}
-		}
-		wsSend(ws, payload);
-	}, []);
-
 	// Responsible to set the music state of the lobby as a host
 	useEffect(() => {
 		if (!appState.in_lobby) return;
