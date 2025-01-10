@@ -18,8 +18,7 @@ function NavBar() {
 
 	const handleConfirm = () => {
 		setShowMessage(false);
-		setIsDisabled(false);
-
+		setIsDisabled(false)
 		navigate('/login');
 	};
 
