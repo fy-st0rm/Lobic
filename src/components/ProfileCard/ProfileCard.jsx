@@ -1,11 +1,11 @@
 import React from "react";
-import Image from "/public/pic_test.png";
+import Image from "/public/pic_test_2.png";
 import "./ProfileCard.css";
+
 import { SERVER_IP } from "../../const";
 
 function ProfileCard({ usertag, username, friendcount, user_uuid }) {
-  user_uuid = "123e4567-e89b-12d3-a456-426614174000"; //TODO: get from the app state
-
+  // console.log(user_uuid); we got user_uuid in here
   const handleUpload = async () => {
     try {
       const response = await fetch(Image); // TODO: get from the backend or the user input (idk)
