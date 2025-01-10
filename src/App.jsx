@@ -75,14 +75,17 @@ function App() {
             </Auth>
           }
         />
-        <Route
+        {/* <Route
           path="/playlist"
           element={
             <Auth>
               <Playlist />
             </Auth>
           }
-        />
+        /> */}
+        <Route path="/playlist/:playlistId" element={<Playlist />} />
+
+
         <Route
           path="/playlists"
           element={
