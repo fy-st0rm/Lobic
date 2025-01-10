@@ -35,7 +35,9 @@ function Login() {
 			let msg = await response.text();
 			setIsError(true);
 			setErrorMsg(msg);
+			return false;
 		}
+		return true;
 	}
 
 	const initClientState = async () => {
@@ -50,25 +52,26 @@ function Login() {
 			console.log(err);
 			setIsError(true);
 			setErrorMsg(err)
-			return;
+			return false;
 		}
 
 		// Updating the user id in app state
 		let data = await response.json();
 		let user_id = data.user_id;
 		updateUserId(user_id);
+		return true;
 	}
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
 
-		await performLogin();
-		if (isError) {
+		let res = await performLogin();
+		if (!res) {
 			return;
 		}
 
-		await initClientState();
-		if (isError) {
+		res = await initClientState();
+		if (!res) {
 			return;
 		}
 
