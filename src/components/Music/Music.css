@@ -69,9 +69,10 @@
 }
 
 .music-info {
-    text-align: center;
-    width: 100%;
+    width: 5rem;
     margin-top: 5px;
+    mask-image: none;
+    -webkit-mask-image: linear-gradient(90deg, #072631 90%, transparent);
 }
 
 .music-title {
@@ -80,6 +81,8 @@
     color: white;
     margin: 0;
     font-family: Arial;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .artist-name {
@@ -90,3 +93,44 @@
     font-family: Arial;
 
 }
+
+.dropdown{
+        position: relative;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+ }
+    .dropdown div{
+        display: block;
+        color: white;
+        font-weight: bold;
+        font-size: 10px;
+        white-space: nowrap;
+       
+    }
+    .dropdown .dropdown-items{
+        display: none;
+        position: absolute;
+        bottom: 10px;
+        right: 40px;
+        background-color: rgba(7, 38, 49, 0.8);
+        border-radius: 10px  ;
+        min-width: 100px;
+        box-shadow: 1px 1px 1px hsla(0, 5%, 96%, 0.1);
+    }
+    .dropdown:hover .dropdown-items{
+        display: block;
+    }
+    .dropdown .dropdown-item{
+      
+      padding: 10px;
+      
+     
+    }
+    .dropdown .dropdown-item:hover{
+        border-radius: 10px;
+        color: rgb(232, 234, 235);
+        background-color: rgb(21, 118, 151,0.5);
+     
+    }

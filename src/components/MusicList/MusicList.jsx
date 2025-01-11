@@ -70,7 +70,7 @@ function MusicList({ list_title }) {
 						className={`music-item-wrapper ${
 							selectedSongId === item.id ? 'selected' : ''
 						}`}
-						onClick={() => handleMusicClick(item)}
+						
 					>
 						<Music
 							title={item.title}
@@ -78,6 +78,7 @@ function MusicList({ list_title }) {
 							coverArt={getImageUrl(item.id)} // Pass the cover art URL to the Music component
 							album={item.album}
 							genre={item.genre}
+							onClick={() => handleMusicClick(item)}
 						/>
 					</div>
 				))}
