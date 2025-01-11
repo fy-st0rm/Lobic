@@ -3,7 +3,7 @@ import SongInfo from "../SongInfo/SongInfo";
 import { SERVER_IP, MPState } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
 
-function SongContainer() {
+function SongContainer(playlist) {
   const [musicItems, setMusicItems] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -11,34 +11,19 @@ function SongContainer() {
   const { updateMusicData } = useAppState();
   
 
-  useEffect(() => {
-    fetchMusicData();
-  }, []);
 
-  const fetchMusicData = async () => {
-    try {
-      const response = await fetch(`${SERVER_IP}/get_music`);
-      if (!response.ok) throw new Error('Failed to fetch music data');
-      const data = await response.json();
-      setMusicItems(data);
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-    }
-  };
 
   // Get the URL for the cover art image
-  const getImageUrl = (songId) => `${SERVER_IP}/image/${songId}.png`;
+  const getImageUrl = (Id) => `${SERVER_IP}/image/${Id}.png`;
 
   const handleMusicClick = async (item) => {
     try {
 			setIsLoading(true);
-			const coverArt = getImageUrl(item.id);
-			setSelectedSongId(item.id);
+			const coverArt = getImageUrl(item.music_id);
+			setSelectedSongId(item.music_id);
       // Updating Music State globally
       updateMusicData(
-        item.id,
+        item.music_id,
         item.title,
         item.artist,
         coverArt,
@@ -68,16 +53,16 @@ function SongContainer() {
 
 
       <div className="overflow-y-auto flex-1">
-        {musicItems.map((item) => (
+        {playlist.songs.map((item) => (
           <div 
-          key={item.id}
+          key={item.music_id}
             onClick={() => handleMusicClick(item)} >
             <SongInfo
               songName={item.title}
               artistName={item.artist}
               duration={item.album}
               addedBy={item.addedBy}
-              coverImg={getImageUrl(item.id)}
+              coverImg={getImageUrl(item.music_id)}
             />
           </div>
         ))}
