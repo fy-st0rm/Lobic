@@ -2,45 +2,59 @@ import { useEffect, useState } from "react";
 import SongInfo from "../SongInfo/SongInfo";
 import { SERVER_IP, MPState } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
+
 function SongContainer() {
-  const { updateMusicData } = useAppState();
   const [musicItems, setMusicItems] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedSongId, setSelectedSongId] = useState(null);
+  const { updateMusicData } = useAppState();
+  
+
   useEffect(() => {
     fetchMusicData();
   }, []);
+
   const fetchMusicData = async () => {
     try {
       const response = await fetch(`${SERVER_IP}/get_music`);
       if (!response.ok) throw new Error('Failed to fetch music data');
       const data = await response.json();
       setMusicItems(data);
-
+      setIsLoading(false);
     } catch (err) {
       setError(err.message);
-
+      setIsLoading(false);
     }
-
-
   };
+
+  // Get the URL for the cover art image
+  const getImageUrl = (songId) => `${SERVER_IP}/image/${songId}.png`;
+
   const handleMusicClick = async (item) => {
     try {
-
-      const coverArt = `${SERVER_IP}/image/${item.id}.png`;
-
+			setIsLoading(true);
+			const coverArt = getImageUrl(item.id);
+			setSelectedSongId(item.id);
       // Updating Music State globally
       updateMusicData(
         item.id,
         item.title,
         item.artist,
         coverArt,
+        0,
         MPState.CHANGE
       );
     } catch (err) {
       console.error('Failed to fetch music URL:', err);
-
+			setError('Failed to fetch music URL: ' + err.message);
     } finally {
+			setIsLoading(false);
     }
   };
+
+	if (error) return console.log(error);
+
   return (
     <div className="absolute top-[11%] right-[4%] bg-primary-100 opacity-65 rounded-[18px] h-[75%] w-[40%] min-w-[300px] flex flex-col pb-5">
       <div className="sticky top-0 bg-primary-100 rounded-[18px]  z-10">
@@ -55,14 +69,15 @@ function SongContainer() {
 
       <div className="overflow-y-auto flex-1">
         {musicItems.map((item) => (
-          <div>
+          <div 
+          key={item.id}
+            onClick={() => handleMusicClick(item)} >
             <SongInfo
               songName={item.title}
               artistName={item.artist}
               duration={item.album}
               addedBy={item.addedBy}
-              coverImg={`${SERVER_IP}/image/${item.id}.png`}
-              onClick={() => handleMusicClick(item)}
+              coverImg={getImageUrl(item.id)}
             />
           </div>
         ))}
