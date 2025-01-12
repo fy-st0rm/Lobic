@@ -1,23 +1,22 @@
 .searchbar-container {
-	display: flex;
-	align-items: center;
-  }
-  
-  .search-bar {
-	padding: 10px;
-	border-radius: 20px;
-	width: 200px;
-	border: 1px solid #ccc;
-  }
-  
-  .clear-button {
-	background: none;
-	border: none;
-	cursor: pointer;
-  }
-  
-  .clear-png {
-	width: 16px;
-	height: 16px;
-  }
-  
+  display: flex;
+  align-items: center;
+}
+
+.search-bar {
+  padding: 10px;
+  border-radius: 20px;
+  width: 200px;
+  border: 1px solid #ccc;
+}
+
+.clear-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.clear-png {
+  width: 16px;
+  height: 16px;
+}

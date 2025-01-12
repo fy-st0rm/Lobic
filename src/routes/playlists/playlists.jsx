@@ -19,7 +19,7 @@ function Playlists() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const result = await response.json();
@@ -43,7 +43,7 @@ function Playlists() {
   //create a new playlist
   const handleAddPlaylistClick = async () => {
     const playlistData = {
-      playlist_name: "my playlisst 3", 
+      playlist_name: "my playlisst 3",
       user_id: currentUserId,
       description: "asf",
     };
@@ -72,7 +72,9 @@ function Playlists() {
 
   //gop to a particular playlist
   const handlePlaylistClick = (playlist) => {
-    navigate(`/playlist/${playlist.playlist_id}`, { state: { playlistData: playlist } });
+    navigate(`/playlist/${playlist.playlist_id}`, {
+      state: { playlistData: playlist },
+    });
   };
 
   return (
@@ -101,7 +103,8 @@ function Playlists() {
                   {playlist.description || "No description"}
                 </p>
                 <p className="text-sm text-gray-400">
-                  Created: {new Date(playlist.creation_date_time).toLocaleString()}
+                  Created:{" "}
+                  {new Date(playlist.creation_date_time).toLocaleString()}
                 </p>
               </div>
             ))}

@@ -3,12 +3,12 @@
   position: absolute;
   left: 0;
   right: 0;
-	top: 0;
+  top: 0;
   align-items: center;
   justify-content: space-between;
 }
 .blur {
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   filter: blur(5px);
   position: absolute;
   height: 100px;
@@ -23,7 +23,7 @@
 .logo {
   width: 70px;
   height: 70px;
-  margin-left: 10px; 
+  margin-left: 10px;
   padding-top: 6px;
 }
 .navbar-items {
@@ -36,7 +36,7 @@
   padding-top: 8px;
 }
 .navbar-icons {
-  width: 30px;  
+  width: 30px;
 }
 .navbar-home {
   width: 22px;
@@ -57,7 +57,7 @@
 .searchbar-container {
   max-width: 800px;
   min-width: 10px;
-  flex-grow: 1; 
+  flex-grow: 1;
   position: relative;
   display: flex;
   margin-left: 10px;
@@ -157,14 +157,14 @@
   right: 0;
   width: 23%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 5;
 }
 .dashboard.open {
   right: 0;
 }
 .dashboard h2 {
-   margin-top: 70px; 
+  margin-top: 70px;
 }
 .dashboard ul {
   list-style-type: none;
@@ -172,7 +172,7 @@
 .buttons-list {
   list-style-type: none;
   padding: 0;
-  margin: 0; 
+  margin: 0;
 }
 .buttons-list li {
   margin: 10px 0;
@@ -193,7 +193,7 @@ button[disabled] {
   cursor: pointer;
 }
 
-.dashboard.open{
+.dashboard.open {
   right: 0;
 }
 .dashboard-content button {
@@ -219,7 +219,6 @@ button[disabled] {
 }
 
 @media (max-width: 1200px) {
-
   .navbar-items {
     display: none;
   }
@@ -229,11 +228,11 @@ button[disabled] {
   }
 
   .navbar-items {
-    gap: 10px; 
+    gap: 10px;
   }
 
   .searchbar-container {
-    max-width: 400px; 
+    max-width: 400px;
   }
 
   .clear-button {
@@ -255,7 +254,7 @@ button[disabled] {
   .hamburger-button {
     display: flex;
   }
-  
+
   .dashboard {
     display: block;
   }
@@ -266,5 +265,3 @@ button[disabled] {
     display: none;
   }
 }
-
-

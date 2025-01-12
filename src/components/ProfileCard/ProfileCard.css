@@ -1,40 +1,40 @@
 .info-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 30px;
-    width: fit-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+  width: fit-content;
 }
 
 .user-pic {
-    width: 200px;
-    border-radius: 100px;
+  width: 200px;
+  border-radius: 100px;
 }
 
 .user-details-container {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    color: white;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  color: white;
 }
 
 .user-details-container h4 {
-    margin: 0;
-    margin-left: 10px;
-    font-weight: normal;
+  margin: 0;
+  margin-left: 10px;
+  font-weight: normal;
 }
 
 .user-details-container h2 {
-    margin: 0;
-    font-weight: bold;
-    font-size: 20pt;
-    margin-left: 10px;
+  margin: 0;
+  font-weight: bold;
+  font-size: 20pt;
+  margin-left: 10px;
 }
 
 .user-details-container h3 {
-    margin: 0;
-    font-size: 12pt;
-    font-weight: normal;
-    margin-left: 10px;
+  margin: 0;
+  font-size: 12pt;
+  font-weight: normal;
+  margin-left: 10px;
 }
