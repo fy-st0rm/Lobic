@@ -85,7 +85,6 @@ function App() {
         /> */}
         <Route path="/playlist/:playlistId" element={<Playlist />} />
 
-
         <Route
           path="/playlists"
           element={
@@ -94,11 +93,13 @@ function App() {
             </Auth>
           }
         />
-        <Route path="/profile" element={
-          <Auth>
-          <Profile />
-          </Auth>
-          } 
+        <Route
+          path="/profile"
+          element={
+            <Auth>
+              <Profile />
+            </Auth>
+          }
         />
       </Routes>
     </div>

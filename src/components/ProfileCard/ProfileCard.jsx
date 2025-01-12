@@ -20,7 +20,7 @@ function ProfileCard({ usertag, username, friendcount, user_uuid }) {
           headers: {
             "Content-Type": "image/png",
           },
-        }
+        },
       );
 
       if (uploadResponse.ok) {
