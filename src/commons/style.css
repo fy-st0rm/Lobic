@@ -1,10 +1,10 @@
 .scrollable-area {
-  flex: 1;
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: 0;
-  z-index: 1;
-  margin-right: 5px;
-  padding-right: 10px;
+	flex: 1;
+	overflow-y: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	padding: 0;
+	z-index: 1;
+	margin-right: 5px;
+	padding-right: 10px;
 }

@@ -1,42 +1,42 @@
 .profile-page-container {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  column-gap: 50px;
-  justify-content: start;
-  width: 100%;
-  flex: 1;
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  z-index: 1;
-  margin-right: 5px;
-  padding-right: 10px;
-  height: 90vh;
+	display: grid;
+	grid-template-columns: 3fr 1fr;
+	column-gap: 50px;
+	justify-content: start;
+	width: 100%;
+	flex: 1;
+	overflow-y: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	z-index: 1;
+	margin-right: 5px;
+	padding-right: 10px;
+	height: 90vh;
 }
 
 .main-content {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 0;
 }
 
 .profile-info {
-  margin-top: 90px;
-  margin-right: 0;
-  margin-left: 200px;
-  width: 100%;
+	margin-top: 90px;
+	margin-right: 0;
+	margin-left: 200px;
+	width: 100%;
 }
 
 .search-list-container {
-  margin-top: 70px;
-  margin-right: 40px;
-  display: flex;
-  flex: 0.4;
-  align-items: flex-start;
-  width: 100%;
+	margin-top: 70px;
+	margin-right: 40px;
+	display: flex;
+	flex: 0.4;
+	align-items: flex-start;
+	width: 100%;
 }
 
 .playlists-container {
-  margin-top: 60px;
-  width: 100%;
+	margin-top: 60px;
+	width: 100%;
 }

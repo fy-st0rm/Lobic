@@ -1,9 +1,9 @@
 import React, {
-  createContext,
-  useContext,
-  useRef,
-  useState,
-  useEffect,
+	createContext,
+	useContext,
+	useRef,
+	useState,
+	useEffect,
 } from "react";
 import { WS_SERVER_IP, OpCode, MPState, wsSend } from "./const.jsx";
 
@@ -11,171 +11,171 @@ const AppStateContext = createContext(null);
 
 // Load from session storage
 const loadInitialAppState = () => {
-  const savedState = sessionStorage.getItem("appState");
-  return savedState
-    ? JSON.parse(savedState)
-    : {
-        user_id: "",
-        lobby_id: "",
-        in_lobby: false,
-        is_host: false,
-      };
+	const savedState = sessionStorage.getItem("appState");
+	return savedState
+		? JSON.parse(savedState)
+		: {
+				user_id: "",
+				lobby_id: "",
+				in_lobby: false,
+				is_host: false,
+			};
 };
 
 const loadInitialMusicState = () => {
-  const savedState = sessionStorage.getItem("musicState");
-  return savedState
-    ? JSON.parse(savedState)
-    : {
-        id: "",
-        title: "",
-        artist: "",
-        cover_img: "",
-        timestamp: 0,
-        state: MPState.PAUSE,
-        has_item: false,
-      };
+	const savedState = sessionStorage.getItem("musicState");
+	return savedState
+		? JSON.parse(savedState)
+		: {
+				id: "",
+				title: "",
+				artist: "",
+				cover_img: "",
+				timestamp: 0,
+				state: MPState.PAUSE,
+				has_item: false,
+			};
 };
 
 export const AppStateProvider = ({ children }) => {
-  const ws = useRef(null);
-  const msgHandlers = useRef({});
-  const audioRef = useRef(null);
-  const [appState, setAppState] = useState(loadInitialAppState);
-  const [musicState, setMusicState] = useState(loadInitialMusicState);
+	const ws = useRef(null);
+	const msgHandlers = useRef({});
+	const audioRef = useRef(null);
+	const [appState, setAppState] = useState(loadInitialAppState);
+	const [musicState, setMusicState] = useState(loadInitialMusicState);
 
-  const updateLobbyState = (lobby_id, in_lobby, is_host) => {
-    setAppState((prevState) => {
-      const newState = {
-        ...prevState,
-        lobby_id: lobby_id,
-        in_lobby: in_lobby,
-        is_host: is_host,
-      };
-      sessionStorage.setItem("appState", JSON.stringify(newState));
-      return newState;
-    });
-  };
+	const updateLobbyState = (lobby_id, in_lobby, is_host) => {
+		setAppState((prevState) => {
+			const newState = {
+				...prevState,
+				lobby_id: lobby_id,
+				in_lobby: in_lobby,
+				is_host: is_host,
+			};
+			sessionStorage.setItem("appState", JSON.stringify(newState));
+			return newState;
+		});
+	};
 
-  const updateMusicData = (id, title, artist, cover_img, timestamp, state) => {
-    setMusicState((prevState) => {
-      const newMusicState = {
-        id: id,
-        title: title,
-        artist: artist,
-        cover_img: cover_img,
-        timestamp: timestamp,
-        state: state,
-        has_item: id.length === 0 ? false : true,
-      };
-      sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-      return newMusicState;
-    });
-  };
+	const updateMusicData = (id, title, artist, cover_img, timestamp, state) => {
+		setMusicState((prevState) => {
+			const newMusicState = {
+				id: id,
+				title: title,
+				artist: artist,
+				cover_img: cover_img,
+				timestamp: timestamp,
+				state: state,
+				has_item: id.length === 0 ? false : true,
+			};
+			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
+			return newMusicState;
+		});
+	};
 
-  const updateMusicTs = (timestamp) => {
-    setMusicState((prevState) => {
-      const newMusicState = {
-        ...prevState,
-        timestamp: timestamp,
-      };
-      sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-      return newMusicState;
-    });
-  };
+	const updateMusicTs = (timestamp) => {
+		setMusicState((prevState) => {
+			const newMusicState = {
+				...prevState,
+				timestamp: timestamp,
+			};
+			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
+			return newMusicState;
+		});
+	};
 
-  const updateMusicState = (state) => {
-    setMusicState((prevState) => {
-      const newMusicState = {
-        ...prevState,
-        state: state,
-      };
-      sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-      return newMusicState;
-    });
-  };
+	const updateMusicState = (state) => {
+		setMusicState((prevState) => {
+			const newMusicState = {
+				...prevState,
+				state: state,
+			};
+			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
+			return newMusicState;
+		});
+	};
 
-  const updateUserId = (user_id) => {
-    setAppState((prevState) => {
-      const newState = {
-        ...prevState,
-        user_id: user_id,
-      };
-      sessionStorage.setItem("appState", JSON.stringify(newState));
-      return newState;
-    });
-  };
+	const updateUserId = (user_id) => {
+		setAppState((prevState) => {
+			const newState = {
+				...prevState,
+				user_id: user_id,
+			};
+			sessionStorage.setItem("appState", JSON.stringify(newState));
+			return newState;
+		});
+	};
 
-  const addMsgHandler = (tag, handler) => {
-    msgHandlers.current[tag] = handler;
-  };
+	const addMsgHandler = (tag, handler) => {
+		msgHandlers.current[tag] = handler;
+	};
 
-  useEffect(() => {
-    ws.current = new WebSocket(WS_SERVER_IP);
-    console.log("New websocket");
+	useEffect(() => {
+		ws.current = new WebSocket(WS_SERVER_IP);
+		console.log("New websocket");
 
-    ws.current.onopen = () => {
-      console.log("From Handler: Connection Open");
+		ws.current.onopen = () => {
+			console.log("From Handler: Connection Open");
 
-      // Performs connection whenever the page is refreshed and when userid exists
-      if (appState.user_id !== "") {
-        const payload = {
-          op_code: OpCode.CONNECT,
-          value: {
-            user_id: appState.user_id,
-          },
-        };
-        wsSend(ws, payload);
-      }
-    };
+			// Performs connection whenever the page is refreshed and when userid exists
+			if (appState.user_id !== "") {
+				const payload = {
+					op_code: OpCode.CONNECT,
+					value: {
+						user_id: appState.user_id,
+					},
+				};
+				wsSend(ws, payload);
+			}
+		};
 
-    ws.current.onmessage = (event) => {
-      let res = JSON.parse(event.data);
-      if (res.op_code == OpCode.ERROR) {
-        console.log(res.value);
-        return;
-      }
+		ws.current.onmessage = (event) => {
+			let res = JSON.parse(event.data);
+			if (res.op_code == OpCode.ERROR) {
+				console.log(res.value);
+				return;
+			}
 
-      let found = false;
-      if (res.for in msgHandlers.current) {
-        msgHandlers.current[res.for](res);
-        found = true;
-      }
+			let found = false;
+			if (res.for in msgHandlers.current) {
+				msgHandlers.current[res.for](res);
+				found = true;
+			}
 
-      if (!found) {
-        console.log("From Handler:", event.data);
-      }
-    };
+			if (!found) {
+				console.log("From Handler:", event.data);
+			}
+		};
 
-    ws.current.onclose = () => {
-      console.log("From Handler: Connection Closed");
-    };
+		ws.current.onclose = () => {
+			console.log("From Handler: Connection Closed");
+		};
 
-    return () => {
-      if (ws.current && ws.current.readyState == WebSocket.OPEN) {
-        ws.current.close();
-      }
-    };
-  }, []);
+		return () => {
+			if (ws.current && ws.current.readyState == WebSocket.OPEN) {
+				ws.current.close();
+			}
+		};
+	}, []);
 
-  return (
-    <AppStateContext.Provider
-      value={{
-        appState,
-        musicState,
-        ws,
-        audioRef,
-        updateLobbyState,
-        updateMusicData,
-        updateMusicTs,
-        updateMusicState,
-        addMsgHandler,
-        updateUserId,
-      }}
-    >
-      {children}
-    </AppStateContext.Provider>
-  );
+	return (
+		<AppStateContext.Provider
+			value={{
+				appState,
+				musicState,
+				ws,
+				audioRef,
+				updateLobbyState,
+				updateMusicData,
+				updateMusicTs,
+				updateMusicState,
+				addMsgHandler,
+				updateUserId,
+			}}
+		>
+			{children}
+		</AppStateContext.Provider>
+	);
 };
 
 export const useAppState = () => useContext(AppStateContext);

@@ -1,28 +1,28 @@
 .music-list-container {
-  padding-left: 20px;
-  color: white;
-  text-align: center;
+	padding-left: 20px;
+	color: white;
+	text-align: center;
 }
 
 .list-title {
-  text-align: left;
-  font-family: Arial;
-  margin-bottom: 10px;
+	text-align: left;
+	font-family: Arial;
+	margin-bottom: 10px;
 }
 
 .music-list {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  gap: 10px;
-  overflow-x: scroll;
-  padding-bottom: 10px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	gap: 10px;
+	overflow-x: scroll;
+	padding-bottom: 10px;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 
 .music-item-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }

@@ -11,40 +11,40 @@ import "./index.css";
 
 // Global audio element
 const AudioElement = () => {
-  const { audioRef, musicState, updateMusicTs, updateMusicState } =
-    useAppState();
+	const { audioRef, musicState, updateMusicTs, updateMusicState } =
+		useAppState();
 
-  useEffect(() => {
-    // Initializing the audio if the music exists in state
-    const init_audio = async () => {
-      if (!musicState.has_item) return;
-      updateMusicState(MPState.PAUSE);
-      updateMusicTs(0);
+	useEffect(() => {
+		// Initializing the audio if the music exists in state
+		const init_audio = async () => {
+			if (!musicState.has_item) return;
+			updateMusicState(MPState.PAUSE);
+			updateMusicTs(0);
 
-      if (!audioRef.current) return;
-      audioRef.current.src = await fetchMusicUrl(musicState.id);
-      await audioRef.current.pause();
-    };
-    init_audio();
-  }, []);
+			if (!audioRef.current) return;
+			audioRef.current.src = await fetchMusicUrl(musicState.id);
+			await audioRef.current.pause();
+		};
+		init_audio();
+	}, []);
 
-  const handleOnEnded = () => {
-    updateMusicState(MPState.PAUSE);
-  };
+	const handleOnEnded = () => {
+		updateMusicState(MPState.PAUSE);
+	};
 
-  return ReactDOM.createPortal(
-    <audio ref={audioRef} onEnded={handleOnEnded} />,
-    document.body,
-  );
+	return ReactDOM.createPortal(
+		<audio ref={audioRef} onEnded={handleOnEnded} />,
+		document.body,
+	);
 };
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <AppStateProvider>
-      <AudioElement />
-      <Router>
-        <App />
-      </Router>
-    </AppStateProvider>
-  </StrictMode>,
+	<StrictMode>
+		<AppStateProvider>
+			<AudioElement />
+			<Router>
+				<App />
+			</Router>
+		</AppStateProvider>
+	</StrictMode>,
 );

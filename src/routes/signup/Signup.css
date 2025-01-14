@@ -1,76 +1,76 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap");
 
 .logo {
-  position: absolute; /* Position the logo absolutely within the container */
-  top: 0;
-  left: 0;
-  padding-left: 15px;
+	position: absolute; /* Position the logo absolutely within the container */
+	top: 0;
+	left: 0;
+	padding-left: 15px;
 }
 
 .container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
 }
 
 .outercircle {
-  position: absolute;
-  align-items: center;
-  width: 550px;
-  height: 550px;
-  border-radius: 50%;
-  background-color: #3a95b4;
+	position: absolute;
+	align-items: center;
+	width: 550px;
+	height: 550px;
+	border-radius: 50%;
+	background-color: #3a95b4;
 }
 
 .innercircle {
-  position: absolute;
-  align-items: center;
-  width: 480px;
-  height: 480px;
-  border-radius: 50%;
-  background-color: #73bbd3;
+	position: absolute;
+	align-items: center;
+	width: 480px;
+	height: 480px;
+	border-radius: 50%;
+	background-color: #73bbd3;
 }
 
 .signupContainer {
-  position: absolute;
-  padding: 10px;
-  width: 400px;
-  height: 390px;
-  /* background-color: white; */
-  border-radius: 10px;
-  text-align: center;
+	position: absolute;
+	padding: 10px;
+	width: 400px;
+	height: 390px;
+	/* background-color: white; */
+	border-radius: 10px;
+	text-align: center;
 }
 
 .signupText {
-  font-family: "Geist Mono", monospace;
-  font-weight: 800;
-  font-size: 22px;
-  margin: 5px;
+	font-family: "Geist Mono", monospace;
+	font-weight: 800;
+	font-size: 22px;
+	margin: 5px;
 }
 
 .signinButton {
-  font-family: "geist mono", monospace;
-  width: 100px;
-  height: 40px;
-  background-color: #3a95b4;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  margin-top: 20px;
-  margin-bottom: 15px;
+	font-family: "geist mono", monospace;
+	width: 100px;
+	height: 40px;
+	background-color: #3a95b4;
+	color: white;
+	border: none;
+	border-radius: 25px;
+	margin-top: 20px;
+	margin-bottom: 15px;
 }
 
 .alreadyRegistered {
-  font-family: "geist mono", monospace;
-  color: white;
-  font-weight: 600;
-  font-size: 13px;
-  margin-top: 10px;
+	font-family: "geist mono", monospace;
+	color: white;
+	font-weight: 600;
+	font-size: 13px;
+	margin-top: 10px;
 }
 
 .login {
-  color: black;
-  text-decoration: underline;
+	color: black;
+	text-decoration: underline;
 }
