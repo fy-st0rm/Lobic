@@ -47,6 +47,18 @@ function MusicList({ list_title }) {
       const coverArt = getImageUrl(item.id);
       setSelectedSongId(item.id);
 
+      // Trigger the increment play count route
+      const incrementResponse = await fetch(
+        `${SERVER_IP}/music/incr_times_played/${item.id}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!incrementResponse.ok) {
+        throw new Error("Failed to increment play count");
+      }
+
       // Updating Music State globally
       updateMusicData(
         item.id,
@@ -57,8 +69,8 @@ function MusicList({ list_title }) {
         MPState.CHANGE,
       );
     } catch (err) {
-      console.error("Failed to fetch music URL:", err);
-      setError("Failed to fetch music URL: " + err.message);
+      console.error("Failed to fetch music URL or increment play count:", err);
+      setError("Failed to fetch music URL or increment play count: " + err.message);
     } finally {
       setIsLoading(false);
     }
