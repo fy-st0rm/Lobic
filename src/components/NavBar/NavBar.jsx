@@ -1,29 +1,89 @@
-import React, { useState } from "react";
-import './NavBar.css'
+import React, { useState, useEffect } from "react";
+import "./NavBar.css";
 import { useNavigate, Link } from "react-router-dom";
 import SearchBar from "../SearchBar/SearchBar";
+import { useAppState } from "../../AppState.jsx";
+import { SERVER_IP, OpCode, wsSend } from "../../const.jsx";
 
 function NavBar() {
 	const [showMessage, setShowMessage] = useState(false);
 	const [isDisabled, setIsDisabled] = useState(false);
 	const [inputValue, setInput] = useState("");
 	const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+	const [profilePic, setProfilePic] = useState("/public/sadit.jpg"); // Default image
+	const { appState, ws } = useAppState();
+	const user_id = appState.user_id;
 
 	const navigate = useNavigate();
+
+	// Fetch the user's profile picture
+	useEffect(() => {
+		const fetchProfilePicture = async () => {
+			try {
+				const response = await fetch(
+					`${SERVER_IP}/user/get_pfp/${user_id}.png`,
+				);
+				if (response.ok) {
+					// If the image exists, use it
+					setProfilePic(`${SERVER_IP}/user/get_pfp/${user_id}.png`);
+				} else {
+					// If the image doesnt exist, fall back to the default image
+					setProfilePic("/public/sadit.jpg");
+				}
+			} catch (error) {
+				setProfilePic("/public/sadit.jpg"); // Fall back to the default image
+				console.error("Error fetching profile picture:", error);
+			}
+		};
+
+		if (user_id) {
+			fetchProfilePicture();
+		}
+	}, [user_id]);
 
 	const handleLogoutClick = () => {
 		setShowMessage(true);
 		setIsDisabled(true);
 	};
 
-	const handleConfirm = () => {
+	const handleLogoutConfirm = async () => {
 		setShowMessage(false);
 		setIsDisabled(false);
 
-		navigate('/login');
+		// If the client is in lobby then leave it
+		if (appState.in_lobby) {
+			const payload = {
+				op_code: OpCode.LEAVE_LOBBY,
+				value: {
+					lobby_id: appState.lobby_id,
+					user_id: appState.user_id,
+				},
+			};
+			wsSend(ws, payload);
+		}
+
+		const payload = {
+			user_id: appState.user_id,
+		};
+
+		let response = await fetch(`${SERVER_IP}/logout`, {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(payload),
+		});
+
+		// TODO: Currently not caring about the fetch errors
+
+		// Clearing the session storage
+		sessionStorage.clear();
+
+		navigate("/login");
 	};
 
-	const handleCancel = () => {
+	const handleLogoutCancel = () => {
 		setShowMessage(false);
 		setIsDisabled(false);
 	};
@@ -118,8 +178,13 @@ function NavBar() {
 				/>
 
 				<div className="user-icon">
-					<button className="profile-button" onClick={() => {navigateAndClose('/profile')}}>
-						<img src="/public/sadit.jpg" className="profile-pic" alt="Profile" />
+					<button
+						className="profile-button"
+						onClick={() => {
+							navigateAndClose("/profile");
+						}}
+					>
+						<img src={profilePic} className="profile-pic" alt="Profile" />
 					</button>
 				</div>
 
@@ -158,17 +223,34 @@ function NavBar() {
 						<div className="dashboard open">
 							<div className="dashboard-content">
 								<h2>Dashboard</h2>
-								<button className='dashboard-buttons' onClick={() => navigateAndClose("/home")}>Home</button>
-								<button className='dashboard-buttons' onClick={() => navigateAndClose("/playlists")}>
+								<button
+									className="dashboard-buttons"
+									onClick={() => navigateAndClose("/home")}
+								>
+									Home
+								</button>
+								<button
+									className="dashboard-buttons"
+									onClick={() => navigateAndClose("/playlists")}
+								>
 									Playlists
 								</button>
-								<button className='dashboard-buttons' onClick={() => navigateAndClose("/notifications")}>
+								<button
+									className="dashboard-buttons"
+									onClick={() => navigateAndClose("/notifications")}
+								>
 									Notifications
 								</button>
-								<button className='dashboard-buttons' onClick={() => navigateAndClose("/lobby")}>
+								<button
+									className="dashboard-buttons"
+									onClick={() => navigateAndClose("/lobby")}
+								>
 									Lobby
 								</button>
-								<button className='dashboard-buttons' onClick={() => navigateAndClose("/profile")}>
+								<button
+									className="dashboard-buttons"
+									onClick={() => navigateAndClose("/profile")}
+								>
 									Profile
 								</button>
 							</div>
@@ -181,10 +263,10 @@ function NavBar() {
 				<div className="floating-message">
 					<p>Are you sure you want to logout?</p>
 					<div className="button-group">
-						<button className="confirm-button" onClick={handleConfirm}>
+						<button className="confirm-button" onClick={handleLogoutConfirm}>
 							Confirm
 						</button>
-						<button className="cancel-button" onClick={handleCancel}>
+						<button className="cancel-button" onClick={handleLogoutCancel}>
 							Cancel
 						</button>
 					</div>

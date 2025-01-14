@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
+import React, {
+	createContext,
+	useContext,
+	useRef,
+	useState,
+	useEffect,
+} from "react";
 import { WS_SERVER_IP, OpCode, MPState, wsSend } from "./const.jsx";
 
 const AppStateContext = createContext(null);
@@ -34,28 +40,25 @@ const loadInitialMusicState = () => {
 export const AppStateProvider = ({ children }) => {
 	const ws = useRef(null);
 	const msgHandlers = useRef({});
-	const audioRef =useRef(null);
+	const audioRef = useRef(null);
 	const [appState, setAppState] = useState(loadInitialAppState);
 	const [musicState, setMusicState] = useState(loadInitialMusicState);
 
 	const updateLobbyState = (lobby_id, in_lobby, is_host) => {
-		setAppState(prevState => {
+		setAppState((prevState) => {
 			const newState = {
 				...prevState,
 				lobby_id: lobby_id,
 				in_lobby: in_lobby,
 				is_host: is_host,
 			};
-			sessionStorage.setItem(
-				"appState",
-				JSON.stringify(newState)
-			);
+			sessionStorage.setItem("appState", JSON.stringify(newState));
 			return newState;
 		});
 	};
 
 	const updateMusicData = (id, title, artist, cover_img, timestamp, state) => {
-		setMusicState(prevState => {
+		setMusicState((prevState) => {
 			const newMusicState = {
 				id: id,
 				title: title,
@@ -63,61 +66,49 @@ export const AppStateProvider = ({ children }) => {
 				cover_img: cover_img,
 				timestamp: timestamp,
 				state: state,
-				has_item: (id.length === 0) ? false : true,
+				has_item: id.length === 0 ? false : true,
 			};
-			sessionStorage.setItem(
-				"musicState",
-				JSON.stringify(newMusicState)
-			);
+			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
 			return newMusicState;
 		});
-	}
+	};
 
 	const updateMusicTs = (timestamp) => {
-		setMusicState(prevState => {
+		setMusicState((prevState) => {
 			const newMusicState = {
 				...prevState,
 				timestamp: timestamp,
 			};
-			sessionStorage.setItem(
-				"musicState",
-				JSON.stringify(newMusicState)
-			);
+			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
 			return newMusicState;
 		});
-	}
+	};
 
 	const updateMusicState = (state) => {
-		setMusicState(prevState => {
+		setMusicState((prevState) => {
 			const newMusicState = {
 				...prevState,
 				state: state,
 			};
-			sessionStorage.setItem(
-				"musicState",
-				JSON.stringify(newMusicState)
-			);
+			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
 			return newMusicState;
 		});
-	}
+	};
 
 	const updateUserId = (user_id) => {
-		setAppState(prevState => {
+		setAppState((prevState) => {
 			const newState = {
 				...prevState,
 				user_id: user_id,
 			};
-			sessionStorage.setItem(
-				"appState",
-				JSON.stringify(newState)
-			);
+			sessionStorage.setItem("appState", JSON.stringify(newState));
 			return newState;
 		});
 	};
 
 	const addMsgHandler = (tag, handler) => {
 		msgHandlers.current[tag] = handler;
-	}
+	};
 
 	useEffect(() => {
 		ws.current = new WebSocket(WS_SERVER_IP);
@@ -131,12 +122,12 @@ export const AppStateProvider = ({ children }) => {
 				const payload = {
 					op_code: OpCode.CONNECT,
 					value: {
-						user_id: appState.user_id
-					}
+						user_id: appState.user_id,
+					},
 				};
 				wsSend(ws, payload);
 			}
-		}
+		};
 
 		ws.current.onmessage = (event) => {
 			let res = JSON.parse(event.data);
@@ -154,32 +145,34 @@ export const AppStateProvider = ({ children }) => {
 			if (!found) {
 				console.log("From Handler:", event.data);
 			}
-		}
+		};
 
 		ws.current.onclose = () => {
 			console.log("From Handler: Connection Closed");
-		}
+		};
 
 		return () => {
 			if (ws.current && ws.current.readyState == WebSocket.OPEN) {
 				ws.current.close();
 			}
-		}
+		};
 	}, []);
 
 	return (
-		<AppStateContext.Provider value={{
-			appState,
-			musicState,
-			ws,
-			audioRef,
-			updateLobbyState,
-			updateMusicData,
-			updateMusicTs,
-			updateMusicState,
-			addMsgHandler,
-			updateUserId
-		}}>
+		<AppStateContext.Provider
+			value={{
+				appState,
+				musicState,
+				ws,
+				audioRef,
+				updateLobbyState,
+				updateMusicData,
+				updateMusicTs,
+				updateMusicState,
+				addMsgHandler,
+				updateUserId,
+			}}
+		>
 			{children}
 		</AppStateContext.Provider>
 	);

@@ -1,270 +1,267 @@
 .navbar {
-  display: flex;
-  position: absolute;
-  left: 0;
-  right: 0;
+	display: flex;
+	position: absolute;
+	left: 0;
+	right: 0;
 	top: 0;
-  align-items: center;
-  justify-content: space-between;
+	align-items: center;
+	justify-content: space-between;
 }
 .blur {
-  background-color: rgba(0,0,0,0.3);
-  filter: blur(5px);
-  position: absolute;
-  height: 100px;
-  width: 100%;
-  z-index: -1;
+	background-color: rgba(0, 0, 0, 0.3);
+	filter: blur(5px);
+	position: absolute;
+	height: 100px;
+	width: 100%;
+	z-index: -1;
 }
 .logo-container {
-  display: block;
-  align-items: center;
-  margin-right: 100px;
+	display: block;
+	align-items: center;
+	margin-right: 100px;
 }
 .logo {
-  width: 70px;
-  height: 70px;
-  margin-left: 10px; 
-  padding-top: 6px;
+	width: 70px;
+	height: 70px;
+	margin-left: 10px;
+	padding-top: 6px;
 }
 .navbar-items {
-  list-style: none;
-  gap: 40px;
-  display: flex;
-  margin-left: 0;
-  padding-left: 10px;
-  margin-right: 10px;
-  padding-top: 8px;
+	list-style: none;
+	gap: 40px;
+	display: flex;
+	margin-left: 0;
+	padding-left: 10px;
+	margin-right: 10px;
+	padding-top: 8px;
 }
 .navbar-icons {
-  width: 30px;  
+	width: 30px;
 }
 .navbar-home {
-  width: 22px;
-  padding-top: 2px;
+	width: 22px;
+	padding-top: 2px;
 }
 .navbar-bell {
-  width: 26px;
-  padding-top: 2px;
+	width: 26px;
+	padding-top: 2px;
 }
 .navbar-button {
-  border: none;
-  width: 30px;
-  color: white;
+	border: none;
+	width: 30px;
+	color: white;
 }
 .navbar-link {
-  text-decoration: none;
+	text-decoration: none;
 }
 .searchbar-container {
-  max-width: 800px;
-  min-width: 10px;
-  flex-grow: 1; 
-  position: relative;
-  display: flex;
-  margin-left: 10px;
-  margin-right: 10px;
-  align-items: center;
+	max-width: 800px;
+	min-width: 10px;
+	flex-grow: 1;
+	position: relative;
+	display: flex;
+	margin-left: 10px;
+	margin-right: 10px;
+	align-items: center;
 }
 .search-bar {
-  border-radius: 20px;
-  width: 95%;
-  border: transparent;
-  padding-top: 12px;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-bottom: 12px;
-  background-color: none;
+	border-radius: 20px;
+	width: 95%;
+	border: transparent;
+	padding-top: 12px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 12px;
+	background-color: none;
 }
 .clear-button {
-  position: absolute;
-  border: none;
-  right: 3%;
-  top: 25%;
-  background-color: transparent;
+	position: absolute;
+	border: none;
+	right: 3%;
+	top: 25%;
+	background-color: transparent;
 }
 .clear-button:hover {
-  cursor: pointer;
+	cursor: pointer;
 }
 .clear-png {
-  width: 10px;
+	width: 10px;
 }
 .search-bar:hover {
-  border: none;
+	border: none;
 }
 .user-icon {
-  display: flex;
-  margin-left: 10px;
-  margin-right: 10px;
-  padding-top: 10px;
+	display: flex;
+	margin-left: 10px;
+	margin-right: 10px;
+	padding-top: 10px;
 }
 .profile-button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  width: 40px;
+	border: none;
+	background: none;
+	cursor: pointer;
+	width: 40px;
 }
 .profile-pic {
-  height: 40px;
-  border-radius: 20px;
+	height: 40px;
+	border-radius: 20px;
 }
 .logout {
-  display: flex;
-  margin-right: 10px;
-  padding-top: 10px;
+	display: flex;
+	margin-right: 10px;
+	padding-top: 10px;
 }
 .logout-button {
-  border: none;
-  background-color: transparent;
+	border: none;
+	background-color: transparent;
 }
 .floating-message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  padding: 20px;
-  transform: translate(-50%, -50%);
-  background-color: blue;
-  border: 1px solid blue;
-  border-radius: 5px;
-  z-index: 999;
-  text-align: left;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	padding: 20px;
+	transform: translate(-50%, -50%);
+	background-color: blue;
+	border: 1px solid blue;
+	border-radius: 5px;
+	z-index: 999;
+	text-align: left;
 }
 .button-group {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
 }
 .hamburger {
-  z-index: 10;
+	z-index: 10;
 }
 .hamburger-button {
-  border: none;
-  background-color: transparent;
-  padding-right: 20px;
-  cursor: pointer;
+	border: none;
+	background-color: transparent;
+	padding-right: 20px;
+	cursor: pointer;
 }
 .hamburger-icon {
-  height: 28px;
+	height: 28px;
 }
 .dashboard {
-  position: fixed;
-  top: 0;
-  right: -200px;
-  width: 175px;
-  height: 100px;
-  transition: right 0.6 ease-in-out;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 23%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 5;
+	position: fixed;
+	top: 0;
+	right: -200px;
+	width: 175px;
+	height: 100px;
+	transition: right 0.6 ease-in-out;
+	padding: 0;
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 23%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 5;
 }
 .dashboard.open {
-  right: 0;
+	right: 0;
 }
 .dashboard h2 {
-   margin-top: 70px; 
+	margin-top: 70px;
 }
 .dashboard ul {
-  list-style-type: none;
+	list-style-type: none;
 }
 .buttons-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0; 
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
 }
 .buttons-list li {
-  margin: 10px 0;
-  padding: 10px 15px;
-  cursor: pointer;
+	margin: 10px 0;
+	padding: 10px 15px;
+	cursor: pointer;
 }
 .disabled-link,
 .disabled-link:hover {
-  pointer-events: none;
+	pointer-events: none;
 }
 input[disabled] {
-  cursor: not-allowed;
+	cursor: not-allowed;
 }
 button[disabled] {
-  cursor: not-allowed;
+	cursor: not-allowed;
 }
 .logout-button:hover {
-  cursor: pointer;
+	cursor: pointer;
 }
 
-.dashboard.open{
-  right: 0;
+.dashboard.open {
+	right: 0;
 }
 .dashboard-content button {
-  border: none;
-  background-color: transparent;
-  display: flex;
-  padding-top: 20px;
-  margin-left: 20px;
-  font-size: 13pt;
+	border: none;
+	background-color: transparent;
+	display: flex;
+	padding-top: 20px;
+	margin-left: 20px;
+	font-size: 13pt;
 }
 
 .dashboard-buttons {
-  color: white;
+	color: white;
 }
 
 @media (max-width: 1920px) {
-  .hamburger-button {
-    display: none;
-  }
-  .dashboard {
-    display: none;
-  }
+	.hamburger-button {
+		display: none;
+	}
+	.dashboard {
+		display: none;
+	}
 }
 
 @media (max-width: 1200px) {
+	.navbar-items {
+		display: none;
+	}
 
-  .navbar-items {
-    display: none;
-  }
+	.logo {
+		margin-left: 10px;
+	}
 
-  .logo {
-    margin-left: 10px;
-  }
+	.navbar-items {
+		gap: 10px;
+	}
 
-  .navbar-items {
-    gap: 10px; 
-  }
+	.searchbar-container {
+		max-width: 400px;
+	}
 
-  .searchbar-container {
-    max-width: 400px; 
-  }
+	.clear-button {
+		right: 1%;
+	}
 
-  .clear-button {
-    right: 1%;
-  }
+	.hamburger-button {
+		display: none;
+	}
 
-  .hamburger-button {
-    display: none;
-  }
+	.user-icon {
+		display: none;
+	}
 
-  .user-icon {
-    display: none;
-  }
+	.logout {
+		display: none;
+	}
 
-  .logout {
-    display: none;
-  }
+	.hamburger-button {
+		display: flex;
+	}
 
-  .hamburger-button {
-    display: flex;
-  }
-  
-  .dashboard {
-    display: block;
-  }
+	.dashboard {
+		display: block;
+	}
 }
 
 @media (min-width: 1024px) {
-  .overlay {
-    display: none;
-  }
+	.overlay {
+		display: none;
+	}
 }
-
-

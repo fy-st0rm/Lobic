@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { SERVER_IP } from "../../const.jsx"
+import { SERVER_IP } from "../../const.jsx";
 
 function Auth({ children }) {
 	const [auth, setAuth] = useState(false);
@@ -10,19 +10,18 @@ function Auth({ children }) {
 	useEffect(() => {
 		fetch(SERVER_IP + "/verify", {
 			method: "GET",
-			credentials: 'include',
-		})
-		.then((res) => {
+			credentials: "include",
+		}).then((res) => {
 			if (res.ok) {
 				setAuth(true);
 			} else {
 				setAuth(false);
 				navigate("/");
 			}
-		})
+		});
 	}, []);
 
-	return (auth) ? children : null;
+	return auth ? children : null;
 }
 
-export default Auth
+export default Auth;

@@ -5,7 +5,7 @@ import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
 import NavBar from "../../components/NavBar/NavBar.jsx";
 import MusicList from "../../components/MusicList/MusicList.jsx";
 import SongContainer from "../../components/SongContainer/SongContainer.jsx";
-import './Home.css';
+import "./Home.css";
 
 function Home() {
 	return (

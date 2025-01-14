@@ -30,7 +30,7 @@ export const wsSend = (ws, data) => {
 	if (ws.current.readyState === WebSocket.OPEN) {
 		ws.current.send(JSON.stringify(data));
 	}
-}
+};
 
 // Creates a blob url for audio
 export const fetchMusicUrl = async (id) => {
@@ -51,5 +51,4 @@ export const fetchMusicUrl = async (id) => {
 		console.error("Failed to fetch music:", error);
 		throw error;
 	}
-}
-
+};

@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 import { OpCode, SERVER_IP, wsSend } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
-import { LobbyCard, CreateLobbyButton } from "../../components/LobbyCard/LobbyCard.jsx";
+import {
+	LobbyCard,
+	CreateLobbyButton,
+} from "../../components/LobbyCard/LobbyCard.jsx";
 
 import test_logo from "/covers/cover.jpg";
 import "./Lobby.css";
@@ -36,7 +39,7 @@ function Lobby() {
 		// Requesting the lobby ids
 		const payload = {
 			op_code: OpCode.GET_LOBBY_IDS,
-			value: "empty"
+			value: "empty",
 		};
 		wsSend(ws, payload);
 	}, []);
@@ -69,11 +72,11 @@ function Lobby() {
 		const payload = {
 			op_code: OpCode.CREATE_LOBBY,
 			value: {
-				host_id: user_id
-			}
+				host_id: user_id,
+			},
 		};
 		wsSend(ws, payload);
-	}
+	};
 
 	const handleJoinLobby = (lobby_id) => {
 		// Join Lobby Handler
@@ -87,11 +90,11 @@ function Lobby() {
 			op_code: OpCode.JOIN_LOBBY,
 			value: {
 				lobby_id: lobby_id,
-				user_id: user_id
-			}
+				user_id: user_id,
+			},
 		};
 		wsSend(ws, payload);
-	}
+	};
 
 	return (
 		<>
@@ -99,25 +102,20 @@ function Lobby() {
 				<h1 className="lobby-header"> Lobbies </h1>
 				<div className="scrollable-area">
 					<div className={`grid-container ${showContent ? "show" : ""}`}>
-						{
-							lobbyIds.map((id, idx) => (
-								<LobbyCard
-									key={id}
-									lobby_id={id}
-									lobby_name={id}
-									listeners_cnt="1"
-									song_name="Song Name"
-									artist_name="Artist Name"
-									lobby_icon={test_logo}
-									card_index={idx}
-									onClick={handleJoinLobby}
-								/>
-							))
-						}
-						<CreateLobbyButton
-							card_index="3"
-							onClick={handleCreateLobby}
-						/>
+						{lobbyIds.map((id, idx) => (
+							<LobbyCard
+								key={id}
+								lobby_id={id}
+								lobby_name={id}
+								listeners_cnt="1"
+								song_name="Song Name"
+								artist_name="Artist Name"
+								lobby_icon={test_logo}
+								card_index={idx}
+								onClick={handleJoinLobby}
+							/>
+						))}
+						<CreateLobbyButton card_index="3" onClick={handleCreateLobby} />
 					</div>
 				</div>
 			</div>

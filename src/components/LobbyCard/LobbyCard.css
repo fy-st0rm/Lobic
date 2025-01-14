@@ -8,7 +8,9 @@
 	align-items: center;
 	overflow: visible;
 	color: white;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	transition:
+		transform 0.3s ease,
+		box-shadow 0.3s ease;
 }
 
 .lobby-card-canvas:hover .lobby-card-bg {
@@ -50,7 +52,9 @@
 	filter: blur(1px);
 	border-radius: 21px;
 	visibility: visible;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	transition:
+		transform 0.3s ease,
+		box-shadow 0.3s ease;
 	z-index: -1;
 }
 
@@ -59,7 +63,7 @@
 	width: 150px;
 	height: 150px;
 	border-radius: 50%;
-	background-color: transparent ;
+	background-color: transparent;
 	margin-top: 30px;
 }
 
@@ -73,7 +77,7 @@
 .lobby-card-lobby-name {
 	display: flex;
 	position: relative;
-	color: #D9D9D9;
+	color: #d9d9d9;
 	font-size: 20px;
 	font-weight: bold;
 	margin-top: 5px;
