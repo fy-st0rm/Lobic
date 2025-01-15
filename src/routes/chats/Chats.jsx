@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
 import { OpCode, wsSend } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
@@ -11,7 +11,8 @@ function Chats() {
 	const [inputValue, setInputValue] = useState("");
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [messages, setMessages] = useState(null);
-	
+
+	const chatContainerRef = useRef(null); // Ref for the chat container
 	const navigate = useNavigate();
 	const {
 		ws,
@@ -22,34 +23,38 @@ function Chats() {
 		updateMusicData,
 		updateLobbyState,
 	} = useAppState();
-	
+
 	const users = [
 		{ id: 1, name: "Coolboy", image: "/user_images/sameep.jpg" },
 		{ id: 2, name: "Bhattey", image: "/user_images/manish.jpg" },
 		{ id: 3, name: "SigmaBoy", image: "/user_images/dog.jpg" },
 	];
-	
-	// Existing handlers and effects remain the same
+
 	const handleUserClick = (user) => setSelectedUser(user);
-	
+
 	useEffect(() => {
 		addMsgHandler(OpCode.GET_MESSAGES, (res) => {
 			setMessages(res.value);
 		});
-	
+
 		setTimeout(() => {
-		const payload = {
-			op_code: OpCode.GET_MESSAGES,
-			value: { lobby_id: appState.lobby_id }
-		};
-		wsSend(ws, payload);
+			const payload = {
+				op_code: OpCode.GET_MESSAGES,
+				value: { lobby_id: appState.lobby_id }
+			};
+			wsSend(ws, payload);
 		}, 1000);
 	}, []);
-	
-	// Responsible for syncronizing the music state
+
+	// Scroll to the bottom of the chat whenever messages change
+	useEffect(() => {
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+		}
+	}, [messages]);
+
 	useEffect(() => {
 		addMsgHandler(OpCode.SYNC_MUSIC, (res) => {
-			console.log(res);
 			let music = res.value;
 			updateMusicData(
 				music.id,
@@ -76,14 +81,13 @@ function Chats() {
 		wsSend(ws, payload);
 	}, []);
 
-	// Leave lobby signal handler
 	useEffect(() => {
 		addMsgHandler(OpCode.LEAVE_LOBBY, (res) => {
 			updateLobbyState("", false, false);
 			navigate("/lobby");
-		})
-	}, [])
-	
+		});
+	}, []);
+
 	const handleLeaveClick = () => {
 		wsSend(ws, {
 			op_code: OpCode.LEAVE_LOBBY,
@@ -93,10 +97,10 @@ function Chats() {
 			}
 		});
 	};
-	
+
 	const handleSendMsg = () => {
 		if (!inputValue.trim()) return;
-		
+
 		wsSend(ws, {
 			op_code: OpCode.MESSAGE,
 			value: {
@@ -121,23 +125,6 @@ function Chats() {
 		const fileNames = files.map((file) => file.name).join(", ");
 		setInputValue(fileNames);
 	};
-	
-	const renderMessage = (msg, idx) => {
-		const isOutgoing = msg.user_id === appState.user_id;
-		return (
-		<div
-			key={idx}
-			className={`max-w-[60%] px-5 py-1 my-1 rounded-2xl text-sm leading-tight
-			${isOutgoing ? 
-				'self-end bg-green-100 rounded-tr-2xl rounded-tl-2xl rounded-bl-none mr-5' : 
-				'self-start bg-blue-50 rounded-tr-2xl rounded-tl-2xl rounded-br-none ml-5'
-			}`}
-		>
-			<p>{msg.message}</p>
-			<div className="text-xs text-gray-400 mt-0.5">{msg.timestamp}</div>
-		</div>
-		);
-	};
 
 	return (
 		<div className="fixed inset-0 flex items-center justify-center p-4" style={{ top: '80px', bottom: 'calc(67px + 1px)' }}>
@@ -145,9 +132,8 @@ function Chats() {
 				{/* Sidebar */}
 				<div className="w-80 bg-black/60 rounded-lg overflow-hidden flex flex-col">
 					<div className="p-4 bg-black/20">
-					<span className="text-white font-bold text-xl">Lobblers</span>
+						<span className="text-white font-bold text-xl">Lobblers</span>
 					</div>
-					
 					<div className="flex-1 overflow-y-auto">
 						<div className="p-2 space-y-2">
 							{users.map((user) => (
@@ -180,14 +166,11 @@ function Chats() {
 									alt={selectedUser.name}
 									className="w-8 h-8 rounded-full object-cover"
 								/>
-								<span className="text-white font-bold">
-									{selectedUser.name}
-								</span>
+								<span className="text-white font-bold">{selectedUser.name}</span>
 							</div>
 						) : (
 							<span className="text-white">Select a user to chat</span>
 						)}
-						 {/* Leave Button */}
 						<button
 							onClick={handleLeaveClick}
 							className="text-white hover:opacity-80 bg-transparent border-none"
@@ -197,7 +180,7 @@ function Chats() {
 					</div>
 
 					{/* Messages Area */}
-					<div className="flex-1 overflow-y-auto p-4">
+					<div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
 						{messages?.map((msg, idx) => (
 							<div
 								key={idx}
@@ -222,14 +205,12 @@ function Chats() {
 					{/* Input Area */}
 					<div className="p-4 border-t border-gray-200 bg-white/80">
 						<div className="relative flex items-center">
-							{/* emoji picker */}
 							<button
 								onClick={() => setShowEmojiPicker(!showEmojiPicker)}
 								className="absolute left-3 text-gray-500 hover:text-gray-700 bg-transparent border-none"
 							>
 								<img src="/chats/emoji.svg" alt="Emoji" className="w-5 h-5" />
 							</button>
-
 							{showEmojiPicker && (
 								<div className="absolute bottom-full left-0 mb-2">
 									<EmojiPicker
@@ -239,7 +220,6 @@ function Chats() {
 									/>
 								</div>
 							)}
-
 							<input
 								type="text"
 								placeholder="Type your message..."
@@ -248,14 +228,12 @@ function Chats() {
 								onChange={(e) => setInputValue(e.target.value)}
 								onKeyDown={(e) => e.key === "Enter" && handleSendMsg()}
 							/>
-
 							<button
 								onClick={() => document.getElementById("fileInput").click()}
 								className="absolute right-3 text-gray-500 hover:text-gray-700 bg-transparent border-none"
 							>
 								<img src="/chats/images.svg" alt="Upload" className="w-5 h-5" />
 							</button>
-
 							<input
 								id="fileInput"
 								type="file"
