@@ -1,9 +1,9 @@
+// Signup.js
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { signupUser } from "../../api/userApi";
 import logo from "/lobic_logo.png";
 import "./Signup.css";
-import { SERVER_IP } from "../../const.jsx";
 
 function Signup() {
 	const [email, setEmail] = useState("");
@@ -18,37 +18,13 @@ function Signup() {
 	const handleSignup = async (event) => {
 		event.preventDefault();
 
-		// Basic password validation
-		if (password !== confirmPassword) {
+		try {
+			await signupUser(email, password, confirmPassword);
+			navigate("/");
+		} catch (error) {
 			setIsError(true);
-			setErrorMsg("Passwords do not match");
-			return;
+			setErrorMsg(error.message);
 		}
-
-		// Payload for signup
-		const payload = {
-			email: email,
-			username: email.split("@")[0], // [TODO] might need to change later
-			password: password,
-		};
-
-		const response = await fetch(SERVER_IP + "/signup", {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(payload),
-		});
-
-		if (!response.ok) {
-			let msg = await response.text();
-			setIsError(true);
-			setErrorMsg(msg);
-			return;
-		}
-
-		navigate("/");
 	};
 
 	const handleLoginRedirect = () => {

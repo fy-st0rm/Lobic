@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { performLogin, initClientState } from "../../api/userApi.js";
+import { useAppState } from "../../AppState.jsx";
 import logo from "/lobic_logo.png";
 import "./Login.css";
-import { SERVER_IP } from "../../const.jsx";
-import { useAppState } from "../../AppState.jsx";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -16,69 +15,23 @@ function Login() {
 	const navigate = useNavigate();
 	const { updateUserId } = useAppState();
 
-	const performLogin = async () => {
-		const payload = {
-			email: email,
-			password: password,
-		};
-
-		let response = await fetch(SERVER_IP + "/login", {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(payload),
-		});
-
-		if (!response.ok) {
-			let msg = await response.text();
-			setIsError(true);
-			setErrorMsg(msg);
-			return false;
-		}
-		return true;
-	};
-
-	const initClientState = async () => {
-		// Getting the user data
-		let response = await fetch(SERVER_IP + "/get_user", {
-			method: "GET",
-			credentials: "include",
-		});
-
-		if (!response.ok) {
-			let err = await response.text();
-			console.log(err);
-			setIsError(true);
-			setErrorMsg(err);
-			return false;
-		}
-
-		// Updating the user id in app state
-		let data = await response.json();
-		let user_id = data.user_id;
-		updateUserId(user_id);
-		return true;
-	};
-
 	const handleLogin = async (event) => {
 		event.preventDefault();
 
-		let res = await performLogin();
-		if (!res) {
-			return;
-		}
+		try {
+			// Perform login
+			await performLogin(email, password);
 
-		res = await initClientState();
-		if (!res) {
-			return;
-		}
+			// Initialize client state
+			const userData = await initClientState();
+			updateUserId(userData.user_id);
 
-		// Intentionally performing a refresh to connect to backend
-		// ps: idk what im doing
-		window.location.href = "/home";
-		//navigate("/home");
+			// Redirect to home page
+			window.location.href = "/home"; // Intentionally refreshing to connect to backend ,He didnt know what he was doing
+		} catch (error) {
+			setIsError(true);
+			setErrorMsg(error.message);
+		}
 	};
 
 	const handleSignupRedirect = () => {
