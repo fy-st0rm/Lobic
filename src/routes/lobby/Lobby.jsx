@@ -15,7 +15,8 @@ function Lobby() {
 	const [showContent, setShowContent] = useState(false);
 	const [lobbyIds, setLobbyIds] = useState([]);
 
-	const { appState, ws, updateLobbyState, addMsgHandler, updateMusicData } = useAppState();
+	const { appState, ws, updateLobbyState, addMsgHandler, updateMusicData } =
+		useAppState();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -65,14 +66,7 @@ function Lobby() {
 			updateLobbyState(res.value.lobby_id, true, true);
 
 			// Clearning the current music when creating a new lobby
-			updateMusicData(
-				"",
-				"",
-				"",
-				"",
-				0,
-				MPState.PAUSE
-			);
+			updateMusicData("", "", "", "", 0, MPState.PAUSE);
 
 			// Switching to chat page when sucessfully created lobby
 			navigate("/chats");
@@ -94,14 +88,7 @@ function Lobby() {
 			updateLobbyState(res.value.lobby_id, true, false);
 
 			// Clearning the current music when creating a new lobby
-			updateMusicData(
-				"",
-				"",
-				"",
-				"",
-				0,
-				MPState.PAUSE
-			);
+			updateMusicData("", "", "", "", 0, MPState.PAUSE);
 
 			navigate("/chats");
 		});

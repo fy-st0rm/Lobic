@@ -1,45 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 import "./NavBar.css";
 import { useNavigate, Link } from "react-router-dom";
 import SearchBar from "../SearchBar/SearchBar";
 import { useAppState } from "../../AppState.jsx";
-import { SERVER_IP, OpCode, wsSend } from "../../const.jsx";
+import { OpCode, wsSend } from "../../const.jsx";
+import { fetchUserProfilePicture, logoutUser } from "../../api/userApi.js";
 
 function NavBar() {
 	const [showMessage, setShowMessage] = useState(false);
 	const [isDisabled, setIsDisabled] = useState(false);
 	const [inputValue, setInput] = useState("");
 	const [isDashboardOpen, setIsDashboardOpen] = useState(false);
-	const [profilePic, setProfilePic] = useState("/public/sadit.jpg"); // Default image
+	const [profilePic, setProfilePic] = useState("/public/sadit.jpg");
 	const { appState, ws } = useAppState();
 	const user_id = appState.user_id;
 
 	const navigate = useNavigate();
 
-	// Fetch the user's profile picture
 	useEffect(() => {
-		const fetchProfilePicture = async () => {
-			try {
-				const response = await fetch(
-					`${SERVER_IP}/user/get_pfp/${user_id}.png`,
-				);
-				if (response.ok) {
-					// If the image exists, use it
-					setProfilePic(`${SERVER_IP}/user/get_pfp/${user_id}.png`);
-				} else {
-					// If the image doesnt exist, fall back to the default image
-					setProfilePic("/public/sadit.jpg");
-				}
-			} catch (error) {
-				setProfilePic("/public/sadit.jpg"); // Fall back to the default image
-				console.error("Error fetching profile picture:", error);
+		const loadProfilePicture = async () => {
+			if (user_id) {
+				const picturePath = await fetchUserProfilePicture(user_id);
+				setProfilePic(picturePath);
 			}
 		};
 
-		if (user_id) {
-			fetchProfilePicture();
-		}
+		loadProfilePicture();
 	}, [user_id]);
 
 	const handleLogoutClick = () => {
@@ -48,40 +35,30 @@ function NavBar() {
 	};
 
 	const handleLogoutConfirm = async () => {
-		setShowMessage(false);
-		setIsDisabled(false);
+		try {
+			setShowMessage(false);
+			setIsDisabled(false);
 
-		// If the client is in lobby then leave it
-		if (appState.in_lobby) {
-			const payload = {
-				op_code: OpCode.LEAVE_LOBBY,
-				value: {
-					lobby_id: appState.lobby_id,
-					user_id: appState.user_id,
-				},
-			};
-			wsSend(ws, payload);
+			// If the client is in lobby then leave it
+			if (appState.in_lobby) {
+				const payload = {
+					op_code: OpCode.LEAVE_LOBBY,
+					value: {
+						lobby_id: appState.lobby_id,
+						user_id: appState.user_id,
+					},
+				};
+				wsSend(ws, payload);
+			}
+
+			await logoutUser(appState.user_id);
+
+			// Clearing the session storage
+			sessionStorage.clear();
+			navigate("/login");
+		} catch (error) {
+			console.error("Logout failed:", error);
 		}
-
-		const payload = {
-			user_id: appState.user_id,
-		};
-
-		let response = await fetch(`${SERVER_IP}/logout`, {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(payload),
-		});
-
-		// TODO: Currently not caring about the fetch errors
-
-		// Clearing the session storage
-		sessionStorage.clear();
-
-		navigate("/login");
 	};
 
 	const handleLogoutCancel = () => {
@@ -181,9 +158,7 @@ function NavBar() {
 				<div className="user-icon">
 					<button
 						className="profile-button"
-						onClick={() => {
-							navigateAndClose("/profile");
-						}}
+						onClick={() => navigateAndClose("/profile")}
 					>
 						<img src={profilePic} className="profile-pic" alt="Profile" />
 					</button>
@@ -261,26 +236,31 @@ function NavBar() {
 			</div>
 
 			{showMessage && (
-    			<div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
-        			<div className="bg-black bg-opacity-90 p-8 rounded-xl shadow-lg max-w-md w-full"> {/* Darker background, transparency, rounded corners */}
-           				<h2 className="text-2xl font-semibold text-white mb-6 text-center">Confirm Logout</h2>
-            			<p className="text-gray-300 mb-6 text-center">Are you sure you want to logout?</p>
-            				<div className="flex justify-center space-x-4">
-								<button
-    								className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105 outline-none focus:outline-none border-none focus:ring-0 focus:shadow-none"
-    								onClick={handleLogoutConfirm}>
-    									Confirm
-								</button>
-								<button
-    								className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105 outline-none focus:outline-none border-none focus:ring-0 focus:shadow-none"
-    								onClick={handleLogoutCancel}>
-    									Cancel
-								</button>
-            				</div>
-        			</div>
-    			</div>
+				<div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
+					<div className="bg-black bg-opacity-90 p-8 rounded-xl shadow-lg max-w-md w-full">
+						<h2 className="text-2xl font-semibold text-white mb-6 text-center">
+							Confirm Logout
+						</h2>
+						<p className="text-gray-300 mb-6 text-center">
+							Are you sure you want to logout?
+						</p>
+						<div className="flex justify-center space-x-4">
+							<button
+								className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105 outline-none focus:outline-none border-none focus:ring-0 focus:shadow-none"
+								onClick={handleLogoutConfirm}
+							>
+								Confirm
+							</button>
+							<button
+								className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105 outline-none focus:outline-none border-none focus:ring-0 focus:shadow-none"
+								onClick={handleLogoutCancel}
+							>
+								Cancel
+							</button>
+						</div>
+					</div>
+				</div>
 			)}
-
 		</>
 	);
 }

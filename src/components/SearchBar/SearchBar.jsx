@@ -1,19 +1,10 @@
 import React from "react";
-import { SERVER_IP } from "../../const.jsx";
-
+import { searchMusic } from "../../api/musicSearchApi";
 const SearchBar = ({ isDisabled, inputValue, onInputChange, onClearInput }) => {
 	const handleKeyPress = async (event) => {
 		if (event.key === "Enter") {
 			try {
-				const response = await fetch(
-					`${SERVER_IP}/search?&search_string=${encodeURIComponent(inputValue)}`,
-				);
-
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-
-				const data = await response.json();
+				const data = await searchMusic(inputValue);
 				console.log("Search response:", data);
 			} catch (error) {
 				console.error("Error performing search:", error);
