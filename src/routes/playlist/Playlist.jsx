@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
-import NavBar from "../../components/NavBar/NavBar";
+// import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
+// import NavBar from "../../components/NavBar/NavBar";
 import SongContainer from "../../components/SongContainer/SongContainer";
 import PlaylistImage from "/playlistimages/playlistimage.png";
 import User1 from "/user_images/manish.jpg";
 import User2 from "/user_images/sameep.jpg";
 import { Dot } from "lucide-react";
-import { SERVER_IP } from "../../const.jsx";
+import { fetchPlaylistById } from "../../api/playlistApi";
 
 function Playlist() {
 	const { playlistId } = useParams();
@@ -16,23 +16,11 @@ function Playlist() {
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		const fetchPlaylistData = async () => {
+		const loadPlaylistData = async () => {
 			try {
-				const response = await fetch(
-					`${SERVER_IP}/playlist/get_by_uuid?playlist_id=${playlistId}`,
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-						},
-					},
-				);
-				if (!response.ok) throw new Error("Failed to fetch playlist data");
-				const result = await response.json();
-				setPlaylistData(result);
-				console.log("Playlist Data:", JSON.stringify(result, null, 4));
+				const data = await fetchPlaylistById(playlistId);
+				setPlaylistData(data);
 			} catch (error) {
-				console.error("Error fetching playlist:", error);
 				setError(error.message);
 			} finally {
 				setIsLoading(false);
@@ -40,13 +28,9 @@ function Playlist() {
 		};
 
 		if (playlistId) {
-			fetchPlaylistData();
+			loadPlaylistData();
 		}
 	}, [playlistId]);
-
-	// if (isLoading) return <div>Loading...</div>;
-	// if (error) return <div>Error: {error}</div>;
-
 	return (
 		<>
 			<div className="absolute flex gap-6 top-[20%] left-[10%] playlistinfo h-[50%] w-[20%]">
