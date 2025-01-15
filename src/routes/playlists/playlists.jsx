@@ -28,9 +28,9 @@ function Playlists() {
 
 	const handleAddPlaylistClick = async () => {
 		const playlistData = {
-			playlist_name: "my playlisst 3",
+			playlist_name: "my playlisst ",
 			user_id: currentUserId,
-			description: "asf",
+			description: "asf 60 60",
 		};
 
 		try {
