@@ -4,14 +4,14 @@ export const fetchUserPlaylists = async (userId) => {
 	try {
 		const response = await fetch(
 			`${SERVER_IP}/playlist/get_users_playlists?user_uuid=${encodeURIComponent(
-				userId
+				userId,
 			)}`,
 			{
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 
 		const result = await response.json();
@@ -59,7 +59,7 @@ export const fetchPlaylistById = async (playlistId) => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 
 		if (!response.ok) {

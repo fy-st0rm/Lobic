@@ -26,7 +26,7 @@ export const incrementPlayCount = async (songId) => {
 			`${SERVER_IP}/music/incr_times_played/${songId}`,
 			{
 				method: "POST",
-			}
+			},
 		);
 
 		if (!response.ok) {

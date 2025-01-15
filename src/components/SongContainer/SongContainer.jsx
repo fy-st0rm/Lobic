@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SongInfo from "../SongInfo/SongInfo";
-import { SERVER_IP, MPState } from "../../const.jsx";
+import { MPState } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
+import { getMusicImageUrl } from "../../api/musicApi.js";
 
 function SongContainer(playlist) {
-	const [musicItems, setMusicItems] = useState([]);
+	const [musicItems] = useState([]);
 	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSongId, setSelectedSongId] = useState(null);
 	const { updateMusicData } = useAppState();
-
-	// Get the URL for the cover art image
-	const getImageUrl = (Id) => `${SERVER_IP}/image/${Id}.png`;
-
 	const handleMusicClick = async (item) => {
 		try {
 			setIsLoading(true);
-			const coverArt = getImageUrl(item.music_id);
+			const coverArt = getMusicImageUrl(item.music_id);
 			setSelectedSongId(item.music_id);
 			// Updating Music State globally
 			updateMusicData(

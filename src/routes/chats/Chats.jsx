@@ -40,7 +40,7 @@ function Chats() {
 		setTimeout(() => {
 			const payload = {
 				op_code: OpCode.GET_MESSAGES,
-				value: { lobby_id: appState.lobby_id }
+				value: { lobby_id: appState.lobby_id },
 			};
 			wsSend(ws, payload);
 		}, 1000);
@@ -49,7 +49,8 @@ function Chats() {
 	// Scroll to the bottom of the chat whenever messages change
 	useEffect(() => {
 		if (chatContainerRef.current) {
-			chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+			chatContainerRef.current.scrollTop =
+				chatContainerRef.current.scrollHeight;
 		}
 	}, [messages]);
 
@@ -86,14 +87,7 @@ function Chats() {
 			updateLobbyState("", false, false);
 
 			// Clearning the current music when leaving a lobby
-			updateMusicData(
-				"",
-				"",
-				"",
-				"",
-				0,
-				MPState.PAUSE
-			);
+			updateMusicData("", "", "", "", 0, MPState.PAUSE);
 
 			navigate("/lobby");
 		});
@@ -104,8 +98,8 @@ function Chats() {
 			op_code: OpCode.LEAVE_LOBBY,
 			value: {
 				lobby_id: appState.lobby_id,
-				user_id: appState.user_id
-			}
+				user_id: appState.user_id,
+			},
 		});
 	};
 
@@ -118,7 +112,7 @@ function Chats() {
 				lobby_id: appState.lobby_id,
 				user_id: appState.user_id,
 				message: inputValue,
-			}
+			},
 		});
 		setInputValue("");
 	};
@@ -138,7 +132,10 @@ function Chats() {
 	};
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center p-4" style={{ top: '80px', bottom: 'calc(67px + 1px)' }}>
+		<div
+			className="fixed inset-0 flex items-center justify-center p-4"
+			style={{ top: "80px", bottom: "calc(67px + 1px)" }}
+		>
 			<div className="flex w-full h-full gap-4 px-0.1">
 				{/* Sidebar */}
 				<div className="w-80 bg-black/60 rounded-lg overflow-hidden flex flex-col">
@@ -152,7 +149,7 @@ function Chats() {
 									key={user.id}
 									onClick={() => handleUserClick(user)}
 									className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors
-										${selectedUser?.id === user.id ? 'bg-white/40' : 'hover:bg-white/20'}`}
+										${selectedUser?.id === user.id ? "bg-white/40" : "hover:bg-white/20"}`}
 								>
 									<img
 										src={user.image}
@@ -177,7 +174,9 @@ function Chats() {
 									alt={selectedUser.name}
 									className="w-8 h-8 rounded-full object-cover"
 								/>
-								<span className="text-white font-bold">{selectedUser.name}</span>
+								<span className="text-white font-bold">
+									{selectedUser.name}
+								</span>
 							</div>
 						) : (
 							<span className="text-white">Select a user to chat</span>
@@ -196,14 +195,14 @@ function Chats() {
 							<div
 								key={idx}
 								className={`max-w-[60%] mb-4 ${
-									msg.user_id === appState.user_id ? 'ml-auto' : ''
+									msg.user_id === appState.user_id ? "ml-auto" : ""
 								}`}
 							>
 								<div
 									className={`px-4 py-2 rounded-2xl ${
 										msg.user_id === appState.user_id
-											? 'bg-green-100 rounded-br-none'
-											: 'bg-blue-50 rounded-bl-none'
+											? "bg-green-100 rounded-br-none"
+											: "bg-blue-50 rounded-bl-none"
 									}`}
 								>
 									<p className="mb-1">{msg.message}</p>
@@ -225,8 +224,8 @@ function Chats() {
 							{showEmojiPicker && (
 								<div className="absolute bottom-full left-0 mb-2">
 									<EmojiPicker
-										onEmojiClick={(emojiObject) => 
-											setInputValue(prev => prev + emojiObject.emoji)
+										onEmojiClick={(emojiObject) =>
+											setInputValue((prev) => prev + emojiObject.emoji)
 										}
 									/>
 								</div>
@@ -253,7 +252,7 @@ function Chats() {
 								multiple
 								onChange={(e) => {
 									const files = Array.from(e.target.files);
-									setInputValue(files.map(file => file.name).join(", "));
+									setInputValue(files.map((file) => file.name).join(", "));
 								}}
 							/>
 						</div>
