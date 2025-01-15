@@ -95,11 +95,9 @@ function MusicPlayer() {
 		// Disabling controls when the music isnt set
 		if (!musicState.has_item) {
 			setAccessControls(false);
-			return;
-		};
-
+		}
 		// Only whenever user is not in lobby
-		if (!appState.in_lobby) {
+		else if (!appState.in_lobby) {
 			setAccessControls(true);
 		}
 
@@ -127,6 +125,7 @@ function MusicPlayer() {
 			playNewSong();
 		} else if (musicState.state === MPState.PAUSE) {
 			audioRef.current.pause();
+			setCurrentTime(musicState.timestamp);
 		}
 	}, [musicState]);
 

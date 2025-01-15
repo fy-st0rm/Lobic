@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
-import { OpCode, wsSend } from "../../const.jsx";
+import { OpCode, wsSend, MPState } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
 import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
 import NavBar from "../../components/NavBar/NavBar.jsx";
@@ -84,6 +84,17 @@ function Chats() {
 	useEffect(() => {
 		addMsgHandler(OpCode.LEAVE_LOBBY, (res) => {
 			updateLobbyState("", false, false);
+
+			// Clearning the current music when leaving a lobby
+			updateMusicData(
+				"",
+				"",
+				"",
+				"",
+				0,
+				MPState.PAUSE
+			);
+
 			navigate("/lobby");
 		});
 	}, []);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { OpCode, SERVER_IP, wsSend } from "../../const.jsx";
+import { OpCode, MPState, SERVER_IP, wsSend } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
 import {
 	LobbyCard,
@@ -15,7 +15,7 @@ function Lobby() {
 	const [showContent, setShowContent] = useState(false);
 	const [lobbyIds, setLobbyIds] = useState([]);
 
-	const { appState, ws, updateLobbyState, addMsgHandler } = useAppState();
+	const { appState, ws, updateLobbyState, addMsgHandler, updateMusicData } = useAppState();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -64,6 +64,16 @@ function Lobby() {
 			// Tagging the user as joined in lobby
 			updateLobbyState(res.value.lobby_id, true, true);
 
+			// Clearning the current music when creating a new lobby
+			updateMusicData(
+				"",
+				"",
+				"",
+				"",
+				0,
+				MPState.PAUSE
+			);
+
 			// Switching to chat page when sucessfully created lobby
 			navigate("/chats");
 		});
@@ -82,6 +92,17 @@ function Lobby() {
 		// Join Lobby Handler
 		addMsgHandler(OpCode.JOIN_LOBBY, (res) => {
 			updateLobbyState(res.value.lobby_id, true, false);
+
+			// Clearning the current music when creating a new lobby
+			updateMusicData(
+				"",
+				"",
+				"",
+				"",
+				0,
+				MPState.PAUSE
+			);
+
 			navigate("/chats");
 		});
 
