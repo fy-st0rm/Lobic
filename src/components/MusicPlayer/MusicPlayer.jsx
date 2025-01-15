@@ -66,7 +66,9 @@ function MusicPlayer() {
 
 	// Disables the controls for listeners in lobby
 	useEffect(() => {
-		setAccessControls(appState.is_host && appState.in_lobby && musicState.has_item);
+		setAccessControls(
+			appState.is_host && appState.in_lobby && musicState.has_item,
+		);
 	}, [appState, musicState]);
 
 	// Responsible to set the music state of the lobby as a host
