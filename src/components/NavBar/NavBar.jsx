@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion"
 import "./NavBar.css";
 import { useNavigate, Link } from "react-router-dom";
 import SearchBar from "../SearchBar/SearchBar";
@@ -260,18 +261,26 @@ function NavBar() {
 			</div>
 
 			{showMessage && (
-				<div className="floating-message">
-					<p>Are you sure you want to logout?</p>
-					<div className="button-group">
-						<button className="confirm-button" onClick={handleLogoutConfirm}>
-							Confirm
-						</button>
-						<button className="cancel-button" onClick={handleLogoutCancel}>
-							Cancel
-						</button>
-					</div>
-				</div>
+    			<div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex justify-center items-center z-50">
+        			<div className="bg-black bg-opacity-90 p-8 rounded-xl shadow-lg max-w-md w-full"> {/* Darker background, transparency, rounded corners */}
+           				<h2 className="text-2xl font-semibold text-white mb-6 text-center">Confirm Logout</h2>
+            			<p className="text-gray-300 mb-6 text-center">Are you sure you want to logout?</p>
+            				<div className="flex justify-center space-x-4">
+								<button
+    								className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105 outline-none focus:outline-none border-none focus:ring-0 focus:shadow-none"
+    								onClick={handleLogoutConfirm}>
+    									Confirm
+								</button>
+								<button
+    								className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105 outline-none focus:outline-none border-none focus:ring-0 focus:shadow-none"
+    								onClick={handleLogoutCancel}>
+    									Cancel
+								</button>
+            				</div>
+        			</div>
+    			</div>
 			)}
+
 		</>
 	);
 }
