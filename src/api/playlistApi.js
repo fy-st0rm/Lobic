@@ -95,3 +95,35 @@ export const fetchPlaylistById = async (playlistId) => {
 		throw error;
 	}
 };
+
+/**
+ * Adds a song to a playlist.
+ * @param {Object} songData - The data for adding a song to a playlist.
+ * @param {string} songData.playlist_id - The ID of the playlist.
+ * @param {string} songData.music_id - The ID of the song to add.
+ * @param {number} [songData.position] - The position in the playlist (optional). If not provided, the song will be added to the end.
+ * @returns {Promise<Object>} - The response from the server, including a success message or error details.
+ * @throws {Error} - If the request fails or the response is not OK.
+ */
+export const addSongToPlaylist = async (songData) => {
+	try {
+		const response = await fetch(`${SERVER_IP}/playlist/add_song`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(songData),
+		});
+
+		const result = await response.text();
+
+		if (response.status !== 201) {
+			throw new Error(result.message || "Failed to add song to playlist");
+		}
+
+		console.log("Song added to playlist successfully:", result.message);
+		return result;
+	} catch (error) {
+		throw error;
+	}
+};

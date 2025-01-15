@@ -6,6 +6,7 @@ import NavBar from "../../components/NavBar/NavBar.jsx";
 import MusicList from "../../components/MusicList/MusicList.jsx";
 import SongContainer from "../../components/SongContainer/SongContainer.jsx";
 import "./Home.css";
+import { useAppState } from "../../AppState.jsx";
 
 function Home() {
 	return (
