@@ -66,8 +66,8 @@ function MusicPlayer() {
 
 	// Disables the controls for listeners in lobby
 	useEffect(() => {
-		setAccessControls(!appState.is_host && appState.in_lobby);
-	}, [appState]);
+		setAccessControls(appState.is_host && appState.in_lobby && musicState.has_item);
+	}, [appState, musicState]);
 
 	// Responsible to set the music state of the lobby as a host
 	useEffect(() => {
@@ -92,7 +92,17 @@ function MusicPlayer() {
 
 	// Responsible for playing a song whenever the music state is changed
 	useEffect(() => {
-		if (!musicState.has_item) return;
+		// Disabling controls when the music isnt set
+		if (!musicState.has_item) {
+			setAccessControls(false);
+			return;
+		};
+
+		// Only whenever user is not in lobby
+		if (!appState.in_lobby) {
+			setAccessControls(true);
+		}
+
 		if (!audioRef.current) return;
 
 		if (musicState.state === MPState.PLAYING) {
@@ -228,35 +238,35 @@ function MusicPlayer() {
 				<div className="control-bar">
 					<button
 						className="control-button"
-						disabled={isLoading || accessControls}
+						disabled={isLoading || !accessControls}
 					>
 						<img
 							src={previousButton}
 							alt="Previous"
-							className={`button-group ${accessControls ? "disabled" : ""}`}
+							className={`button-group ${!accessControls ? "disabled" : ""}`}
 						/>
 					</button>
 					<button
 						className="control-button"
 						onClick={handlePlayMusic}
-						disabled={isLoading || accessControls}
+						disabled={isLoading || !accessControls}
 					>
 						<img
 							src={
 								musicState.state === MPState.PLAYING ? pauseButton : playButton
 							}
 							alt={musicState.state === MPState.PLAYING ? "Pause" : "Play"}
-							className={`button-group ${accessControls ? "disabled" : ""}`}
+							className={`button-group ${!accessControls ? "disabled" : ""}`}
 						/>
 					</button>
 					<button
 						className="control-button"
-						disabled={isLoading || accessControls}
+						disabled={isLoading || !accessControls}
 					>
 						<img
 							src={NextButton}
 							alt="Next"
-							className={`button-group ${accessControls ? "disabled" : ""}`}
+							className={`button-group ${!accessControls ? "disabled" : ""}`}
 						/>
 					</button>
 				</div>
@@ -273,7 +283,7 @@ function MusicPlayer() {
 						onTouchStart={handleSeekStart}
 						onTouchEnd={handleSeekEnd}
 						className="status-bar"
-						disabled={isLoading || accessControls}
+						disabled={isLoading || !accessControls}
 					/>
 				</div>
 			</div>
