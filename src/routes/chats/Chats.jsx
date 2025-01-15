@@ -137,6 +137,7 @@ function Chats() {
 		setInputValue(fileNames);
 	};
 
+  
 	return (
 		<div className="fixed inset-0 flex items-center justify-center p-4" style={{ top: '80px', bottom: 'calc(67px + 1px)' }}>
 			<div className="flex w-full h-full gap-4 px-0.1">
@@ -191,27 +192,29 @@ function Chats() {
 					</div>
 
 					{/* Messages Area */}
-					<div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
-						{messages?.map((msg, idx) => (
-							<div
-								key={idx}
-								className={`max-w-[60%] mb-4 ${
-									msg.user_id === appState.user_id ? 'ml-auto' : ''
-								}`}
-							>
-								<div
-									className={`px-4 py-2 rounded-2xl ${
-										msg.user_id === appState.user_id
-											? 'bg-green-100 rounded-br-none'
-											: 'bg-blue-50 rounded-bl-none'
-									}`}
-								>
-									<p className="mb-1">{msg.message}</p>
-									<div className="text-xs text-gray-500">{msg.timestamp}</div>
-								</div>
-							</div>
-						))}
-					</div>
+<div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
+    {messages?.map((msg, idx) => (
+        <div
+            key={idx}
+            className={`flex mb-4 ${msg.user_id === appState.user_id ? 'justify-end' : 'justify-start'}`}
+        >
+            <div
+                className={`px-4 py-2 rounded-2xl inline-block ${
+                    msg.user_id === appState.user_id
+                        ? 'bg-green-100 rounded-br-none text-right'
+                        : 'bg-blue-50 rounded-bl-none text-left'
+                }`}
+                style={{
+                    maxWidth: '60%',
+                    wordBreak: 'break-word',
+                }}
+            >
+                <p className="mb-1">{msg.message}</p>
+                <div className="text-xs text-gray-500">{msg.timestamp}</div>
+            </div>
+        </div>
+    ))}
+</div>
 
 					{/* Input Area */}
 					<div className="p-4 border-t border-gray-200 bg-white/80">
