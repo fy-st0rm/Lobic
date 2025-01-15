@@ -47,7 +47,7 @@ function MusicList({ list_title }) {
 				item.artist,
 				coverArt,
 				0,
-				MPState.CHANGE,
+				MPState.CHANGE
 			);
 		} catch (err) {
 			console.error("Failed to handle music click:", err);
@@ -71,6 +71,7 @@ function MusicList({ list_title }) {
 						}`}
 					>
 						<Music
+							musicId={item.id}
 							title={item.title}
 							artist={item.artist}
 							coverArt={getMusicImageUrl(item.id)}

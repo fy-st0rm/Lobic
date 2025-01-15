@@ -1,7 +1,45 @@
 import React from "react";
 import "./Music.css";
 import { EllipsisVertical } from "lucide-react";
-function Music({ title, artist, coverArt, onClick }) {
+import { fetchUserPlaylists } from "../../api/playlistApi.js";
+import { addSongToPlaylist } from "../../api/playlistApi.js";
+import { useAppState } from "../../AppState.jsx";
+
+function Music({ musicId, title, artist, coverArt, onClick }) {
+	const { appState } = useAppState();
+	const userId = appState.user_id; //maybe optimize this?
+	const handleAddToQueue = () => {
+		console.log("NEED TO IMPLEMENT THE QUEUE:", musicId, title);
+		// Add your logic for adding to queue here
+	};
+
+	const handleAddToPlaylist = async () => {
+		console.log("Added to playlist:", musicId, title);
+
+		try {
+			const playlists = await fetchUserPlaylists(userId);
+			console.log("playlists:", playlists);
+
+			if (playlists.length === 0) {
+				console.log("No playlists found for the user.");
+				return;
+			}
+
+			const playlistId = playlists[0].playlist_id;
+			console.log("playlistId:", playlistId);
+
+			const songData = {
+				playlist_id: playlistId,
+				music_id: musicId,
+			};
+
+			const result = await addSongToPlaylist(songData);
+			console.log("Song added to playlist successfully:", result);
+		} catch (error) {
+			console.error("Error adding song to playlist:", error);
+		}
+	};
+
 	return (
 		<>
 			<div className="music-container">
@@ -17,8 +55,12 @@ function Music({ title, artist, coverArt, onClick }) {
 				<div className="dropdown absolute right-0 bottom-3">
 					<EllipsisVertical className="opacity-40 " />
 					<div className="dropdown-items">
-						<div className="dropdown-item"> Add to Queue</div>
-						<div className="dropdown-item">Add to Playlist</div>
+						<div className="dropdown-item" onClick={handleAddToQueue}>
+							Add to Queue
+						</div>
+						<div className="dropdown-item" onClick={handleAddToPlaylist}>
+							Add to Playlist
+						</div>
 					</div>
 				</div>
 			</div>
