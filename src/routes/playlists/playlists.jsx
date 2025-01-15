@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useAppState } from "../../AppState.jsx";
 import { SERVER_IP } from "../../const.jsx";
 import { useNavigate } from "react-router-dom";
+import img from "/playlistimages/playlistimage.png"
+import { Plus } from 'lucide-react';
 
 function Playlists() {
 	const { appState } = useAppState();
@@ -78,41 +80,49 @@ function Playlists() {
 	};
 
 	return (
-		<div className="controlbuttons flex flex-col justify-center items-center min-h-screen p-8">
-			<button
-				className="playbutton bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
-				onClick={handleAddPlaylistClick}
-			>
-				Add Playlist
-			</button>
-
-			<div className="mt-8 w-full max-w-4xl">
-				<h2 className="text-2xl font-bold mb-6 text-white">Your Playlists</h2>
+		<div className="absolute top-[80px] w-full h-full m-6">
+			<div className="text-3xl font-bold  text-white">Your Playlists</div>
+			<div className="mt-8 w-full max-w-4xl flex">
 				{playlists.length > 0 ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					<>
 						{playlists.map((playlist) => (
 							<div
 								key={playlist.playlist_id}
 								onClick={() => handlePlaylistClick(playlist)}
-								className="bg-gray-800 hover:bg-gray-700 p-6 rounded-lg cursor-pointer transition-all transform hover:scale-105"
+								className="bg-gray-800 group transition-all duration-300 ease-in-out h-[240px] w-48 p-4 rounded-lg cursor-pointer bg-opacity-55 mx-2 self-center relative hover:bg-opacity-75 hover:scale-105"
 							>
-								<h3 className="font-semibold text-xl text-white mb-2">
+								<div className=" rounded-[10px]"><img src={img} alt="" className="h-[100%] w-[100%]" /></div>
+								<div className="text-xl font-bold text-white">
 									{playlist.playlist_name}
-								</h3>
-								<p className="text-gray-300 mb-3">
+								</div>
+								<div className="text-sm  text-white opacity-50">
 									{playlist.description || "No description"}
-								</p>
-								<p className="text-sm text-gray-400">
-									Created:{" "}
-									{new Date(playlist.creation_date_time).toLocaleString()}
-								</p>
+								</div>
+
 							</div>
 						))}
-					</div>
+					</>
+
 				) : (
 					<p className="text-gray-300 text-center">No playlists found.</p>
 				)}
+				<div
+					onClick={handleAddPlaylistClick}
+					className="bg-gray-800 group transition-all duration-300 ease-in-out h-[240px] w-48 p-4 rounded-lg cursor-pointer bg-opacity-55 mx-2 self-center relative hover:bg-opacity-75 hover:scale-105"
+				>
+					<div className="rounded-[10px]">
+						<Plus
+							className="transition-all duration-300 ease-in-out h-36 w-36 text-white opacity-50 absolute left-[17%] top-[40px] group-hover:opacity-80 group-hover:rotate-90 group-hover:scale-110"
+						/>
+					</div>
+					<div className="absolute bottom-12 left-[50px] text-xl font-bold text-white transition-all duration-300 group-hover:text-opacity-90 group-hover:scale-105">
+						Create Playlist
+					</div>
+				</div>
+
+
 			</div>
+
 		</div>
 	);
 }
