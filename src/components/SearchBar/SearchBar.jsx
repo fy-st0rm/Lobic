@@ -4,7 +4,7 @@ const SearchBar = ({ isDisabled, inputValue, onInputChange, onClearInput }) => {
 	const handleKeyPress = async (event) => {
 		if (event.key === "Enter") {
 			try {
-				const data = await searchMusic(inputValue);
+				const data = await searchMusic(inputValue, 8);
 				console.log("Search response:", data);
 			} catch (error) {
 				console.error("Error performing search:", error);

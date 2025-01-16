@@ -7,6 +7,9 @@ import {
 	fetchMusicList,
 	incrementPlayCount,
 	getMusicImageUrl,
+	fetchTrendingSongs,
+	fetchRecentlyPlayed,
+	logSongPlay,
 } from "../../api/musicApi.js";
 
 function MusicList({ list_title }) {
@@ -15,16 +18,25 @@ function MusicList({ list_title }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSongId, setSelectedSongId] = useState(null);
 
-	const { updateMusicState } = useAppState();
+	const { appState, updateMusicState } = useAppState();
+	const userId = appState.user_id;
 
 	useEffect(() => {
 		loadMusicData();
 	}, [list_title]);
 
 	const loadMusicData = async () => {
+		let data;
 		try {
-			const isTrending = list_title === "Trending Now";
-			const data = await fetchMusicList(isTrending);
+			if (list_title === "Trending Now") {
+				data = await fetchTrendingSongs();
+				console.log(" trending now :", data);
+			} else if (list_title === "Recently Played") {
+				data = await fetchRecentlyPlayed(userId);
+				console.log("recently played :", data);
+			} else {
+				data = await fetchMusicList();
+			}
 			setMusicItems(data);
 		} catch (err) {
 			setError(err.message);
@@ -33,19 +45,23 @@ function MusicList({ list_title }) {
 		}
 	};
 
-	const handleMusicClick = async (item) => {
+	const handleMusicClick = async (song) => {
 		try {
+			//TODO : refactor into PlaySong??
+			setSelectedSongId(song.id);
 			setIsLoading(true);
-			const coverArt = getMusicImageUrl(item.id);
-			setSelectedSongId(item.id);
 
-			await incrementPlayCount(item.id);
+			const coverArt = getMusicImageUrl(song.id);
+			setSelectedSongId(song.id);
+
+			await incrementPlayCount(song.id);
+			await logSongPlay(userId, song.id);
 
 			updateMusicState({
 				has_item: true,
-				id: item.id,
-				title: item.title,
-				artist: item.artist,
+				id: song.id,
+				title: song.title,
+				artist: song.artist,
 				cover_img: coverArt,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
@@ -64,20 +80,21 @@ function MusicList({ list_title }) {
 		<div className="music-list-container">
 			<h2 className="list-title">{list_title}</h2>
 			<div className="music-list">
-				{musicItems.map((item) => (
+				{musicItems.map((song) => (
 					<div
-						key={item.id}
+						key={song.id}
 						className={`music-item-wrapper ${
-							selectedSongId === item.id ? "selected" : ""
+							selectedSongId === song.id ? "selected" : ""
 						}`}
 					>
 						<Music
-							title={item.title}
-							artist={item.artist}
-							coverArt={getMusicImageUrl(item.id)}
-							album={item.album}
-							genre={item.genre}
-							onClick={() => handleMusicClick(item)}
+							musicId={song.id}
+							title={song.title}
+							artist={song.artist}
+							coverArt={getMusicImageUrl(song.id)}
+							album={song.album}
+							genre={song.genre}
+							onClick={() => handleMusicClick(song)}
 						/>
 					</div>
 				))}
