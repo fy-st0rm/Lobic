@@ -7,6 +7,7 @@ import {
 	fetchMusicList,
 	incrementPlayCount,
 	getMusicImageUrl,
+	fetchTrendingSongs,
 } from "../../api/musicApi.js";
 
 function MusicList({ list_title }) {
@@ -22,9 +23,13 @@ function MusicList({ list_title }) {
 	}, [list_title]);
 
 	const loadMusicData = async () => {
+		let data;
 		try {
-			const isTrending = list_title === "Trending Now";
-			const data = await fetchMusicList(isTrending);
+			if (list_title === "Trending Now") {
+				data = await fetchTrendingSongs();
+			} else {
+				data = await fetchMusicList();
+			}
 			setMusicItems(data);
 		} catch (err) {
 			setError(err.message);
