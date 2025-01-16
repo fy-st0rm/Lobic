@@ -6,18 +6,33 @@ import { SERVER_IP } from "../const.jsx";
  * @param {boolean} [options.isTrending=false] - Whether to fetch trending music.
  * @returns {Promise<Array>} - A list of music tracks.
  */
-export const fetchMusicList = async (isTrending = false) => {
+export const fetchMusicList = async () => {
 	try {
 		let url = `${SERVER_IP}/get_music`;
-		if (isTrending) {
-			url += "?trending=true";
-		}
-
 		const response = await fetch(url);
 		if (!response.ok) {
 			throw new Error("Failed to fetch music data");
 		}
 
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error fetching music list:", error);
+		throw error;
+	}
+};
+
+/**
+ * Fetches a list of music tracks
+ * @returns {Promise<Array>} - A list of music tracks.
+ */
+export const fetchTrendingSongs = async () => {
+	try {
+		let url = `${SERVER_IP}/get_trending`;
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error("Failed to fetch music data");
+		}
 		const data = await response.json();
 		return data;
 	} catch (error) {
