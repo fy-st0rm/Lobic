@@ -40,7 +40,7 @@ function MusicList({ list_title }) {
 			}
 			setMusicItems(data);
 		} catch (err) {
-			setError(err.message);
+			console.error(err);
 		} finally {
 			setIsLoading(false);
 		}
@@ -74,8 +74,6 @@ function MusicList({ list_title }) {
 			setIsLoading(false);
 		}
 	};
-
-	if (error) return console.error(error);
 
 	return (
 		<div className="music-list-container">

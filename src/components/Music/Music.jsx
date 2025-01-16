@@ -41,14 +41,8 @@ function Music({ musicId, title, artist, coverArt, onClick }) {
 		}
 	};
 
-	const handleAddToLikedSongs = async (userId, musicId) => {
-		try {
-			const message = await addToLikedSongs(userId, musicId);
-			console.log(message);
-		} catch (error) {
-			console.error("Failed to add song to liked songs:", error);
-			alert("Failed to add song to liked songs. Please try again.");
-		}
+	const handleAddToLikedSongs = async () => {
+		await addToLikedSongs(userId, musicId);
 	};
 
 	return (

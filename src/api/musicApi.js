@@ -36,7 +36,6 @@ export const fetchTrendingSongs = async () => {
 		return data;
 	} catch (error) {
 		console.error("Error fetching music list:", error);
-		throw error;
 	}
 };
 

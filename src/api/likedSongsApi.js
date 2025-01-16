@@ -9,7 +9,7 @@ import { SERVER_IP } from "../const.jsx";
 export const fetchLikedSongs = async (userId, paginationLimit) => {
 	try {
 		// Construct the URL with query parameters
-		const url = new URL(`${SERVER_IP}/liked_songs`);
+		const url = new URL(`${SERVER_IP}/music/liked_song/get`);
 		const params = new URLSearchParams({
 			user_id: userId,
 		});
@@ -34,7 +34,6 @@ export const fetchLikedSongs = async (userId, paginationLimit) => {
 		}
 
 		const data = await response.json();
-		console.log("Fetched liked songs:", data); // Log the result
 		return data;
 	} catch (error) {
 		console.error("Error fetching liked songs:", error);
@@ -50,27 +49,40 @@ export const fetchLikedSongs = async (userId, paginationLimit) => {
  */
 export const addToLikedSongs = async (userId, musicId) => {
 	try {
-		const response = await fetch(`${SERVER_IP}/liked_songs/add`, {
+		const payload = {
+			user_id: userId,
+			music_id: musicId,
+		};
+
+		const response = await fetch(`${SERVER_IP}/music/liked_song/add`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
-				user_id: userId,
-				music_id: musicId,
-			}),
+			body: JSON.stringify(payload),
 		});
 
-		if (!response.ok) {
-			throw new Error("Failed to add song to liked songs");
+		if (response.status !== 201) {
+			const errorResponse = await response.json();
+			const errorMessage =
+				errorResponse.message || "Failed to add song to liked songs";
+
+			if (response.status === 409) {
+				console.log("Song already exists in liked songs");
+			}
 		}
 
-		const result = await response.json();
-		console.log("Added to liked songs:", result); // Log the result
-		return result;
+		// Handle 201 Created response
+		const contentType = response.headers.get("content-type");
+		if (contentType && contentType.includes("application/json")) {
+			const result = await response.json();
+			return result;
+		} else {
+			const result = await response.text();
+			return result;
+		}
 	} catch (error) {
-		console.error("Error adding to liked songs:", error);
-		throw error;
+		console.error("Error adding to liked songs:", error.message);
 	}
 };
 

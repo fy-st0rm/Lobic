@@ -89,33 +89,56 @@ function Playlists() {
 					</div>
 				</div>
 			</div>
-{showPlaylistAdder	&&	(
-			<div  className="fixed bg-black backdrop-blur-sm bg-opacity-20 h-[100vh] w-[100vw]">
-				<div className="fixed top-[30%] left-[30%] flex flex-col bg-[#072631] bg-opacity-80 h-[300px] w-[500px]  rounded-md">
-					<div className="text-xl font-bold text-white p-5">Create a Playlist</div>
-					<div className="inputs flex ">
-						<div className="playlistimg h-52 w-52 bg-black mx-5 rounded-md"> </div>
-						<div className="">
-							<input placeholder="Add a Name" className=" border-none w-[90%] py-2 rounded-sm after:appearance-none px-2 my-2 focus:outline-none focus:border-1 focus:border-black "></input>
-							<div className="flex flex-col justify-between h-[75%]">
-								<div className="">
-									<select className="block py-1 px-1 w-full text-sm text-white opacity-25 bg-transparent border-0 border-b-[1px] border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 ">
-										<option className="bg-[#1d586d] hover:bg-[#157697] after:hover:bg-[#157697]">Public Playlist</option>
-										<option className="bg-[#1d586d] hover:bg-[#157697]">Private Playlist</option>
-
-									</select>
-								</div>
-								<div className="flex">
-									<div><button className="hover:bg-[#157697] bg-[#1d586d] border-none text-white font-bold py-2 px-4 rounded-full transition-all ml-20 cursor-pointer">Create</button></div>
-									<div><button onClick = {()=> setShowPlaylistAdder(false)} className="cursor-pointer bg-slate-200 hover:bg-slate-300 border-none text-black font-bold py-2 px-4 rounded-full mx-1">Cancel</button></div>
+			{showPlaylistAdder && (
+				<div className="fixed bg-black backdrop-blur-sm bg-opacity-20 h-[100vh] w-[100vw]">
+					<div className="fixed top-[30%] left-[30%] flex flex-col bg-[#072631] bg-opacity-80 h-[300px] w-[500px]  rounded-md">
+						<div className="text-xl font-bold text-white p-5">
+							Create a Playlist
+						</div>
+						<div className="inputs flex ">
+							<div className="playlistimg h-52 w-52 bg-black mx-5 rounded-md">
+								{" "}
+							</div>
+							<div className="">
+								<input
+									placeholder="Add a Name"
+									className=" border-none w-[90%] py-2 rounded-sm after:appearance-none px-2 my-2 focus:outline-none focus:border-1 focus:border-black "
+								></input>
+								<div className="flex flex-col justify-between h-[75%]">
+									<div className="">
+										<select className="block py-1 px-1 w-full text-sm text-white opacity-25 bg-transparent border-0 border-b-[1px] border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 ">
+											<option className="bg-[#1d586d] hover:bg-[#157697] after:hover:bg-[#157697]">
+												Public Playlist
+											</option>
+											<option className="bg-[#1d586d] hover:bg-[#157697]">
+												Private Playlist
+											</option>
+										</select>
+									</div>
+									<div className="flex">
+										<div>
+											<button
+												className="hover:bg-[#157697] bg-[#1d586d] border-none text-white font-bold py-2 px-4 rounded-full transition-all ml-20 cursor-pointer"
+												onClick={handleAddPlaylistClick}
+											>
+												Create
+											</button>
+										</div>
+										<div>
+											<button
+												onClick={() => setShowPlaylistAdder(false)}
+												className="cursor-pointer bg-slate-200 hover:bg-slate-300 border-none text-black font-bold py-2 px-4 rounded-full mx-1"
+											>
+												Cancel
+											</button>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-
 				</div>
-			</div>
-)}
+			)}
 		</>
 	);
 }
