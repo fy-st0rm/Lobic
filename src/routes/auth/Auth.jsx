@@ -16,7 +16,7 @@ function Auth({ children }) {
 				setAuth(true);
 			} else {
 				setAuth(false);
-				navigate("/");
+				navigate("/login");
 			}
 		});
 	}, []);
