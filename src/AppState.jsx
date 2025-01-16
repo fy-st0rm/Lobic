@@ -27,15 +27,22 @@ const loadInitialMusicState = () => {
 	return savedState
 		? JSON.parse(savedState)
 		: {
+				has_item: false,
 				id: "",
 				title: "",
 				artist: "",
 				cover_img: "",
+
 				timestamp: 0,
+				duration: 0,
+				volume: 50,
+
 				state: MPState.PAUSE,
-				has_item: false,
+				state_data: 0,
 			};
 };
+
+//TODO: Improve update state functions
 
 export const AppStateProvider = ({ children }) => {
 	const ws = useRef(null);
@@ -43,68 +50,91 @@ export const AppStateProvider = ({ children }) => {
 	const audioRef = useRef(null);
 	const [appState, setAppState] = useState(loadInitialAppState);
 	const [musicState, setMusicState] = useState(loadInitialMusicState);
+	const [controlsDisabled, setControlsDisabled] = useState(true);
 
-	const updateLobbyState = (lobby_id, in_lobby, is_host) => {
+	const updateAppState = (state) => {
 		setAppState((prevState) => {
 			const newState = {
 				...prevState,
-				lobby_id: lobby_id,
-				in_lobby: in_lobby,
-				is_host: is_host,
+				...state,
 			};
 			sessionStorage.setItem("appState", JSON.stringify(newState));
 			return newState;
 		});
-	};
-
-	const updateMusicData = (id, title, artist, cover_img, timestamp, state) => {
-		setMusicState((prevState) => {
-			const newMusicState = {
-				id: id,
-				title: title,
-				artist: artist,
-				cover_img: cover_img,
-				timestamp: timestamp,
-				state: state,
-				has_item: id.length === 0 ? false : true,
-			};
-			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-			return newMusicState;
-		});
-	};
-
-	const updateMusicTs = (timestamp) => {
-		setMusicState((prevState) => {
-			const newMusicState = {
-				...prevState,
-				timestamp: timestamp,
-			};
-			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-			return newMusicState;
-		});
-	};
+	}
 
 	const updateMusicState = (state) => {
 		setMusicState((prevState) => {
-			const newMusicState = {
-				...prevState,
-				state: state,
-			};
-			sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-			return newMusicState;
-		});
-	};
-
-	const updateUserId = (user_id) => {
-		setAppState((prevState) => {
 			const newState = {
 				...prevState,
-				user_id: user_id,
+				...state,
 			};
-			sessionStorage.setItem("appState", JSON.stringify(newState));
+			sessionStorage.setItem("musicState", JSON.stringify(newState));
 			return newState;
 		});
-	};
+	}
+
+	// const updateLobbyState = (lobby_id, in_lobby, is_host) => {
+	// 	setAppState((prevState) => {
+	// 		const newState = {
+	// 			...prevState,
+	// 			lobby_id: lobby_id,
+	// 			in_lobby: in_lobby,
+	// 			is_host: is_host,
+	// 		};
+	// 		sessionStorage.setItem("appState", JSON.stringify(newState));
+	// 		return newState;
+	// 	});
+	// };
+
+	// const updateMusicData = (id, title, artist, cover_img, timestamp, state) => {
+	// 	setMusicState((prevState) => {
+	// 		const newMusicState = {
+	// 			id: id,
+	// 			title: title,
+	// 			artist: artist,
+	// 			cover_img: cover_img,
+	// 			timestamp: timestamp,
+	// 			state: state,
+	// 			has_item: id.length === 0 ? false : true,
+	// 		};
+	// 		sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
+	// 		return newMusicState;
+	// 	});
+	// };
+
+	// const updateMusicTs = (timestamp) => {
+	// 	setMusicState((prevState) => {
+	// 		const newMusicState = {
+	// 			...prevState,
+	// 			timestamp: timestamp,
+	// 		};
+	// 		sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
+	// 		return newMusicState;
+	// 	});
+	// };
+
+	// const updateMusicState = (state) => {
+	// 	setMusicState((prevState) => {
+	// 		const newMusicState = {
+	// 			...prevState,
+	// 			state: state,
+	// 		};
+	// 		sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
+	// 		return newMusicState;
+	// 	});
+	// };
+
+	// const updateUserId = (user_id) => {
+	// 	setAppState((prevState) => {
+	// 		const newState = {
+	// 			...prevState,
+	// 			user_id: user_id,
+	// 		};
+	// 		sessionStorage.setItem("appState", JSON.stringify(newState));
+	// 		return newState;
+	// 	});
+	// };
 
 	const addMsgHandler = (tag, handler) => {
 		msgHandlers.current[tag] = handler;
@@ -161,16 +191,15 @@ export const AppStateProvider = ({ children }) => {
 	return (
 		<AppStateContext.Provider
 			value={{
-				appState,
-				musicState,
 				ws,
 				audioRef,
-				updateLobbyState,
-				updateMusicData,
-				updateMusicTs,
-				updateMusicState,
+				appState,
+				musicState,
+				controlsDisabled,
 				addMsgHandler,
-				updateUserId,
+				updateAppState,
+				updateMusicState,
+				setControlsDisabled,
 			}}
 		>
 			{children}

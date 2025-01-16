@@ -15,14 +15,14 @@ function Lobby() {
 	const [showContent, setShowContent] = useState(false);
 	const [lobbyIds, setLobbyIds] = useState([]);
 
-	const { appState, ws, updateLobbyState, addMsgHandler, updateMusicData } =
-		useAppState();
+	const { appState, ws, addMsgHandler, updateAppState, updateMusicState } = useAppState();
 	const navigate = useNavigate();
 
+	// Delay to ensure content is rendered before animation
 	useEffect(() => {
 		setTimeout(() => {
 			setShowContent(true);
-		}, 100); // Delay to ensure content is rendered before animation
+		}, 100);
 	}, []);
 
 	// Get the online lobbies
@@ -63,10 +63,22 @@ function Lobby() {
 		// Handling the response
 		addMsgHandler(OpCode.CREATE_LOBBY, (res) => {
 			// Tagging the user as joined in lobby
-			updateLobbyState(res.value.lobby_id, true, true);
+			updateAppState({
+				lobby_id: res.value.lobby_id,
+				in_lobby: true,
+				is_host: true,
+			});
 
 			// Clearning the current music when creating a new lobby
-			updateMusicData("", "", "", "", 0, MPState.PAUSE);
+			updateMusicState({
+				has_item: false,
+				id: "",
+				title: "",
+				artist: "",
+				cover_img: "",
+				state: MPState.CHANGE_TIME,
+				state_data: 0,
+			});
 
 			// Switching to chat page when sucessfully created lobby
 			navigate("/chats");
@@ -85,10 +97,23 @@ function Lobby() {
 	const handleJoinLobby = (lobby_id) => {
 		// Join Lobby Handler
 		addMsgHandler(OpCode.JOIN_LOBBY, (res) => {
-			updateLobbyState(res.value.lobby_id, true, false);
+			// Tagging the user as joined in lobby
+			updateAppState({
+				lobby_id: res.value.lobby_id,
+				in_lobby: true,
+				is_host: false,
+			});
 
 			// Clearning the current music when creating a new lobby
-			updateMusicData("", "", "", "", 0, MPState.PAUSE);
+			updateMusicState({
+				has_item: false,
+				id: "",
+				title: "",
+				artist: "",
+				cover_img: "",
+				state: MPState.CHANGE_TIME,
+				state_data: 0,
+			});
 
 			navigate("/chats");
 		});

@@ -9,21 +9,23 @@ function SongContainer(playlist) {
 	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSongId, setSelectedSongId] = useState(null);
-	const { updateMusicData } = useAppState();
+	const { updateMusicState } = useAppState();
 	const handleMusicClick = async (item) => {
 		try {
 			setIsLoading(true);
 			const coverArt = getMusicImageUrl(item.music_id);
 			setSelectedSongId(item.music_id);
+
 			// Updating Music State globally
-			updateMusicData(
-				item.music_id,
-				item.title,
-				item.artist,
-				coverArt,
-				0,
-				MPState.CHANGE,
-			);
+			updateMusicState({
+				has_item: true,
+				id: item.music_id,
+				title: item.title,
+				artist: item.artist,
+				cover_img: coverArt,
+				timestamp: 0,
+				state: MPState.CHANGE_MUSIC,
+			});
 		} catch (err) {
 			console.error("Failed to fetch music URL:", err);
 			setError("Failed to fetch music URL: " + err.message);

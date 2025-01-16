@@ -13,7 +13,7 @@ function Login() {
 	const [errorMsg, setErrorMsg] = useState("");
 
 	const navigate = useNavigate();
-	const { updateUserId } = useAppState();
+	const { updateAppState } = useAppState();
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -24,7 +24,7 @@ function Login() {
 
 			// Initialize client state
 			const userData = await initClientState();
-			updateUserId(userData.user_id);
+			updateAppState({ user_id: userData.user_id });
 
 			// Redirect to home page
 			window.location.href = "/home"; // Intentionally refreshing to connect to backend ,He didnt know what he was doing

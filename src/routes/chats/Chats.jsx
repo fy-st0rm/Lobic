@@ -20,8 +20,8 @@ function Chats() {
 		appState,
 		musicState,
 		addMsgHandler,
-		updateMusicData,
-		updateLobbyState,
+		updateAppState,
+		updateMusicState,
 	} = useAppState();
 
 	const users = [
@@ -57,17 +57,30 @@ function Chats() {
 	useEffect(() => {
 		addMsgHandler(OpCode.SYNC_MUSIC, (res) => {
 			let music = res.value;
-			updateMusicData(
-				music.id,
-				music.title,
-				music.artist,
-				music.cover_img,
-				music.timestamp,
-				music.state,
-			);
+			console.log(music);
+			updateMusicState({
+				has_item: music.id ? true : false,
+				id: music.id,
+				title: music.title,
+				artist: music.artist,
+				cover_img: music.cover_img,
+			});
 
-			if (audioRef.current) {
-				audioRef.current.currentTime = music.timestamp;
+			if (
+				music.state === MPState.CHANGE_MUSIC ||
+				music.state === MPState.PLAY         ||
+				music.state === MPState.PAUSE
+			) {
+				updateMusicState({ state: music.state });
+			}
+			else if (music.state === MPState.CHANGE_TIME) {
+				updateMusicState({
+					state: music.state,
+					state_data: music.timestamp,
+				});
+			}
+			else if (music.state === MPState.CHANGE_VOLUME) {
+				// Ignore this state
 			}
 		});
 
@@ -84,10 +97,23 @@ function Chats() {
 
 	useEffect(() => {
 		addMsgHandler(OpCode.LEAVE_LOBBY, (res) => {
-			updateLobbyState("", false, false);
+			// Tagging the user as joined in lobby
+			updateAppState({
+				lobby_id: "",
+				in_lobby: false,
+				is_host: false,
+			});
 
-			// Clearning the current music when leaving a lobby
-			updateMusicData("", "", "", "", 0, MPState.PAUSE);
+			// Clearning the current music when creating a new lobby
+			updateMusicState({
+				has_item: false,
+				id: "",
+				title: "",
+				artist: "",
+				cover_img: "",
+				state: MPState.CHANGE_TIME,
+				state_data: 0,
+			});
 
 			navigate("/lobby");
 		});
