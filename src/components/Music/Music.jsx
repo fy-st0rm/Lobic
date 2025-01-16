@@ -14,8 +14,6 @@ function Music({ musicId, title, artist, coverArt, onClick }) {
 	};
 
 	const handleAddToPlaylist = async () => {
-		console.log("Added to playlist:", musicId, title);
-
 		try {
 			const playlists = await fetchUserPlaylists(userId);
 			console.log("playlists:", playlists);

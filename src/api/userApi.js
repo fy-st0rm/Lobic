@@ -91,14 +91,12 @@ export const signupUser = async (email, password, confirmPassword) => {
 export const fetchUserProfilePicture = async (userId) => {
 	try {
 		const response = await fetch(`${SERVER_IP}/user/get_pfp/${userId}.png`);
-
 		if (response.ok) {
 			return `${SERVER_IP}/user/get_pfp/${userId}.png`;
 		} else {
 			return "/public/sadit.jpg"; // Default image
 		}
-	} catch (error) {
-		console.error("Error fetching profile picture:", error);
+	} catch {
 		return "/public/sadit.jpg"; // Default image on error
 	}
 };
