@@ -55,7 +55,8 @@ function NavBar() {
 
 			// Clearing the session storage
 			sessionStorage.clear();
-			navigate("/login");
+			// navigate("/login");
+			window.location.href = "/login";
 		} catch (error) {
 			console.error("Logout failed:", error);
 		}

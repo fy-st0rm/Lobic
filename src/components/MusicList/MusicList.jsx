@@ -11,6 +11,7 @@ import {
 	fetchRecentlyPlayed,
 	logSongPlay,
 } from "../../api/musicApi.js";
+import { fetchLikedSongs } from "../../api/likedSongsApi.js";
 
 function MusicList({ list_title }) {
 	const [musicItems, setMusicItems] = useState([]);
@@ -30,16 +31,16 @@ function MusicList({ list_title }) {
 		try {
 			if (list_title === "Trending Now") {
 				data = await fetchTrendingSongs();
-				console.log(" trending now :", data);
 			} else if (list_title === "Recently Played") {
 				data = await fetchRecentlyPlayed(userId);
-				console.log("recently played :", data);
+			} else if (list_title === "Liked Songs") {
+				data = await fetchLikedSongs(userId);
 			} else {
 				data = await fetchMusicList();
 			}
 			setMusicItems(data);
 		} catch (err) {
-			setError(err.message);
+			console.error(err);
 		} finally {
 			setIsLoading(false);
 		}
@@ -73,8 +74,6 @@ function MusicList({ list_title }) {
 			setIsLoading(false);
 		}
 	};
-
-	if (error) return console.log(error);
 
 	return (
 		<div className="music-list-container">

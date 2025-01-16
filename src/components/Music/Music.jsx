@@ -1,9 +1,12 @@
 import React from "react";
 import "./Music.css";
 import { EllipsisVertical } from "lucide-react";
-import { fetchUserPlaylists } from "../../api/playlistApi.js";
-import { addSongToPlaylist } from "../../api/playlistApi.js";
+import {
+	fetchUserPlaylists,
+	addSongToPlaylist,
+} from "../../api/playlistApi.js";
 import { useAppState } from "../../AppState.jsx";
+import { addToLikedSongs } from "../../api/likedSongsApi.js";
 
 function Music({ musicId, title, artist, coverArt, onClick }) {
 	const { appState } = useAppState();
@@ -38,6 +41,10 @@ function Music({ musicId, title, artist, coverArt, onClick }) {
 		}
 	};
 
+	const handleAddToLikedSongs = async () => {
+		await addToLikedSongs(userId, musicId);
+	};
+
 	return (
 		<>
 			<div className="music-container">
@@ -58,6 +65,9 @@ function Music({ musicId, title, artist, coverArt, onClick }) {
 						</div>
 						<div className="dropdown-item" onClick={handleAddToPlaylist}>
 							Add to Playlist
+						</div>
+						<div className="dropdown-item" onClick={handleAddToLikedSongs}>
+							Add to Liked Songs
 						</div>
 					</div>
 				</div>
