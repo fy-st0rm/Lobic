@@ -17,59 +17,26 @@ import {
 	fetchMusicUrl,
 } from "../../const.jsx";
 
-function debounce(func, wait) {
-	let timeout;
-	return function (...args) {
-		clearTimeout(timeout);
-		timeout = setTimeout(() => func(...args), wait);
-	};
-}
-
 function MusicPlayer() {
-	const [volume, setVolume] = useState(50); // Global volume state
-	const [currentTime, setCurrentTime] = useState(0);
-	const [duration, setDuration] = useState(0);
-	const [seeking, setSeeking] = useState(false);
-	const [initialVolume, setInitialVolume] = useState(50); // For mute toggle
-	const [isLoading, setIsLoading] = useState(false);
-	const [accessControls, setAccessControls] = useState(true);
-	const [error, setError] = useState("");
-
 	const {
 		ws,
 		appState,
 		musicState,
 		audioRef,
+		controlsDisabled,
 		addMsgHandler,
-		updateMusicData,
-		updateMusicTs,
 		updateMusicState,
 	} = useAppState();
+
+	const [initialVolume, setInitialVolume] = useState(musicState.volume);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState("");
 
 	const formatTime = (time) => {
 		const minutes = Math.floor(time / 60);
 		const seconds = Math.floor(time % 60);
 		return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 	};
-
-	const resetAudioRef = async () => {
-		if (audioRef.current) {
-			await audioRef.current.pause();
-			audioRef.current.src = ""; // Clear the previous source
-			await audioRef.current.load(); // Reset the audio element
-		}
-
-		setCurrentTime(0); // Reset the current time
-		setDuration(0); // Reset the duration
-		setError(""); // Clear any errors
-	};
-
-	// Disables the controls for listeners in lobby
-	useEffect(() => {
-		setAccessControls(
-			appState.is_host && appState.in_lobby && musicState.has_item,
-		);
-	}, [appState, musicState]);
 
 	// Responsible to set the music state of the lobby as a host
 	useEffect(() => {
@@ -90,46 +57,7 @@ function MusicPlayer() {
 			},
 		};
 		wsSend(ws, payload);
-	}, [musicState]);
-
-	// Responsible for playing a song whenever the music state is changed
-	useEffect(() => {
-		// Disabling controls when the music isnt set
-		if (!musicState.has_item) {
-			setAccessControls(false);
-		}
-		// Only whenever user is not in lobby
-		else if (!appState.in_lobby) {
-			setAccessControls(true);
-		}
-
-		if (!audioRef.current) return;
-
-		if (musicState.state === MPState.PLAYING) {
-			audioRef.current.play();
-		} else if (musicState.state === MPState.CHANGE) {
-			setIsLoading(true);
-
-			const playNewSong = async () => {
-				try {
-					await resetAudioRef();
-					audioRef.current.src = await fetchMusicUrl(musicState.id);
-					// Set the volume only once when the song is loaded
-					audioRef.current.volume = volume / 100; // Set volume after loading song
-				} catch (err) {
-					console.error("Failed to autoplay:", err);
-					setError("Failed to autoplay: " + err.message);
-				} finally {
-					setIsLoading(false);
-					updateMusicState(MPState.PLAYING);
-				}
-			};
-			playNewSong();
-		} else if (musicState.state === MPState.PAUSE) {
-			audioRef.current.pause();
-			setCurrentTime(musicState.timestamp);
-		}
-	}, [musicState]);
+	}, [musicState.state]);
 
 	const handlePlayMusic = async () => {
 		try {
@@ -137,82 +65,60 @@ function MusicPlayer() {
 				throw new Error("No song selected");
 			}
 
-			if (musicState.state == MPState.PLAYING) {
-				updateMusicTs(audioRef.current.currentTime);
-				updateMusicState(MPState.PAUSE);
+			if (musicState.state == MPState.PLAY) {
+				updateMusicState({ state: MPState.PAUSE });
 			} else if (musicState.state == MPState.PAUSE) {
+				updateMusicState({ state: MPState.PLAY });
+
 				setIsLoading(true);
 				setError("");
-				updateMusicTs(audioRef.current.currentTime);
-				updateMusicState(MPState.PLAYING);
 			}
 		} catch (err) {
 			console.error("Failed to load/play music:", err);
 			setError("Failed to load music: " + err.message);
-			updateMusicState(MPState.PAUSE);
+			updateMusicState({ state: MPState.PAUSE });
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
 	const onVolumeChange = (e) => {
-		const newVolume = e.target.value;
-
-		setVolume(newVolume); // Update the volume state
-		if (audioRef.current) {
-			audioRef.current.volume = newVolume / 100; // Update volume directly without restarting
-		}
+		updateMusicState({
+			state: MPState.CHANGE_VOLUME,
+			state_data: e.target.value,
+		});
 	};
 
 	const volumeToggle = () => {
-		if (volume > 0) {
-			setInitialVolume(volume); // Save the current volume before muting
-			setVolume(0);
-			audioRef.current.volume = 0;
+		if (musicState.volume > 0) {
+			setInitialVolume(musicState.volume); // Save the current volume before muting
+			updateMusicState({
+				state: MPState.CHANGE_VOLUME,
+				state_data: 0,
+			});
 		} else {
-			setVolume(initialVolume); // Restore saved volume when unmuted
-			audioRef.current.volume = initialVolume / 100;
+			updateMusicState({
+				state: MPState.CHANGE_VOLUME,
+				state_data: initialVolume,
+			});
 		}
-	};
-
-	const handleTimeUpdate = () => {
-		if (!seeking) {
-			setCurrentTime(audioRef.current.currentTime);
-		}
-	};
-
-	const handleLoadedMetadata = () => {
-		setDuration(audioRef.current.duration);
-	};
-
-	const handleSeekStart = () => {
-		setSeeking(true);
 	};
 
 	const handleSeekEnd = (e) => {
-		setSeeking(false);
-		const seekTime = (e.target.value / 100) * duration;
-		audioRef.current.currentTime = seekTime;
-		setCurrentTime(seekTime);
-		updateMusicTs(seekTime);
+		const seekTime = (e.target.value / 100) * musicState.duration;
+		updateMusicState({
+			state: MPState.CHANGE_TIME,
+			state_data: seekTime,
+		});
 	};
 
 	const handleSeekMove = (e) => {
-		const seekTime = (e.target.value / 100) * duration;
-		setCurrentTime(seekTime);
-		updateMusicTs(seekTime);
+		const seekTime = (e.target.value / 100) * musicState.duration;
+		updateMusicState({
+			state: MPState.CHANGE_TIME,
+			state_data: seekTime,
+		});
 	};
-
-	useEffect(() => {
-		const audioElement = audioRef.current;
-		audioElement.addEventListener("timeupdate", handleTimeUpdate);
-		audioElement.addEventListener("loadedmetadata", handleLoadedMetadata);
-
-		return () => {
-			audioElement.removeEventListener("timeupdate", handleTimeUpdate);
-			audioElement.removeEventListener("loadedmetadata", handleLoadedMetadata);
-		};
-	}, [seeking]);
 
 	return (
 		<div className="music-player">
@@ -239,52 +145,50 @@ function MusicPlayer() {
 				<div className="control-bar">
 					<button
 						className="control-button"
-						disabled={isLoading || !accessControls}
+						disabled={isLoading || controlsDisabled}
 					>
 						<img
 							src={previousButton}
 							alt="Previous"
-							className={`button-group ${!accessControls ? "disabled" : ""}`}
+							className={`button-group ${controlsDisabled ? "disabled" : ""}`}
 						/>
 					</button>
 					<button
 						className="control-button"
 						onClick={handlePlayMusic}
-						disabled={isLoading || !accessControls}
+						disabled={isLoading || controlsDisabled}
 					>
 						<img
 							src={
-								musicState.state === MPState.PLAYING ? pauseButton : playButton
+								musicState.state === MPState.PLAY ? pauseButton : playButton
 							}
-							alt={musicState.state === MPState.PLAYING ? "Pause" : "Play"}
-							className={`button-group ${!accessControls ? "disabled" : ""}`}
+							alt={musicState.state === MPState.PLAY ? "Pause" : "Play"}
+							className={`button-group ${controlsDisabled ? "disabled" : ""}`}
 						/>
 					</button>
 					<button
 						className="control-button"
-						disabled={isLoading || !accessControls}
+						disabled={isLoading || controlsDisabled}
 					>
 						<img
 							src={NextButton}
 							alt="Next"
-							className={`button-group ${!accessControls ? "disabled" : ""}`}
+							className={`button-group ${controlsDisabled ? "disabled" : ""}`}
 						/>
 					</button>
 				</div>
 				<div className="status">
-					<div className="music-status">{formatTime(currentTime)}</div>
+					<div className="music-status">{formatTime(musicState.timestamp)}</div>
 					<input
 						type="range"
 						min="0"
 						max="100"
-						value={(currentTime / duration) * 100 || 0}
+						value={(musicState.timestamp / musicState.duration) * 100 || 0}
 						onChange={handleSeekMove}
-						onMouseDown={handleSeekStart}
 						onMouseUp={handleSeekEnd}
-						onTouchStart={handleSeekStart}
 						onTouchEnd={handleSeekEnd}
 						className="status-bar"
-						disabled={isLoading || !accessControls}
+						disabled={isLoading || controlsDisabled}
 					/>
 				</div>
 			</div>
@@ -297,7 +201,7 @@ function MusicPlayer() {
 				>
 					<img
 						className="volume-image"
-						src={volume == 0 ? Mute : volume > 40 ? VolumeHigh : VolumeLow}
+						src={musicState.volume == 0 ? Mute : musicState.volume > 40 ? VolumeHigh : VolumeLow}
 						alt="Volume"
 					/>
 				</button>
@@ -305,7 +209,7 @@ function MusicPlayer() {
 					type="range"
 					min="0"
 					max="100"
-					value={volume}
+					value={musicState.volume}
 					onChange={onVolumeChange}
 					className="volume-control-bar"
 					disabled={isLoading}

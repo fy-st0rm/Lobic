@@ -14,12 +14,16 @@ export const OpCode = Object.freeze({
 	GET_LOBBY_IDS: "GET_LOBBY_IDS",
 	SET_MUSIC_STATE: "SET_MUSIC_STATE",
 	SYNC_MUSIC: "SYNC_MUSIC",
+	ADD_FRIEND: "ADD_FRIEND",
+	REMOVE_FRIEND: "REMOVE_FRIEND",
 });
 
 export const MPState = Object.freeze({
-	PLAYING: "PLAYING",
-	CHANGE: "CHANGE",
+	PLAY: "PLAY",
 	PAUSE: "PAUSE",
+	CHANGE_MUSIC: "CHANGE_MUSIC",
+	CHANGE_VOLUME: "CHANGE_VOLUME",
+	CHANGE_TIME: "CHANGE_TIME",
 });
 
 export const wsSend = (ws, data) => {

@@ -19,7 +19,7 @@ function MusicList({ list_title }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSongId, setSelectedSongId] = useState(null);
 
-	const { updateMusicData, appState } = useAppState();
+	const { appState, updateMusicState } = useAppState();
 	const userId = appState.user_id;
 
 	useEffect(() => {
@@ -51,17 +51,22 @@ function MusicList({ list_title }) {
 			//TODO : refactor into PlaySong??
 			setSelectedSongId(song.id);
 			setIsLoading(true);
+
 			const coverArt = getMusicImageUrl(song.id);
+			setSelectedSongId(song.id);
+
 			await incrementPlayCount(song.id);
 			await logSongPlay(userId, song.id);
-			updateMusicData(
-				song.id,
-				song.title,
-				song.artist,
-				coverArt,
-				0,
-				MPState.CHANGE
-			);
+
+			updateMusicState({
+				has_item: true,
+				id: song.id,
+				title: song.title,
+				artist: song.artist,
+				cover_img: coverArt,
+				timestamp: 0,
+				state: MPState.CHANGE_MUSIC,
+			});
 		} catch (err) {
 			console.error("Failed to handle music click:", err);
 			setError("Failed to play music: " + err.message);
