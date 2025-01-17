@@ -1,20 +1,33 @@
 import { SERVER_IP } from "../const.jsx";
 
+// Define interfaces for the data structures
+interface MusicTrack {
+	id: string;
+	title: string;
+	artist: string;
+	album?: string;
+	duration?: number;
+	// Add other fields as needed
+}
+
+interface RecentlyPlayedSong extends MusicTrack {
+	playedAt: string; // Timestamp of when the song was played
+}
+
 /**
- * Fetches a list of music tracks with optional query parameters.
- * @param {Object} options - Options for fetching music data.
- * @param {boolean} [options.isTrending=false] - Whether to fetch trending music.
- * @returns {Promise<Array>} - A list of music tracks.
+ * Fetches a list of music tracks.
+ * @returns {Promise<MusicTrack[]>} - A list of music tracks.
  */
-export const fetchMusicList = async () => {
+export const fetchMusicList = async (): Promise<MusicTrack[]> => {
 	try {
-		let url = `${SERVER_IP}/get_music`;
+		const url = `${SERVER_IP}/get_music`;
 		const response = await fetch(url);
+
 		if (!response.ok) {
 			throw new Error("Failed to fetch music data");
 		}
 
-		const data = await response.json();
+		const data: MusicTrack[] = await response.json();
 		return data;
 	} catch (error) {
 		console.error("Error fetching music list:", error);
@@ -23,19 +36,22 @@ export const fetchMusicList = async () => {
 };
 
 /**
- * Fetches a list of music tracks
- * @returns {Promise<Array>} - A list of music tracks.
+ * Fetches a list of trending music tracks.
+ * @returns {Promise<MusicTrack[]>} - A list of trending music tracks.
  */
-export const fetchTrendingSongs = async () => {
+export const fetchTrendingSongs = async (): Promise<MusicTrack[]> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/music/get_trending`);
+
 		if (!response.ok) {
-			throw new Error("Failed to fetch music data");
+			throw new Error("Failed to fetch trending music data");
 		}
-		const data = await response.json();
+
+		const data: MusicTrack[] = await response.json();
 		return data;
 	} catch (error) {
-		console.error("Error fetching music list:", error);
+		console.error("Error fetching trending songs:", error);
+		throw error;
 	}
 };
 
@@ -43,15 +59,18 @@ export const fetchTrendingSongs = async () => {
  * Fetches a list of recently played songs for a specific user.
  * @param {string} userId - The ID of the user.
  * @param {number} paginationLimit - The number of songs to fetch.
- * @returns {Promise<Array>} - A list of recently played songs.
+ * @returns {Promise<RecentlyPlayedSong[]>} - A list of recently played songs.
  */
-export const fetchRecentlyPlayed = async (userId, paginationLimit = 30) => {
+export const fetchRecentlyPlayed = async (
+	userId: string,
+	paginationLimit: number = 30
+): Promise<RecentlyPlayedSong[]> => {
 	try {
 		// Construct the URL with query parameters
 		const url = new URL(`${SERVER_IP}/music/get_recently_played`);
 		const params = new URLSearchParams({
 			user_id: userId,
-			pagination_limit: paginationLimit,
+			pagination_limit: paginationLimit.toString(),
 		});
 		url.search = params.toString();
 
@@ -67,7 +86,7 @@ export const fetchRecentlyPlayed = async (userId, paginationLimit = 30) => {
 			throw new Error("Failed to fetch recently played songs");
 		}
 
-		const data = await response.json();
+		const data: RecentlyPlayedSong[] = await response.json();
 		return data;
 	} catch (error) {
 		console.error("Error fetching recently played songs:", error);
@@ -81,7 +100,10 @@ export const fetchRecentlyPlayed = async (userId, paginationLimit = 30) => {
  * @param {string} musicId - The ID of the song being played.
  * @returns {Promise<string>} - A confirmation message.
  */
-export const logSongPlay = async (userId, musicId) => {
+export const logSongPlay = async (
+	userId: string,
+	musicId: string
+): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/music/log_song_play`, {
 			method: "POST",
@@ -98,7 +120,7 @@ export const logSongPlay = async (userId, musicId) => {
 			throw new Error("Failed to log song play");
 		}
 
-		const text = await response.text();
+		const text: string = await response.text();
 		return text;
 	} catch (error) {
 		console.error("Error logging song play:", error);
@@ -111,7 +133,7 @@ export const logSongPlay = async (userId, musicId) => {
  * @param {string} songId - The ID of the song.
  * @returns {Promise<string>} - A confirmation message.
  */
-export const incrementPlayCount = async (songId) => {
+export const incrementPlayCount = async (songId: string): Promise<string> => {
 	try {
 		const response = await fetch(
 			`${SERVER_IP}/music/incr_times_played/${songId}`,
@@ -124,7 +146,7 @@ export const incrementPlayCount = async (songId) => {
 			throw new Error("Failed to increment play count");
 		}
 
-		const text = await response.text();
+		const text: string = await response.text();
 		return text;
 	} catch (error) {
 		console.error("Error incrementing play count:", error);
@@ -137,4 +159,5 @@ export const incrementPlayCount = async (songId) => {
  * @param {string} songId - The ID of the song.
  * @returns {string} - The URL of the music image.
  */
-export const getMusicImageUrl = (songId) => `${SERVER_IP}/image/${songId}.png`;
+export const getMusicImageUrl = (songId: string): string =>
+	`${SERVER_IP}/image/${songId}.png`;

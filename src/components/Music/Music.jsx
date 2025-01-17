@@ -6,7 +6,7 @@ import {
 	addSongToPlaylist,
 } from "../../api/playlistApi.ts";
 import { useAppState } from "../../AppState.jsx";
-import { addToLikedSongs } from "../../api/likedSongsApi.js";
+import { addToLikedSongs } from "../../api/likedSongsApi.ts";
 
 function Music({ musicId, title, artist, coverArt, onClick }) {
 	const { appState } = useAppState();
