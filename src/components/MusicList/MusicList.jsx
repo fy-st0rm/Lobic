@@ -10,8 +10,8 @@ import {
 	fetchTrendingSongs,
 	fetchRecentlyPlayed,
 	logSongPlay,
-} from "../../api/musicApi.js";
-import { fetchLikedSongs } from "../../api/likedSongsApi.js";
+} from "../../api/musicApi.ts";
+import { fetchLikedSongs } from "../../api/likedSongsApi.ts";
 
 function MusicList({ list_title }) {
 	const [musicItems, setMusicItems] = useState([]);

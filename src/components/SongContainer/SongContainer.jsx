@@ -2,7 +2,7 @@ import { useState } from "react";
 import SongInfo from "../SongInfo/SongInfo";
 import { MPState } from "../../const.jsx";
 import { useAppState } from "../../AppState.jsx";
-import { getMusicImageUrl } from "../../api/musicApi.js";
+import { getMusicImageUrl } from "../../api/musicApi.ts";
 
 function SongContainer({ playlistId, songs }) {
 	const [error, setError] = useState(null);

@@ -6,7 +6,10 @@ import { SERVER_IP } from "../const.jsx";
  * @param {string} password - User's password.
  * @returns {Promise<boolean>} - True if login is successful, false otherwise.
  */
-export const performLogin = async (email, password) => {
+export const performLogin = async (
+	email: string,
+	password: string
+): Promise<boolean> => {
 	const payload = {
 		email: email,
 		password: password,
@@ -33,7 +36,7 @@ export const performLogin = async (email, password) => {
  * Fetches the user's data and updates the client state.
  * @returns {Promise<{ user_id: string }>} - The user's data.
  */
-export const initClientState = async () => {
+export const initClientState = async (): Promise<{ user_id: string }> => {
 	const response = await fetch(`${SERVER_IP}/get_user`, {
 		method: "GET",
 		credentials: "include",
@@ -44,7 +47,7 @@ export const initClientState = async () => {
 		throw new Error(errorMsg);
 	}
 
-	const data = await response.json();
+	const data: { user_id: string } = await response.json();
 	return data;
 };
 
@@ -55,7 +58,11 @@ export const initClientState = async () => {
  * @param {string} confirmPassword - Confirmation of the user's password.
  * @returns {Promise<Response>} - The response from the server.
  */
-export const signupUser = async (email, password, confirmPassword) => {
+export const signupUser = async (
+	email: string,
+	password: string,
+	confirmPassword: string
+): Promise<Response> => {
 	if (password !== confirmPassword) {
 		throw new Error("Passwords do not match");
 	}
@@ -88,7 +95,9 @@ export const signupUser = async (email, password, confirmPassword) => {
  * @param {string} userId - The user's ID.
  * @returns {Promise<string>} - The URL of the profile picture or a default image.
  */
-export const fetchUserProfilePicture = async (userId) => {
+export const fetchUserProfilePicture = async (
+	userId: string
+): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/user/get_pfp/${userId}.png`);
 		if (response.ok) {
@@ -106,7 +115,7 @@ export const fetchUserProfilePicture = async (userId) => {
  * @param {string} userId - The user's ID.
  * @returns {Promise<Response>} - The response from the server.
  */
-export const logoutUser = async (userId) => {
+export const logoutUser = async (userId: string): Promise<Response> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/logout`, {
 			method: "POST",
@@ -134,14 +143,17 @@ export const logoutUser = async (userId) => {
  * @param {string} imageUrl - The URL of the new profile picture.
  * @returns {Promise<string>} - The result of the upload.
  */
-export const updateProfilePicture = async (userUuid, imageUrl) => {
+export const updateProfilePicture = async (
+	userUuid: string,
+	imageUrl: string
+): Promise<string> => {
 	try {
 		// First fetch the image data
 		const imageResponse = await fetch(imageUrl);
 		if (!imageResponse.ok) {
 			throw new Error("Failed to fetch image data");
 		}
-		const imageBlob = await imageResponse.blob();
+		const imageBlob: Blob = await imageResponse.blob();
 
 		// Then upload it to the server
 		const uploadResponse = await fetch(
@@ -159,7 +171,7 @@ export const updateProfilePicture = async (userUuid, imageUrl) => {
 			throw new Error(`Upload failed: ${uploadResponse.statusText}`);
 		}
 
-		const result = await uploadResponse.text();
+		const result: string = await uploadResponse.text();
 		console.log("Upload successful:", result);
 		return result;
 	} catch (error) {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { performLogin, initClientState } from "../../api/userApi.js";
+import { performLogin, initClientState } from "../../api/userApi.ts";
 import { useAppState } from "../../AppState.jsx";
 import logo from "/lobic_logo.png";
 import "./Login.css";
