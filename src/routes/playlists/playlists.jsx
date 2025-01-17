@@ -3,7 +3,7 @@ import { useAppState } from "../../AppState.jsx";
 import { useNavigate } from "react-router-dom";
 import img from "/playlistimages/playlistimage.png";
 import { Plus } from "lucide-react";
-import { fetchUserPlaylists, createPlaylist } from "../../api/playlistApi.js";
+import { fetchUserPlaylists, createPlaylist } from "../../api/playlistApi.ts";
 
 function Playlists() {
 	const { appState } = useAppState();

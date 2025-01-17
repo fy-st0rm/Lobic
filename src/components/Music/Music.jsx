@@ -4,7 +4,7 @@ import { EllipsisVertical } from "lucide-react";
 import {
 	fetchUserPlaylists,
 	addSongToPlaylist,
-} from "../../api/playlistApi.js";
+} from "../../api/playlistApi.ts";
 import { useAppState } from "../../AppState.jsx";
 import { addToLikedSongs } from "../../api/likedSongsApi.js";
 
