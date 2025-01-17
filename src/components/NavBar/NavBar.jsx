@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import SearchBar from "../SearchBar/SearchBar";
 import { useAppState } from "../../AppState.jsx";
 import { OpCode, wsSend } from "../../const.jsx";
-import { fetchUserProfilePicture, logoutUser } from "../../api/userApi.js";
+import { fetchUserProfilePicture, logoutUser } from "../../api/userApi.ts";
 
 function NavBar() {
 	const [showMessage, setShowMessage] = useState(false);

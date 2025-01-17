@@ -1,12 +1,24 @@
 import { SERVER_IP } from "../const.jsx";
 
+// Define interfaces for the data structures
+interface LikedSong {
+	id: string;
+	title: string;
+	artist: string;
+	album?: string;
+	duration?: number;
+}
+
 /**
  * Fetches a list of liked songs for a specific user.
  * @param {string} userId - The ID of the user.
- * @param {number} [paginationLimit] - Optional. The number of songs to fetch. fetches all if nothing is provided
- * @returns {Promise<Array>} - A list of liked songs.
+ * @param {number} [paginationLimit] - Optional. The number of songs to fetch. Fetches all if nothing is provided.
+ * @returns {Promise<LikedSong[]>} - A list of liked songs.
  */
-export const fetchLikedSongs = async (userId, paginationLimit) => {
+export const fetchLikedSongs = async (
+	userId: string,
+	paginationLimit?: number
+): Promise<LikedSong[]> => {
 	try {
 		// Construct the URL with query parameters
 		const url = new URL(`${SERVER_IP}/music/liked_song/get`);
@@ -16,7 +28,7 @@ export const fetchLikedSongs = async (userId, paginationLimit) => {
 
 		// Add pagination_limit if provided
 		if (paginationLimit !== undefined) {
-			params.append("pagination_limit", paginationLimit);
+			params.append("pagination_limit", paginationLimit.toString());
 		}
 
 		url.search = params.toString();
@@ -33,7 +45,7 @@ export const fetchLikedSongs = async (userId, paginationLimit) => {
 			throw new Error("Failed to fetch liked songs");
 		}
 
-		const data = await response.json();
+		const data: LikedSong[] = await response.json();
 		return data;
 	} catch (error) {
 		console.error("Error fetching liked songs:", error);
@@ -45,9 +57,12 @@ export const fetchLikedSongs = async (userId, paginationLimit) => {
  * Adds a song to the user's liked songs.
  * @param {string} userId - The ID of the user.
  * @param {string} musicId - The ID of the song.
- * @returns {Promise<string>} - A confirmation message.
+ * @returns {Promise<string | object>} - A confirmation message or JSON response.
  */
-export const addToLikedSongs = async (userId, musicId) => {
+export const addToLikedSongs = async (
+	userId: string,
+	musicId: string
+): Promise<string | object> => {
 	try {
 		const payload = {
 			user_id: userId,
@@ -70,19 +85,22 @@ export const addToLikedSongs = async (userId, musicId) => {
 			if (response.status === 409) {
 				console.log("Song already exists in liked songs");
 			}
+
+			throw new Error(errorMessage);
 		}
 
 		// Handle 201 Created response
 		const contentType = response.headers.get("content-type");
 		if (contentType && contentType.includes("application/json")) {
-			const result = await response.json();
+			const result: object = await response.json();
 			return result;
 		} else {
-			const result = await response.text();
+			const result: string = await response.text();
 			return result;
 		}
 	} catch (error) {
-		console.error("Error adding to liked songs:", error.message);
+		console.error("Error adding to liked songs:", error);
+		throw error;
 	}
 };
 
@@ -92,7 +110,10 @@ export const addToLikedSongs = async (userId, musicId) => {
  * @param {string} musicId - The ID of the song.
  * @returns {Promise<string>} - A confirmation message.
  */
-export const removeFromLikedSongs = async (userId, musicId) => {
+export const removeFromLikedSongs = async (
+	userId: string,
+	musicId: string
+): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/liked_songs/remove`, {
 			method: "DELETE",
@@ -109,7 +130,7 @@ export const removeFromLikedSongs = async (userId, musicId) => {
 			throw new Error("Failed to remove song from liked songs");
 		}
 
-		const text = await response.text();
+		const text: string = await response.text();
 		console.log("Removed from liked songs:", text); // Log the result
 		return text;
 	} catch (error) {
