@@ -1,12 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-
-import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
-import NavBar from "../../components/NavBar/NavBar.jsx";
 import MusicList from "../../components/MusicList/MusicList.jsx";
-import SongContainer from "../../components/SongContainer/SongContainer.jsx";
 import "./Home.css";
-import { useAppState } from "../../AppState.jsx";
 
 function Home() {
 	return (
@@ -17,6 +10,7 @@ function Home() {
 					<MusicList className="music-list" list_title="Featured Music" />
 					<MusicList className="music-list" list_title="Recently Played" />
 					<MusicList className="music-list" list_title="Trending Now" />
+					<MusicList className="music-list" list_title="My Top Tracks" />
 				</div>
 			</div>
 		</>
