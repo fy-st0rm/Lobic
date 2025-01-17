@@ -159,9 +159,7 @@ function MusicPlayer() {
 						disabled={isLoading || controlsDisabled}
 					>
 						<img
-							src={
-								musicState.state === MPState.PLAY ? pauseButton : playButton
-							}
+							src={musicState.state === MPState.PLAY ? pauseButton : playButton}
 							alt={musicState.state === MPState.PLAY ? "Pause" : "Play"}
 							className={`button-group ${controlsDisabled ? "disabled" : ""}`}
 						/>
@@ -201,7 +199,13 @@ function MusicPlayer() {
 				>
 					<img
 						className="volume-image"
-						src={musicState.volume == 0 ? Mute : musicState.volume > 40 ? VolumeHigh : VolumeLow}
+						src={
+							musicState.volume == 0
+								? Mute
+								: musicState.volume > 40
+								? VolumeHigh
+								: VolumeLow
+						}
 						alt="Volume"
 					/>
 				</button>

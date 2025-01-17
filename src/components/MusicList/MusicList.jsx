@@ -12,6 +12,7 @@ import {
 	logSongPlay,
 } from "../../api/musicApi.ts";
 import { fetchLikedSongs } from "../../api/likedSongsApi.ts";
+import { fetchTopTracks } from "../../api/topTracksApi.ts";
 
 function MusicList({ list_title }) {
 	const [musicItems, setMusicItems] = useState([]);
@@ -35,6 +36,8 @@ function MusicList({ list_title }) {
 				data = await fetchRecentlyPlayed(userId);
 			} else if (list_title === "Liked Songs") {
 				data = await fetchLikedSongs(userId);
+			} else if (list_title === "My Top Tracks") {
+				data = await fetchTopTracks(userId);
 			} else {
 				data = await fetchMusicList();
 			}
