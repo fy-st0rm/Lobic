@@ -1,8 +1,10 @@
+// Node modules
 import React, { useState, useEffect } from "react";
-import { useAppState } from "../../AppState.jsx";
-import Music from "../Music/Music";
-import "./MusicList.css";
-import { MPState } from "../../const.jsx";
+
+// Local
+import { useAppState } from "@/AppState.jsx";
+import Music from "components/Music/Music";
+import { MPState } from "@/const.jsx";
 import {
 	fetchMusicList,
 	incrementPlayCount,
@@ -10,9 +12,12 @@ import {
 	fetchTrendingSongs,
 	fetchRecentlyPlayed,
 	logSongPlay,
-} from "../../api/musicApi.ts";
-import { fetchLikedSongs } from "../../api/likedSongsApi.ts";
-import { fetchTopTracks } from "../../api/topTracksApi.ts";
+} from "api/musicApi.ts";
+import { fetchLikedSongs } from "api/likedSongsApi.ts";
+import { fetchTopTracks } from "api/topTracksApi.ts";
+
+// Assets
+import "./MusicList.css";
 
 function MusicList({ list_title }) {
 	const [musicItems, setMusicItems] = useState([]);
