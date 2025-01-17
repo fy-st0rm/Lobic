@@ -9,6 +9,7 @@ import {
 	SocketResponse,
 	SocketPayload
 } from "api/socketApi.ts";
+import { LobbyModel, fetchLobbies } from "api/lobbyApi.ts";
 import { MPState, SERVER_IP } from "@/const.jsx";
 import { useAppState } from "@/AppState.jsx";
 import {
@@ -22,7 +23,7 @@ import "./Lobby.css";
 
 function Lobby() {
 	const [showContent, setShowContent] = useState<boolean>(false);
-	const [lobbyIds, setLobbyIds] = useState<string[]>([]);
+	const [lobbies, setLobbies] = useState<LobbyModel[]>([]);
 
 	const {
 		appState,
@@ -49,7 +50,11 @@ function Lobby() {
 
 		// Handling the response
 		addMsgHandler(OpCode.GET_LOBBY_IDS, (res: SocketResponse) => {
-			setLobbyIds(res.value);
+			const init = async () => {
+				let lobbies = await fetchLobbies(res.value);
+				setLobbies(lobbies);
+			}
+			init();
 		});
 
 		// Requesting the lobby ids
@@ -150,15 +155,15 @@ function Lobby() {
 				<h1 className="lobby-header"> Lobbies </h1>
 				<div className="scrollable-area">
 					<div className={`grid-container ${showContent ? "show" : ""}`}>
-						{lobbyIds.map((id, idx) => (
+						{lobbies.map((lobby, idx) => (
 							<LobbyCard
-								key={id}
-								lobby_id={id}
-								lobby_name={id}
-								listeners_cnt={1}
-								song_name="Song Name"
-								artist_name="Artist Name"
-								lobby_icon={test_logo}
+								key={lobby.id}
+								lobby_id={lobby.id}
+								lobby_name={lobby.lobby_name}
+								listeners_cnt={lobby.listeners}
+								song_name={lobby.song_name}
+								artist_name={lobby.artist_name}
+								lobby_icon={lobby.lobby_icon}
 								card_index={idx}
 								onClick={handleJoinLobby}
 							/>

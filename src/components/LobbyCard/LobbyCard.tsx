@@ -1,7 +1,11 @@
+// Node modules
 import { FC, useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
+
+// Assets
 import equalizer_logo from "/music_equalizer.png";
 import PlusIcon from "/plus.svg";
+import test_logo from "/covers/cover.jpg";
 import "./LobbyCard.css";
 
 /*
@@ -119,7 +123,13 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 
 					{/* Lobby icon */}
 					<div className="lobby-card-icon-canvas">
-						<img src={lobby_icon} className="lobby-card-icon" />
+						<img
+							src={lobby_icon}
+							className="lobby-card-icon"
+							onError={(e) => {
+								(e.target as HTMLImageElement).src = test_logo;
+							}}
+						/>
 					</div>
 
 					{/* Lobby name */}
