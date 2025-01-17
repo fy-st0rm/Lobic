@@ -8,7 +8,8 @@
 		"build": "vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",
-		"save_music": "node save-music.js"
+		"save_music": "node save-music.js",
+		"tsc": "tsc --noEmit --watch"
 	},
 	"dependencies": {
 		"date-fns": "^4.1.0",
