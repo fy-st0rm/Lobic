@@ -1,12 +1,25 @@
-import { useState, useEffect, useRef } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
-
 import equalizer_logo from "/music_equalizer.png";
 import PlusIcon from "/plus.svg";
-
 import "./LobbyCard.css";
 
-export const LobbyCard = ({
+/*
+ * React component for lobby card
+ */
+
+type LobbyCardProps = {
+	lobby_id: string;
+	lobby_name: string;
+	listeners_cnt: number;
+	song_name: string;
+	artist_name: string;
+	lobby_icon: string;
+	card_index: number;
+	onClick: (lobby_id: string) => void;
+};
+
+export const LobbyCard: FC<LobbyCardProps> = ({
 	lobby_id,
 	lobby_name,
 	listeners_cnt,
@@ -16,14 +29,15 @@ export const LobbyCard = ({
 	card_index,
 	onClick,
 }) => {
-	const [isLobbyNameOF, setLobbyNameOF] = useState(false);
-	const [isSongNameOF, setSongNameOF] = useState(false);
-	const [isHovered, setIsHovered] = useState(false);
-	const [animate, setAnimate] = useState(false);
-	const cardRef = useRef(null);
-	const lobbyNameRef = useRef(null);
-	const songCardRef = useRef(null);
-	const songNameRef = useRef(null);
+	const [isLobbyNameOF, setLobbyNameOF] = useState<boolean>(false);
+	const [isSongNameOF, setSongNameOF] = useState<boolean>(false);
+	const [isHovered, setIsHovered] = useState<boolean>(false);
+	const [animate, setAnimate] = useState<boolean>(false);
+
+	const cardRef = useRef<HTMLDivElement | null>(null);
+	const lobbyNameRef = useRef<HTMLDivElement | null>(null);
+	const songCardRef = useRef<HTMLDivElement | null>(null);
+	const songNameRef = useRef<HTMLDivElement | null>(null);
 
 	const handleMouseEnter = () => setIsHovered(true);
 	const handleMouseLeave = () => setIsHovered(false);
@@ -102,6 +116,7 @@ export const LobbyCard = ({
 
 				{/* Body of the card */}
 				<div className="lobby-card-canvas">
+
 					{/* Lobby icon */}
 					<div className="lobby-card-icon-canvas">
 						<img src={lobby_icon} className="lobby-card-icon" />
@@ -133,15 +148,30 @@ export const LobbyCard = ({
 						{listeners_cnt} listeners
 					</div>
 				</div>
+
+				{ /* Music info */ }
 				{song_name.length > 0 && create_music_info()}
 			</div>
 		</>
 	);
 };
 
-export const CreateLobbyButton = ({ card_index, onClick }) => {
-	const [isHovered, setIsHovered] = useState(false);
-	const [animate, setAnimate] = useState(false);
+
+/*
+ * React component for create lobby button
+ */
+
+type CreateLobbyButtonProps = {
+	card_index: number;
+	onClick: () => void;
+};
+
+export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
+	card_index,
+	onClick
+}) => {
+	const [isHovered, setIsHovered] = useState<boolean>(false);
+	const [animate, setAnimate] = useState<boolean>(false);
 
 	const handleMouseEnter = () => setIsHovered(true);
 	const handleMouseLeave = () => setIsHovered(false);

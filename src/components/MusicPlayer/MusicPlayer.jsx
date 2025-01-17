@@ -1,5 +1,12 @@
+// Node modules
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { useAppState } from "../../AppState.jsx";
+
+// Local
+import { useAppState } from "@/AppState.jsx";
+import { SERVER_IP, MPState, fetchMusicUrl } from "@/const.jsx";
+import { wsSend, OpCode } from "api/socketApi.ts";
+
+// Assets
 import previousButton from "/controlbar/PreviousButton.svg";
 import playButton from "/controlbar/ButtonPlay.svg";
 import pauseButton from "/controlbar/ButtonPause.svg";
@@ -9,13 +16,6 @@ import Mute from "/volumecontrols/Volume Mute.png";
 import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
 import "./MusicPlayer.css";
-import {
-	SERVER_IP,
-	wsSend,
-	OpCode,
-	MPState,
-	fetchMusicUrl,
-} from "../../const.jsx";
 
 function MusicPlayer() {
 	const {

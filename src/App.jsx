@@ -1,21 +1,23 @@
+// Node modules
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import React, { useState } from "react";
-
-import Login from "./routes/login/Login.jsx";
-import Home from "./routes/home/Home.jsx";
-import Auth from "./routes/auth/Auth.jsx";
-import Signup from "./routes/signup/Signup.jsx";
-import ForgotPassword from "./routes/login/ForgotPassword.jsx";
-import Lobby from "./routes/lobby/Lobby.jsx";
-import Chats from "./routes/chats/Chats.jsx";
-import Playlist from "./routes/playlist/Playlist.jsx";
-import Playlists from "./routes/playlists/playlists.jsx";
-
-import Profile from "./routes/profile/Profile.jsx";
-import MusicPlayer from "./components/MusicPlayer/MusicPlayer.jsx";
-import NavBar from "./components/NavBar/NavBar.jsx";
-import { useAppState } from "./AppState.jsx";
 import { Helmet } from "react-helmet";
+
+// Routes
+import Login from "routes/login/Login.jsx";
+import Home from "routes/home/Home.jsx";
+import Auth from "routes/auth/Auth.jsx";
+import Signup from "routes/signup/Signup.jsx";
+import ForgotPassword from "routes/login/ForgotPassword.jsx";
+import Lobby from "routes/lobby/Lobby.tsx";
+import Chats from "routes/chats/Chats.jsx";
+import Playlist from "routes/playlist/Playlist.jsx";
+import Playlists from "routes/playlists/playlists.jsx";
+import Profile from "routes/profile/Profile.jsx";
+
+import MusicPlayer from "components/MusicPlayer/MusicPlayer.jsx";
+import NavBar from "components/NavBar/NavBar.jsx";
+import { useAppState } from "@/AppState.jsx";
 
 function App() {
 	const location = useLocation(); // Get the current route location

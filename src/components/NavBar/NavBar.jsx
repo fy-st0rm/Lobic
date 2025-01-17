@@ -1,11 +1,16 @@
+// Node modules
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "./NavBar.css";
 import { useNavigate, Link } from "react-router-dom";
-import SearchBar from "../SearchBar/SearchBar";
-import { useAppState } from "../../AppState.jsx";
-import { OpCode, wsSend } from "../../const.jsx";
-import { fetchUserProfilePicture, logoutUser } from "../../api/userApi.ts";
+
+// Local
+import SearchBar from "components/SearchBar/SearchBar";
+import { useAppState } from "@/AppState.jsx";
+import { OpCode, wsSend } from "api/socketApi.ts";
+import { fetchUserProfilePicture, logoutUser } from "api/userApi.ts";
+
+// Assets
+import "./NavBar.css";
 
 function NavBar() {
 	const [showMessage, setShowMessage] = useState(false);

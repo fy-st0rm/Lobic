@@ -1,10 +1,14 @@
+// Node Modules
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
-import { OpCode, wsSend, MPState } from "../../const.jsx";
-import { useAppState } from "../../AppState.jsx";
-import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
-import NavBar from "../../components/NavBar/NavBar.jsx";
+
+// Local
+import { MPState } from "@/const.jsx";
+import { OpCode, wsSend } from "api/socketApi.ts";
+import { useAppState } from "@/AppState.jsx";
+import MusicPlayer from "components/MusicPlayer/MusicPlayer";
+import NavBar from "components/NavBar/NavBar.jsx";
 
 function Chats() {
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);

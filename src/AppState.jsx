@@ -1,3 +1,4 @@
+// Node modules
 import React, {
 	createContext,
 	useContext,
@@ -5,7 +6,13 @@ import React, {
 	useState,
 	useEffect,
 } from "react";
-import { WS_SERVER_IP, OpCode, MPState, wsSend } from "./const.jsx";
+
+// Locals
+import { WS_SERVER_IP, MPState } from "@/const.jsx";
+import {
+	OpCode,
+	wsSend
+} from "api/socketApi.ts";
 
 const AppStateContext = createContext(null);
 
@@ -73,68 +80,6 @@ export const AppStateProvider = ({ children }) => {
 			return newState;
 		});
 	}
-
-	// const updateLobbyState = (lobby_id, in_lobby, is_host) => {
-	// 	setAppState((prevState) => {
-	// 		const newState = {
-	// 			...prevState,
-	// 			lobby_id: lobby_id,
-	// 			in_lobby: in_lobby,
-	// 			is_host: is_host,
-	// 		};
-	// 		sessionStorage.setItem("appState", JSON.stringify(newState));
-	// 		return newState;
-	// 	});
-	// };
-
-	// const updateMusicData = (id, title, artist, cover_img, timestamp, state) => {
-	// 	setMusicState((prevState) => {
-	// 		const newMusicState = {
-	// 			id: id,
-	// 			title: title,
-	// 			artist: artist,
-	// 			cover_img: cover_img,
-	// 			timestamp: timestamp,
-	// 			state: state,
-	// 			has_item: id.length === 0 ? false : true,
-	// 		};
-	// 		sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-	// 		return newMusicState;
-	// 	});
-	// };
-
-	// const updateMusicTs = (timestamp) => {
-	// 	setMusicState((prevState) => {
-	// 		const newMusicState = {
-	// 			...prevState,
-	// 			timestamp: timestamp,
-	// 		};
-	// 		sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-	// 		return newMusicState;
-	// 	});
-	// };
-
-	// const updateMusicState = (state) => {
-	// 	setMusicState((prevState) => {
-	// 		const newMusicState = {
-	// 			...prevState,
-	// 			state: state,
-	// 		};
-	// 		sessionStorage.setItem("musicState", JSON.stringify(newMusicState));
-	// 		return newMusicState;
-	// 	});
-	// };
-
-	// const updateUserId = (user_id) => {
-	// 	setAppState((prevState) => {
-	// 		const newState = {
-	// 			...prevState,
-	// 			user_id: user_id,
-	// 		};
-	// 		sessionStorage.setItem("appState", JSON.stringify(newState));
-	// 		return newState;
-	// 	});
-	// };
 
 	const addMsgHandler = (tag, handler) => {
 		msgHandlers.current[tag] = handler;

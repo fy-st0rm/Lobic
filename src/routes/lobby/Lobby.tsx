@@ -1,21 +1,36 @@
+// Node modules
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { OpCode, MPState, SERVER_IP, wsSend } from "../../const.jsx";
-import { useAppState } from "../../AppState.jsx";
+// Locals
+import {
+	OpCode,
+	wsSend,
+	SocketResponse,
+	SocketPayload
+} from "api/socketApi.ts";
+import { MPState, SERVER_IP } from "@/const.jsx";
+import { useAppState } from "@/AppState.jsx";
 import {
 	LobbyCard,
 	CreateLobbyButton,
-} from "../../components/LobbyCard/LobbyCard.jsx";
+} from "components/LobbyCard/LobbyCard.jsx";
 
+// Assets
 import test_logo from "/covers/cover.jpg";
 import "./Lobby.css";
 
 function Lobby() {
-	const [showContent, setShowContent] = useState(false);
-	const [lobbyIds, setLobbyIds] = useState([]);
+	const [showContent, setShowContent] = useState<boolean>(false);
+	const [lobbyIds, setLobbyIds] = useState<string[]>([]);
 
-	const { appState, ws, addMsgHandler, updateAppState, updateMusicState } = useAppState();
+	const {
+		appState,
+		ws,
+		addMsgHandler,
+		updateAppState,
+		updateMusicState
+	} = useAppState();
 	const navigate = useNavigate();
 
 	// Delay to ensure content is rendered before animation
@@ -33,12 +48,12 @@ function Lobby() {
 		}
 
 		// Handling the response
-		addMsgHandler(OpCode.GET_LOBBY_IDS, (res) => {
+		addMsgHandler(OpCode.GET_LOBBY_IDS, (res: SocketResponse) => {
 			setLobbyIds(res.value);
 		});
 
 		// Requesting the lobby ids
-		const payload = {
+		const payload: SocketPayload = {
 			op_code: OpCode.GET_LOBBY_IDS,
 			value: "empty",
 		};
@@ -61,7 +76,7 @@ function Lobby() {
 		}
 
 		// Handling the response
-		addMsgHandler(OpCode.CREATE_LOBBY, (res) => {
+		addMsgHandler(OpCode.CREATE_LOBBY, (res: SocketResponse) => {
 			// Tagging the user as joined in lobby
 			updateAppState({
 				lobby_id: res.value.lobby_id,
@@ -85,7 +100,7 @@ function Lobby() {
 		});
 
 		// Requesting to create lobby (If sucess also makes the host join it)
-		const payload = {
+		const payload: SocketPayload = {
 			op_code: OpCode.CREATE_LOBBY,
 			value: {
 				host_id: user_id,
@@ -94,9 +109,9 @@ function Lobby() {
 		wsSend(ws, payload);
 	};
 
-	const handleJoinLobby = (lobby_id) => {
+	const handleJoinLobby = (lobby_id: string) => {
 		// Join Lobby Handler
-		addMsgHandler(OpCode.JOIN_LOBBY, (res) => {
+		addMsgHandler(OpCode.JOIN_LOBBY, (res: SocketResponse) => {
 			// Tagging the user as joined in lobby
 			updateAppState({
 				lobby_id: res.value.lobby_id,
@@ -119,7 +134,7 @@ function Lobby() {
 		});
 
 		let user_id = appState.user_id;
-		const payload = {
+		const payload: SocketPayload = {
 			op_code: OpCode.JOIN_LOBBY,
 			value: {
 				lobby_id: lobby_id,
@@ -140,7 +155,7 @@ function Lobby() {
 								key={id}
 								lobby_id={id}
 								lobby_name={id}
-								listeners_cnt="1"
+								listeners_cnt={1}
 								song_name="Song Name"
 								artist_name="Artist Name"
 								lobby_icon={test_logo}
@@ -148,7 +163,10 @@ function Lobby() {
 								onClick={handleJoinLobby}
 							/>
 						))}
-						<CreateLobbyButton card_index="3" onClick={handleCreateLobby} />
+						<CreateLobbyButton
+							card_index={3}
+							onClick={handleCreateLobby}
+						/>
 					</div>
 				</div>
 			</div>
