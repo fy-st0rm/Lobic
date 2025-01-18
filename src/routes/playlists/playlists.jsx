@@ -74,7 +74,7 @@ function Playlists() {
 							))}
 						</>
 					) : (
-						<p className="text-gray-300 text-center">No playlists found.</p>
+						<></>
 					)}
 					<div
 						onClick={() => setShowPlaylistAdder(true)}
@@ -89,9 +89,9 @@ function Playlists() {
 					</div>
 				</div>
 			</div>
-			{showPlaylistAdder && (
-				<div className="fixed bg-black backdrop-blur-sm bg-opacity-20 h-[100vh] w-[100vw]">
-					<div className="fixed top-[30%] left-[30%] flex flex-col bg-[#072631] bg-opacity-80 h-[300px] w-[500px]  rounded-md">
+			{showPlaylistAdder && ( 
+				<div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 blur-sm">
+					<div className="top-[30%] left-[30%] flex flex-col bg-[#072631] bg-opacity-100 h-[300px] w-[500px]  rounded-lg">
 						<div className="text-xl font-bold text-white p-5">
 							Create a Playlist
 						</div>

@@ -45,7 +45,7 @@
 	font-size: 22px;
 	margin: 5px;
 }
-.inputBox {
+.inputBox{
 	width: 350px;
 	height: 30px;
 	/* margin: 10px; */
@@ -53,6 +53,9 @@
 	border-radius: 5px;
 	border: 1px solid #ccc;
 }
+
+
+
 /* .inputBox::placeholder{
     font-family: "geist mono", monospace;
     font-size: 12px;

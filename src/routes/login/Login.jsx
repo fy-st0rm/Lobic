@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { performLogin, initClientState } from "../../api/userApi.ts";
 import { useAppState } from "../../AppState.jsx";
 import logo from "/lobic_logo.png";
+import { CircleAlert } from 'lucide-react'
 import "./Login.css";
 
 function Login() {
@@ -75,7 +76,7 @@ function Login() {
 							<p className="emailPassword">Password</p>
 							<input
 								type="password"
-								className="inputBox"
+								className="inputBox passwordbox"
 								placeholder="Enter your password"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
@@ -83,9 +84,10 @@ function Login() {
 							/>
 						</div>
 
-						{isError && (
-							<div>
-								<p>{errorMsg}</p>
+						{isError && 
+								 (
+							<div className="flex justify-center mt-2"> 
+								 <CircleAlert className= "relative m-0 top-1 mx-[1.8px] text-[#E34234]"/> <p className="my-1 text-[#E34234]">{errorMsg}</p>
 							</div>
 						)}
 
@@ -116,7 +118,9 @@ function Login() {
 					</div>
 				</div>
 			</div>
+		
 		</div>
+		
 	);
 }
 
