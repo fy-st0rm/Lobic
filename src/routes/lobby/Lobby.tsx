@@ -7,7 +7,7 @@ import {
 	OpCode,
 	wsSend,
 	SocketResponse,
-	SocketPayload
+	SocketPayload,
 } from "api/socketApi.ts";
 import { LobbyModel, fetchLobbies } from "api/lobbyApi.ts";
 import { MPState, SERVER_IP } from "@/const.jsx";
@@ -25,13 +25,8 @@ function Lobby() {
 	const [showContent, setShowContent] = useState<boolean>(false);
 	const [lobbies, setLobbies] = useState<LobbyModel[]>([]);
 
-	const {
-		appState,
-		ws,
-		addMsgHandler,
-		updateAppState,
-		updateMusicState
-	} = useAppState();
+	const { appState, ws, addMsgHandler, updateAppState, updateMusicState } =
+		useAppState();
 	const navigate = useNavigate();
 
 	// Delay to ensure content is rendered before animation
@@ -53,7 +48,7 @@ function Lobby() {
 			const init = async () => {
 				let lobbies = await fetchLobbies(res.value);
 				setLobbies(lobbies);
-			}
+			};
 			init();
 		});
 
@@ -168,10 +163,7 @@ function Lobby() {
 								onClick={handleJoinLobby}
 							/>
 						))}
-						<CreateLobbyButton
-							card_index={3}
-							onClick={handleCreateLobby}
-						/>
+						<CreateLobbyButton card_index={3} onClick={handleCreateLobby} />
 					</div>
 				</div>
 			</div>

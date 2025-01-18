@@ -35,19 +35,19 @@ interface ApiResponse {
  * @throws {Error} - If the request fails or the response is not OK.
  */
 export const fetchUserPlaylists = async (
-	userId: string
+	userId: string,
 ): Promise<Playlist[]> => {
 	try {
 		const response = await fetch(
 			`${SERVER_IP}/playlist/get_users_playlists?user_uuid=${encodeURIComponent(
-				userId
+				userId,
 			)}`,
 			{
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 
 		const result: ApiResponse = await response.json();
@@ -70,7 +70,7 @@ export const fetchUserPlaylists = async (
  * @throws {Error} - If the request fails or the response is not OK.
  */
 export const createPlaylist = async (
-	playlistData: PlaylistData
+	playlistData: PlaylistData,
 ): Promise<ApiResponse> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/playlist/new`, {
@@ -101,7 +101,7 @@ export const createPlaylist = async (
  * @throws {Error} - If the request fails or the response is not OK.
  */
 export const fetchPlaylistById = async (
-	playlistId: string
+	playlistId: string,
 ): Promise<Playlist> => {
 	try {
 		const response = await fetch(
@@ -111,7 +111,7 @@ export const fetchPlaylistById = async (
 				headers: {
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 
 		if (!response.ok) {
@@ -133,7 +133,7 @@ export const fetchPlaylistById = async (
  * @throws {Error} - If the request fails or the response is not OK.
  */
 export const addSongToPlaylist = async (
-	songData: SongData
+	songData: SongData,
 ): Promise<ApiResponse> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/playlist/add_song`, {

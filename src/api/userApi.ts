@@ -8,7 +8,7 @@ import { SERVER_IP } from "../const.jsx";
  */
 export const performLogin = async (
 	email: string,
-	password: string
+	password: string,
 ): Promise<boolean> => {
 	const payload = {
 		email: email,
@@ -61,7 +61,7 @@ export const initClientState = async (): Promise<{ user_id: string }> => {
 export const signupUser = async (
 	email: string,
 	password: string,
-	confirmPassword: string
+	confirmPassword: string,
 ): Promise<Response> => {
 	if (password !== confirmPassword) {
 		throw new Error("Passwords do not match");
@@ -96,7 +96,7 @@ export const signupUser = async (
  * @returns {Promise<string>} - The URL of the profile picture or a default image.
  */
 export const fetchUserProfilePicture = async (
-	userId: string
+	userId: string,
 ): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/user/get_pfp/${userId}.png`);
@@ -145,7 +145,7 @@ export const logoutUser = async (userId: string): Promise<Response> => {
  */
 export const updateProfilePicture = async (
 	userUuid: string,
-	imageUrl: string
+	imageUrl: string,
 ): Promise<string> => {
 	try {
 		// First fetch the image data
@@ -164,7 +164,7 @@ export const updateProfilePicture = async (
 				headers: {
 					"Content-Type": "image/png",
 				},
-			}
+			},
 		);
 
 		if (!uploadResponse.ok) {

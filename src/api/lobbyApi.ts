@@ -34,4 +34,4 @@ export const fetchLobbies = async (lobby_ids: string[]): LobbyModel[] => {
 	}
 
 	return lobbies;
-}
+};

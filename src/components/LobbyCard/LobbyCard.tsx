@@ -120,7 +120,6 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 
 				{/* Body of the card */}
 				<div className="lobby-card-canvas">
-
 					{/* Lobby icon */}
 					<div className="lobby-card-icon-canvas">
 						<img
@@ -159,13 +158,12 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 					</div>
 				</div>
 
-				{ /* Music info */ }
+				{/* Music info */}
 				{song_name.length > 0 && create_music_info()}
 			</div>
 		</>
 	);
 };
-
 
 /*
  * React component for create lobby button
@@ -178,7 +176,7 @@ type CreateLobbyButtonProps = {
 
 export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
 	card_index,
-	onClick
+	onClick,
 }) => {
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const [animate, setAnimate] = useState<boolean>(false);
