@@ -1,4 +1,5 @@
 import React from "react";
+import { useState,} from "react";
 import "./Music.css";
 import { EllipsisVertical } from "lucide-react";
 import {
@@ -11,6 +12,8 @@ import { addToLikedSongs } from "../../api/likedSongsApi.ts";
 function Music({ musicId, title, artist, coverArt, onClick }) {
 	const { appState } = useAppState();
 	const userId = appState.user_id; //maybe optimize this?
+	const [isOpen, setIsOpen] = useState(false);
+
 	const handleAddToQueue = () => {
 		console.log("NEED TO IMPLEMENT THE QUEUE:", musicId, title);
 		// Add your logic for adding to queue here
@@ -45,6 +48,16 @@ function Music({ musicId, title, artist, coverArt, onClick }) {
 		await addToLikedSongs(userId, musicId);
 	};
 
+	const toggleDropdown = () => {
+			setIsOpen(!isOpen);
+		};
+
+	const closeDropdown = () => {
+			setIsOpen(false);
+	};
+
+	
+
 	return (
 		<>
 			<div className="music-container">
@@ -57,19 +70,21 @@ function Music({ musicId, title, artist, coverArt, onClick }) {
 						<h3 className="artist-name opacity-75"> {artist} </h3>
 					</div>
 				</div>
-				<div className="dropdown absolute right-0 bottom-3">
-					<EllipsisVertical className="opacity-40 " />
+				<div className="dropdown absolute right-0 bottom-3" onClick={toggleDropdown}>
+					<EllipsisVertical className="opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" />
+					{isOpen && (
 					<div className="dropdown-items">
-						<div className="dropdown-item" onClick={handleAddToQueue}>
+						<div className="dropdown-item" onClick={() => { closeDropdown(); handleAddToQueue(); }}>
 							Add to Queue
 						</div>
-						<div className="dropdown-item" onClick={handleAddToPlaylist}>
+						<div className="dropdown-item" onClick={() => { closeDropdown(); handleAddToPlaylist(); }}>
 							Add to Playlist
 						</div>
-						<div className="dropdown-item" onClick={handleAddToLikedSongs}>
+						<div className="dropdown-item" onClick={() => { closeDropdown(); handleAddToLikedSongs(); }}>
 							Add to Liked Songs
 						</div>
 					</div>
+					)}
 				</div>
 			</div>
 		</>
