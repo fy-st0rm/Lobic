@@ -179,3 +179,36 @@ export const updateProfilePicture = async (
 		throw error;
 	}
 };
+
+
+/**
+ * Fetches user data from the server.
+ * @param {string} userUuid - The user's UUID.
+ * @returns {Promise<{ username: string; email: string }>} - The user's data.
+ */
+export const getUserData = async (
+	userUuid: string,
+): Promise<{ username: string; email: string }> => {
+	try {
+		// Make a GET request to fetch user data
+		const response = await fetch(`${SERVER_IP}/user/get_user_data/${userUuid}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		// Check if the response is successful
+		if (!response.ok) {
+			throw new Error(`Failed to fetch user data: ${response.statusText}`);
+		}
+
+		// Parse the JSON response
+		const userData: { username: string; email: string } = await response.json();
+		console.log("User data fetched successfully:", userData);
+		return userData;
+	} catch (error) {
+		console.error("Error fetching user data:", error);
+		throw error;
+	}
+};
