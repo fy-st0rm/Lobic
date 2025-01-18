@@ -63,7 +63,7 @@ export const fetchTrendingSongs = async (): Promise<MusicTrack[]> => {
  */
 export const fetchRecentlyPlayed = async (
 	userId: string,
-	paginationLimit: number = 30
+	paginationLimit: number = 30,
 ): Promise<RecentlyPlayedSong[]> => {
 	try {
 		// Construct the URL with query parameters
@@ -102,7 +102,7 @@ export const fetchRecentlyPlayed = async (
  */
 export const logSongPlay = async (
 	userId: string,
-	musicId: string
+	musicId: string,
 ): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/music/log_song_play`, {
@@ -139,7 +139,7 @@ export const incrementPlayCount = async (songId: string): Promise<string> => {
 			`${SERVER_IP}/music/incr_times_played/${songId}`,
 			{
 				method: "POST",
-			}
+			},
 		);
 
 		if (!response.ok) {

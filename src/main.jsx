@@ -43,14 +43,11 @@ const AudioElement = () => {
 	useEffect(() => {
 		if (!musicState.has_item) {
 			setControlsDisabled(true);
-		}
-		else if (appState.in_lobby && appState.is_host) {
+		} else if (appState.in_lobby && appState.is_host) {
 			setControlsDisabled(false);
-		}
-		else if (appState.in_lobby && !appState.is_host) {
+		} else if (appState.in_lobby && !appState.is_host) {
 			setControlsDisabled(true);
-		}
-		else if (!appState.in_lobby) {
+		} else if (!appState.in_lobby) {
 			setControlsDisabled(false);
 		}
 	}, [appState, musicState]);
@@ -70,31 +67,27 @@ const AudioElement = () => {
 		const musicStateManager = async () => {
 			if (musicState.state === MPState.PLAY) {
 				await audioRef.current.play();
-			}
-			else if (musicState.state === MPState.PAUSE) {
+			} else if (musicState.state === MPState.PAUSE) {
 				await audioRef.current.pause();
-			}
-			else if (musicState.state === MPState.CHANGE_MUSIC) {
+			} else if (musicState.state === MPState.CHANGE_MUSIC) {
 				try {
 					audioRef.current.src = await fetchMusicUrl(musicState.id);
 					audioRef.current.volume = musicState.volume / 100;
 					audioRef.current.currentTime = 0;
 					updateMusicState({ timestamp: 0 });
-				} catch(err) {
+				} catch (err) {
 					console.error("Failed to play music:", err);
 				} finally {
 					updateMusicState({ state: MPState.PLAY });
 				}
-			}
-			else if (musicState.state === MPState.CHANGE_TIME) {
+			} else if (musicState.state === MPState.CHANGE_TIME) {
 				audioRef.current.currentTime = musicState.state_data;
 				if (audioRef.current.paused) {
 					updateMusicState({ state: MPState.PAUSE, state_data: 0 });
 				} else {
 					updateMusicState({ state: MPState.PLAY, state_data: 0 });
 				}
-			}
-			else if (musicState.state === MPState.CHANGE_VOLUME) {
+			} else if (musicState.state === MPState.CHANGE_VOLUME) {
 				audioRef.current.volume = musicState.state_data / 100;
 				if (audioRef.current.paused) {
 					updateMusicState({ state: MPState.PAUSE, state_data: 0 });
@@ -102,7 +95,7 @@ const AudioElement = () => {
 					updateMusicState({ state: MPState.PLAY, state_data: 0 });
 				}
 			}
-		}
+		};
 
 		musicStateManager();
 	}, [musicState]);

@@ -16,6 +16,7 @@ import Mute from "/volumecontrols/Volume Mute.png";
 import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
 import "./MusicPlayer.css";
+import { fetchIsSongLiked, toggleSongLiked } from "@/api/likedSongsApi";
 
 function MusicPlayer() {
 	const {
@@ -31,6 +32,7 @@ function MusicPlayer() {
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
+	const [isSongLiked, setIsSongLiked] = useState(false); // State for song liked toggle
 
 	const formatTime = (time) => {
 		const minutes = Math.floor(time / 60);
@@ -58,6 +60,35 @@ function MusicPlayer() {
 		};
 		wsSend(ws, payload);
 	}, [musicState.state]);
+	
+    useEffect(() => {
+		fetchLikedState();
+    }, [appState.user_id, musicState.id]);
+	
+	// Fetch the liked state of the song when the component mounts or when the song changes
+	const fetchLikedState = async () => {
+		if (appState.user_id && musicState.id) {
+			try {
+				const isLiked = await fetchIsSongLiked(appState.user_id, musicState.id);
+				setIsSongLiked(isLiked);
+			} catch (err) {
+				console.error("Failed to fetch song liked state:", err);
+			}
+		}
+	};
+    // Handle toggling the liked state of the song
+    const handleSongLikedToggle = async () => {
+        const newLikedState = !isSongLiked;
+        setIsSongLiked(newLikedState);
+
+        try {
+            const result = await toggleSongLiked(appState.user_id, musicState.id);
+            console.log("Song liked state updated successfully:", result);
+        } catch (err) {
+            console.error("Failed to update song liked state:", err);
+            setIsSongLiked(!newLikedState); // Revert the local state on error
+        }
+    };
 
 	const handlePlayMusic = async () => {
 		try {
@@ -141,6 +172,22 @@ function MusicPlayer() {
 					{musicState.has_item ? musicState.artist : ""}
 				</div>
 			</div>
+
+			{/* Song Liked Toggle Section */}
+			{/* TODO : make a better checkbox */}
+			<div className="song-liked-section">
+				<label className="switch">
+					<input
+						type="checkbox"
+						checked={isSongLiked}
+						onChange={handleSongLikedToggle}
+						disabled={isLoading}
+					/>
+					<span className="slider round"></span>
+				</label>
+				<span className="song-liked-label">Song Liked</span>
+			</div>
+
 			<div className="control-container">
 				<div className="control-bar">
 					<button
@@ -203,8 +250,8 @@ function MusicPlayer() {
 							musicState.volume == 0
 								? Mute
 								: musicState.volume > 40
-								? VolumeHigh
-								: VolumeLow
+									? VolumeHigh
+									: VolumeLow
 						}
 						alt="Volume"
 					/>

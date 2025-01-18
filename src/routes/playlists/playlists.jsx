@@ -89,7 +89,7 @@ function Playlists() {
 					</div>
 				</div>
 			</div>
-			{showPlaylistAdder && ( 
+			{showPlaylistAdder && (
 				<div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 blur-sm">
 					<div className="top-[30%] left-[30%] flex flex-col bg-[#072631] bg-opacity-100 h-[300px] w-[500px]  rounded-lg">
 						<div className="text-xl font-bold text-white p-5">
