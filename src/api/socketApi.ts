@@ -15,7 +15,7 @@ export enum OpCode {
 	SYNC_MUSIC = "SYNC_MUSIC",
 	ADD_FRIEND = "ADD_FRIEND",
 	REMOVE_FRIEND = "REMOVE_FRIEND",
-};
+}
 
 export type SocketResponse = {
 	op_code: OpCode;
@@ -28,7 +28,6 @@ export type SocketPayload = {
 	value: any; // TODO: Maybe add union of types
 };
 
-
 /*
  * Sends the websocket request to the server.
  * @param {WebSocket} ws - WebSocket hanlder
@@ -37,7 +36,7 @@ export type SocketPayload = {
 
 export const wsSend = (
 	ws: React.RefObject<WebSocket | null>,
-	data: SocketPayload
+	data: SocketPayload,
 ) => {
 	if (ws.current === null) {
 		console.log("Websocket is null");
@@ -46,5 +45,4 @@ export const wsSend = (
 	if (ws.current.readyState === WebSocket.OPEN) {
 		ws.current.send(JSON.stringify(data));
 	}
-}
-
+};

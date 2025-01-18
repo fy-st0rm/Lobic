@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signupUser } from "../../api/userApi";
 import logo from "/lobic_logo.png";
-import { CircleAlert } from 'lucide-react'
+import { CircleAlert } from "lucide-react";
 import "./Signup.css";
 
 function Signup() {
@@ -81,9 +81,10 @@ function Signup() {
 							/>
 
 							{isError && (
-								<div className="flex justify-center mt-2"> 
-								<CircleAlert className= "relative m-0 top-1 mx-[1.8px] text-[#E34234]"/> <p className="my-1 text-[#E34234]">{errorMsg}</p>
-						   </div>
+								<div className="flex justify-center mt-2">
+									<CircleAlert className="relative m-0 top-1 mx-[1.8px] text-[#E34234]" />{" "}
+									<p className="my-1 text-[#E34234]">{errorMsg}</p>
+								</div>
 							)}
 
 							<div>

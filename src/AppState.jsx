@@ -9,10 +9,7 @@ import React, {
 
 // Locals
 import { WS_SERVER_IP, MPState } from "@/const.jsx";
-import {
-	OpCode,
-	wsSend
-} from "api/socketApi.ts";
+import { OpCode, wsSend } from "api/socketApi.ts";
 
 const AppStateContext = createContext(null);
 
@@ -68,7 +65,7 @@ export const AppStateProvider = ({ children }) => {
 			sessionStorage.setItem("appState", JSON.stringify(newState));
 			return newState;
 		});
-	}
+	};
 
 	const updateMusicState = (state) => {
 		setMusicState((prevState) => {
@@ -79,7 +76,7 @@ export const AppStateProvider = ({ children }) => {
 			sessionStorage.setItem("musicState", JSON.stringify(newState));
 			return newState;
 		});
-	}
+	};
 
 	const addMsgHandler = (tag, handler) => {
 		msgHandlers.current[tag] = handler;
