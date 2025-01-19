@@ -17,7 +17,7 @@ interface LikedSong {
  */
 export const fetchLikedSongs = async (
 	userId: string,
-	paginationLimit?: number
+	paginationLimit?: number,
 ): Promise<LikedSong[]> => {
 	try {
 		// Construct the URL with query parameters
@@ -61,7 +61,7 @@ export const fetchLikedSongs = async (
  */
 export const addToLikedSongs = async (
 	userId: string,
-	musicId: string
+	musicId: string,
 ): Promise<string | object> => {
 	try {
 		const payload = {
@@ -112,7 +112,7 @@ export const addToLikedSongs = async (
  */
 export const removeFromLikedSongs = async (
 	userId: string,
-	musicId: string
+	musicId: string,
 ): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/liked_songs/remove`, {
@@ -137,4 +137,57 @@ export const removeFromLikedSongs = async (
 		console.error("Error removing from liked songs:", error);
 		throw error;
 	}
+};
+
+
+/**
+ * Fetches whether a song is liked by a user.
+ * @param userId - The ID of the user.
+ * @param musicId - The ID of the song.
+ * @returns A boolean indicating whether the song is liked.
+ */
+export const fetchIsSongLiked = async (userId: string, musicId: string): Promise<boolean> => {
+    try {
+        const url = `${SERVER_IP}/music/liked_song/is_song_liked?user_id=${encodeURIComponent(userId)}&music_id=${encodeURIComponent(musicId)}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.text();
+        return data === "true"; // Convert the response to a boolean
+    } catch (err) {
+        console.error("Failed to fetch song liked state:", err);
+        throw err; // Re-throw the error for handling in the component
+    }
+};
+
+/**
+ * Toggles the liked state of a song for a user.
+ * @param userId - The ID of the user.
+ * @param musicId - The ID of the song.
+ * @returns A string indicating the result of the operation.
+ */
+export const toggleSongLiked = async (userId: string, musicId: string): Promise<string> => {
+    try {
+        const response = await fetch(`${SERVER_IP}/music/liked_song/toggle_like`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                music_id: musicId,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.text();
+        return data; // Return the response message
+    } catch (err) {
+        console.error("Failed to toggle song liked state:", err);
+        throw err; // Re-throw the error for handling in the component
+    }
 };

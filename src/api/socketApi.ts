@@ -15,7 +15,7 @@ export enum OpCode {
 	SYNC_MUSIC = "SYNC_MUSIC",
 	ADD_FRIEND = "ADD_FRIEND",
 	REMOVE_FRIEND = "REMOVE_FRIEND",
-};
+}
 
 export type SocketResponse = {
 	op_code: OpCode;
@@ -27,7 +27,6 @@ export type SocketPayload = {
 	op_code: OpCode;
 	value: any; // TODO: Maybe add union of types
 };
-
 
 /*
  * Sends the websocket request to the server.
@@ -43,5 +42,4 @@ export const wsSend = (ws: WebSocket | null, data: SocketPayload) => {
 	if (ws.readyState === WebSocket.OPEN) {
 		ws.send(JSON.stringify(data));
 	}
-}
-
+};

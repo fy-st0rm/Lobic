@@ -48,7 +48,7 @@ const Lobby = (): React.ReactElement => {
 			const init = async () => {
 				let lobbies = await fetchLobbies(res.value);
 				setLobbies(lobbies);
-			}
+			};
 			init();
 		});
 
@@ -156,10 +156,7 @@ const Lobby = (): React.ReactElement => {
 								onClick={handleJoinLobby}
 							/>
 						))}
-						<CreateLobbyButton
-							card_index={3}
-							onClick={handleCreateLobby}
-						/>
+						<CreateLobbyButton card_index={3} onClick={handleCreateLobby} />
 					</div>
 				</div>
 			</div>

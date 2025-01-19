@@ -40,4 +40,4 @@ export const fetchLobbies = async (lobby_ids: string[]): Promise<LobbyModel[]> =
 
 	// Filter out null values
 	return lobbies.filter((lobby): lobby is LobbyModel => lobby !== null);
-}
+};

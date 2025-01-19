@@ -19,7 +19,7 @@ interface TopTrack {
  */
 export const fetchTopTracks = async (
 	userId: string,
-	paginationLimit?: number
+	paginationLimit?: number,
 ): Promise<TopTrack[]> => {
 	try {
 		// Construct the URL with query parameters

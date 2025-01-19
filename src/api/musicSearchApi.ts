@@ -18,11 +18,11 @@ interface SearchResult {
  */
 export const searchMusic = async (
 	searchString: string,
-	noResultsToGen?: number
+	noResultsToGen?: number,
 ): Promise<SearchResult[]> => {
 	try {
 		let url = `${SERVER_IP}/search?search_string=${encodeURIComponent(
-			searchString
+			searchString,
 		)}`;
 
 		// Add optional number of results parameter if specified

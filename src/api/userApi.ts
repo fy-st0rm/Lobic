@@ -8,7 +8,7 @@ import { SERVER_IP } from "@/const";
  */
 export const performLogin = async (
 	email: string,
-	password: string
+	password: string,
 ): Promise<boolean> => {
 	const payload = {
 		email: email,
@@ -61,7 +61,7 @@ export const initClientState = async (): Promise<{ user_id: string }> => {
 export const signupUser = async (
 	email: string,
 	password: string,
-	confirmPassword: string
+	confirmPassword: string,
 ): Promise<Response> => {
 	if (password !== confirmPassword) {
 		throw new Error("Passwords do not match");
@@ -96,7 +96,7 @@ export const signupUser = async (
  * @returns {Promise<string>} - The URL of the profile picture or a default image.
  */
 export const fetchUserProfilePicture = async (
-	userId: string
+	userId: string,
 ): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/user/get_pfp/${userId}.png`);
@@ -145,7 +145,7 @@ export const logoutUser = async (userId: string): Promise<Response> => {
  */
 export const updateProfilePicture = async (
 	userUuid: string,
-	imageUrl: string
+	imageUrl: string,
 ): Promise<string> => {
 	try {
 		// First fetch the image data
@@ -164,7 +164,7 @@ export const updateProfilePicture = async (
 				headers: {
 					"Content-Type": "image/png",
 				},
-			}
+			},
 		);
 
 		if (!uploadResponse.ok) {
@@ -176,6 +176,39 @@ export const updateProfilePicture = async (
 		return result;
 	} catch (error) {
 		console.error("Error updating profile picture:", error);
+		throw error;
+	}
+};
+
+
+/**
+ * Fetches user data from the server.
+ * @param {string} userUuid - The user's UUID.
+ * @returns {Promise<{ username: string; email: string }>} - The user's data.
+ */
+export const getUserData = async (
+	userUuid: string,
+): Promise<{ username: string; email: string }> => {
+	try {
+		// Make a GET request to fetch user data
+		const response = await fetch(`${SERVER_IP}/user/get_user_data/${userUuid}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		// Check if the response is successful
+		if (!response.ok) {
+			throw new Error(`Failed to fetch user data: ${response.statusText}`);
+		}
+
+		// Parse the JSON response
+		const userData: { username: string; email: string } = await response.json();
+		console.log("User data fetched successfully:", userData);
+		return userData;
+	} catch (error) {
+		console.error("Error fetching user data:", error);
 		throw error;
 	}
 };
