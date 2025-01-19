@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 import React from "react";
 import { useState} from "react";
-import "./Music.css";
-=======
-// Node modules
-import React, { useState } from "react";
->>>>>>> ad06dee9f3df14bfe519301a67ed2d0d14918618
 import { EllipsisVertical } from "lucide-react";
 
 // Local

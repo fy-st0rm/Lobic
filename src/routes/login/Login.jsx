@@ -9,11 +9,6 @@ import { useAppProvider } from "providers/AppProvider";
 
 // Assets
 import logo from "/lobic_logo.png";
-<<<<<<< HEAD
-import { CircleAlert } from "lucide-react";
-=======
-import "./Login.css";
->>>>>>> ad06dee9f3df14bfe519301a67ed2d0d14918618
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -22,15 +17,10 @@ function Login() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const navigate = useNavigate();
-  const { updateAppState } = useAppState();
+  const { updateAppState } = useAppProvider();
 
-<<<<<<< HEAD
   const handleLogin = async (event) => {
     event.preventDefault();
-=======
-	const navigate = useNavigate();
-	const { updateAppState } = useAppProvider();
->>>>>>> ad06dee9f3df14bfe519301a67ed2d0d14918618
 
     try {
       await performLogin(email, password);
