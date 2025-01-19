@@ -1,22 +1,15 @@
 import { SERVER_IP } from "@/const";
 
 interface TopTrack {
-	id: string;
-	filename: string;
-	artist: string;
-	title: string;
 	album: string;
-	genre: string;
-	times_played: number;
+	artist: string;
 	cover_art_path: string;
+	genre: string;
+	id: string;
+	times_played: number;
+	title: string;
 }
 
-/*
- * Fetches a list of top tracks for a specific user.
- * @param {string | null} userId - The ID of the user.
- * @param {number} [paginationLimit] - Optional. The number of tracks to fetch.
- * @returns {Promise<TopTrack[]>} - A list of top tracks.
- */
 export const fetchTopTracks = async (
 	userId: string | null,
 	paginationLimit?: number,
