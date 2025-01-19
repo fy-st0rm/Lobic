@@ -20,11 +20,12 @@ import { useMusicProvider } from "providers/MusicProvider";
 // Assets
 import "./MusicList.css";
 
-function MusicList({ list_title }) {
+function MusicList({ list_title, renderOnlyOnSuccess }) {
 	const [musicItems, setMusicItems] = useState([]);
 	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSongId, setSelectedSongId] = useState(null);
+	const [isEmpty,setEmpty] = useState(true);
 
 	const { appState } = useAppProvider();
 	const { updateMusicState } = useMusicProvider();
@@ -50,6 +51,7 @@ function MusicList({ list_title }) {
 				data = await fetchMusicList();
 			}
 			setMusicItems(data);
+			setEmpty(false);
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -84,6 +86,9 @@ function MusicList({ list_title }) {
 			setIsLoading(false);
 		}
 	};
+	if (renderOnlyOnSuccess && isEmpty) {
+		return null;
+	}
 
 	return (
 		<div className="music-list-container">
