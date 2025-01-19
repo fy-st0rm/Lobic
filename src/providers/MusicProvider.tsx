@@ -2,7 +2,7 @@
 import React, { FC, createContext, useContext, useState, useRef } from "react";
 
 // Local
-import { MPState } from "@/const.ts";
+import { MPState } from "api/musicApi";
 
 
 /*

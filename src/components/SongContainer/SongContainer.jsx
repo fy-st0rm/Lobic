@@ -3,9 +3,8 @@ import { useState } from "react";
 
 // Local
 import SongInfo from "components/SongInfo/SongInfo";
-import { MPState } from "@/const";
 import { useMusicProvider } from "providers/MusicProvider";
-import { getMusicImageUrl } from "api/musicApi";
+import { MPState, getMusicImageUrl } from "api/musicApi";
 
 function SongContainer({ playlistId, songs }) {
 	const [error, setError] = useState(null);

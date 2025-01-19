@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 // Local
 import Music from "components/Music/Music";
-import { MPState } from "@/const";
+import { MPState } from "api/musicApi";
 import {
 	fetchMusicList,
 	incrementPlayCount,

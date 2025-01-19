@@ -2,8 +2,9 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
-import { SERVER_IP, MPState, fetchMusicUrl } from "@/const";
+import { SERVER_IP } from "@/const";
 import { wsSend, OpCode } from "api/socketApi";
+import { MPState  } from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";

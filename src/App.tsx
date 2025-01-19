@@ -14,11 +14,11 @@ import Chats from "routes/chats/Chats";
 import Playlist from "routes/playlist/Playlist";
 import Playlists from "routes/playlists/playlists";
 import Profile from "routes/profile/Profile";
-
 import MusicPlayer from "components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";
 
-function App() {
+
+function App(): React.ReactElement {
 	const location = useLocation(); // Get the current route location
 
 	// List of routes where MusicPlayer should NOT be rendered
@@ -36,7 +36,7 @@ function App() {
 			</Helmet>
 
 			{/* Globally rendering navbar */}
-			{shouldRenderNavBar && <NavBar className="navbar" />}
+			{shouldRenderNavBar && <NavBar />}
 
 			{/* Render MusicPlayer globally if the route is not excluded */}
 			{shouldRenderMusicPlayer && <MusicPlayer />}
@@ -76,16 +76,12 @@ function App() {
 						</Auth>
 					}
 				/>
-				{/* <Route
-          path="/playlist"
-          element={
-            <Auth>
-              <Playlist />
-            </Auth>
-          }
-        /> */}
-				<Route path="/playlist/:playlistId" element={<Playlist />} />
-
+				<Route
+					path="/playlist/:playlistId"
+					element={
+						<Playlist />
+					}
+				/>
 				<Route
 					path="/playlists"
 					element={
