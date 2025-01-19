@@ -15,7 +15,7 @@ interface PlaylistData {
 	description?: string;
 	cover_image?: string;
 	songs?: string[];
-	user_id?: string; // Added to handle user association
+	user_id: string; // Added to handle user association
 }
 
 interface SongData {
@@ -32,12 +32,12 @@ interface ApiResponse {
 
 /**
  * Fetches playlists for a specific user.
- * @param {string | null} userId - The ID of the user whose playlists are being fetched.
+ * @param {string} userId - The ID of the user whose playlists are being fetched.
  * @returns {Promise<Playlist[]>} - A list of playlists belonging to the user, or an empty array if userId is null.
  * @throws {Error} - If the request fails or the response is not OK.
  */
 export const fetchUserPlaylists = async (
-	userId: string | null,
+	userId: string,
 ): Promise<Playlist[]> => {
 	// Return empty array if userId is null
 	if (!userId) {
@@ -74,18 +74,14 @@ export const fetchUserPlaylists = async (
 /**
  * Creates a new playlist.
  * @param {PlaylistData} playlistData - The data for the new playlist.
- * @param {string | null} userId - The ID of the user creating the playlist.
+ * @param {string} userId - The ID of the user creating the playlist.
  * @returns {Promise<ApiResponse>} - The response from the server, including the created playlist's details.
  * @throws {Error} - If the request fails, the response is not OK, or no user ID is provided.
  */
 export const createPlaylist = async (
 	playlistData: PlaylistData,
-	userId: string | null,
+	userId: string,
 ): Promise<ApiResponse> => {
-	if (!userId) {
-		throw new Error("User ID is required to create a playlist");
-	}
-
 	try {
 		const response = await fetch(`${SERVER_IP}/playlist/new`, {
 			method: "POST",

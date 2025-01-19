@@ -186,7 +186,7 @@ export const updateProfilePicture = async (
  * @returns {Promise<{ username: string; email: string }>} - The user's data.
  */
 export const getUserData = async (
-	userUuid: string,
+	userUuid: string | null,
 ): Promise<{ username: string; email: string }> => {
 	try {
 		// Make a GET request to fetch user data

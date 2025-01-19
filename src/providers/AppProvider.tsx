@@ -1,16 +1,14 @@
 // Node modules
 import React, { FC, createContext, useContext, useState } from "react";
 
-
 /*
  * AppState type
  * @member {string | null} user_id - Id of the current user
  */
 
 export type AppState = {
-	user_id: string | null;
+	user_id: string;
 };
-
 
 /*
  * AppProvider Context type
@@ -21,17 +19,15 @@ export type AppState = {
 export type AppContextType = {
 	appState: AppState;
 	updateAppState: (state: Partial<AppState>) => void;
-}
-
+};
 
 // Creating context width default values will be assigned later in providers
 const defaultContext: AppContextType = {
-	appState: { user_id: null },
-	updateAppState: (state: Partial<AppState>) => {}
+	appState: { user_id: "" },
+	updateAppState: (state: Partial<AppState>) => {},
 };
 
 const AppContext = createContext<AppContextType>(defaultContext);
-
 
 /*
  * Loads AppState from session storage
@@ -43,11 +39,13 @@ const loadAppState = (): AppState => {
 	return savedState
 		? JSON.parse(savedState)
 		: {
-			user_id: null,
-		};
-}
+				user_id: null,
+			};
+};
 
-export const AppProvider: FC<{ children: React.ReactNode }> = ({ children }): React.ReactElement => {
+export const AppProvider: FC<{ children: React.ReactNode }> = ({
+	children,
+}): React.ReactElement => {
 	const [appState, setAppState] = useState<AppState>(loadAppState);
 
 	const updateAppState = (state: Partial<AppState>) => {
@@ -59,13 +57,13 @@ export const AppProvider: FC<{ children: React.ReactNode }> = ({ children }): Re
 			sessionStorage.setItem("AppState", JSON.stringify(newState));
 			return newState;
 		});
-	}
+	};
 
 	return (
 		<AppContext.Provider value={{ appState, updateAppState }}>
 			{children}
 		</AppContext.Provider>
 	);
-}
+};
 
 export const useAppProvider = () => useContext(AppContext);
