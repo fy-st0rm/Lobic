@@ -1,5 +1,14 @@
 import { SERVER_IP } from "@/const";
 
+// Enum to define Music Player State
+export enum MPState {
+	PLAY = "PLAY",
+	PAUSE = "PAUSE",
+	CHANGE_MUSIC = "CHANGE_MUSIC",
+	CHANGE_VOLUME = "CHANGE_VOLUME",
+	CHANGE_TIME = "CHANGE_TIME",
+};
+
 // Define interfaces for the data structures
 interface MusicTrack {
 	id: string;
@@ -161,3 +170,33 @@ export const incrementPlayCount = async (songId: string): Promise<string> => {
  */
 export const getMusicImageUrl = (songId: string): string =>
 	`${SERVER_IP}/image/${songId}.png`;
+
+
+/*
+ * Fetches the music from the backend based on the given music id
+ * @param {string|null} id - The ID of the music
+ * @returns {Promise<string>} - The blob URL of the music
+ */
+
+export const fetchMusicUrl = async (id: string | null): Promise<string> => {
+	try {
+		if (id === null)
+		 throw new Error("Music Id is null");
+
+		const url = `${SERVER_IP}/music/${encodeURIComponent(id)}`;
+		const response = await fetch(url, {
+			method: "GET",
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		const blob = await response.blob();
+		const audioUrl = URL.createObjectURL(blob);
+		return audioUrl;
+	} catch (error) {
+		console.error("Failed to fetch music:", error);
+		throw error;
+	}
+};

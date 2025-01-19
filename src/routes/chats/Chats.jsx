@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
 
 // Local
-import { MPState } from "@/const";
+import { MPState } from "api/musicApi";
 import { OpCode, wsSend } from "api/socketApi";
 import MusicPlayer from "components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";

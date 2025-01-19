@@ -10,7 +10,8 @@ import {
 	SocketPayload
 } from "api/socketApi";
 import { LobbyModel, fetchLobbies } from "api/lobbyApi";
-import { MPState, SERVER_IP } from "@/const";
+import { MPState } from "api/musicApi";
+import { SERVER_IP } from "@/const";
 import {
 	LobbyCard,
 	CreateLobbyButton,
