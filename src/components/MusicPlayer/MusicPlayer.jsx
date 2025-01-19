@@ -20,6 +20,9 @@ import VolumeLow from "/volumecontrols/Volume Level Low.png";
 import Mute from "/volumecontrols/Volume Mute.png";
 import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
+import likedSong from "/controlbar/love-svgrepo-com.svg";
+import likedSongFilled from "/controlbar/love-svgrepo-com-filled.svg";
+
 import "./MusicPlayer.css";
 
 function MusicPlayer() {
@@ -172,21 +175,6 @@ function MusicPlayer() {
 				</div>
 			</div>
 
-			{/* Song Liked Toggle Section */}
-			{/* TODO : make a better checkbox */}
-			<div className="song-liked-section">
-				<label className="switch">
-					<input
-						type="checkbox"
-						checked={isSongLiked}
-						onChange={handleSongLikedToggle}
-						disabled={isLoading}
-					/>
-					<span className="slider round"></span>
-				</label>
-				<span className="song-liked-label">Song Liked</span>
-			</div>
-
 			<div className="control-container">
 				<div className="control-bar">
 					<button
@@ -236,6 +224,25 @@ function MusicPlayer() {
 					/>
 				</div>
 			</div>
+
+			<div
+        		className={`mt-1 flex items-center justify-center w-8 h-8 cursor-pointer transition-transform duration-200 ${
+          			isLoading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
+        			}`}
+        				onClick={!isLoading ? handleSongLikedToggle : null}
+        				role="button"
+        				aria-pressed={isSongLiked}
+        				tabIndex={0}
+        				onKeyDown={(e) => {
+          					if ((e.key === "Enter" || e.key === " ") && !isLoading) {
+            				e.preventDefault();
+            				handleSongLikedToggle();
+          					}}}>
+        				<img
+          				src={isSongLiked ? likedSongFilled : likedSong}
+          				alt={isSongLiked ? "Liked" : "Not Liked"}
+          				className="w-6 h-6"/>
+      		</div>
 
 			<div className="volume-status">
 				<button
