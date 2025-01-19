@@ -115,7 +115,7 @@ export const fetchUserProfilePicture = async (
  * @param {string} userId - The user's ID.
  * @returns {Promise<Response>} - The response from the server.
  */
-export const logoutUser = async (userId: string): Promise<Response> => {
+export const logoutUser = async (userId: string | null): Promise<Response> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/logout`, {
 			method: "POST",
@@ -180,7 +180,6 @@ export const updateProfilePicture = async (
 	}
 };
 
-
 /**
  * Fetches user data from the server.
  * @param {string} userUuid - The user's UUID.
@@ -191,12 +190,15 @@ export const getUserData = async (
 ): Promise<{ username: string; email: string }> => {
 	try {
 		// Make a GET request to fetch user data
-		const response = await fetch(`${SERVER_IP}/user/get_user_data/${userUuid}`, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
+		const response = await fetch(
+			`${SERVER_IP}/user/get_user_data/${userUuid}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
 			},
-		});
+		);
 
 		// Check if the response is successful
 		if (!response.ok) {
