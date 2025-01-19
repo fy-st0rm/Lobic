@@ -60,7 +60,7 @@ function Chats() {
 	useEffect(() => {
 		addMsgHandler(OpCode.SYNC_MUSIC, (res) => {
 			let music = res.value;
-			console.log(music);
+
 			updateMusicState({
 				id: music.id,
 				title: music.title,
@@ -104,13 +104,13 @@ function Chats() {
 				is_host: false,
 			});
 
-			// Clearning the current music when creating a new lobby
+			// Clearing the current music when leaving lobby
 			updateMusicState({
 				id: null,
 				title: null,
 				artist: null,
 				cover_img: null,
-				state: MPState.CHANGE_TIME,
+				state: MPState.EMPTY,
 				state_data: 0,
 			});
 

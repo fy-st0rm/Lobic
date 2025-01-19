@@ -7,15 +7,18 @@ export enum MPState {
 	CHANGE_MUSIC = "CHANGE_MUSIC",
 	CHANGE_VOLUME = "CHANGE_VOLUME",
 	CHANGE_TIME = "CHANGE_TIME",
+	EMPTY = "EMPTY",
 }
 
 // Define interfaces for the data structures
-interface MusicTrack {
+export interface MusicTrack {
 	id: string;
 	title: string;
 	artist: string;
 	album?: string;
 	duration?: number;
+	cover_img?: string;
+	// Add other fields as needed
 }
 
 interface RecentlyPlayedSong extends MusicTrack {

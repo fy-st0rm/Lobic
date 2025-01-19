@@ -3,11 +3,12 @@ import { useEffect } from "react";
 import ReactDOM from "react-dom";
 
 // Local
-import { MPState, fetchMusicUrl } from "api/musicApi";
-import { AppContextType, useAppProvider } from "providers/AppProvider";
-import { LobbyContextType, useLobbyProvider } from "providers/LobbyProvider";
-import { MusicContextType, useMusicProvider } from "providers/MusicProvider";
-import { SocketContextType, useSocketProvider } from "providers/SocketProvider";
+import { MusicTrack, MPState, fetchMusicUrl } from "api/musicApi";
+import { useAppProvider } from "providers/AppProvider";
+import { useLobbyProvider } from "providers/LobbyProvider";
+import { useMusicProvider } from "providers/MusicProvider";
+import { useSocketProvider } from "providers/SocketProvider";
+import { useQueueProvider } from "providers/QueueProvider";
 
 const AudioElement = () => {
 	const { appState, updateAppState } = useAppProvider();
@@ -19,6 +20,7 @@ const AudioElement = () => {
 		getAudioElement,
 		setControlsDisabled
 	} = useMusicProvider();
+	const { queue, dequeue } = useQueueProvider();
 
 	// If page is refreshed initializing the audio
 	useEffect(() => {
@@ -109,6 +111,10 @@ const AudioElement = () => {
 					updateMusicState({ state: MPState.PLAY, state_data: 0 });
 				}
 			}
+			else if (musicState.state === MPState.EMPTY) {
+				audioElement.src = "";
+				audioElement.currentTime = 0;
+			}
 		}
 
 		musicStateManager();
@@ -143,8 +149,32 @@ const AudioElement = () => {
 		};
 	}, []);
 
+	// Called when a music is ended
 	const handleOnEnded = () => {
-		updateMusicState({ state: MPState.PAUSE });
+		// Getting next track from queue
+		let nextTrack: MusicTrack | null = dequeue();
+
+		// If there exists a track then play that
+		if (nextTrack) {
+			updateMusicState({
+				id: nextTrack.id,
+				title: nextTrack.title,
+				artist: nextTrack.artist,
+				cover_img: nextTrack.cover_img,
+				state: MPState.CHANGE_MUSIC
+			});
+			return;
+		}
+
+		// Else just remove the song
+		updateMusicState({
+			id: null,
+			title: null,
+			artist: null,
+			cover_img: null,
+			state: MPState.EMPTY,
+			state_data: 0,
+		});
 	};
 
 	return ReactDOM.createPortal(

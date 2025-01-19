@@ -86,7 +86,7 @@ const Lobby = (): React.ReactElement => {
 				title: null,
 				artist: null,
 				cover_img: null,
-				state: MPState.CHANGE_TIME,
+				state: MPState.EMPTY,
 				state_data: 0,
 			});
 
@@ -114,13 +114,13 @@ const Lobby = (): React.ReactElement => {
 				is_host: false,
 			});
 
-			// Clearning the current music when creating a new lobby
+			// Clearing the current music when creating a new lobby
 			updateMusicState({
 				id: null,
 				title: null,
 				artist: null,
 				cover_img: null,
-				state: MPState.CHANGE_TIME,
+				state: MPState.EMPTY,
 				state_data: 0,
 			});
 
