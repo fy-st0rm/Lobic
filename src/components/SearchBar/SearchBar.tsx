@@ -1,7 +1,22 @@
-import React from "react";
+import React, { KeyboardEvent, ChangeEvent } from "react";
 import { searchMusic } from "../../api/musicSearchApi";
-const SearchBar = ({ isDisabled, inputValue, onInputChange, onClearInput }) => {
-	const handleKeyPress = async (event) => {
+
+interface SearchBarProps {
+	isDisabled: boolean;
+	inputValue: string;
+	onInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
+	onClearInput: () => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({
+	isDisabled,
+	inputValue,
+	onInputChange,
+	onClearInput,
+}) => {
+	const handleKeyPress = async (
+		event: KeyboardEvent<HTMLInputElement>,
+	): Promise<void> => {
 		if (event.key === "Enter") {
 			try {
 				const data = await searchMusic(inputValue, 8);
