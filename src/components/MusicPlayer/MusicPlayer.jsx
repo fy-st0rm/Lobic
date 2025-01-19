@@ -225,7 +225,7 @@ function MusicPlayer() {
 			</div>
 
 			<div
-        		className={`mt-1 flex items-center justify-center w-8 h-8 cursor-pointer transition-transform duration-200 ${
+        		className={`mt-1 w-8 h-8 self-center cursor-pointer transition-transform duration-200 ${
           			isLoading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
         			}`}
         				onClick={!isLoading ? handleSongLikedToggle : null}
