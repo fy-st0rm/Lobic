@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState} from "react";
 import { EllipsisVertical } from "lucide-react";
 
@@ -6,18 +6,27 @@ import { EllipsisVertical } from "lucide-react";
 import { fetchUserPlaylists, addSongToPlaylist } from "api/playlistApi";
 import { addToLikedSongs } from "api/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
+import { useQueueProvider } from "providers/QueueProvider";
 
 // Assets
 import "./Music.css";
 
 function Music({ musicId, title, artist, coverArt, onClick }) {
 	const { appState } = useAppProvider();
+	const { queue, enqueue } = useQueueProvider();
+
 	const userId = appState.user_id; //maybe optimize this?
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleAddToQueue = () => {
-		console.log("NEED TO IMPLEMENT THE QUEUE:", musicId, title);
-		// Add your logic for adding to queue here
+		const track = {
+			id: musicId,
+			title: title,
+			artist: artist,
+			cover_img: coverArt,
+		};
+		
+		enqueue(track);
 	};
 
 	const handleAddToPlaylist = async () => {
