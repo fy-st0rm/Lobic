@@ -35,6 +35,8 @@ const AudioElement = () => {
 			});
 
 			audioElement.src = await fetchMusicUrl(musicState.id);
+			audioElement.volume = musicState.volume / 100;
+			audioElement.currentTime = 0;
 			await audioElement.pause();
 		};
 		init_audio();
