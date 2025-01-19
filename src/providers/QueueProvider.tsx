@@ -43,6 +43,11 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({ children }): 
 		return first;
 	}
 
+	// TODO: Remove this in future when queue ui is done
+	useEffect(() => {
+		console.log(queue);
+	}, [queue]);
+
 	return (
 		<QueueContext.Provider value={{
 			queue,
