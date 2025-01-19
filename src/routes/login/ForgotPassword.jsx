@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import logo from "/lobic_logo.png";
-import "./Login.css";
 
 function ForgotPassword() {
 	const navigate = useNavigate();
