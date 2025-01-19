@@ -18,14 +18,12 @@ interface MusicProps {
 	onClick: () => void;
 }
 
-interface PlaylistData {
+interface Playlist {
 	playlist_id: string;
-	// Add other playlist properties as needed
-}
-
-interface SongData {
-	playlist_id: string;
-	music_id: string;
+	playlist_name: string;
+	creation_date_time: string;
+	description: string;
+	last_updated_date_time: string;
 }
 
 const Music: React.FC<MusicProps> = ({
@@ -52,20 +50,25 @@ const Music: React.FC<MusicProps> = ({
 		enqueue(track);
 	};
 
+	interface FetchUserPlaylistsResponse {
+		user_id: string;
+		playlists: Playlist[]; // Array of playlists
+	}
 	const handleAddToPlaylist = async (): Promise<void> => {
 		try {
-			const playlists = await fetchUserPlaylists(userId);
-			console.log("playlists:", playlists);
+			const response: FetchUserPlaylistsResponse =
+				await fetchUserPlaylists(userId);
+			console.log("playlists:", response.playlists);
 
-			if (playlists.length === 0) {
+			if (response.playlists.length === 0) {
 				console.log("No playlists found for the user.");
 				return;
 			}
 
-			const playlistId = playlists[0].playlist_id;
+			const playlistId = response.playlists[0].playlist_id;
 			console.log("playlistId:", playlistId);
 
-			const songData: SongData = {
+			const songData = {
 				playlist_id: playlistId,
 				music_id: musicId,
 			};

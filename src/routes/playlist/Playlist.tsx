@@ -1,36 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-// import MusicPlayer from "../../components/MusicPlayer/MusicPlayer";
-// import NavBar from "../../components/NavBar/NavBar";
 import SongContainer from "../../components/SongContainer/SongContainer";
 import PlaylistImage from "/playlistimages/playlistimage.png";
 import User1 from "/user_images/manish.jpg";
 import User2 from "/user_images/sameep.jpg";
 import { Dot } from "lucide-react";
-import { fetchPlaylistById } from "../../api/playlistApi";
+import { useAppProvider } from "providers/AppProvider";
+
+import {
+	fetchPlaylistById,
+	PlaylistResponse,
+	Playlist as PlaylistType, // Renamed to avoid conflict
+	Song,
+} from "../../api/playlistApi";
 
 function Playlist() {
-	const { playlistId } = useParams();
-	const [playlistData, setPlaylistData] = useState(null);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const { appState } = useAppProvider();
+	const currentUserId = appState.user_id;
+	const { playlistId } = useParams<{ playlistId: string }>();
+	const [playlistData, setPlaylistData] = useState<PlaylistResponse | null>(
+		null,
+	);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const loadPlaylistData = async () => {
 			try {
-				const data = await fetchPlaylistById(playlistId);
-				setPlaylistData(data);
+				if (playlistId) {
+					const data: PlaylistResponse = await fetchPlaylistById(playlistId);
+					setPlaylistData(data);
+				}
 			} catch (error) {
-				setError(error.message);
+				setError(
+					error instanceof Error ? error.message : "An unknown error occurred",
+				);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 
-		if (playlistId) {
-			loadPlaylistData();
-		}
+		loadPlaylistData();
 	}, [playlistId]);
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	if (error) {
+		return <div>Error: {error}</div>;
+	}
+
 	return (
 		<>
 			<div className="absolute flex gap-6 top-[20%] left-[10%] playlistinfo h-[50%] w-[20%]">
@@ -63,7 +83,7 @@ function Playlist() {
 								/>
 							</div>
 							<div className="creatorname text-white opacity-50 pb-0.5 text-[8px] font-bold self-center">
-								{playlistData?.playlist?.user_id || "Unknown User"} and 1 other
+								{currentUserId || "Unknown User"} and 1 other
 							</div>
 						</div>
 						<div className="text-white opacity-50 text-[7px] font-bold self-center">
@@ -80,7 +100,7 @@ function Playlist() {
 				</div>
 			</div>
 			<SongContainer
-				playlistId={playlistId}
+				playlistId={playlistId || ""}
 				songs={playlistData?.songs || []}
 			/>
 		</>
