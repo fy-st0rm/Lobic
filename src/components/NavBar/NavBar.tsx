@@ -1,6 +1,5 @@
 // Node modules
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 
 // Local
@@ -15,11 +14,11 @@ import { useLobbyProvider } from "providers/LobbyProvider";
 import "./NavBar.css";
 
 function NavBar() {
-	const [showMessage, setShowMessage] = useState(false);
-	const [isDisabled, setIsDisabled] = useState(false);
-	const [inputValue, setInput] = useState("");
-	const [isDashboardOpen, setIsDashboardOpen] = useState(false);
-	const [profilePic, setProfilePic] = useState("/public/sadit.jpg");
+	const [showMessage, setShowMessage] = useState<boolean>(false);
+	const [isDisabled, setIsDisabled] = useState<boolean>(false);
+	const [inputValue, setInput] = useState<string>("");
+	const [isDashboardOpen, setIsDashboardOpen] = useState<boolean>(false);
+	const [profilePic, setProfilePic] = useState<string>("/public/sadit.jpg");
 
 	const { appState } = useAppProvider();
 	const { getSocket } = useSocketProvider();
@@ -78,7 +77,7 @@ function NavBar() {
 		setIsDisabled(false);
 	};
 
-	const handleInputChange = (event) => {
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setInput(event.target.value);
 	};
 
@@ -94,7 +93,7 @@ function NavBar() {
 		setIsDashboardOpen(false);
 	};
 
-	const navigateAndClose = (url) => {
+	const navigateAndClose = (url: string) => {
 		closeDashboard();
 		navigate(url);
 	};

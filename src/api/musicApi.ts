@@ -8,7 +8,7 @@ export enum MPState {
 	CHANGE_VOLUME = "CHANGE_VOLUME",
 	CHANGE_TIME = "CHANGE_TIME",
 	EMPTY = "EMPTY",
-};
+}
 
 // Define interfaces for the data structures
 export interface MusicTrack {
@@ -22,7 +22,7 @@ export interface MusicTrack {
 }
 
 interface RecentlyPlayedSong extends MusicTrack {
-	playedAt: string; // Timestamp of when the song was played
+	playedAt: string;
 }
 
 /**
@@ -68,16 +68,20 @@ export const fetchTrendingSongs = async (): Promise<MusicTrack[]> => {
 
 /**
  * Fetches a list of recently played songs for a specific user.
- * @param {string} userId - The ID of the user.
+ * @param {string | null} userId - The ID of the user.
  * @param {number} paginationLimit - The number of songs to fetch.
  * @returns {Promise<RecentlyPlayedSong[]>} - A list of recently played songs.
+ * @throws {Error} If userId is null
  */
 export const fetchRecentlyPlayed = async (
-	userId: string,
+	userId: string | null,
 	paginationLimit: number = 30,
 ): Promise<RecentlyPlayedSong[]> => {
+	if (!userId) {
+		throw new Error("User ID is required to fetch recently played songs");
+	}
+
 	try {
-		// Construct the URL with query parameters
 		const url = new URL(`${SERVER_IP}/music/get_recently_played`);
 		const params = new URLSearchParams({
 			user_id: userId,
@@ -85,7 +89,6 @@ export const fetchRecentlyPlayed = async (
 		});
 		url.search = params.toString();
 
-		// Fetch the data
 		const response = await fetch(url, {
 			method: "GET",
 			headers: {
@@ -107,14 +110,19 @@ export const fetchRecentlyPlayed = async (
 
 /**
  * Logs a song play event for a specific user.
- * @param {string} userId - The ID of the user.
+ * @param {string | null} userId - The ID of the user.
  * @param {string} musicId - The ID of the song being played.
  * @returns {Promise<string>} - A confirmation message.
+ * @throws {Error} If userId is null
  */
 export const logSongPlay = async (
-	userId: string,
+	userId: string | null,
 	musicId: string,
 ): Promise<string> => {
+	if (!userId) {
+		throw new Error("User ID is required to log song play");
+	}
+
 	try {
 		const response = await fetch(`${SERVER_IP}/music/log_song_play`, {
 			method: "POST",
@@ -173,18 +181,18 @@ export const incrementPlayCount = async (songId: string): Promise<string> => {
 export const getMusicImageUrl = (songId: string): string =>
 	`${SERVER_IP}/image/${songId}.png`;
 
-
-/*
+/**
  * Fetches the music from the backend based on the given music id
  * @param {string|null} id - The ID of the music
  * @returns {Promise<string>} - The blob URL of the music
+ * @throws {Error} If id is null
  */
-
 export const fetchMusicUrl = async (id: string | null): Promise<string> => {
-	try {
-		if (id === null)
-		 throw new Error("Music Id is null");
+	if (!id) {
+		throw new Error("Music ID is required to fetch music URL");
+	}
 
+	try {
 		const url = `${SERVER_IP}/music/${encodeURIComponent(id)}`;
 		const response = await fetch(url, {
 			method: "GET",

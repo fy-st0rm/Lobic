@@ -1,9 +1,14 @@
 // Node modules
-import React, { FC, createContext, useContext, useState } from "react";
+import React, {
+	FC,
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 
 // Local
 import { MusicTrack } from "api/musicApi";
-
 
 /*
  * QueueContext Type
@@ -27,13 +32,14 @@ const defaultContext: QueueContextType = {
 
 const QueueContext = createContext<QueueContextType>(defaultContext);
 
-
-export const QueueProvider: FC<{ children: React.ReactNode }> = ({ children }): React.ReactElement => {
+export const QueueProvider: FC<{ children: React.ReactNode }> = ({
+	children,
+}): React.ReactElement => {
 	const [queue, setQueue] = useState<MusicTrack[]>([]);
 
 	const enqueue = (track: MusicTrack) => {
 		setQueue((prevQueue) => [...prevQueue, track]);
-	}
+	};
 
 	const dequeue = (): MusicTrack | null => {
 		if (queue.length === 0) return null;
@@ -41,7 +47,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({ children }): 
 		const [first, ...rest] = queue;
 		setQueue(rest);
 		return first;
-	}
+	};
 
 	// TODO: Remove this in future when queue ui is done
 	useEffect(() => {
@@ -49,14 +55,16 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({ children }): 
 	}, [queue]);
 
 	return (
-		<QueueContext.Provider value={{
-			queue,
-			enqueue,
-			dequeue
-		}}>
+		<QueueContext.Provider
+			value={{
+				queue,
+				enqueue,
+				dequeue,
+			}}
+		>
 			{children}
 		</QueueContext.Provider>
 	);
-}
+};
 
 export const useQueueProvider = () => useContext(QueueContext);

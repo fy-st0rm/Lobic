@@ -1,4 +1,3 @@
-// Node modules
 import React, { useState, useEffect } from "react";
 
 // Local
@@ -20,12 +19,37 @@ import { useMusicProvider } from "providers/MusicProvider";
 // Assets
 import "./MusicList.css";
 
-function MusicList({ list_title, renderOnlyOnSuccess }) {
-	const [musicItems, setMusicItems] = useState([]);
-	const [error, setError] = useState(null);
-	const [isLoading, setIsLoading] = useState(true);
-	const [selectedSongId, setSelectedSongId] = useState(null);
-	const [isEmpty,setEmpty] = useState(true);
+interface MusicListProps {
+	list_title: string;
+	renderOnlyOnSuccess: boolean;
+}
+
+interface Song {
+	id: string;
+	title: string;
+	artist: string;
+	album?: string;
+	genre?: string;
+}
+
+interface MusicState {
+	id: string;
+	title: string;
+	artist: string;
+	cover_img: string;
+	timestamp: number;
+	state: MPState;
+}
+
+const MusicList: React.FC<MusicListProps> = ({
+	list_title,
+	renderOnlyOnSuccess,
+}) => {
+	const [musicItems, setMusicItems] = useState<Song[]>([]);
+	const [error, setError] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
+	const [isEmpty, setEmpty] = useState<boolean>(true);
 
 	const { appState } = useAppProvider();
 	const { updateMusicState } = useMusicProvider();
@@ -36,32 +60,37 @@ function MusicList({ list_title, renderOnlyOnSuccess }) {
 		loadMusicData();
 	}, [list_title]);
 
-	const loadMusicData = async () => {
-		let data;
+	const loadMusicData = async (): Promise<void> => {
+		let data: Song[];
 		try {
-			if (list_title === "Trending Now") {
-				data = await fetchTrendingSongs();
-			} else if (list_title === "Recently Played") {
-				data = await fetchRecentlyPlayed(userId);
-			} else if (list_title === "Liked Songs") {
-				data = await fetchLikedSongs(userId);
-			} else if (list_title === "My Top Tracks") {
-				data = await fetchTopTracks(userId);
-			} else {
-				data = await fetchMusicList();
+			switch (list_title) {
+				case "Trending Now":
+					data = await fetchTrendingSongs();
+					break;
+				case "Recently Played":
+					data = await fetchRecentlyPlayed(userId);
+					break;
+				case "Liked Songs":
+					data = await fetchLikedSongs(userId);
+					break;
+				case "My Top Tracks":
+					data = await fetchTopTracks(userId);
+					break;
+				default:
+					data = await fetchMusicList();
 			}
 			setMusicItems(data);
 			setEmpty(false);
 		} catch (err) {
-			console.error(err);
+			const error = err as Error;
+			console.error(error);
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
-	const handleMusicClick = async (song) => {
+	const handleMusicClick = async (song: Song): Promise<void> => {
 		try {
-			//TODO : refactor into PlaySong??
 			setSelectedSongId(song.id);
 			setIsLoading(true);
 
@@ -78,14 +107,16 @@ function MusicList({ list_title, renderOnlyOnSuccess }) {
 				cover_img: coverArt,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
-			});
+			} as MusicState);
 		} catch (err) {
-			console.error("Failed to handle music click:", err);
-			setError("Failed to play music: " + err.message);
+			const error = err as Error;
+			console.error("Failed to handle music click:", error);
+			setError("Failed to play music: " + error.message);
 		} finally {
 			setIsLoading(false);
 		}
 	};
+
 	if (renderOnlyOnSuccess && isEmpty) {
 		return null;
 	}
@@ -106,8 +137,6 @@ function MusicList({ list_title, renderOnlyOnSuccess }) {
 							title={song.title}
 							artist={song.artist}
 							coverArt={getMusicImageUrl(song.id)}
-							album={song.album}
-							genre={song.genre}
 							onClick={() => handleMusicClick(song)}
 						/>
 					</div>
@@ -115,6 +144,6 @@ function MusicList({ list_title, renderOnlyOnSuccess }) {
 			</div>
 		</div>
 	);
-}
+};
 
 export default MusicList;

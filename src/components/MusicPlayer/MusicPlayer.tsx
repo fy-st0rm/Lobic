@@ -1,10 +1,9 @@
-// Node modules
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
 import { SERVER_IP } from "@/const";
 import { wsSend, OpCode } from "api/socketApi";
-import { MPState  } from "api/musicApi";
+import { MPState } from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
@@ -33,10 +32,9 @@ function MusicPlayer() {
 
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState("");
-	const [isSongLiked, setIsSongLiked] = useState(false); // State for song liked toggle
+	const [isSongLiked, setIsSongLiked] = useState(false);
 
-	const formatTime = (time) => {
+	const formatTime = (time: number) => {
 		const minutes = Math.floor(time / 60);
 		const seconds = Math.floor(time % 60);
 		return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
@@ -62,27 +60,41 @@ function MusicPlayer() {
 		};
 		wsSend(getSocket(), payload);
 	}, [musicState]);
-	
+
 	useEffect(() => {
 		fetchLikedState();
-	}, [appState, musicState]);
-	
+	}, [appState.user_id, musicState.id]);
+
 	// Fetch the liked state of the song when the component mounts or when the song changes
 	const fetchLikedState = async () => {
-		if (appState.user_id && musicState.id) {
-			try {
-				const isLiked = await fetchIsSongLiked(appState.user_id, musicState.id);
-				setIsSongLiked(isLiked);
-			} catch (err) {
-				console.error("Failed to fetch song liked state:", err);
-			}
+		// Reset like state if no user or no music
+		if (!appState.user_id || !musicState.id) {
+			setIsSongLiked(false);
+			return;
+		}
+
+		try {
+			const isLiked = await fetchIsSongLiked(appState.user_id, musicState.id);
+			setIsSongLiked(isLiked);
+		} catch (err) {
+			console.error("Failed to fetch song liked state:", err);
+			setIsSongLiked(false);
 		}
 	};
 
 	// Handle toggling the liked state of the song
 	const handleSongLikedToggle = async () => {
+		// Prevent toggling if no user is logged in or no song is selected
+		if (!appState.user_id || !musicState.id) {
+			console.log(
+				"Cannot toggle like state: No user logged in or no song selected",
+			);
+			return;
+		}
+
 		const newLikedState = !isSongLiked;
 		setIsSongLiked(newLikedState);
+
 		try {
 			const result = await toggleSongLiked(appState.user_id, musicState.id);
 			console.log("Song liked state updated successfully:", result);
@@ -102,20 +114,17 @@ function MusicPlayer() {
 				updateMusicState({ state: MPState.PAUSE });
 			} else if (musicState.state == MPState.PAUSE) {
 				updateMusicState({ state: MPState.PLAY });
-
 				setIsLoading(true);
-				setError("");
 			}
 		} catch (err) {
 			console.error("Failed to load/play music:", err);
-			setError("Failed to load music: " + err.message);
 			updateMusicState({ state: MPState.PAUSE });
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
-	const onVolumeChange = (e) => {
+	const onVolumeChange = (e: { target: { value: any } }) => {
 		updateMusicState({
 			state: MPState.CHANGE_VOLUME,
 			state_data: e.target.value,
@@ -124,7 +133,7 @@ function MusicPlayer() {
 
 	const volumeToggle = () => {
 		if (musicState.volume > 0) {
-			setInitialVolume(musicState.volume); // Save the current volume before muting
+			setInitialVolume(musicState.volume);
 			updateMusicState({
 				state: MPState.CHANGE_VOLUME,
 				state_data: 0,
@@ -137,21 +146,28 @@ function MusicPlayer() {
 		}
 	};
 
-	const handleSeekEnd = (e) => {
-		const seekTime = (e.target.value / 100) * musicState.duration;
+	const handleSeekEnd = (
+		e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>,
+	) => {
+		// Get the value from the input element
+		const input = e.target as HTMLInputElement;
+		const seekTime = (Number(input.value) / 100) * musicState.duration;
 		updateMusicState({
 			state: MPState.CHANGE_TIME,
 			state_data: seekTime,
 		});
 	};
 
-	const handleSeekMove = (e) => {
-		const seekTime = (e.target.value / 100) * musicState.duration;
+	const handleSeekMove = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const seekTime = (Number(e.target.value) / 100) * musicState.duration;
 		updateMusicState({
 			state: MPState.CHANGE_TIME,
 			state_data: seekTime,
 		});
 	};
+
+	// Determine if the like button should be disabled
+	const isLikeButtonDisabled = isLoading || !appState.user_id || !musicState.id;
 
 	return (
 		<div className="music-player">
@@ -226,23 +242,29 @@ function MusicPlayer() {
 			</div>
 
 			<div
-        		className={`mt-1 w-8 h-8 self-center cursor-pointer transition-transform duration-200 ${
-          			isLoading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
-        			}`}
-        				onClick={!isLoading ? handleSongLikedToggle : null}
-        				role="button"
-        				aria-pressed={isSongLiked}
-        				tabIndex={0}
-        				onKeyDown={(e) => {
-          					if ((e.key === "Enter" || e.key === " ") && !isLoading) {
-            				e.preventDefault();
-            				handleSongLikedToggle();
-          					}}}>
-        				<img
-          				src={isSongLiked ? likedSongFilled : likedSong}
-          				alt={isSongLiked ? "Liked" : "Not Liked"}
-          				className="w-6 h-6"/>
-      		</div>
+				className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${
+					isLikeButtonDisabled
+						? "opacity-50 cursor-not-allowed"
+						: "cursor-pointer hover:scale-110"
+				}`}
+				onClick={!isLikeButtonDisabled ? handleSongLikedToggle : undefined}
+				role="button"
+				aria-pressed={isSongLiked}
+				aria-disabled={isLikeButtonDisabled}
+				tabIndex={isLikeButtonDisabled ? -1 : 0}
+				onKeyDown={(e) => {
+					if ((e.key === "Enter" || e.key === " ") && !isLikeButtonDisabled) {
+						e.preventDefault();
+						handleSongLikedToggle();
+					}
+				}}
+			>
+				<img
+					src={isSongLiked ? likedSongFilled : likedSong}
+					alt={isSongLiked ? "Liked" : "Not Liked"}
+					className="w-6 h-6"
+				/>
+			</div>
 
 			<div className="volume-status">
 				<button

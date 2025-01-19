@@ -2,6 +2,7 @@ import { SERVER_IP } from "@/const";
 
 // Define interfaces for the data structures
 interface Playlist {
+	playlist_id: any;
 	id: string;
 	name: string;
 	description?: string;
@@ -14,6 +15,7 @@ interface PlaylistData {
 	description?: string;
 	cover_image?: string;
 	songs?: string[];
+	user_id: string; // Added to handle user association
 }
 
 interface SongData {
@@ -31,12 +33,18 @@ interface ApiResponse {
 /**
  * Fetches playlists for a specific user.
  * @param {string} userId - The ID of the user whose playlists are being fetched.
- * @returns {Promise<Playlist[]>} - A list of playlists belonging to the user.
+ * @returns {Promise<Playlist[]>} - A list of playlists belonging to the user, or an empty array if userId is null.
  * @throws {Error} - If the request fails or the response is not OK.
  */
 export const fetchUserPlaylists = async (
 	userId: string,
 ): Promise<Playlist[]> => {
+	// Return empty array if userId is null
+	if (!userId) {
+		console.log("No user ID provided, returning empty playlist array");
+		return [];
+	}
+
 	try {
 		const response = await fetch(
 			`${SERVER_IP}/playlist/get_users_playlists?user_uuid=${encodeURIComponent(
@@ -66,11 +74,13 @@ export const fetchUserPlaylists = async (
 /**
  * Creates a new playlist.
  * @param {PlaylistData} playlistData - The data for the new playlist.
+ * @param {string} userId - The ID of the user creating the playlist.
  * @returns {Promise<ApiResponse>} - The response from the server, including the created playlist's details.
- * @throws {Error} - If the request fails or the response is not OK.
+ * @throws {Error} - If the request fails, the response is not OK, or no user ID is provided.
  */
 export const createPlaylist = async (
 	playlistData: PlaylistData,
+	userId: string,
 ): Promise<ApiResponse> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/playlist/new`, {
@@ -78,7 +88,7 @@ export const createPlaylist = async (
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(playlistData),
+			body: JSON.stringify({ ...playlistData, user_id: userId }),
 		});
 
 		const result: ApiResponse = await response.json();
