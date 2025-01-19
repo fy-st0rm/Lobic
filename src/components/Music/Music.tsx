@@ -5,6 +5,7 @@ import { EllipsisVertical } from "lucide-react";
 import { fetchUserPlaylists, addSongToPlaylist } from "api/playlistApi";
 import { addToLikedSongs } from "api/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
+import { useQueueProvider } from "providers/QueueProvider";
 
 // Assets
 import "./Music.css";
@@ -35,11 +36,20 @@ const Music: React.FC<MusicProps> = ({
 	onClick,
 }) => {
 	const { appState } = useAppProvider();
+	const { queue, enqueue } = useQueueProvider();
+
 	const userId = appState.user_id;
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
-	const handleAddToQueue = (): void => {
-		console.log("NEED TO IMPLEMENT THE QUEUE:", musicId, title);
+	const handleAddToQueue = () => {
+		const track = {
+			id: musicId,
+			title: title,
+			artist: artist,
+			cover_img: coverArt,
+		};
+
+		enqueue(track);
 	};
 
 	const handleAddToPlaylist = async (): Promise<void> => {
