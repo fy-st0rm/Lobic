@@ -4,13 +4,21 @@ import { useState, useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
 
 // Local
-import { MPState } from "@/const.jsx";
-import { OpCode, wsSend } from "api/socketApi.ts";
-import { useAppState } from "@/AppState.jsx";
+import { MPState } from "@/const";
+import { OpCode, wsSend } from "api/socketApi";
 import MusicPlayer from "components/MusicPlayer/MusicPlayer";
-import NavBar from "components/NavBar/NavBar.jsx";
+import NavBar from "components/NavBar/NavBar";
+import { useAppProvider } from "providers/AppProvider";
+import { useMusicProvider } from "providers/MusicProvider";
+import { useLobbyProvider } from "providers/LobbyProvider";
+import { useSocketProvider } from "providers/SocketProvider";
 
 function Chats() {
+	const { appState } = useAppProvider();
+	const { lobbyState, updateLobbyState } = useLobbyProvider();
+	const { musicState, updateMusicState } = useMusicProvider();
+	const { getSocket, addMsgHandler } = useSocketProvider();
+
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [inputValue, setInputValue] = useState("");
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -18,15 +26,6 @@ function Chats() {
 
 	const chatContainerRef = useRef(null); // Ref for the chat container
 	const navigate = useNavigate();
-	const {
-		ws,
-		audioRef,
-		appState,
-		musicState,
-		addMsgHandler,
-		updateAppState,
-		updateMusicState,
-	} = useAppState();
 
 	const users = [
 		{ id: 1, name: "Coolboy", image: "/user_images/sameep.jpg" },
@@ -44,9 +43,9 @@ function Chats() {
 		setTimeout(() => {
 			const payload = {
 				op_code: OpCode.GET_MESSAGES,
-				value: { lobby_id: appState.lobby_id },
+				value: { lobby_id: lobbyState.lobby_id },
 			};
-			wsSend(ws, payload);
+			wsSend(getSocket(), payload);
 		}, 1000);
 	}, []);
 
@@ -63,7 +62,6 @@ function Chats() {
 			let music = res.value;
 			console.log(music);
 			updateMusicState({
-				has_item: music.id ? true : false,
 				id: music.id,
 				title: music.title,
 				artist: music.artist,
@@ -86,33 +84,32 @@ function Chats() {
 			}
 		});
 
-		if (!appState.in_lobby) return;
+		if (!lobbyState.in_lobby) return;
 
 		const payload = {
 			op_code: OpCode.SYNC_MUSIC,
 			value: {
-				lobby_id: appState.lobby_id,
+				lobby_id: lobbyState.lobby_id,
 			},
 		};
-		wsSend(ws, payload);
+		wsSend(getSocket(), payload);
 	}, []);
 
 	useEffect(() => {
 		addMsgHandler(OpCode.LEAVE_LOBBY, (res) => {
 			// Tagging the user as joined in lobby
-			updateAppState({
-				lobby_id: "",
+			updateLobbyState({
+				lobby_id: null,
 				in_lobby: false,
 				is_host: false,
 			});
 
 			// Clearning the current music when creating a new lobby
 			updateMusicState({
-				has_item: false,
-				id: "",
-				title: "",
-				artist: "",
-				cover_img: "",
+				id: null,
+				title: null,
+				artist: null,
+				cover_img: null,
 				state: MPState.CHANGE_TIME,
 				state_data: 0,
 			});
@@ -122,10 +119,10 @@ function Chats() {
 	}, []);
 
 	const handleLeaveClick = () => {
-		wsSend(ws, {
+		wsSend(getSocket(), {
 			op_code: OpCode.LEAVE_LOBBY,
 			value: {
-				lobby_id: appState.lobby_id,
+				lobby_id: lobbyState.lobby_id,
 				user_id: appState.user_id,
 			},
 		});
@@ -134,10 +131,10 @@ function Chats() {
 	const handleSendMsg = () => {
 		if (!inputValue.trim()) return;
 
-		wsSend(ws, {
+		wsSend(getSocket(), {
 			op_code: OpCode.MESSAGE,
 			value: {
-				lobby_id: appState.lobby_id,
+				lobby_id: lobbyState.lobby_id,
 				user_id: appState.user_id,
 				message: inputValue,
 			},

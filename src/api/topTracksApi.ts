@@ -1,4 +1,4 @@
-import { SERVER_IP } from "@/const.jsx";
+import { SERVER_IP } from "@/const";
 
 interface TopTrack {
 	id: string;

@@ -5,9 +5,11 @@ import { useNavigate, Link } from "react-router-dom";
 
 // Local
 import SearchBar from "components/SearchBar/SearchBar";
-import { useAppState } from "@/AppState.jsx";
 import { OpCode, wsSend } from "api/socketApi.ts";
 import { fetchUserProfilePicture, logoutUser } from "api/userApi.ts";
+import { useAppProvider } from "providers/AppProvider";
+import { useSocketProvider } from "providers/SocketProvider";
+import { useLobbyProvider } from "providers/LobbyProvider";
 
 // Assets
 import "./NavBar.css";
@@ -18,7 +20,11 @@ function NavBar() {
 	const [inputValue, setInput] = useState("");
 	const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 	const [profilePic, setProfilePic] = useState("/public/sadit.jpg");
-	const { appState, ws } = useAppState();
+
+	const { appState } = useAppProvider();
+	const { getSocket } = useSocketProvider();
+	const { lobbyState } = useLobbyProvider();
+
 	const user_id = appState.user_id;
 
 	const navigate = useNavigate();
@@ -45,15 +51,15 @@ function NavBar() {
 			setIsDisabled(false);
 
 			// If the client is in lobby then leave it
-			if (appState.in_lobby) {
+			if (lobbyState.in_lobby) {
 				const payload = {
 					op_code: OpCode.LEAVE_LOBBY,
 					value: {
-						lobby_id: appState.lobby_id,
+						lobby_id: lobbyState.lobby_id,
 						user_id: appState.user_id,
 					},
 				};
-				wsSend(ws, payload);
+				wsSend(getSocket(), payload);
 			}
 
 			await logoutUser(appState.user_id);

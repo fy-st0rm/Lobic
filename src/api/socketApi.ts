@@ -34,15 +34,12 @@ export type SocketPayload = {
  * @param {SocketPayload} data - Payload to transfer
  */
 
-export const wsSend = (
-	ws: React.RefObject<WebSocket | null>,
-	data: SocketPayload,
-) => {
-	if (ws.current === null) {
+export const wsSend = (ws: WebSocket | null, data: SocketPayload) => {
+	if (ws === null) {
 		console.log("Websocket is null");
 		return;
 	}
-	if (ws.current.readyState === WebSocket.OPEN) {
-		ws.current.send(JSON.stringify(data));
+	if (ws.readyState === WebSocket.OPEN) {
+		ws.send(JSON.stringify(data));
 	}
 };

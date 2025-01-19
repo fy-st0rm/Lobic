@@ -1,9 +1,19 @@
+// Node modules
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { performLogin, initClientState } from "../../api/userApi.ts";
-import { useAppState } from "../../AppState.jsx";
+import { CircleAlert } from 'lucide-react'
+
+// Local
+import { performLogin, initClientState } from "api/userApi";
+import { useAppProvider } from "providers/AppProvider";
+
+// Assets
 import logo from "/lobic_logo.png";
+<<<<<<< HEAD
 import { CircleAlert } from "lucide-react";
+=======
+import "./Login.css";
+>>>>>>> ad06dee9f3df14bfe519301a67ed2d0d14918618
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -14,8 +24,13 @@ function Login() {
   const navigate = useNavigate();
   const { updateAppState } = useAppState();
 
+<<<<<<< HEAD
   const handleLogin = async (event) => {
     event.preventDefault();
+=======
+	const navigate = useNavigate();
+	const { updateAppState } = useAppProvider();
+>>>>>>> ad06dee9f3df14bfe519301a67ed2d0d14918618
 
     try {
       await performLogin(email, password);

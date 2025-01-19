@@ -21,7 +21,8 @@
 			"components/*": ["src/components/*"],
 			"routes/*": ["src/routes/*"],
 			"api/*": ["src/api/*"],
-			"commons/*": ["src/commons/*"]
+			"commons/*": ["src/commons/*"],
+			"providers/*": ["src/providers/*"]
 		}
 	},
 	"include": ["src"],
