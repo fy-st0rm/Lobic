@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+// Node modules
+import React, { FC, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { SERVER_IP } from "../../const.jsx";
+// Local
+import { SERVER_IP } from "@/const.ts";
 
-function Auth({ children }) {
-	const [auth, setAuth] = useState(false);
+const Auth: FC<{ children: React.ReactNode }> = ({ children }): React.ReactElement => {
+	const [auth, setAuth] = useState<boolean>(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -21,7 +23,9 @@ function Auth({ children }) {
 		});
 	}, []);
 
-	return auth ? children : null;
+	return auth
+		? <div>{children}</div>
+		: <div></div>;
 }
 
 export default Auth;

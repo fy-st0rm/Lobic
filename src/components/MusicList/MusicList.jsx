@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from "react";
 
 // Local
-import { useAppState } from "@/AppState.jsx";
 import Music from "components/Music/Music";
-import { MPState } from "@/const.jsx";
+import { MPState } from "@/const";
 import {
 	fetchMusicList,
 	incrementPlayCount,
@@ -12,9 +11,11 @@ import {
 	fetchTrendingSongs,
 	fetchRecentlyPlayed,
 	logSongPlay,
-} from "api/musicApi.ts";
-import { fetchLikedSongs } from "api/likedSongsApi.ts";
-import { fetchTopTracks } from "api/topTracksApi.ts";
+} from "api/musicApi";
+import { fetchLikedSongs } from "api/likedSongsApi";
+import { fetchTopTracks } from "api/topTracksApi";
+import { useAppProvider } from "providers/AppProvider";
+import { useMusicProvider } from "providers/MusicProvider";
 
 // Assets
 import "./MusicList.css";
@@ -25,7 +26,9 @@ function MusicList({ list_title }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSongId, setSelectedSongId] = useState(null);
 
-	const { appState, updateMusicState } = useAppState();
+	const { appState } = useAppProvider();
+	const { updateMusicState } = useMusicProvider();
+
 	const userId = appState.user_id;
 
 	useEffect(() => {
@@ -67,7 +70,6 @@ function MusicList({ list_title }) {
 			await logSongPlay(userId, song.id);
 
 			updateMusicState({
-				has_item: true,
 				id: song.id,
 				title: song.title,
 				artist: song.artist,

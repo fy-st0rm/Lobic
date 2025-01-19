@@ -1,5 +1,5 @@
 // Node modules
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Locals
@@ -8,31 +8,31 @@ import {
 	wsSend,
 	SocketResponse,
 	SocketPayload
-} from "api/socketApi.ts";
-import { LobbyModel, fetchLobbies } from "api/lobbyApi.ts";
-import { MPState, SERVER_IP } from "@/const.jsx";
-import { useAppState } from "@/AppState.jsx";
+} from "api/socketApi";
+import { LobbyModel, fetchLobbies } from "api/lobbyApi";
+import { MPState, SERVER_IP } from "@/const";
 import {
 	LobbyCard,
 	CreateLobbyButton,
-} from "components/LobbyCard/LobbyCard.jsx";
+} from "components/LobbyCard/LobbyCard";
+import { useAppProvider } from "providers/AppProvider";
+import { useLobbyProvider } from "providers/LobbyProvider";
+import { useSocketProvider } from "providers/SocketProvider";
+import { useMusicProvider } from "providers/MusicProvider";
 
 // Assets
 import test_logo from "/covers/cover.jpg";
 import "./Lobby.css";
 
-function Lobby() {
+const Lobby = (): React.ReactElement => {
+	const navigate = useNavigate();
+	const { appState } = useAppProvider();
+	const { lobbyState, updateLobbyState } = useLobbyProvider();
+	const { getSocket, addMsgHandler } = useSocketProvider();
+	const { musicState, updateMusicState } = useMusicProvider();
+
 	const [showContent, setShowContent] = useState<boolean>(false);
 	const [lobbies, setLobbies] = useState<LobbyModel[]>([]);
-
-	const {
-		appState,
-		ws,
-		addMsgHandler,
-		updateAppState,
-		updateMusicState
-	} = useAppState();
-	const navigate = useNavigate();
 
 	// Delay to ensure content is rendered before animation
 	useEffect(() => {
@@ -43,11 +43,6 @@ function Lobby() {
 
 	// Get the online lobbies
 	useEffect(() => {
-		if (ws.current === null) {
-			console.log("Websocket is null!");
-			return;
-		}
-
 		// Handling the response
 		addMsgHandler(OpCode.GET_LOBBY_IDS, (res: SocketResponse) => {
 			const init = async () => {
@@ -62,12 +57,12 @@ function Lobby() {
 			op_code: OpCode.GET_LOBBY_IDS,
 			value: "empty",
 		};
-		wsSend(ws, payload);
+		wsSend(getSocket(), payload);
 	}, []);
 
 	// Effect to switch to chat page if the user is already joined the lobby
 	useEffect(() => {
-		if (appState.in_lobby) {
+		if (lobbyState.in_lobby) {
 			navigate("/chats");
 		}
 	}, []);
@@ -75,27 +70,21 @@ function Lobby() {
 	const handleCreateLobby = async () => {
 		let user_id = appState.user_id;
 
-		if (ws.current === null) {
-			console.log("Websocket is null!");
-			return;
-		}
-
 		// Handling the response
 		addMsgHandler(OpCode.CREATE_LOBBY, (res: SocketResponse) => {
 			// Tagging the user as joined in lobby
-			updateAppState({
+			updateLobbyState({
 				lobby_id: res.value.lobby_id,
 				in_lobby: true,
 				is_host: true,
 			});
 
-			// Clearning the current music when creating a new lobby
+			// Clearing the current music when creating a new lobby
 			updateMusicState({
-				has_item: false,
-				id: "",
-				title: "",
-				artist: "",
-				cover_img: "",
+				id: null,
+				title: null,
+				artist: null,
+				cover_img: null,
 				state: MPState.CHANGE_TIME,
 				state_data: 0,
 			});
@@ -111,14 +100,14 @@ function Lobby() {
 				host_id: user_id,
 			},
 		};
-		wsSend(ws, payload);
+		wsSend(getSocket(), payload);
 	};
 
 	const handleJoinLobby = (lobby_id: string) => {
 		// Join Lobby Handler
 		addMsgHandler(OpCode.JOIN_LOBBY, (res: SocketResponse) => {
 			// Tagging the user as joined in lobby
-			updateAppState({
+			updateLobbyState({
 				lobby_id: res.value.lobby_id,
 				in_lobby: true,
 				is_host: false,
@@ -126,11 +115,10 @@ function Lobby() {
 
 			// Clearning the current music when creating a new lobby
 			updateMusicState({
-				has_item: false,
-				id: "",
-				title: "",
-				artist: "",
-				cover_img: "",
+				id: null,
+				title: null,
+				artist: null,
+				cover_img: null,
 				state: MPState.CHANGE_TIME,
 				state_data: 0,
 			});
@@ -146,7 +134,7 @@ function Lobby() {
 				user_id: user_id,
 			},
 		};
-		wsSend(ws, payload);
+		wsSend(getSocket(), payload);
 	};
 
 	return (

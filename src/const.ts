@@ -18,17 +18,20 @@ export const WS_SERVER_IP = "ws://127.0.0.1:8080/ws";
 // 	REMOVE_FRIEND: "REMOVE_FRIEND",
 // });
 
-export const MPState = Object.freeze({
-	PLAY: "PLAY",
-	PAUSE: "PAUSE",
-	CHANGE_MUSIC: "CHANGE_MUSIC",
-	CHANGE_VOLUME: "CHANGE_VOLUME",
-	CHANGE_TIME: "CHANGE_TIME",
-});
+export enum MPState {
+	PLAY = "PLAY",
+	PAUSE = "PAUSE",
+	CHANGE_MUSIC = "CHANGE_MUSIC",
+	CHANGE_VOLUME = "CHANGE_VOLUME",
+	CHANGE_TIME = "CHANGE_TIME",
+};
 
 // Creates a blob url for audio
-export const fetchMusicUrl = async (id) => {
+export const fetchMusicUrl = async (id: string | null) => {
 	try {
+		if (id === null)
+		 throw new Error("Music Id is null");
+
 		const url = `${SERVER_IP}/music/${encodeURIComponent(id)}`;
 		const response = await fetch(url, {
 			method: "GET",

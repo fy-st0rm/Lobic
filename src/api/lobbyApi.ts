@@ -1,4 +1,4 @@
-import { SERVER_IP } from "@/const.jsx";
+import { SERVER_IP } from "@/const";
 
 export type LobbyModel = {
 	id: string;
@@ -9,29 +9,35 @@ export type LobbyModel = {
 	artist_name: string;
 };
 
-export const fetchLobbies = async (lobby_ids: string[]): LobbyModel[] => {
-	let lobbies: LobbyModel[] = [];
+export const fetchLobbies = async (lobby_ids: string[]): Promise<LobbyModel[]> => {
+	const fetchLobby = async (id: string): Promise<LobbyModel | null> => {
+		try {
+			const response = await fetch(`${SERVER_IP}/get_lobby/${id}`);
+			if (!response.ok) {
+				const msg = await response.text();
+				console.error("Failed to fetch lobby:", msg);
+				return null;
+			}
 
-	for (const id of lobby_ids) {
-		let response = await fetch(`${SERVER_IP}/get_lobby/${id}`);
-		if (!response.ok) {
-			let msg = await response.text();
-			console.error("Failed to fetch lobby:", msg);
-			continue;
+			const data = await response.json();
+			return {
+				id: data.id,
+				lobby_name: data.lobby_name,
+				lobby_icon: data.lobby_icon,
+				listeners: data.listeners,
+				song_name: data.song_name,
+				artist_name: data.artist_name,
+			};
+		} catch (error) {
+			console.error("Error fetching lobby:", error);
+			return null;
 		}
+	};
 
-		let data = await response.json();
-		let lobby: LobbyModel = {
-			id: data.id,
-			lobby_name: data.lobby_name,
-			lobby_icon: data.lobby_icon,
-			listeners: data.listeners,
-			song_name: data.song_name,
-			artist_name: data.artist_name,
-		};
+	const lobbies = await Promise.all(
+		lobby_ids.map((id) => fetchLobby(id))
+	);
 
-		lobbies.push(lobby);
-	}
-
-	return lobbies;
+	// Filter out null values
+	return lobbies.filter((lobby): lobby is LobbyModel => lobby !== null);
 }

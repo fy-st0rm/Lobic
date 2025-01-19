@@ -1,9 +1,14 @@
+// Node modules
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { performLogin, initClientState } from "../../api/userApi.ts";
-import { useAppState } from "../../AppState.jsx";
-import logo from "/lobic_logo.png";
 import { CircleAlert } from 'lucide-react'
+
+// Local
+import { performLogin, initClientState } from "api/userApi";
+import { useAppProvider } from "providers/AppProvider";
+
+// Assets
+import logo from "/lobic_logo.png";
 import "./Login.css";
 
 function Login() {
@@ -14,7 +19,7 @@ function Login() {
 	const [errorMsg, setErrorMsg] = useState("");
 
 	const navigate = useNavigate();
-	const { updateAppState } = useAppState();
+	const { updateAppState } = useAppProvider();
 
 	const handleLogin = async (event) => {
 		event.preventDefault();

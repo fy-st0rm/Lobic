@@ -1,14 +1,17 @@
+// Node modules
 import { useState } from "react";
-import SongInfo from "../SongInfo/SongInfo";
-import { MPState } from "../../const.jsx";
-import { useAppState } from "../../AppState.jsx";
-import { getMusicImageUrl } from "../../api/musicApi.ts";
+
+// Local
+import SongInfo from "components/SongInfo/SongInfo";
+import { MPState } from "@/const";
+import { useMusicProvider } from "providers/MusicProvider";
+import { getMusicImageUrl } from "api/musicApi";
 
 function SongContainer({ playlistId, songs }) {
 	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [selectedSongId, setSelectedSongId] = useState(null);
-	const { updateMusicState } = useAppState();
+	const { updateMusicState } = useMusicProvider();
 
 	const handleMusicClick = async (item) => {
 		try {
@@ -18,7 +21,6 @@ function SongContainer({ playlistId, songs }) {
 
 			// Updating Music State globally
 			updateMusicState({
-				has_item: true,
 				id: item.music_id,
 				title: item.title,
 				artist: item.artist,

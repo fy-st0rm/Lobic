@@ -2,9 +2,12 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
-import { useAppState } from "@/AppState.jsx";
-import { SERVER_IP, MPState, fetchMusicUrl } from "@/const.jsx";
-import { wsSend, OpCode } from "api/socketApi.ts";
+import { SERVER_IP, MPState, fetchMusicUrl } from "@/const";
+import { wsSend, OpCode } from "api/socketApi";
+import { useAppProvider } from "providers/AppProvider";
+import { useLobbyProvider } from "providers/LobbyProvider";
+import { useSocketProvider } from "providers/SocketProvider";
+import { useMusicProvider } from "providers/MusicProvider";
 
 // Assets
 import previousButton from "/controlbar/PreviousButton.svg";
@@ -18,15 +21,10 @@ import placeholder_logo from "/covers/cover.jpg";
 import "./MusicPlayer.css";
 
 function MusicPlayer() {
-	const {
-		ws,
-		appState,
-		musicState,
-		audioRef,
-		controlsDisabled,
-		addMsgHandler,
-		updateMusicState,
-	} = useAppState();
+	const { appState } = useAppProvider();
+	const { lobbyState, updateLobbyState } = useLobbyProvider();
+	const { getSocket, addMsgHandler } = useSocketProvider();
+	const { musicState, controlsDisabled, updateMusicState } = useMusicProvider();
 
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
@@ -40,13 +38,13 @@ function MusicPlayer() {
 
 	// Responsible to set the music state of the lobby as a host
 	useEffect(() => {
-		if (!appState.in_lobby) return;
-		if (!musicState.has_item) return;
+		if (!lobbyState.in_lobby) return;
+		if (!musicState.id) return;
 
 		const payload = {
 			op_code: OpCode.SET_MUSIC_STATE,
 			value: {
-				lobby_id: appState.lobby_id,
+				lobby_id: lobbyState.lobby_id,
 				user_id: appState.user_id,
 				music_id: musicState.id,
 				title: musicState.title,
@@ -56,12 +54,12 @@ function MusicPlayer() {
 				state: musicState.state,
 			},
 		};
-		wsSend(ws, payload);
-	}, [musicState.state]);
+		wsSend(getSocket(), payload);
+	}, [musicState]);
 
 	const handlePlayMusic = async () => {
 		try {
-			if (!musicState.has_item) {
+			if (!musicState.id) {
 				throw new Error("No song selected");
 			}
 
@@ -125,7 +123,7 @@ function MusicPlayer() {
 			<div>
 				<img
 					src={
-						musicState.has_item
+						musicState.id
 							? `${SERVER_IP}/image/${musicState.id}.png`
 							: placeholder_logo
 					}
@@ -135,10 +133,10 @@ function MusicPlayer() {
 			</div>
 			<div className="song-info">
 				<div className="song-name">
-					{musicState.has_item ? musicState.title : "No Song Selected"}
+					{musicState.id ? musicState.title : "No Song Selected"}
 				</div>
 				<div className="artist-name">
-					{musicState.has_item ? musicState.artist : ""}
+					{musicState.id ? musicState.artist : ""}
 				</div>
 			</div>
 			<div className="control-container">

@@ -1,12 +1,17 @@
+// Node modules
 import React, { useEffect, useState } from "react";
-import { useAppState } from "../../AppState.jsx";
 import { useNavigate } from "react-router-dom";
-import img from "/playlistimages/playlistimage.png";
 import { Plus } from "lucide-react";
-import { fetchUserPlaylists, createPlaylist } from "../../api/playlistApi.ts";
+
+// Local
+import { useAppProvider } from "providers/AppProvider";
+import { fetchUserPlaylists, createPlaylist } from "api/playlistApi";
+
+// Assets
+import img from "/playlistimages/playlistimage.png";
 
 function Playlists() {
-	const { appState } = useAppState();
+	const { appState } = useAppProvider();
 	const currentUserId = appState.user_id;
 	const navigate = useNavigate();
 	const [playlists, setPlaylists] = useState([]);

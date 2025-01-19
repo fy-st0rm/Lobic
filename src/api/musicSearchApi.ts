@@ -1,4 +1,4 @@
-import { SERVER_IP } from "../const";
+import { SERVER_IP } from "@/const";
 
 // Define an interface for the search result (adjust based on your actual API response structure)
 interface SearchResult {

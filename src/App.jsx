@@ -4,20 +4,19 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 
 // Routes
-import Login from "routes/login/Login.jsx";
-import Home from "routes/home/Home.jsx";
-import Auth from "routes/auth/Auth.jsx";
-import Signup from "routes/signup/Signup.jsx";
-import ForgotPassword from "routes/login/ForgotPassword.jsx";
-import Lobby from "routes/lobby/Lobby.tsx";
-import Chats from "routes/chats/Chats.jsx";
-import Playlist from "routes/playlist/Playlist.jsx";
-import Playlists from "routes/playlists/playlists.jsx";
-import Profile from "routes/profile/Profile.jsx";
+import Login from "routes/login/Login";
+import Home from "routes/home/Home";
+import Auth from "routes/auth/Auth";
+import Signup from "routes/signup/Signup";
+import ForgotPassword from "routes/login/ForgotPassword";
+import Lobby from "routes/lobby/Lobby";
+import Chats from "routes/chats/Chats";
+import Playlist from "routes/playlist/Playlist";
+import Playlists from "routes/playlists/playlists";
+import Profile from "routes/profile/Profile";
 
-import MusicPlayer from "components/MusicPlayer/MusicPlayer.jsx";
-import NavBar from "components/NavBar/NavBar.jsx";
-import { useAppState } from "@/AppState.jsx";
+import MusicPlayer from "components/MusicPlayer/MusicPlayer";
+import NavBar from "components/NavBar/NavBar";
 
 function App() {
 	const location = useLocation(); // Get the current route location

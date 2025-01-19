@@ -12,6 +12,7 @@ export default defineConfig({
 			routes: path.resolve(__dirname, 'src/routes'),
 			api: path.resolve(__dirname, 'src/api'),
 			commons: path.resolve(__dirname, 'src/commons'),
+			providers: path.resolve(__dirname, 'src/providers'),
 		},
 	},
 });

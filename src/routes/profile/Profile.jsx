@@ -1,11 +1,17 @@
+// Node modules
 import React from "react";
+
+// Local
+import ProfileCard from "components/ProfileCard/ProfileCard";
+import SearchList from "components/SearchList/SearchList";
+import PlaylistsContainer from "components/PlaylistsContainer/PlaylistsContainer";
+import { useAppProvider} from "providers/AppProvider";
+
+// Assets
 import "./Profile.css";
-import ProfileCard from "../../components/ProfileCard/ProfileCard";
-import SearchList from "../../components/SearchList/SearchList.jsx";
-import PlaylistsContainer from "../../components/PlaylistsContainer/PlaylistsContainer.jsx";
-import { useAppState } from "../../AppState.jsx";
+
 function Profile() {
-	const { appState } = useAppState();
+	const { appState } = useAppProvider();
 	return (
 		<>
 			<div className="home-container">

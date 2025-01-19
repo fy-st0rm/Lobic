@@ -1,16 +1,19 @@
+// Node modules
 import React from "react";
-import "./Music.css";
 import { EllipsisVertical } from "lucide-react";
-import {
-	fetchUserPlaylists,
-	addSongToPlaylist,
-} from "../../api/playlistApi.ts";
-import { useAppState } from "../../AppState.jsx";
-import { addToLikedSongs } from "../../api/likedSongsApi.ts";
+
+// Local
+import { fetchUserPlaylists, addSongToPlaylist } from "api/playlistApi";
+import { addToLikedSongs } from "api/likedSongsApi";
+import { useAppProvider } from "providers/AppProvider";
+
+// Assets
+import "./Music.css";
 
 function Music({ musicId, title, artist, coverArt, onClick }) {
-	const { appState } = useAppState();
+	const { appState } = useAppProvider();
 	const userId = appState.user_id; //maybe optimize this?
+
 	const handleAddToQueue = () => {
 		console.log("NEED TO IMPLEMENT THE QUEUE:", musicId, title);
 		// Add your logic for adding to queue here
