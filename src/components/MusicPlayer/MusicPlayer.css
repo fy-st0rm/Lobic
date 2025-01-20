@@ -22,6 +22,7 @@
 .song-info {
 	padding: 5px;
 	align-self: center;
+	mask-image: none;
 }
 
 .cover-image {
@@ -44,8 +45,8 @@
 }
 
 .control-container {
-	flex-grow: 1;
-	width: 50%;
+	flex-grow: 0;
+	width: 60%;
 	align-self: center;
 }
 

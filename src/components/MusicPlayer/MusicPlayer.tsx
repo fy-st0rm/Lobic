@@ -194,8 +194,9 @@ function MusicPlayer() {
 					className="cover-image"
 				/>
 			</div>
-			<div className="flex w-[10%]">
-				<div className="song-info mr-2 overflow-hidden">
+			<div className="flex w-[20%]">
+				<div className="self-center"> 
+				<div className="song-info overflow-hidden p-2">
 					<div className="song-name">
 						{musicState.id ? musicState.title : "No Song Selected"}
 					</div>
@@ -227,6 +228,8 @@ function MusicPlayer() {
 						className="w-6 h-6"
 					/>
 				</div>
+
+					</div>
 			
 
 
