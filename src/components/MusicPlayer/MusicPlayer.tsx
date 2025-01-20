@@ -195,7 +195,7 @@ function MusicPlayer() {
 				/>
 			</div>
 			<div className="flex w-[10%]">
-				<div className="song-info mr-2 w-[100%]">
+				<div className="song-info mr-2 overflow-hidden">
 					<div className="song-name">
 						{musicState.id ? musicState.title : "No Song Selected"}
 					</div>
@@ -203,7 +203,8 @@ function MusicPlayer() {
 						{musicState.id ? musicState.artist : ""}
 					</div>
 				</div>
-				<div
+			</div>
+			<div
 					className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${isLikeButtonDisabled
 						? "opacity-50 cursor-not-allowed"
 						: "cursor-pointer hover:scale-110"
@@ -226,7 +227,7 @@ function MusicPlayer() {
 						className="w-6 h-6"
 					/>
 				</div>
-			</div>
+			
 
 
 			<div className="control-container">
