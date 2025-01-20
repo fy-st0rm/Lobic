@@ -167,9 +167,7 @@ function MusicPlayer() {
 	const isLikeButtonDisabled = isLoading || !appState.user_id || !musicState.id;
 
 	const nextMusic = () =>{
-			let nextTrack: MusicTrack | null = dequeue();
-		
-				// If there exists a track then play that
+			let nextTrack: MusicTrack | null = dequeue()
 				if (nextTrack) {
 					updateMusicState({
 						id: nextTrack.id,
@@ -307,7 +305,7 @@ function MusicPlayer() {
 									</div>
 								</div>
 							</div>
-							<div className=" mx-4 font-sans text-[100%] text-white text-xl font-semibold">Queue</div>
+							<div className=" mx-4 mb-2 font-sans text-[100%] text-white text-xl font-semibold">Queue</div>
 						</div>
 						{queue.map((item) => (
 							<div className="flex items-center font-bold px-4 pb-3">
