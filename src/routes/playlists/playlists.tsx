@@ -24,6 +24,8 @@ function Playlists() {
 	const [showPlaylistAdder, setShowPlaylistAdder] = useState<boolean>(false);
 	const [playlistName, setPlaylistName] = useState<string>("UnknownPlaylist");
 	const [playlistType, setPlaylistType] = useState<string>("Solo Playlist");
+	const [playlistImage, setPlaylistImage] = useState<string>("");
+
 
 	const handleName = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setPlaylistName(e.target.value);
@@ -84,7 +86,13 @@ function Playlists() {
 									className="bg-gray-800 group transition-all duration-300 ease-in-out h-[240px] w-48 p-4 rounded-lg cursor-pointer bg-opacity-55 mx-3 relative hover:bg-opacity-75 hover:scale-105 my-2"
 								>
 									<div className="rounded-[10px]">
-										<img src={img} alt="" className="h-[100%] w-[100%]" />
+										{
+											playlistImage == "" ? <div
+												className=" flex justify-center align-middle playlistimg bg-gray-700 cursor-pointer rounded-md  text-slate-500 mb-2 " 
+											>
+												<Music className="h-44 w-40" />
+											</div>:<img src={img} alt="" className="h-[100%] w-[100%]" />
+										}
 									</div>
 									<div className="text-xl font-bold text-white">
 										{playlist.playlist_name}

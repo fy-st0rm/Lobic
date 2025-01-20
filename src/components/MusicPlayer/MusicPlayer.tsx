@@ -182,14 +182,40 @@ function MusicPlayer() {
 					className="cover-image"
 				/>
 			</div>
-			<div className="song-info">
-				<div className="song-name">
-					{musicState.id ? musicState.title : "No Song Selected"}
+			<div className="flex w-[10%]">
+				<div className="song-info mr-2 w-[100%]">
+					<div className="song-name">
+						{musicState.id ? musicState.title : "No Song Selected"}
+					</div>
+					<div className="artist-name">
+						{musicState.id ? musicState.artist : ""}
+					</div>
 				</div>
-				<div className="artist-name">
-					{musicState.id ? musicState.artist : ""}
+				<div
+					className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${isLikeButtonDisabled
+							? "opacity-50 cursor-not-allowed"
+							: "cursor-pointer hover:scale-110"
+						}`}
+					onClick={!isLikeButtonDisabled ? handleSongLikedToggle : undefined}
+					role="button"
+					aria-pressed={isSongLiked}
+					aria-disabled={isLikeButtonDisabled}
+					tabIndex={isLikeButtonDisabled ? -1 : 0}
+					onKeyDown={(e) => {
+						if ((e.key === "Enter" || e.key === " ") && !isLikeButtonDisabled) {
+							e.preventDefault();
+							handleSongLikedToggle();
+						}
+					}}
+				>
+					<img
+						src={isSongLiked ? likedSongFilled : likedSong}
+						alt={isSongLiked ? "Liked" : "Not Liked"}
+						className="w-6 h-6"
+					/>
 				</div>
 			</div>
+
 
 			<div className="control-container">
 				<div className="control-bar">
@@ -241,30 +267,8 @@ function MusicPlayer() {
 				</div>
 			</div>
 
-			<div
-				className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${
-					isLikeButtonDisabled
-						? "opacity-50 cursor-not-allowed"
-						: "cursor-pointer hover:scale-110"
-				}`}
-				onClick={!isLikeButtonDisabled ? handleSongLikedToggle : undefined}
-				role="button"
-				aria-pressed={isSongLiked}
-				aria-disabled={isLikeButtonDisabled}
-				tabIndex={isLikeButtonDisabled ? -1 : 0}
-				onKeyDown={(e) => {
-					if ((e.key === "Enter" || e.key === " ") && !isLikeButtonDisabled) {
-						e.preventDefault();
-						handleSongLikedToggle();
-					}
-				}}
-			>
-				<img
-					src={isSongLiked ? likedSongFilled : likedSong}
-					alt={isSongLiked ? "Liked" : "Not Liked"}
-					className="w-6 h-6"
-				/>
-			</div>
+
+
 
 			<div className="volume-status">
 				<button
@@ -294,6 +298,8 @@ function MusicPlayer() {
 					disabled={isLoading}
 				/>
 			</div>
+
+
 		</div>
 	);
 }
