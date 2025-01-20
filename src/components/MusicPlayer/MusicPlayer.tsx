@@ -280,14 +280,14 @@ function MusicPlayer() {
 				</div>
 			</div>
 
-			<div className="queue self-center cursor-pointer transition-all">
-				<Menu onClick={queueToggle} />
+			<div className="queue self-center transition-all">
+				<Menu onClick={queueToggle} className="cursor-pointer"/>
 				{showQueue && (
 					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[50%] w-[20%] top-[39%] right-[5%] overflow-scroll no-scrollbar">
 						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">Current Song</div>
 						<div className="">
-							<div className="flex items-center font-bold px-4 pb-3">
-								<div className="h-[66px] w-[66px] py-1 self-start cursor-pointer rounded-sm"><img
+							<div className="flex items-center font-bold px-4 pb-2">
+								<div className="h-[66px] w-[66px] py-1 self-start rounded-sm"><img
 									src={
 										musicState.id
 											? `${SERVER_IP}/image/${musicState.id}.png`
@@ -309,7 +309,7 @@ function MusicPlayer() {
 						</div>
 						{queue.map((item) => (
 							<div className="flex items-center font-bold px-4 pb-3">
-							<div className="h-[66px] w-[66px] py-1 self-start cursor-pointer rounded-sm"><img
+							<div className="h-[66px] w-[66px] py-1 self-start rounded-sm"><img
 								src={
 									item.cover_img
 								}
