@@ -1,17 +1,32 @@
 import { SERVER_IP } from "@/const";
+import { OpCode, wsSend } from "api/socketApi";
+import { AppState } from "providers/AppProvider";
+import { LobbyState } from "providers/LobbyProvider";
+import { MusicState } from "providers/MusicProvider";
+
+// Enum to define Music Player State
+export enum MPState {
+	PLAY = "PLAY",
+	PAUSE = "PAUSE",
+	CHANGE_MUSIC = "CHANGE_MUSIC",
+	CHANGE_VOLUME = "CHANGE_VOLUME",
+	CHANGE_TIME = "CHANGE_TIME",
+	EMPTY = "EMPTY",
+}
 
 // Define interfaces for the data structures
-interface MusicTrack {
+export interface MusicTrack {
 	id: string;
 	title: string;
 	artist: string;
 	album?: string;
 	duration?: number;
+	cover_img?: string;
 	// Add other fields as needed
 }
 
 interface RecentlyPlayedSong extends MusicTrack {
-	playedAt: string; // Timestamp of when the song was played
+	playedAt: string;
 }
 
 /**
@@ -57,16 +72,20 @@ export const fetchTrendingSongs = async (): Promise<MusicTrack[]> => {
 
 /**
  * Fetches a list of recently played songs for a specific user.
- * @param {string} userId - The ID of the user.
+ * @param {string | null} userId - The ID of the user.
  * @param {number} paginationLimit - The number of songs to fetch.
  * @returns {Promise<RecentlyPlayedSong[]>} - A list of recently played songs.
+ * @throws {Error} If userId is null
  */
 export const fetchRecentlyPlayed = async (
-	userId: string,
+	userId: string | null,
 	paginationLimit: number = 30,
 ): Promise<RecentlyPlayedSong[]> => {
+	if (!userId) {
+		throw new Error("User ID is required to fetch recently played songs");
+	}
+
 	try {
-		// Construct the URL with query parameters
 		const url = new URL(`${SERVER_IP}/music/get_recently_played`);
 		const params = new URLSearchParams({
 			user_id: userId,
@@ -74,7 +93,6 @@ export const fetchRecentlyPlayed = async (
 		});
 		url.search = params.toString();
 
-		// Fetch the data
 		const response = await fetch(url, {
 			method: "GET",
 			headers: {
@@ -96,14 +114,19 @@ export const fetchRecentlyPlayed = async (
 
 /**
  * Logs a song play event for a specific user.
- * @param {string} userId - The ID of the user.
+ * @param {string | null} userId - The ID of the user.
  * @param {string} musicId - The ID of the song being played.
  * @returns {Promise<string>} - A confirmation message.
+ * @throws {Error} If userId is null
  */
 export const logSongPlay = async (
-	userId: string,
+	userId: string | null,
 	musicId: string,
 ): Promise<string> => {
+	if (!userId) {
+		throw new Error("User ID is required to log song play");
+	}
+
 	try {
 		const response = await fetch(`${SERVER_IP}/music/log_song_play`, {
 			method: "POST",
@@ -161,3 +184,65 @@ export const incrementPlayCount = async (songId: string): Promise<string> => {
  */
 export const getMusicImageUrl = (songId: string): string =>
 	`${SERVER_IP}/image/${songId}.png`;
+
+/**
+ * Fetches the music from the backend based on the given music id
+ * @param {string|null} id - The ID of the music
+ * @returns {Promise<string>} - The blob URL of the music
+ * @throws {Error} If id is null
+ */
+export const fetchMusicUrl = async (id: string | null): Promise<string> => {
+	if (!id) {
+		throw new Error("Music ID is required to fetch music URL");
+	}
+
+	try {
+		const url = `${SERVER_IP}/music/${encodeURIComponent(id)}`;
+		const response = await fetch(url, {
+			method: "GET",
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		const blob = await response.blob();
+		const audioUrl = URL.createObjectURL(blob);
+		return audioUrl;
+	} catch (error) {
+		console.error("Failed to fetch music:", error);
+		throw error;
+	}
+};
+
+/*
+ * Updates the host music state in the server
+ * @param {WebSocket} socket - Instance of the websocket
+ * @param {AppState} appState - Instance of the app state
+ * @param {LobbyState} lobbyState - Instance of the lobby state
+ * @param {MusicState} musicState - Instance of the music state
+ */
+export const updateHostMusicState = (
+	socket: WebSocket | null,
+	appState: AppState,
+	lobbyState: LobbyState,
+	musicState: MusicState
+) => {
+	if (!lobbyState.in_lobby) return;
+	if (!musicState.id) return;
+
+	const payload = {
+		op_code: OpCode.SET_MUSIC_STATE,
+		value: {
+			lobby_id: lobbyState.lobby_id,
+			user_id: appState.user_id,
+			music_id: musicState.id,
+			title: musicState.title,
+			artist: musicState.artist,
+			cover_img: musicState.cover_img,
+			timestamp: musicState.timestamp,
+			state: musicState.state,
+		},
+	};
+	wsSend(socket, payload);
+}

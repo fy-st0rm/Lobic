@@ -1,26 +1,24 @@
 import { SERVER_IP } from "@/const";
 
 interface TopTrack {
-	id: string;
-	filename: string;
-	artist: string;
-	title: string;
 	album: string;
-	genre: string;
-	times_played: number;
+	artist: string;
 	cover_art_path: string;
+	genre: string;
+	id: string;
+	times_played: number;
+	title: string;
 }
 
-/**
- * Fetches a list of top tracks for a specific user.
- * @param {string} userId - The ID of the user.
- * @param {number} [paginationLimit] - Optional. The number of tracks to fetch.
- * @returns {Promise<TopTrack[]>} - A list of top tracks.
- */
 export const fetchTopTracks = async (
-	userId: string,
+	userId: string | null,
 	paginationLimit?: number,
 ): Promise<TopTrack[]> => {
+	if (!userId) {
+		console.log("No user ID provided, returning empty top tracks array");
+		return [];
+	}
+
 	try {
 		// Construct the URL with query parameters
 		const url = new URL(`${SERVER_IP}/music/get_top_tracks`);
@@ -36,7 +34,12 @@ export const fetchTopTracks = async (
 		url.search = params.toString();
 
 		// Fetch the data
-		const response = await fetch(url.toString());
+		const response = await fetch(url.toString(), {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
 		if (!response.ok) {
 			throw new Error("Failed to fetch top tracks");

@@ -1,6 +1,5 @@
 import { SERVER_IP } from "@/const";
 
-// Define interfaces for the data structures
 interface LikedSong {
 	id: string;
 	title: string;
@@ -11,14 +10,19 @@ interface LikedSong {
 
 /**
  * Fetches a list of liked songs for a specific user.
- * @param {string} userId - The ID of the user.
+ * @param {string | null} userId - The ID of the user.
  * @param {number} [paginationLimit] - Optional. The number of songs to fetch. Fetches all if nothing is provided.
  * @returns {Promise<LikedSong[]>} - A list of liked songs.
  */
 export const fetchLikedSongs = async (
-	userId: string,
+	userId: string | null,
 	paginationLimit?: number,
 ): Promise<LikedSong[]> => {
+	if (!userId) {
+		console.log("No user ID provided, returning empty playlist array");
+		return [];
+	}
+
 	try {
 		// Construct the URL with query parameters
 		const url = new URL(`${SERVER_IP}/music/liked_song/get`);
@@ -55,14 +59,23 @@ export const fetchLikedSongs = async (
 
 /**
  * Adds a song to the user's liked songs.
- * @param {string} userId - The ID of the user.
- * @param {string} musicId - The ID of the song.
+ * @param {string | null} userId - The ID of the user.
+ * @param {string | null} musicId - The ID of the song.
  * @returns {Promise<string | object>} - A confirmation message or JSON response.
  */
 export const addToLikedSongs = async (
-	userId: string,
-	musicId: string,
+	userId: string | null,
+	musicId: string | null,
 ): Promise<string | object> => {
+	if (!userId) {
+		console.log("No user ID provided, cannot add the song");
+		return [];
+	}
+	if (!musicId) {
+		console.log("No music ID provided, cannot add the song");
+		return [];
+	}
+
 	try {
 		const payload = {
 			user_id: userId,
@@ -106,14 +119,23 @@ export const addToLikedSongs = async (
 
 /**
  * Removes a song from the user's liked songs.
- * @param {string} userId - The ID of the user.
- * @param {string} musicId - The ID of the song.
+ * @param {string | null} userId - The ID of the user.
+ * @param {string | null} musicId - The ID of the song.
  * @returns {Promise<string>} - A confirmation message.
  */
 export const removeFromLikedSongs = async (
-	userId: string,
-	musicId: string,
+	userId: string | null,
+	musicId: string | null,
 ): Promise<string> => {
+	if (!userId) {
+		console.log("No user ID provided, cannot remove the song");
+		return "Error: No user ID provided";
+	}
+	if (!musicId) {
+		console.log("No music ID provided, cannot remove the song");
+		return "Error: No music ID provided";
+	}
+
 	try {
 		const response = await fetch(`${SERVER_IP}/liked_songs/remove`, {
 			method: "DELETE",
@@ -131,7 +153,7 @@ export const removeFromLikedSongs = async (
 		}
 
 		const text: string = await response.text();
-		console.log("Removed from liked songs:", text); // Log the result
+		console.log("Removed from liked songs:", text);
 		return text;
 	} catch (error) {
 		console.error("Error removing from liked songs:", error);
@@ -139,55 +161,70 @@ export const removeFromLikedSongs = async (
 	}
 };
 
-
 /**
  * Fetches whether a song is liked by a user.
- * @param userId - The ID of the user.
- * @param musicId - The ID of the song.
- * @returns A boolean indicating whether the song is liked.
+ * @param {string | null} userId - The ID of the user.
+ * @param {string} musicId - The ID of the song.
+ * @returns {Promise<boolean>} A boolean indicating whether the song is liked.
  */
-export const fetchIsSongLiked = async (userId: string, musicId: string): Promise<boolean> => {
-    try {
-        const url = `${SERVER_IP}/music/liked_song/is_song_liked?user_id=${encodeURIComponent(userId)}&music_id=${encodeURIComponent(musicId)}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.text();
-        return data === "true"; // Convert the response to a boolean
-    } catch (err) {
-        console.error("Failed to fetch song liked state:", err);
-        throw err; // Re-throw the error for handling in the component
-    }
+export const fetchIsSongLiked = async (
+	userId: string | null,
+	musicId: string,
+): Promise<boolean> => {
+	if (!userId) {
+		console.log("No user ID provided, returning false");
+		return false;
+	}
+
+	try {
+		const url = `${SERVER_IP}/music/liked_song/is_song_liked?user_id=${encodeURIComponent(userId)}&music_id=${encodeURIComponent(musicId)}`;
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.text();
+		return data === "true";
+	} catch (err) {
+		console.error("Failed to fetch song liked state:", err);
+		throw err;
+	}
 };
 
 /**
  * Toggles the liked state of a song for a user.
- * @param userId - The ID of the user.
- * @param musicId - The ID of the song.
- * @returns A string indicating the result of the operation.
+ * @param {string | null} userId - The ID of the user.
+ * @param {string} musicId - The ID of the song.
+ * @returns {Promise<string>} A string indicating the result of the operation.
  */
-export const toggleSongLiked = async (userId: string, musicId: string): Promise<string> => {
-    try {
-        const response = await fetch(`${SERVER_IP}/music/liked_song/toggle_like`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                user_id: userId,
-                music_id: musicId,
-            }),
-        });
+export const toggleSongLiked = async (
+	userId: string | null,
+	musicId: string,
+): Promise<string> => {
+	if (!userId) {
+		console.log("No user ID provided, cannot toggle like state");
+		return "Error: No user ID provided";
+	}
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+	try {
+		const response = await fetch(`${SERVER_IP}/music/liked_song/toggle_like`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				user_id: userId,
+				music_id: musicId,
+			}),
+		});
 
-        const data = await response.text();
-        return data; // Return the response message
-    } catch (err) {
-        console.error("Failed to toggle song liked state:", err);
-        throw err; // Re-throw the error for handling in the component
-    }
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.text();
+		return data;
+	} catch (err) {
+		console.error("Failed to toggle song liked state:", err);
+		throw err;
+	}
 };

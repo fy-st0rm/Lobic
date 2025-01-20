@@ -1,14 +1,15 @@
-// Node modules
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
-import { SERVER_IP, MPState, fetchMusicUrl } from "@/const";
-import { wsSend, OpCode } from "api/socketApi";
+import { SERVER_IP } from "@/const";
+import { MPState, updateHostMusicState } from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "api/likedSongsApi";
+import { useQueueProvider } from "providers/QueueProvider";
+
 
 // Assets
 import previousButton from "/controlbar/PreviousButton.svg";
@@ -21,67 +22,74 @@ import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
 import likedSong from "/controlbar/love-svgrepo-com.svg";
 import likedSongFilled from "/controlbar/love-svgrepo-com-filled.svg";
+import { Menu } from 'lucide-react';
 
 import "./MusicPlayer.css";
 
 function MusicPlayer() {
 	const { appState } = useAppProvider();
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
-	const { getSocket, addMsgHandler } = useSocketProvider();
+	const { getSocket } = useSocketProvider();
 	const { musicState, controlsDisabled, updateMusicState } = useMusicProvider();
 
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState("");
-	const [isSongLiked, setIsSongLiked] = useState(false); // State for song liked toggle
+	const [isSongLiked, setIsSongLiked] = useState(false);
+	const [showQueue, setShowQueue] = useState(false);
+	const { queue, enqueue } = useQueueProvider();
 
-	const formatTime = (time) => {
+	const queueToggle = () => {
+		showQueue ?
+			setShowQueue(false) : setShowQueue(true);
+	}
+	const formatTime = (time: number) => {
 		const minutes = Math.floor(time / 60);
 		const seconds = Math.floor(time % 60);
 		return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 	};
 
 	// Responsible to set the music state of the lobby as a host
+	// TODO: This sends the update request to server every frame (might be laggy)
 	useEffect(() => {
-		if (!lobbyState.in_lobby) return;
-		if (!musicState.id) return;
-
-		const payload = {
-			op_code: OpCode.SET_MUSIC_STATE,
-			value: {
-				lobby_id: lobbyState.lobby_id,
-				user_id: appState.user_id,
-				music_id: musicState.id,
-				title: musicState.title,
-				artist: musicState.artist,
-				cover_img: musicState.cover_img,
-				timestamp: musicState.timestamp,
-				state: musicState.state,
-			},
-		};
-		wsSend(getSocket(), payload);
+		if (lobbyState.is_host) {
+			updateHostMusicState(getSocket(), appState, lobbyState, musicState);
+		}
 	}, [musicState]);
-	
+
 	useEffect(() => {
 		fetchLikedState();
-	}, [appState, musicState]);
-	
+	}, [appState.user_id, musicState.id]);
+
 	// Fetch the liked state of the song when the component mounts or when the song changes
 	const fetchLikedState = async () => {
-		if (appState.user_id && musicState.id) {
-			try {
-				const isLiked = await fetchIsSongLiked(appState.user_id, musicState.id);
-				setIsSongLiked(isLiked);
-			} catch (err) {
-				console.error("Failed to fetch song liked state:", err);
-			}
+		// Reset like state if no user or no music
+		if (!appState.user_id || !musicState.id) {
+			setIsSongLiked(false);
+			return;
+		}
+
+		try {
+			const isLiked = await fetchIsSongLiked(appState.user_id, musicState.id);
+			setIsSongLiked(isLiked);
+		} catch (err) {
+			console.error("Failed to fetch song liked state:", err);
+			setIsSongLiked(false);
 		}
 	};
 
 	// Handle toggling the liked state of the song
 	const handleSongLikedToggle = async () => {
+		// Prevent toggling if no user is logged in or no song is selected
+		if (!appState.user_id || !musicState.id) {
+			console.log(
+				"Cannot toggle like state: No user logged in or no song selected",
+			);
+			return;
+		}
+
 		const newLikedState = !isSongLiked;
 		setIsSongLiked(newLikedState);
+
 		try {
 			const result = await toggleSongLiked(appState.user_id, musicState.id);
 			console.log("Song liked state updated successfully:", result);
@@ -101,20 +109,17 @@ function MusicPlayer() {
 				updateMusicState({ state: MPState.PAUSE });
 			} else if (musicState.state == MPState.PAUSE) {
 				updateMusicState({ state: MPState.PLAY });
-
 				setIsLoading(true);
-				setError("");
 			}
 		} catch (err) {
 			console.error("Failed to load/play music:", err);
-			setError("Failed to load music: " + err.message);
 			updateMusicState({ state: MPState.PAUSE });
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
-	const onVolumeChange = (e) => {
+	const onVolumeChange = (e: { target: { value: any } }) => {
 		updateMusicState({
 			state: MPState.CHANGE_VOLUME,
 			state_data: e.target.value,
@@ -123,7 +128,7 @@ function MusicPlayer() {
 
 	const volumeToggle = () => {
 		if (musicState.volume > 0) {
-			setInitialVolume(musicState.volume); // Save the current volume before muting
+			setInitialVolume(musicState.volume);
 			updateMusicState({
 				state: MPState.CHANGE_VOLUME,
 				state_data: 0,
@@ -136,21 +141,28 @@ function MusicPlayer() {
 		}
 	};
 
-	const handleSeekEnd = (e) => {
-		const seekTime = (e.target.value / 100) * musicState.duration;
+	const handleSeekEnd = (
+		e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>,
+	) => {
+		// Get the value from the input element
+		const input = e.target as HTMLInputElement;
+		const seekTime = (Number(input.value) / 100) * musicState.duration;
 		updateMusicState({
 			state: MPState.CHANGE_TIME,
 			state_data: seekTime,
 		});
 	};
 
-	const handleSeekMove = (e) => {
-		const seekTime = (e.target.value / 100) * musicState.duration;
+	const handleSeekMove = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const seekTime = (Number(e.target.value) / 100) * musicState.duration;
 		updateMusicState({
 			state: MPState.CHANGE_TIME,
 			state_data: seekTime,
 		});
 	};
+
+	// Determine if the like button should be disabled
+	const isLikeButtonDisabled = isLoading || !appState.user_id || !musicState.id;
 
 	return (
 		<div className="music-player">
@@ -165,14 +177,40 @@ function MusicPlayer() {
 					className="cover-image"
 				/>
 			</div>
-			<div className="song-info">
-				<div className="song-name">
-					{musicState.id ? musicState.title : "No Song Selected"}
+			<div className="flex w-[10%]">
+				<div className="song-info mr-2 w-[100%]">
+					<div className="song-name">
+						{musicState.id ? musicState.title : "No Song Selected"}
+					</div>
+					<div className="artist-name">
+						{musicState.id ? musicState.artist : ""}
+					</div>
 				</div>
-				<div className="artist-name">
-					{musicState.id ? musicState.artist : ""}
+				<div
+					className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${isLikeButtonDisabled
+						? "opacity-50 cursor-not-allowed"
+						: "cursor-pointer hover:scale-110"
+						}`}
+					onClick={!isLikeButtonDisabled ? handleSongLikedToggle : undefined}
+					role="button"
+					aria-pressed={isSongLiked}
+					aria-disabled={isLikeButtonDisabled}
+					tabIndex={isLikeButtonDisabled ? -1 : 0}
+					onKeyDown={(e) => {
+						if ((e.key === "Enter" || e.key === " ") && !isLikeButtonDisabled) {
+							e.preventDefault();
+							handleSongLikedToggle();
+						}
+					}}
+				>
+					<img
+						src={isSongLiked ? likedSongFilled : likedSong}
+						alt={isSongLiked ? "Liked" : "Not Liked"}
+						className="w-6 h-6"
+					/>
 				</div>
 			</div>
+
 
 			<div className="control-container">
 				<div className="control-bar">
@@ -224,24 +262,61 @@ function MusicPlayer() {
 				</div>
 			</div>
 
-			<div
-        		className={`mt-1 flex items-center justify-center w-8 h-8 cursor-pointer transition-transform duration-200 ${
-          			isLoading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
-        			}`}
-        				onClick={!isLoading ? handleSongLikedToggle : null}
-        				role="button"
-        				aria-pressed={isSongLiked}
-        				tabIndex={0}
-        				onKeyDown={(e) => {
-          					if ((e.key === "Enter" || e.key === " ") && !isLoading) {
-            				e.preventDefault();
-            				handleSongLikedToggle();
-          					}}}>
-        				<img
-          				src={isSongLiked ? likedSongFilled : likedSong}
-          				alt={isSongLiked ? "Liked" : "Not Liked"}
-          				className="w-6 h-6"/>
-      		</div>
+			<div className="queue self-center cursor-pointer transition-all">
+				<Menu onClick={queueToggle} />
+				{showQueue && (
+					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[50%] w-[20%] top-[39%] right-[5%] overflow-scroll no-scrollbar">
+						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">Current Song</div>
+						<div className="">
+							<div className="flex items-center font-bold px-4 pb-3">
+								<div className="h-[66px] w-[66px] py-1 self-start cursor-pointer rounded-sm"><img
+									src={
+										musicState.id
+											? `${SERVER_IP}/image/${musicState.id}.png`
+											: placeholder_logo
+									}
+									alt="Album cover"
+									className="h-[100%] w-[100%] rounded-sm"
+								/></div>
+								<div className="mx-2">
+									<div className="font-sans text-[100%] text-white overflow-hidden">
+										{musicState.id ? musicState.title : "No Song Selected"}
+									</div>
+									<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
+										{musicState.id ? musicState.artist : ""}
+									</div>
+								</div>
+							</div>
+							<div className=" mx-4 font-sans text-[100%] text-white text-xl font-semibold">Queue</div>
+						</div>
+						{queue.map((item) => (
+							<div className="flex items-center font-bold px-4 pb-3">
+							<div className="h-[66px] w-[66px] py-1 self-start cursor-pointer rounded-sm"><img
+								src={
+									item.cover_img
+								}
+								alt="Album cover"
+								className="h-[100%] w-[100%] rounded-sm"
+							/></div>
+							<div className="mx-2">
+								<div className="font-sans text-[100%] text-white overflow-hidden">
+									{item.title}
+								</div>
+								<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
+									{item.artist}
+								</div>
+							</div>
+						</div>
+							
+						
+					))}
+					</div>
+					
+				)}
+
+			</div>
+
+
 
 			<div className="volume-status">
 				<button
@@ -271,6 +346,8 @@ function MusicPlayer() {
 					disabled={isLoading}
 				/>
 			</div>
+
+
 		</div>
 	);
 }

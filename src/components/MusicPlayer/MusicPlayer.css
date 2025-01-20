@@ -20,12 +20,6 @@
 }
 
 .song-info {
-	mask-image: none;
-	-webkit-mask-image: linear-gradient(90deg, #072631 60%, transparent);
-}
-
-.song-info {
-	width: 15%;
 	padding: 5px;
 	align-self: center;
 }
@@ -41,7 +35,6 @@
 	overflow: hidden;
 	white-space: nowrap;
 	font-weight: bold;
-	animation: scroll-text 10s linear infinite;
 }
 
 .artist-name {
@@ -157,13 +150,4 @@
 .volume-image {
 	height: 25px;
 	width: 25px;
-}
-
-@keyframes scroll-text {
-	0% {
-		transform: translateX(0%);
-	}
-	100% {
-		transform: translateX(-100%);
-	}
 }

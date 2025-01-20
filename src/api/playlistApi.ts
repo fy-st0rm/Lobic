@@ -1,42 +1,48 @@
 import { SERVER_IP } from "@/const";
 
-// Define interfaces for the data structures
-interface Playlist {
-	id: string;
-	name: string;
-	description?: string;
-	cover_image?: string;
-	songs?: string[];
+// Define and export types
+export interface Playlist {
+	playlist_id: string;
+	playlist_name: string;
+	description: string;
+	creation_date_time: string;
+	last_updated_date_time: string;
 }
 
-interface PlaylistData {
-	name: string;
-	description?: string;
-	cover_image?: string;
-	songs?: string[];
+export interface FetchUserPlaylistsResponse {
+	user_id: string;
+	playlists: Playlist[];
 }
 
-interface SongData {
+export interface CreatePlaylistData {
+	playlist_name: string;
+	user_id: string;
+	description?: string;
+}
+
+export interface Song {
+	music_id: string;
+	artist: string;
+	title: string;
+	album: string;
+	genre: string;
+	song_added_date_time: string;
+}
+
+export interface PlaylistResponse {
+	playlist: Playlist;
+	songs: Song[];
+}
+
+export interface AddSongToPlaylistData {
 	playlist_id: string;
 	music_id: string;
-	position?: number;
 }
 
-interface ApiResponse {
-	message?: string;
-	playlists?: Playlist[];
-	[key: string]: any; // Allow additional properties
-}
-
-/**
- * Fetches playlists for a specific user.
- * @param {string} userId - The ID of the user whose playlists are being fetched.
- * @returns {Promise<Playlist[]>} - A list of playlists belonging to the user.
- * @throws {Error} - If the request fails or the response is not OK.
- */
+// API Functions
 export const fetchUserPlaylists = async (
 	userId: string,
-): Promise<Playlist[]> => {
+): Promise<FetchUserPlaylistsResponse> => {
 	try {
 		const response = await fetch(
 			`${SERVER_IP}/playlist/get_users_playlists?user_uuid=${encodeURIComponent(
@@ -49,39 +55,30 @@ export const fetchUserPlaylists = async (
 				},
 			},
 		);
-
-		const result: ApiResponse = await response.json();
-
+		const result = await response.json();
 		if (response.status !== 200) {
 			throw new Error(result.message || "Failed to fetch playlists");
 		}
-
-		console.log("Playlists fetched successfully:", result.playlists);
-		return result.playlists || [];
+		return result;
 	} catch (error) {
 		throw error;
 	}
 };
 
-/**
- * Creates a new playlist.
- * @param {PlaylistData} playlistData - The data for the new playlist.
- * @returns {Promise<ApiResponse>} - The response from the server, including the created playlist's details.
- * @throws {Error} - If the request fails or the response is not OK.
- */
 export const createPlaylist = async (
-	playlistData: PlaylistData,
-): Promise<ApiResponse> => {
+	playlistData: CreatePlaylistData,
+	userId: string,
+): Promise<{ message: string }> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/playlist/new`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(playlistData),
+			body: JSON.stringify({ ...playlistData, user_id: userId }),
 		});
 
-		const result: ApiResponse = await response.json();
+		const result = await response.json();
 
 		if (response.status !== 201) {
 			throw new Error(result.message || "Failed to create playlist");
@@ -94,15 +91,9 @@ export const createPlaylist = async (
 	}
 };
 
-/**
- * Fetches a playlist by its ID.
- * @param {string} playlistId - The ID of the playlist to fetch.
- * @returns {Promise<Playlist>} - The playlist data, including metadata and songs.
- * @throws {Error} - If the request fails or the response is not OK.
- */
 export const fetchPlaylistById = async (
 	playlistId: string,
-): Promise<Playlist> => {
+): Promise<PlaylistResponse> => {
 	try {
 		const response = await fetch(
 			`${SERVER_IP}/playlist/get_by_uuid?playlist_id=${playlistId}`,
@@ -118,23 +109,17 @@ export const fetchPlaylistById = async (
 			throw new Error("Failed to fetch playlist data");
 		}
 
-		const result: Playlist = await response.json();
-		console.log("Playlist Data:", JSON.stringify(result, null, 4));
+		const result: PlaylistResponse = await response.json();
+		console.log(result);
 		return result;
 	} catch (error) {
 		throw error;
 	}
 };
 
-/**
- * Adds a song to a playlist.
- * @param {SongData} songData - The data for adding a song to a playlist.
- * @returns {Promise<ApiResponse>} - The response from the server, including a success message or error details.
- * @throws {Error} - If the request fails or the response is not OK.
- */
 export const addSongToPlaylist = async (
-	songData: SongData,
-): Promise<ApiResponse> => {
+	songData: AddSongToPlaylistData,
+): Promise<string> => {
 	try {
 		const response = await fetch(`${SERVER_IP}/playlist/add_song`, {
 			method: "POST",
@@ -143,14 +128,11 @@ export const addSongToPlaylist = async (
 			},
 			body: JSON.stringify(songData),
 		});
-
-		const result: ApiResponse = await response.json();
-
+		const result = await response.json();
 		if (response.status !== 201) {
 			throw new Error(result.message || "Failed to add song to playlist");
 		}
-
-		console.log("Song added to playlist successfully:", result.message);
+		console.log("Song added to playlist successfully:", result);
 		return result;
 	} catch (error) {
 		throw error;

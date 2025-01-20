@@ -2,10 +2,11 @@
 import React from "react";
 
 // Local
-import { AppProvider } from "providers/AppProvider.tsx";
-import { LobbyProvider } from "providers/LobbyProvider.tsx";
-import { MusicProvider } from "providers/MusicProvider.tsx";
-import { SocketProvider } from "providers/SocketProvider.tsx";
+import { AppProvider } from "providers/AppProvider";
+import { LobbyProvider } from "providers/LobbyProvider";
+import { MusicProvider } from "providers/MusicProvider";
+import { SocketProvider } from "providers/SocketProvider";
+import { QueueProvider } from "providers/QueueProvider";
 
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }): React.ReactElement => {
@@ -14,7 +15,9 @@ export const Providers: React.FC<{ children: React.ReactNode }> = ({ children })
 			<LobbyProvider>
 				<MusicProvider>
 					<SocketProvider>
-						{children}
+						<QueueProvider>
+							{children}
+						</QueueProvider>
 					</SocketProvider>
 				</MusicProvider>
 			</LobbyProvider>

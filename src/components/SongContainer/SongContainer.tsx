@@ -1,19 +1,36 @@
-// Node modules
 import { useState } from "react";
-
-// Local
 import SongInfo from "components/SongInfo/SongInfo";
-import { MPState } from "@/const";
 import { useMusicProvider } from "providers/MusicProvider";
-import { getMusicImageUrl } from "api/musicApi";
+import { MPState, getMusicImageUrl } from "api/musicApi";
 
-function SongContainer({ playlistId, songs }) {
-	const [error, setError] = useState(null);
-	const [isLoading, setIsLoading] = useState(false);
-	const [selectedSongId, setSelectedSongId] = useState(null);
+interface Song {
+	music_id: string;
+	title: string;
+	artist: string;
+	album: string;
+}
+
+interface MusicState {
+	id: string;
+	title: string;
+	artist: string;
+	cover_img: string;
+	timestamp: number;
+	state: MPState;
+}
+
+interface SongContainerProps {
+	playlistId: string;
+	songs: Song[];
+}
+
+const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
+	const [error, setError] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
 	const { updateMusicState } = useMusicProvider();
 
-	const handleMusicClick = async (item) => {
+	const handleMusicClick = async (item: Song): Promise<void> => {
 		try {
 			setIsLoading(true);
 			const coverArt = getMusicImageUrl(item.music_id);
@@ -27,10 +44,11 @@ function SongContainer({ playlistId, songs }) {
 				cover_img: coverArt,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
-			});
+			} as MusicState);
 		} catch (err) {
-			console.error("Failed to fetch music URL:", err);
-			setError("Failed to fetch music URL: " + err.message);
+			const error = err as Error;
+			console.error("Failed to fetch music URL:", error);
+			setError("Failed to fetch music URL: " + error.message);
 		} finally {
 			setIsLoading(false);
 		}
@@ -68,7 +86,7 @@ function SongContainer({ playlistId, songs }) {
 							songName={item.title}
 							artistName={item.artist}
 							duration={item.album}
-							addedBy="Unknown" // Placeholder since `addedBy` is not in the data
+							addedBy="Unknown"
 							coverImg={getMusicImageUrl(item.music_id)}
 						/>
 					</div>
@@ -76,6 +94,6 @@ function SongContainer({ playlistId, songs }) {
 			</div>
 		</div>
 	);
-}
+};
 
 export default SongContainer;
