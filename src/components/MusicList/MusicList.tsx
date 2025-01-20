@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-
-// Local
+import React, { useState, useEffect, useCallback } from "react";
 import Music from "components/Music/Music";
 import { MPState } from "api/musicApi";
 import {
@@ -15,8 +13,8 @@ import { fetchLikedSongs } from "api/likedSongsApi";
 import { fetchTopTracks } from "api/topTracksApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useMusicProvider } from "providers/MusicProvider";
+import { useMusicLists } from "@/contexts/MusicListContext";
 
-// Assets
 import "./MusicList.css";
 
 interface MusicListProps {
@@ -41,53 +39,58 @@ interface MusicState {
 	state: MPState;
 }
 
+type ListLoaderMap = {
+	[key: string]: (userId: string) => Promise<Song[]>;
+};
+
+const listLoaders: ListLoaderMap = {
+	"Trending Now": () => fetchTrendingSongs(),
+	"Recently Played": (userId: string) => fetchRecentlyPlayed(userId),
+	"Liked Songs": (userId: string) => fetchLikedSongs(userId),
+	"My Top Tracks": (userId: string) => fetchTopTracks(userId),
+	"Featured Music": () => fetchMusicList(),
+};
+
 const MusicList: React.FC<MusicListProps> = ({
 	list_title,
 	renderOnlyOnSuccess,
 }) => {
 	const [musicItems, setMusicItems] = useState<Song[]>([]);
-	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
 	const [isEmpty, setEmpty] = useState<boolean>(true);
 
 	const { appState } = useAppProvider();
 	const { updateMusicState } = useMusicProvider();
+	const { notifyMusicPlayed, registerReloadHandler } = useMusicLists();
 
 	const userId = appState.user_id;
 
-	useEffect(() => {
-		loadMusicData();
-	}, [list_title]);
+	const loadMusicData = useCallback(async (): Promise<void> => {
+		setIsLoading(true);
 
-	const loadMusicData = async (): Promise<void> => {
-		let data: Song[];
 		try {
-			switch (list_title) {
-				case "Trending Now":
-					data = await fetchTrendingSongs();
-					break;
-				case "Recently Played":
-					data = await fetchRecentlyPlayed(userId);
-					break;
-				case "Liked Songs":
-					data = await fetchLikedSongs(userId);
-					break;
-				case "My Top Tracks":
-					data = await fetchTopTracks(userId);
-					break;
-				default:
-					data = await fetchMusicList();
-			}
+			const loader = listLoaders[list_title] || listLoaders["Featured Music"];
+			const data = await loader(userId);
 			setMusicItems(data);
-			setEmpty(false);
+			setEmpty(data.length === 0);
 		} catch (err) {
 			const error = err as Error;
-			console.error(error);
+			console.error(`Error loading ${list_title}:`, error);
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [list_title, userId]);
+
+	useEffect(() => {
+		// Register this list's reload handler
+		const cleanup = registerReloadHandler(list_title as any, loadMusicData);
+
+		// Initial load
+		loadMusicData();
+
+		return cleanup;
+	}, [list_title, loadMusicData, registerReloadHandler]);
 
 	const handleMusicClick = async (song: Song): Promise<void> => {
 		try {
@@ -95,10 +98,11 @@ const MusicList: React.FC<MusicListProps> = ({
 			setIsLoading(true);
 
 			const coverArt = getMusicImageUrl(song.id);
-			setSelectedSongId(song.id);
 
-			await incrementPlayCount(song.id);
-			await logSongPlay(userId, song.id);
+			await Promise.all([
+				incrementPlayCount(song.id),
+				logSongPlay(userId, song.id),
+			]);
 
 			updateMusicState({
 				id: song.id,
@@ -108,10 +112,12 @@ const MusicList: React.FC<MusicListProps> = ({
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
+
+			// Notify other lists that a song was played
+			notifyMusicPlayed(song.id, list_title as any);
 		} catch (err) {
 			const error = err as Error;
 			console.error("Failed to handle music click:", error);
-			setError("Failed to play music: " + error.message);
 		} finally {
 			setIsLoading(false);
 		}
