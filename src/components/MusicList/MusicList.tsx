@@ -14,6 +14,7 @@ import { fetchTopTracks } from "api/topTracksApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { useMusicLists } from "@/contexts/MusicListContext";
+import { useQueueProvider } from "providers/QueueProvider";
 
 import "./MusicList.css";
 
@@ -62,6 +63,8 @@ const MusicList: React.FC<MusicListProps> = ({
 
 	const { appState } = useAppProvider();
 	const { updateMusicState } = useMusicProvider();
+	const { queue, enqueue } = useQueueProvider();
+
 	const { notifyMusicPlayed, registerReloadHandler } = useMusicLists();
 
 	const userId = appState.user_id;
@@ -123,13 +126,30 @@ const MusicList: React.FC<MusicListProps> = ({
 		}
 	};
 
+	const enqueueAllSongs = (): void => {
+		musicItems.forEach((song) => {
+			const track = {
+				id: song.id,
+				title: song.title,
+				artist: song.artist,
+				cover_img: getMusicImageUrl(song.id),
+			};
+			enqueue(track); // Enqueue each song
+		});
+	};
+
 	if (renderOnlyOnSuccess && isEmpty) {
 		return null;
 	}
 
 	return (
 		<div className="music-list-container">
-			<h2 className="list-title">{list_title}</h2>
+			<div className="list-header">
+				<h2 className="list-title">{list_title}</h2>
+				<button onClick={enqueueAllSongs} className="log-songs-button">
+					Enqueue All Songs
+				</button>
+			</div>
 			<div className="music-list">
 				{musicItems.map((song) => (
 					<div

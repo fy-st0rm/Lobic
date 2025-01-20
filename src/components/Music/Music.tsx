@@ -86,8 +86,7 @@ const Music: React.FC<MusicProps> = ({
 	const handleAddToLikedSongs = async (): Promise<void> => {
 		try {
 			await toggleSongLiked(userId, musicId);
-			notifyMusicPlayed(musicId, "Liked Songs");
-			//
+			notifyMusicPlayed(musicId, "Liked Songs"); // rerender the likedSongs
 		} catch (error) {
 			console.error("Error adding to liked songs:", error);
 		}
