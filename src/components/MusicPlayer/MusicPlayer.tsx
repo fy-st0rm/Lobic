@@ -278,8 +278,9 @@ function MusicPlayer() {
 				<Menu onClick={queueToggle} />
 				{showQueue && (
 					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[50%] w-[20%] top-[40%] right-[5%]">
+						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">Current Song</div>
 						<div className="">
-							<div className="flex items-center font-bold px-3 py-3">
+							<div className="flex items-center font-bold px-4 pb-3">
 								<div className="h-[66px] w-[66px] py-1 self-start cursor-pointer rounded-sm"><img
 									src={
 										musicState.id
@@ -291,20 +292,16 @@ function MusicPlayer() {
 								/></div>
 								<div className="mx-2">
 									<div className="font-sans text-[100%] text-white overflow-hidden">
-									{musicState.id ? musicState.title : "No Song Selected"}
+										{musicState.id ? musicState.title : "No Song Selected"}
 									</div>
 									<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
-									{musicState.id ? musicState.artist : ""}
+										{musicState.id ? musicState.artist : ""}
 									</div>
 								</div>
 							</div>
-							{/* <div className="font-sans text-[70%] text-white font-bold duration w-[30%] px-4 py-2">
-				{duration}
-			</div>
-			<div className="font-sans text-[70%] text-white font-bold addedby w-[20%] px-4 py-2 overflow-hidden text-nowrap">
-				{addedBy}
-			</div>*/}
-						</div> </div>)}
+							<div className=" mx-4 font-sans text-[100%] text-white text-xl font-semibold">Queue</div>
+						</div>
+					</div>)}
 
 			</div>
 
