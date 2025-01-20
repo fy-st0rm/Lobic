@@ -10,6 +10,7 @@ import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "api/likedSongsApi";
 
+
 // Assets
 import previousButton from "/controlbar/PreviousButton.svg";
 import playButton from "/controlbar/ButtonPlay.svg";
@@ -21,6 +22,7 @@ import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
 import likedSong from "/controlbar/love-svgrepo-com.svg";
 import likedSongFilled from "/controlbar/love-svgrepo-com-filled.svg";
+import { Menu } from 'lucide-react';
 
 import "./MusicPlayer.css";
 
@@ -33,7 +35,12 @@ function MusicPlayer() {
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
+	const [showQueue, setShowQueue] = useState(false);
 
+	const queueToggle = () => {
+		showQueue ?
+			setShowQueue(false) : setShowQueue(true);
+	}
 	const formatTime = (time: number) => {
 		const minutes = Math.floor(time / 60);
 		const seconds = Math.floor(time % 60);
@@ -193,8 +200,8 @@ function MusicPlayer() {
 				</div>
 				<div
 					className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${isLikeButtonDisabled
-							? "opacity-50 cursor-not-allowed"
-							: "cursor-pointer hover:scale-110"
+						? "opacity-50 cursor-not-allowed"
+						: "cursor-pointer hover:scale-110"
 						}`}
 					onClick={!isLikeButtonDisabled ? handleSongLikedToggle : undefined}
 					role="button"
@@ -267,6 +274,39 @@ function MusicPlayer() {
 				</div>
 			</div>
 
+			<div className="queue self-center cursor-pointer transition-all">
+				<Menu onClick={queueToggle} />
+				{showQueue && (
+					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[50%] w-[20%] top-[40%] right-[5%]">
+						<div className="">
+							<div className="flex items-center font-bold px-3 py-3">
+								<div className="h-[66px] w-[66px] py-1 self-start cursor-pointer rounded-sm"><img
+									src={
+										musicState.id
+											? `${SERVER_IP}/image/${musicState.id}.png`
+											: placeholder_logo
+									}
+									alt="Album cover"
+									className="h-[100%] w-[100%] rounded-sm"
+								/></div>
+								<div className="mx-2">
+									<div className="font-sans text-[100%] text-white overflow-hidden">
+									{musicState.id ? musicState.title : "No Song Selected"}
+									</div>
+									<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
+									{musicState.id ? musicState.artist : ""}
+									</div>
+								</div>
+							</div>
+							{/* <div className="font-sans text-[70%] text-white font-bold duration w-[30%] px-4 py-2">
+				{duration}
+			</div>
+			<div className="font-sans text-[70%] text-white font-bold addedby w-[20%] px-4 py-2 overflow-hidden text-nowrap">
+				{addedBy}
+			</div>*/}
+						</div> </div>)}
+
+			</div>
 
 
 
