@@ -2,13 +2,14 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
 import { SERVER_IP } from "@/const";
-import { MPState, updateHostMusicState } from "api/musicApi";
+import { MPState, updateHostMusicState, MusicTrack} from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "api/likedSongsApi";
 import { useQueueProvider } from "providers/QueueProvider";
+
 
 
 // Assets
@@ -36,7 +37,8 @@ function MusicPlayer() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
 	const [showQueue, setShowQueue] = useState(false);
-	const { queue, enqueue } = useQueueProvider();
+	const { queue, enqueue, dequeue} = useQueueProvider();
+	
 
 	const queueToggle = () => {
 		showQueue ?
@@ -164,6 +166,23 @@ function MusicPlayer() {
 	// Determine if the like button should be disabled
 	const isLikeButtonDisabled = isLoading || !appState.user_id || !musicState.id;
 
+	const nextMusic = () =>{
+			let nextTrack: MusicTrack | null = dequeue();
+		
+				// If there exists a track then play that
+				if (nextTrack) {
+					updateMusicState({
+						id: nextTrack.id,
+						title: nextTrack.title,
+						artist: nextTrack.artist,
+						cover_img: nextTrack.cover_img,
+						state: MPState.CHANGE_MUSIC
+					});
+					return;
+				}
+		
+	}
+
 	return (
 		<div className="music-player">
 			<div>
@@ -238,6 +257,7 @@ function MusicPlayer() {
 					<button
 						className="control-button"
 						disabled={isLoading || controlsDisabled}
+						onClick={nextMusic}
 					>
 						<img
 							src={NextButton}
