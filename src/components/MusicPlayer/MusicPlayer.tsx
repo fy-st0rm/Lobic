@@ -8,6 +8,7 @@ import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "api/likedSongsApi";
+import { useQueueProvider } from "providers/QueueProvider";
 
 
 // Assets
@@ -35,6 +36,7 @@ function MusicPlayer() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
 	const [showQueue, setShowQueue] = useState(false);
+	const { queue, enqueue } = useQueueProvider();
 
 	const queueToggle = () => {
 		showQueue ?
@@ -263,7 +265,7 @@ function MusicPlayer() {
 			<div className="queue self-center cursor-pointer transition-all">
 				<Menu onClick={queueToggle} />
 				{showQueue && (
-					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[50%] w-[20%] top-[40%] right-[5%]">
+					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[50%] w-[20%] top-[39%] right-[5%] overflow-scroll no-scrollbar">
 						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">Current Song</div>
 						<div className="">
 							<div className="flex items-center font-bold px-4 pb-3">
@@ -287,7 +289,30 @@ function MusicPlayer() {
 							</div>
 							<div className=" mx-4 font-sans text-[100%] text-white text-xl font-semibold">Queue</div>
 						</div>
-					</div>)}
+						{queue.map((item) => (
+							<div className="flex items-center font-bold px-4 pb-3">
+							<div className="h-[66px] w-[66px] py-1 self-start cursor-pointer rounded-sm"><img
+								src={
+									item.cover_img
+								}
+								alt="Album cover"
+								className="h-[100%] w-[100%] rounded-sm"
+							/></div>
+							<div className="mx-2">
+								<div className="font-sans text-[100%] text-white overflow-hidden">
+									{item.title}
+								</div>
+								<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
+									{item.artist}
+								</div>
+							</div>
+						</div>
+							
+						
+					))}
+					</div>
+					
+				)}
 
 			</div>
 
