@@ -3,9 +3,10 @@ import { EllipsisVertical } from "lucide-react";
 
 // Local
 import { fetchUserPlaylists, addSongToPlaylist } from "api/playlistApi";
-import { addToLikedSongs } from "api/likedSongsApi";
+import { toggleSongLiked } from "api/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
+import { useMusicLists } from "@/contexts/MusicListContext";
 
 // Assets
 import "./Music.css";
@@ -35,6 +36,7 @@ const Music: React.FC<MusicProps> = ({
 }) => {
 	const { appState } = useAppProvider();
 	const { queue, enqueue } = useQueueProvider();
+	const { notifyMusicPlayed } = useMusicLists();
 
 	const userId = appState.user_id;
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -54,6 +56,7 @@ const Music: React.FC<MusicProps> = ({
 		user_id: string;
 		playlists: Playlist[]; // Array of playlists
 	}
+
 	const handleAddToPlaylist = async (): Promise<void> => {
 		try {
 			const response: FetchUserPlaylistsResponse =
@@ -81,7 +84,13 @@ const Music: React.FC<MusicProps> = ({
 	};
 
 	const handleAddToLikedSongs = async (): Promise<void> => {
-		await addToLikedSongs(userId, musicId);
+		try {
+			await toggleSongLiked(userId, musicId);
+			notifyMusicPlayed(musicId, "Liked Songs");
+			//
+		} catch (error) {
+			console.error("Error adding to liked songs:", error);
+		}
 	};
 
 	const toggleDropdown = (): void => {

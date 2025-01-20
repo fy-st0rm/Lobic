@@ -1,10 +1,11 @@
 import React from "react";
 import MusicList from "components/MusicList/MusicList";
+import { MusicListsProvider } from "@/contexts/MusicListContext";
 import "./Home.css";
 
 function Home() {
 	return (
-		<>
+		<MusicListsProvider>
 			<div className="home-container">
 				<div className="scrollable-area">
 					<MusicList list_title="Liked Songs" renderOnlyOnSuccess={true} />
@@ -14,7 +15,7 @@ function Home() {
 					<MusicList list_title="My Top Tracks" renderOnlyOnSuccess={false} />
 				</div>
 			</div>
-		</>
+		</MusicListsProvider>
 	);
 }
 
