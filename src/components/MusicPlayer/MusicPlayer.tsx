@@ -167,18 +167,17 @@ function MusicPlayer() {
 	const isLikeButtonDisabled = isLoading || !appState.user_id || !musicState.id;
 
 	const nextMusic = () =>{
-			let nextTrack: MusicTrack | null = dequeue()
-				if (nextTrack) {
-					updateMusicState({
-						id: nextTrack.id,
-						title: nextTrack.title,
-						artist: nextTrack.artist,
-						cover_img: nextTrack.cover_img,
-						state: MPState.CHANGE_MUSIC
-					});
-					return;
-				}
-		
+		let nextTrack: MusicTrack | null = dequeue()
+		if (nextTrack) {
+			updateMusicState({
+				id: nextTrack.id,
+				title: nextTrack.title,
+				artist: nextTrack.artist,
+				cover_img: nextTrack.cover_img,
+				state: MPState.CHANGE_MUSIC
+			});
+			return;
+		}
 	}
 
 	return (

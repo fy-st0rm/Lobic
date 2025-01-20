@@ -1,11 +1,10 @@
 // Node Modules
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect, useRef } from "react";
-import EmojiPicker from "emoji-picker-react";
+import React, { FC, useState, useEffect, useRef, RefObject } from "react";
 
 // Local
 import { MPState } from "api/musicApi";
-import { User } from "api/userApi";
+import { User, getUserData, fetchUserProfilePicture } from "api/userApi";
 import { OpCode, wsSend, SocketResponse } from "api/socketApi";
 import MusicPlayer from "components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";
@@ -14,14 +13,13 @@ import { useMusicProvider } from "providers/MusicProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 
-import crown from "/chats/crown.svg";
-import sadit from "/sadit.jpg";
+import { LobbyMembers, LobblersArea } from "./LobblersArea";
+import { Message, MessageArea } from "./MessageArea";
+import { InputArea } from "./InputArea";
 
-type Message = {
-	user_id: string,
-	message: string,
-	timestamp: string,
-};
+// Assets
+import crown from "/chats/crown.svg";
+
 
 function Chats(): React.ReactElement {
 	const { appState } = useAppProvider();
@@ -30,35 +28,54 @@ function Chats(): React.ReactElement {
 	const { getSocket, addMsgHandler } = useSocketProvider();
 	const navigate = useNavigate();
 
-	const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 	const [inputValue, setInputValue] = useState<string>("");
+	const [users, setUsers] = useState<LobbyMembers>({});
 	const [selectedUser, setSelectedUser] = useState<User>({
 		id: "", username: "", email: "", pfp: ""
 	});
 	const [messages, setMessages] = useState<Message[]>([]);
-
-	const chatContainerRef = useRef<HTMLDivElement>(null); // Ref for the chat container
-
-	const users: User[] = [
-		{ id: "1", username: "Coolboy",  email: "asd@gmail.com", pfp: "/user_images/sameep.jpg" },
-		{ id: "2", username: "Bhattey",  email: "asd@gmail.com", pfp: "/user_images/manish.jpg" },
-		{ id: "3", username: "SigmaBoy", email: "asd@gmail.com", pfp: "/user_images/dog.jpg"		},
-	];
+ 
+	// Ref for the chat container
+	const chatContainerRef = useRef<HTMLDivElement>(null);
 
 	const handleUserClick = (user: User) => setSelectedUser(user);
 
+	// Responsible to collect the incoming messages
 	useEffect(() => {
 		addMsgHandler(OpCode.GET_MESSAGES, (res: SocketResponse) => {
 			setMessages(res.value);
 		});
 
-		setTimeout(() => {
-			const payload = {
-				op_code: OpCode.GET_MESSAGES,
-				value: { lobby_id: lobbyState.lobby_id },
-			};
-			wsSend(getSocket(), payload);
-		}, 1000);
+		// Fetches the messages once when entering the lobby
+		const payload = {
+			op_code: OpCode.GET_MESSAGES,
+			value: { lobby_id: lobbyState.lobby_id },
+		};
+		wsSend(getSocket(), payload);
+	}, []);
+
+	// Responsible to collect the members of the lobby
+	useEffect(() => {
+		addMsgHandler(OpCode.GET_LOBBY_MEMBERS, (res: SocketResponse) => {
+			const prepare_users = async () => {
+				let user_ids = res.value;
+				let users: LobbyMembers = {};
+				for (let x of user_ids) {
+					let user = await getUserData(x);
+					user.pfp = await fetchUserProfilePicture(x);
+					users[user.id] = user;
+				}
+				setUsers(users);
+			}
+			prepare_users();
+		});
+
+		// Fetches the members once when entering the lobby
+		const payload = {
+			op_code: OpCode.GET_LOBBY_MEMBERS,
+			value: { lobby_id: lobbyState.lobby_id },
+		};
+		wsSend(getSocket(), payload);
 	}, []);
 
 	// Scroll to the bottom of the chat whenever messages change
@@ -69,6 +86,7 @@ function Chats(): React.ReactElement {
 		}
 	}, [messages]);
 
+	// Responsible to sync music with the host of the lobby
 	useEffect(() => {
 		addMsgHandler(OpCode.SYNC_MUSIC, (res: SocketResponse) => {
 			let music = res.value;
@@ -99,6 +117,7 @@ function Chats(): React.ReactElement {
 			}
 		});
 
+		// Fetches the current state of music in lobby once while entering the lobby
 		if (!lobbyState.in_lobby) return;
 		const payload = {
 			op_code: OpCode.SYNC_MUSIC,
@@ -110,6 +129,7 @@ function Chats(): React.ReactElement {
 		wsSend(getSocket(), payload);
 	}, []);
 
+	// Responsible to handle signal of LEAVE_LOBBY
 	useEffect(() => {
 		addMsgHandler(OpCode.LEAVE_LOBBY, (res: SocketResponse) => {
 			// Tagging the user as joined in lobby
@@ -157,9 +177,9 @@ function Chats(): React.ReactElement {
 		setInputValue("");
 	};
 
-	const toggleEmojiPicker = () => {
-		setShowEmojiPicker(!showEmojiPicker);
-	};
+	const handleInputValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setInputValue(event.target.value);
+	}
 
 	const handleEmojiClick = (emojiObject: { emoji: string }) => {
 		setInputValue((prev) => prev + emojiObject.emoji);
@@ -178,30 +198,11 @@ function Chats(): React.ReactElement {
 		>
 			<div className="flex w-full h-full gap-4 px-0.1">
 				{/* Sidebar */}
-				<div className="w-80 bg-black/60 rounded-lg overflow-hidden flex flex-col">
-					<div className="p-4 bg-black/20">
-						<span className="text-white font-bold text-xl">Lobblers</span>
-					</div>
-					<div className="flex-1 overflow-y-auto">
-						<div className="p-2 space-y-2">
-							{users.map((user) => (
-								<div
-								key={user.id}
-									onClick={() => handleUserClick(user)}
-									className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors
-										${selectedUser?.id === user.id ? "bg-white/40" : "hover:bg-white/20"}`}
-								>
-									<img
-										src={user.pfp}
-										alt={user.username}
-										className="w-10 h-10 rounded-full mr-3 object-cover"
-									/>
-									<span className="text-white font-medium">{user.username}</span>
-							  </div>
-							))}
-						</div>
-					</div>
-				</div>
+				<LobblersArea
+					users={users}
+					selectedUser={selectedUser}
+					handleUserClick={handleUserClick}
+				/>
 
 				{/* Chat Container */}
 				<div className="flex-1 bg-white/60 rounded-lg overflow-hidden flex flex-col">
@@ -230,84 +231,21 @@ function Chats(): React.ReactElement {
 					</div>
 
 					{/* Messages Area */}
-    				<div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>{messages?.map((msg, idx) => (
-        				<div
-         					 key={idx}
-          						className={`flex mb-4 ${msg.user_id === appState.user_id ? "justify-end" : "justify-start"}`}>
-          					<div className="relative flex items-end max-w-[60%]">
-            					{/* For incoming messages, show image on the left */}
-            					{msg.user_id !== appState.user_id && (
-              						<img
-                						src={sadit}
-                						alt="User"
-                						className="w-8 h-8 rounded-full object-cover mb-0.5 mr-1"/>)}
-
- 		           		{/* Message Box */}
-            			<div
-              				className={`px-4 py-2 rounded-2xl ${
-                				msg.user_id === appState.user_id? "bg-green-100 rounded-br-none": "bg-blue-50 rounded-bl-none"
-              					}`}
-              					style={{
-                				wordBreak: "break-word",
-              					}}>
-              						<p className="mb-1 mt-1">{msg.message}</p>
-              				<div className="text-xs text-gray-500">{msg.timestamp}</div>
-            			</div>
-
-            {/* For outgoing messages */}
-            {msg.user_id === appState.user_id && (
-              <img
-                src={sadit}
-                alt="User"
-                className="w-8 h-8 rounded-full object-cover mb-0.5 ml-1"
-              />
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
+					<MessageArea
+						currentUserId={appState.user_id}
+						messages={messages}
+						users={users}
+						chatContainerRef={chatContainerRef}
+					/>
 
 					{/* Input Area */}
-					<div className="p-4 border-t border-gray-200 bg-white/80">
-						<div className="relative flex items-center">
-							<button
-								onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-								className="absolute left-3 text-gray-500 hover:text-gray-700 bg-transparent border-none"
-							>
-								<img src="/chats/emoji.svg" alt="Emoji" className="w-5 h-5" />
-							</button>
-							{showEmojiPicker && (
-								<div className="absolute bottom-full left-0 mb-2">
-									<EmojiPicker onEmojiClick={handleEmojiClick} />
-								</div>
-							)}
-							<input
-								type="text"
-								placeholder="Type your message..."
-								className="w-full pl-12 pr-12 py-2 rounded-full border border-black-300 focus:border-black-400"
-								value={inputValue}
-								onChange={(e) => setInputValue(e.target.value)}
-								onKeyDown={(e) => e.key === "Enter" && handleSendMsg()}
-							/>
-							<button
-								onClick={() => {
-									let fileInput = document.getElementById("fileInput");
-									if (fileInput) fileInput.click();
-								}}
-								className="absolute right-3 text-gray-500 hover:text-gray-700 bg-transparent border-none"
-							>
-								<img src="/chats/images.svg" alt="Upload" className="w-5 h-5" />
-							</button>
-							<input
-								id="fileInput"
-								type="file"
-								accept="image/*,application/pdf"
-								className="hidden"
-								multiple
-								onChange={handleFileSelect}
-							/>
-						</div>
-					</div>
+					<InputArea
+						inputValue={inputValue}
+						handleInputValue={handleInputValue}
+						handleEmojiClick={handleEmojiClick}
+						handleSendMsg={handleSendMsg}
+						handleFileSelect={handleFileSelect}
+					/>
 				</div>
 			</div>
 		</div>

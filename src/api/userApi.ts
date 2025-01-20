@@ -6,13 +6,13 @@ import { SERVER_IP } from "@/const";
  * @member {string} id - Id of the user
  * @member {string} username - Name of the user
  * @member {string} email - Email of the user
- * @member {string} pfp - Profile picture of the user
+ * @member {string} pfp - Profile picture of the user (Optional)
  */
 export type User = {
 	id: string,
 	username: string,
 	email: string,
-	pfp: string,
+	pfp?: string,
 };
 
 /**
