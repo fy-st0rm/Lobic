@@ -1,5 +1,20 @@
 import { SERVER_IP } from "@/const";
 
+
+/*
+ * Model of a User
+ * @member {string} id - Id of the user
+ * @member {string} username - Name of the user
+ * @member {string} email - Email of the user
+ * @member {string} pfp - Profile picture of the user
+ */
+export type User = {
+	id: string,
+	username: string,
+	email: string,
+	pfp: string,
+};
+
 /**
  * Handles user login.
  * @param {string} email - User's email.
@@ -185,13 +200,11 @@ export const updateProfilePicture = async (
  * @param {string} userUuid - The user's UUID.
  * @returns {Promise<{ username: string; email: string }>} - The user's data.
  */
-export const getUserData = async (
-	userUuid: string | null,
-): Promise<{ username: string; email: string }> => {
+export const getUserData = async (userId: string | null): Promise<User> => {
 	try {
 		// Make a GET request to fetch user data
 		const response = await fetch(
-			`${SERVER_IP}/user/get_user_data/${userUuid}`,
+			`${SERVER_IP}/user/get_user_data/${userId}`,
 			{
 				method: "GET",
 				headers: {
@@ -206,7 +219,7 @@ export const getUserData = async (
 		}
 
 		// Parse the JSON response
-		const userData: { username: string; email: string } = await response.json();
+		const userData:User = await response.json();
 		console.log("User data fetched successfully:", userData);
 		return userData;
 	} catch (error) {

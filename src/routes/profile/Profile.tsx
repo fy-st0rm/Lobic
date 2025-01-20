@@ -6,24 +6,21 @@ import ProfileCard from "components/ProfileCard/ProfileCard";
 import SearchList from "components/SearchList/SearchList";
 import PlaylistsContainer from "components/PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
-import { getUserData } from "api/userApi";
+import { User, getUserData } from "api/userApi";
 
 // Assets
 import "./Profile.css";
 
-// Define the type for user data
-interface UserData {
-	username: string;
-	email: string;
-}
 
 function Profile() {
 	const { appState } = useAppProvider();
 
 	// State with type annotations
-	const [userData, setUserData] = useState<UserData>({
+	const [userData, setUserData] = useState<User>({
+		id: "",
 		username: "",
 		email: "",
+		pfp: "",
 	});
 
 	const [loading, setLoading] = useState<boolean>(true);
@@ -57,7 +54,7 @@ function Profile() {
 								usertag={userData.email}
 								username={userData.username}
 								friendcount={10}
-								user_uuid={appState.user_id}
+								user_uuid={userData.id}
 							/>
 						</div>
 						<div className="playlists-container">
