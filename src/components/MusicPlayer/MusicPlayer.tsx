@@ -2,8 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
 import { SERVER_IP } from "@/const";
-import { wsSend, OpCode } from "api/socketApi";
-import { MPState } from "api/musicApi";
+import { MPState, updateHostMusicState } from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
@@ -27,7 +26,7 @@ import "./MusicPlayer.css";
 function MusicPlayer() {
 	const { appState } = useAppProvider();
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
-	const { getSocket, addMsgHandler } = useSocketProvider();
+	const { getSocket } = useSocketProvider();
 	const { musicState, controlsDisabled, updateMusicState } = useMusicProvider();
 
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
@@ -41,24 +40,11 @@ function MusicPlayer() {
 	};
 
 	// Responsible to set the music state of the lobby as a host
+	// TODO: This sends the update request to server every frame (might be laggy)
 	useEffect(() => {
-		if (!lobbyState.in_lobby) return;
-		if (!musicState.id) return;
-
-		const payload = {
-			op_code: OpCode.SET_MUSIC_STATE,
-			value: {
-				lobby_id: lobbyState.lobby_id,
-				user_id: appState.user_id,
-				music_id: musicState.id,
-				title: musicState.title,
-				artist: musicState.artist,
-				cover_img: musicState.cover_img,
-				timestamp: musicState.timestamp,
-				state: musicState.state,
-			},
-		};
-		wsSend(getSocket(), payload);
+		if (lobbyState.is_host) {
+			updateHostMusicState(getSocket(), appState, lobbyState, musicState);
+		}
 	}, [musicState]);
 
 	useEffect(() => {

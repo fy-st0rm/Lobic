@@ -1,4 +1,8 @@
 import { SERVER_IP } from "@/const";
+import { OpCode, wsSend } from "api/socketApi";
+import { AppState } from "providers/AppProvider";
+import { LobbyState } from "providers/LobbyProvider";
+import { MusicState } from "providers/MusicProvider";
 
 // Enum to define Music Player State
 export enum MPState {
@@ -210,3 +214,35 @@ export const fetchMusicUrl = async (id: string | null): Promise<string> => {
 		throw error;
 	}
 };
+
+/*
+ * Updates the host music state in the server
+ * @param {WebSocket} socket - Instance of the websocket
+ * @param {AppState} appState - Instance of the app state
+ * @param {LobbyState} lobbyState - Instance of the lobby state
+ * @param {MusicState} musicState - Instance of the music state
+ */
+export const updateHostMusicState = (
+	socket: WebSocket | null,
+	appState: AppState,
+	lobbyState: LobbyState,
+	musicState: MusicState
+) => {
+	if (!lobbyState.in_lobby) return;
+	if (!musicState.id) return;
+
+	const payload = {
+		op_code: OpCode.SET_MUSIC_STATE,
+		value: {
+			lobby_id: lobbyState.lobby_id,
+			user_id: appState.user_id,
+			music_id: musicState.id,
+			title: musicState.title,
+			artist: musicState.artist,
+			cover_img: musicState.cover_img,
+			timestamp: musicState.timestamp,
+			state: musicState.state,
+		},
+	};
+	wsSend(socket, payload);
+}

@@ -46,7 +46,7 @@ const AudioElement = () => {
 
 	// Handling controls access
 	useEffect(() => {
-		if (musicState.id === null) {
+		if (!musicState.id) {
 			setControlsDisabled(true);
 		}
 		else if (lobbyState.in_lobby && lobbyState.is_host) {
@@ -58,7 +58,7 @@ const AudioElement = () => {
 		else if (!lobbyState.in_lobby) {
 			setControlsDisabled(false);
 		}
-	}, [lobbyState, musicState]);
+	}, [lobbyState.in_lobby, musicState.id]);
 
 	// Music State Handler
 	useEffect(() => {
@@ -87,8 +87,7 @@ const AudioElement = () => {
 				try {
 					audioElement.src = await fetchMusicUrl(musicState.id);
 					audioElement.volume = musicState.volume / 100;
-					audioElement.currentTime = 0;
-					updateMusicState({ timestamp: 0 });
+					audioElement.currentTime = musicState.state_data;
 				} catch(err) {
 					console.error("Failed to play music:", err);
 				} finally {

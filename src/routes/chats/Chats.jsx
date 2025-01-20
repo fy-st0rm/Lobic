@@ -73,7 +73,10 @@ function Chats() {
 				music.state === MPState.PLAY ||
 				music.state === MPState.PAUSE
 			) {
-				updateMusicState({ state: music.state });
+				updateMusicState({
+					state: music.state,
+					state_data: music.timestamp,
+				});
 			} else if (music.state === MPState.CHANGE_TIME) {
 				updateMusicState({
 					state: music.state,
@@ -85,11 +88,11 @@ function Chats() {
 		});
 
 		if (!lobbyState.in_lobby) return;
-
 		const payload = {
 			op_code: OpCode.SYNC_MUSIC,
 			value: {
 				lobby_id: lobbyState.lobby_id,
+				current_state: musicState.state,
 			},
 		};
 		wsSend(getSocket(), payload);
