@@ -9,6 +9,7 @@ import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import {getMusicImageUrl,MPState } from "api/musicApi";
+import { Play } from 'lucide-react';
 import {
 	fetchPlaylistById,
 	PlaylistResponse,
@@ -95,7 +96,7 @@ function Playlist() {
 
 	return (
 		<>
-			<div className="absolute flex gap-6 top-[20%] left-[10%] playlistinfo h-[50%] w-[50%]">
+			<div className="absolute flex gap-6 top-[20%] left-[10%] playlistinfo h-[50%]">
 				<div className="playlistcover relative self-center rounded-[10px]">
 					<img
 						src={PlaylistImage}
@@ -107,7 +108,7 @@ function Playlist() {
 					<div className="playlistname text-white text-[50px] font-bold text-nowrap w-50">
 						{playlistData?.playlist?.playlist_name || "Untitled Playlist"}
 					</div>
-					<div className="typeofplaylist text-white text-[15px] relative pl-2 top-[-9px] font-thin">
+					<div className="typeofplaylist text-white text-[20px] relative top-[-9px] opacity-60 font-medium">
 						{playlistData?.playlist?.description || "Combined Playlist"}
 					</div>
 					<div className="infobar flex relative top-[-9px]">
@@ -124,7 +125,7 @@ function Playlist() {
 									alt="Creator 2"
 								/>
 							</div>
-							<div className="creatorname text-white opacity-50 pb-0.5 text-[8px] font-bold self-center">
+							<div className="creatorname text-white opacity-50 pb-0.5 text-[8px] font-bold self-center overflow-hidden text-nowrap">
 								{currentUserId || "Unknown User"} and 1 other
 							</div>
 						</div>
@@ -136,7 +137,7 @@ function Playlist() {
 						</div>
 					</div>
 					<div className="controlbuttons">
-						<div className="playbutton cursor-pointer" onClick={playlistPlayed}> asdklfjal</div>
+						<div className="playbutton cursor-pointer" onClick={playlistPlayed}><Play className="bg-[#072631] text-white rounded-full p-2 h-7 w-7 pl-2.5" /></div>
 						<div className="addtoplaylist"></div>
 					</div>
 				</div>
