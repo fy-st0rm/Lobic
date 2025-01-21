@@ -9,7 +9,9 @@ export type LobbyModel = {
 	artist_name: string;
 };
 
-export const fetchLobbies = async (lobby_ids: string[]): Promise<LobbyModel[]> => {
+export const fetchLobbies = async (
+	lobby_ids: string[],
+): Promise<LobbyModel[]> => {
 	const fetchLobby = async (id: string): Promise<LobbyModel | null> => {
 		try {
 			const response = await fetch(`${SERVER_IP}/get_lobby/${id}`);
@@ -34,9 +36,7 @@ export const fetchLobbies = async (lobby_ids: string[]): Promise<LobbyModel[]> =
 		}
 	};
 
-	const lobbies = await Promise.all(
-		lobby_ids.map((id) => fetchLobby(id))
-	);
+	const lobbies = await Promise.all(lobby_ids.map((id) => fetchLobby(id)));
 
 	// Filter out null values
 	return lobbies.filter((lobby): lobby is LobbyModel => lobby !== null);
