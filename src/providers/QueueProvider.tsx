@@ -29,7 +29,7 @@ const defaultContext: QueueContextType = {
 	queue: [],
 	enqueue: () => {},
 	dequeue: () => null,
-	clear: () => null
+	clear: () => null,
 };
 
 const QueueContext = createContext<QueueContextType>(defaultContext);
@@ -50,7 +50,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		setQueue(rest);
 		return first;
 	};
-	const clear = ():  null => {
+	const clear = (): null => {
 		setQueue([]);
 		return null;
 	};
