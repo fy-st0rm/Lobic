@@ -1,16 +1,15 @@
+// Node modules
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
 import { SERVER_IP } from "@/const";
-import { MPState, updateHostMusicState, MusicTrack} from "api/musicApi";
+import { MPState, MusicTrack} from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "api/likedSongsApi";
 import { useQueueProvider } from "providers/QueueProvider";
-
-
 
 // Assets
 import previousButton from "/controlbar/PreviousButton.svg";
@@ -49,14 +48,6 @@ function MusicPlayer() {
 		const seconds = Math.floor(time % 60);
 		return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 	};
-
-	// Responsible to set the music state of the lobby as a host
-	// TODO: This sends the update request to server every frame (might be laggy)
-	useEffect(() => {
-		if (lobbyState.is_host) {
-			updateHostMusicState(getSocket(), appState, lobbyState, musicState);
-		}
-	}, [musicState]);
 
 	useEffect(() => {
 		fetchLikedState();
@@ -174,7 +165,9 @@ function MusicPlayer() {
 				title: nextTrack.title,
 				artist: nextTrack.artist,
 				cover_img: nextTrack.cover_img,
-				state: MPState.CHANGE_MUSIC
+				state: MPState.CHANGE_MUSIC,
+				state_data: 0,
+				timestamp: 0,
 			});
 			return;
 		}

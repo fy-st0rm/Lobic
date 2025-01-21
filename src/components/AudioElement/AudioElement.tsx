@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import ReactDOM from "react-dom";
 
 // Local
-import { MusicTrack, MPState, fetchMusicUrl } from "api/musicApi";
+import { MusicTrack, MPState, fetchMusicUrl, updateHostMusicState } from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useMusicProvider } from "providers/MusicProvider";
@@ -21,6 +21,7 @@ const AudioElement = () => {
 		setControlsDisabled
 	} = useMusicProvider();
 	const { queue, dequeue } = useQueueProvider();
+	const { getSocket } = useSocketProvider();
 
 	// If page is refreshed initializing the audio
 	useEffect(() => {
@@ -76,11 +77,11 @@ const AudioElement = () => {
 
 		const musicStateManager = async () => {
 			if (musicState.state === MPState.PLAY) {
-				if (audioElement.paused)
+				if (audioElement.paused && audioElement.readyState > 3)
 					await audioElement.play();
 			}
 			else if (musicState.state === MPState.PAUSE) {
-				if (!audioElement.paused)
+				if (!audioElement.paused && audioElement.readyState > 3)
 					await audioElement.pause();
 			}
 			else if (musicState.state === MPState.CHANGE_MUSIC) {
@@ -88,6 +89,7 @@ const AudioElement = () => {
 					audioElement.src = await fetchMusicUrl(musicState.id);
 					audioElement.volume = musicState.volume / 100;
 					audioElement.currentTime = musicState.state_data;
+					audioElement.load();
 				} catch(err) {
 					console.error("Failed to play music:", err);
 				} finally {
@@ -113,6 +115,12 @@ const AudioElement = () => {
 			else if (musicState.state === MPState.EMPTY) {
 				audioElement.src = "";
 				audioElement.currentTime = 0;
+			}
+
+			// Responsible to set the music state of the lobby as a host
+			// TODO: This sends the update request to server every frame (might be laggy)
+			if (lobbyState.is_host) {
+				updateHostMusicState(getSocket(), appState, lobbyState, musicState);
 			}
 		}
 
@@ -160,7 +168,9 @@ const AudioElement = () => {
 				title: nextTrack.title,
 				artist: nextTrack.artist,
 				cover_img: nextTrack.cover_img,
-				state: MPState.CHANGE_MUSIC
+				state: MPState.CHANGE_MUSIC,
+				state_data: 0,
+				timestamp: 0,
 			});
 			return;
 		}
