@@ -13,10 +13,9 @@ import Lobby from "routes/lobby/Lobby";
 import Chats from "routes/chats/Chats";
 import Playlist from "routes/playlist/Playlist";
 import Playlists from "routes/playlists/playlists";
-import Profile from "routes/profile/Profile";
+import Profile from "routes/profile/Profile.tsx";
 import MusicPlayer from "components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";
-
 
 function App(): React.ReactElement {
 	const location = useLocation(); // Get the current route location
@@ -76,12 +75,7 @@ function App(): React.ReactElement {
 						</Auth>
 					}
 				/>
-				<Route
-					path="/playlist/:playlistId"
-					element={
-						<Playlist />
-					}
-				/>
+				<Route path="/playlist/:playlistId" element={<Playlist />} />
 				<Route
 					path="/playlists"
 					element={

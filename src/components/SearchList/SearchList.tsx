@@ -1,7 +1,6 @@
 import React, { useState, ChangeEvent } from "react";
 import "./SearchList.css";
 import ClearButton from "/public/close.png";
-
 interface SearchListState {
 	searchValue: string;
 }
