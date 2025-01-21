@@ -4,6 +4,7 @@ import {
 	updateProfilePicture,
 	fetchUserProfilePicture,
 } from "../../api/userApi";
+import SearchList from "components/SearchList/SearchList";
 
 interface ProfileCardProps {
 	usertag: string;
@@ -23,6 +24,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
 	const [profilePicture, setProfilePicture] =
 		useState<string>("/public/sadit.jpg");
+	const [showSearchList, setShowSearchList] = useState<boolean>(false);
 
 	useEffect(() => {
 		const fetchProfilePicture = async (): Promise<void> => {
@@ -88,6 +90,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 				{isUpdating ? "Updating..." : "Update Profile Picture"}
 			</button>
 
+			<button
+				className="add-friend-button"
+				onClick={() => setShowSearchList(!showSearchList)}
+			>
+				{showSearchList ? "Close Friend" : "Add Friend"}
+			</button>
+
 			{showModal && (
 				<div className="modal-overlay">
 					<div className="modal">
@@ -100,6 +109,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 							</button>
 						</div>
 					</div>
+				</div>
+			)}
+
+			{showSearchList && (
+				<div className="search-overlay">
+					<button
+						className="close-popup-button"
+						onClick={() => setShowSearchList(false)}
+					>
+						X
+					</button>
+
+					<SearchList />
 				</div>
 			)}
 		</div>

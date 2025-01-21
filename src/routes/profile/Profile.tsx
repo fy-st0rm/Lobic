@@ -51,12 +51,10 @@ function Profile() {
 								user_uuid={userData.id}
 							/>
 						</div>
+
 						<div className="playlists-container">
 							<PlaylistsContainer />
 						</div>
-					</div>
-					<div className="search-list-container">
-						<SearchList />
 					</div>
 				</div>
 			</div>
