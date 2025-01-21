@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import EmojiPicker from "emoji-picker-react";
 
-
 type InputAreaProps = {
 	inputValue: string;
 	handleInputValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -16,7 +15,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
 	handleInputValue,
 	handleEmojiClick,
 	handleSendMsg,
-	handleFileSelect
+	handleFileSelect,
 }): React.ReactElement => {
 	const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 
@@ -66,4 +65,4 @@ export const InputArea: React.FC<InputAreaProps> = ({
 			</div>
 		</div>
 	);
-}
+};

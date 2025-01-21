@@ -4,7 +4,6 @@ import React, { FC, createContext, useContext, useState, useRef } from "react";
 // Local
 import { MPState } from "api/musicApi";
 
-
 /*
  * MusicState type
  * @member {string | null} id - Holds the unique identifier of the current track, or null if no track is selected.
@@ -30,7 +29,6 @@ export type MusicState = {
 	state_data: number;
 };
 
-
 /*
  * MusicContextType type
  * @member {RefObject<HTMLAudioElement | null> audioRef - Reference to the HTML audio element
@@ -49,7 +47,6 @@ export type MusicContextType = {
 	updateMusicState: (state: Partial<MusicState>) => void;
 	getAudioElement: () => HTMLAudioElement | null;
 };
-
 
 // Creating context width default values will be assigned later in providers
 const defaultContext: MusicContextType = {
@@ -73,7 +70,6 @@ const defaultContext: MusicContextType = {
 
 const MusicContext = createContext<MusicContextType>(defaultContext);
 
-
 /*
  * Loads the music state from session storage
  * @retuns {MusicState} - Loaded music state
@@ -94,9 +90,11 @@ const loadMusicState = (): MusicState => {
 				state: MPState.PAUSE,
 				state_data: 0,
 			};
-}
+};
 
-export const MusicProvider: FC<{ children: React.ReactNode }> = ({ children }): React.ReactElement => {
+export const MusicProvider: FC<{ children: React.ReactNode }> = ({
+	children,
+}): React.ReactElement => {
 	const [musicState, setMusicState] = useState<MusicState>(loadMusicState);
 	const [controlsDisabled, setControlsDisabled] = useState<boolean>(true);
 	const audioRef = useRef<HTMLAudioElement>(null);
@@ -110,24 +108,26 @@ export const MusicProvider: FC<{ children: React.ReactNode }> = ({ children }): 
 			sessionStorage.setItem("MusicState", JSON.stringify(newState));
 			return newState;
 		});
-	}
+	};
 
 	const getAudioElement = (): HTMLAudioElement | null => {
 		return audioRef.current;
-	}
+	};
 
 	return (
-		<MusicContext.Provider value={{
-			audioRef,
-			musicState,
-			controlsDisabled,
-			setControlsDisabled,
-			updateMusicState,
-			getAudioElement
-		}}>
+		<MusicContext.Provider
+			value={{
+				audioRef,
+				musicState,
+				controlsDisabled,
+				setControlsDisabled,
+				updateMusicState,
+				getAudioElement,
+			}}
+		>
 			{children}
 		</MusicContext.Provider>
 	);
-}
+};
 
 export const useMusicProvider = () => useContext(MusicContext);

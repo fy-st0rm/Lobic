@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
 import { SERVER_IP } from "@/const";
-import { MPState, MusicTrack} from "api/musicApi";
+import { MPState, MusicTrack } from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
@@ -22,7 +22,7 @@ import VolumeHigh from "/volumecontrols/Volume Level High.png";
 import placeholder_logo from "/covers/cover.jpg";
 import likedSong from "/controlbar/love-svgrepo-com.svg";
 import likedSongFilled from "/controlbar/love-svgrepo-com-filled.svg";
-import { Menu } from 'lucide-react';
+import { Menu } from "lucide-react";
 
 import "./MusicPlayer.css";
 
@@ -36,13 +36,11 @@ function MusicPlayer() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
 	const [showQueue, setShowQueue] = useState(false);
-	const { queue, enqueue, dequeue} = useQueueProvider();
-	
+	const { queue, enqueue, dequeue } = useQueueProvider();
 
 	const queueToggle = () => {
-		showQueue ?
-			setShowQueue(false) : setShowQueue(true);
-	}
+		showQueue ? setShowQueue(false) : setShowQueue(true);
+	};
 	const formatTime = (time: number) => {
 		const minutes = Math.floor(time / 60);
 		const seconds = Math.floor(time % 60);
@@ -157,8 +155,8 @@ function MusicPlayer() {
 	// Determine if the like button should be disabled
 	const isLikeButtonDisabled = isLoading || !appState.user_id || !musicState.id;
 
-	const nextMusic = () =>{
-		let nextTrack: MusicTrack | null = dequeue()
+	const nextMusic = () => {
+		let nextTrack: MusicTrack | null = dequeue();
 		if (nextTrack) {
 			updateMusicState({
 				id: nextTrack.id,
@@ -171,7 +169,7 @@ function MusicPlayer() {
 			});
 			return;
 		}
-	}
+	};
 
 	return (
 		<div className="music-player">
@@ -187,21 +185,22 @@ function MusicPlayer() {
 				/>
 			</div>
 			<div className="flex w-[20%]">
-				<div className="self-center"> 
-				<div className="song-info overflow-hidden p-2">
-					<div className="song-name">
-						{musicState.id ? musicState.title : "No Song Selected"}
-					</div>
-					<div className="artist-name">
-						{musicState.id ? musicState.artist : ""}
+				<div className="self-center">
+					<div className="song-info overflow-hidden p-2">
+						<div className="song-name">
+							{musicState.id ? musicState.title : "No Song Selected"}
+						</div>
+						<div className="artist-name">
+							{musicState.id ? musicState.artist : ""}
+						</div>
 					</div>
 				</div>
-			</div>
-			<div
-					className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${isLikeButtonDisabled
-						? "opacity-50 cursor-not-allowed"
-						: "cursor-pointer hover:scale-110"
-						}`}
+				<div
+					className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${
+						isLikeButtonDisabled
+							? "opacity-50 cursor-not-allowed"
+							: "cursor-pointer hover:scale-110"
+					}`}
 					onClick={!isLikeButtonDisabled ? handleSongLikedToggle : undefined}
 					role="button"
 					aria-pressed={isSongLiked}
@@ -220,10 +219,7 @@ function MusicPlayer() {
 						className="w-6 h-6"
 					/>
 				</div>
-
-					</div>
-			
-
+			</div>
 
 			<div className="control-container">
 				<div className="control-bar">
@@ -277,21 +273,25 @@ function MusicPlayer() {
 			</div>
 
 			<div className="queue self-center transition-all">
-				<Menu onClick={queueToggle} className="cursor-pointer"/>
+				<Menu onClick={queueToggle} className="cursor-pointer" />
 				{showQueue && (
 					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[400px] w-[400px] bottom-[90px] right-[5%] overflow-scroll no-scrollbar">
-						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">Current Song</div>
+						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">
+							Current Song
+						</div>
 						<div className="">
 							<div className="flex items-center font-bold px-4 pb-2">
-								<div className="h-[66px] w-[66px] py-1 self-start rounded-sm"><img
-									src={
-										musicState.id
-											? `${SERVER_IP}/image/${musicState.id}.png`
-											: placeholder_logo
-									}
-									alt="Album cover"
-									className="h-[100%] w-[100%] rounded-sm"
-								/></div>
+								<div className="h-[66px] w-[66px] py-1 self-start rounded-sm">
+									<img
+										src={
+											musicState.id
+												? `${SERVER_IP}/image/${musicState.id}.png`
+												: placeholder_logo
+										}
+										alt="Album cover"
+										className="h-[100%] w-[100%] rounded-sm"
+									/>
+								</div>
 								<div className="mx-2">
 									<div className="font-sans text-[100%] text-white overflow-hidden">
 										{musicState.id ? musicState.title : "No Song Selected"}
@@ -301,36 +301,32 @@ function MusicPlayer() {
 									</div>
 								</div>
 							</div>
-							<div className=" mx-4 mb-2 font-sans text-[100%] text-white text-xl font-semibold">Queue</div>
+							<div className=" mx-4 mb-2 font-sans text-[100%] text-white text-xl font-semibold">
+								Queue
+							</div>
 						</div>
 						{queue.map((item) => (
 							<div className="flex items-center font-bold px-4 pb-3">
-							<div className="h-[66px] w-[66px] py-1 self-start rounded-sm"><img
-								src={
-									item.cover_img
-								}
-								alt="Album cover"
-								className="h-[100%] w-[100%] rounded-sm"
-							/></div>
-							<div className="mx-2">
-								<div className="font-sans text-[100%] text-white overflow-hidden">
-									{item.title}
+								<div className="h-[66px] w-[66px] py-1 self-start rounded-sm">
+									<img
+										src={item.cover_img}
+										alt="Album cover"
+										className="h-[100%] w-[100%] rounded-sm"
+									/>
 								</div>
-								<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
-									{item.artist}
+								<div className="mx-2">
+									<div className="font-sans text-[100%] text-white overflow-hidden">
+										{item.title}
+									</div>
+									<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
+										{item.artist}
+									</div>
 								</div>
 							</div>
-						</div>
-							
-						
-					))}
+						))}
 					</div>
-					
 				)}
-
 			</div>
-
-
 
 			<div className="volume-status">
 				<button
@@ -360,8 +356,6 @@ function MusicPlayer() {
 					disabled={isLoading}
 				/>
 			</div>
-
-
 		</div>
 	);
 }

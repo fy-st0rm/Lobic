@@ -11,7 +11,6 @@ import { Providers } from "providers/Providers";
 // Assets
 import "./index.css";
 
-
 // Main
 const root = document.getElementById("root");
 

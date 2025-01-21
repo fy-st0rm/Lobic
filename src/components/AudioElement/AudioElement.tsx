@@ -3,7 +3,12 @@ import { useEffect } from "react";
 import ReactDOM from "react-dom";
 
 // Local
-import { MusicTrack, MPState, fetchMusicUrl, updateHostMusicState } from "api/musicApi";
+import {
+	MusicTrack,
+	MPState,
+	fetchMusicUrl,
+	updateHostMusicState,
+} from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useMusicProvider } from "providers/MusicProvider";
@@ -18,7 +23,7 @@ const AudioElement = () => {
 		musicState,
 		updateMusicState,
 		getAudioElement,
-		setControlsDisabled
+		setControlsDisabled,
 	} = useMusicProvider();
 	const { queue, dequeue } = useQueueProvider();
 	const { getSocket } = useSocketProvider();
@@ -49,14 +54,11 @@ const AudioElement = () => {
 	useEffect(() => {
 		if (!musicState.id) {
 			setControlsDisabled(true);
-		}
-		else if (lobbyState.in_lobby && lobbyState.is_host) {
+		} else if (lobbyState.in_lobby && lobbyState.is_host) {
 			setControlsDisabled(false);
-		}
-		else if (lobbyState.in_lobby && !lobbyState.is_host) {
+		} else if (lobbyState.in_lobby && !lobbyState.is_host) {
 			setControlsDisabled(true);
-		}
-		else if (!lobbyState.in_lobby) {
+		} else if (!lobbyState.in_lobby) {
 			setControlsDisabled(false);
 		}
 	}, [lobbyState.in_lobby, musicState.id]);
@@ -79,40 +81,35 @@ const AudioElement = () => {
 			if (musicState.state === MPState.PLAY) {
 				if (audioElement.paused && audioElement.readyState > 3)
 					await audioElement.play();
-			}
-			else if (musicState.state === MPState.PAUSE) {
+			} else if (musicState.state === MPState.PAUSE) {
 				if (!audioElement.paused && audioElement.readyState > 3)
 					await audioElement.pause();
-			}
-			else if (musicState.state === MPState.CHANGE_MUSIC) {
+			} else if (musicState.state === MPState.CHANGE_MUSIC) {
 				try {
 					audioElement.src = await fetchMusicUrl(musicState.id);
 					audioElement.volume = musicState.volume / 100;
 					audioElement.currentTime = musicState.state_data;
 					audioElement.load();
-				} catch(err) {
+				} catch (err) {
 					console.error("Failed to play music:", err);
 				} finally {
 					updateMusicState({ state: MPState.PLAY });
 				}
-			}
-			else if (musicState.state === MPState.CHANGE_TIME) {
+			} else if (musicState.state === MPState.CHANGE_TIME) {
 				audioElement.currentTime = musicState.state_data;
 				if (audioElement.paused) {
 					updateMusicState({ state: MPState.PAUSE, state_data: 0 });
 				} else {
 					updateMusicState({ state: MPState.PLAY, state_data: 0 });
 				}
-			}
-			else if (musicState.state === MPState.CHANGE_VOLUME) {
+			} else if (musicState.state === MPState.CHANGE_VOLUME) {
 				audioElement.volume = musicState.state_data / 100;
 				if (audioElement.paused) {
 					updateMusicState({ state: MPState.PAUSE, state_data: 0 });
 				} else {
 					updateMusicState({ state: MPState.PLAY, state_data: 0 });
 				}
-			}
-			else if (musicState.state === MPState.EMPTY) {
+			} else if (musicState.state === MPState.EMPTY) {
 				audioElement.src = "";
 				audioElement.currentTime = 0;
 			}
@@ -122,7 +119,7 @@ const AudioElement = () => {
 			if (lobbyState.is_host) {
 				updateHostMusicState(getSocket(), appState, lobbyState, musicState);
 			}
-		}
+		};
 
 		musicStateManager();
 	}, [musicState]);
@@ -131,23 +128,23 @@ const AudioElement = () => {
 	useEffect(() => {
 		const audioElement = getAudioElement();
 		if (!audioElement) return;
-	
+
 		const timeUpdateHandler = () => {
 			updateMusicState({ timestamp: audioElement.currentTime });
 		};
-	
+
 		const loadedMetadataHandler = () => {
 			updateMusicState({ duration: audioElement.duration });
 		};
-	
+
 		const volumeChangeHandler = () => {
 			updateMusicState({ volume: audioElement.volume * 100 });
 		};
-	
+
 		audioElement.addEventListener("timeupdate", timeUpdateHandler);
 		audioElement.addEventListener("loadedmetadata", loadedMetadataHandler);
 		audioElement.addEventListener("volumechange", volumeChangeHandler);
-	
+
 		// Cleanup event listeners on component unmount
 		return () => {
 			audioElement.removeEventListener("timeupdate", timeUpdateHandler);

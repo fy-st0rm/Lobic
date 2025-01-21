@@ -20,7 +20,6 @@ import { InputArea } from "./InputArea";
 // Assets
 import crown from "/chats/crown.svg";
 
-
 function Chats(): React.ReactElement {
 	const { appState } = useAppProvider();
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
@@ -31,10 +30,13 @@ function Chats(): React.ReactElement {
 	const [inputValue, setInputValue] = useState<string>("");
 	const [users, setUsers] = useState<LobbyMembers>({});
 	const [selectedUser, setSelectedUser] = useState<User>({
-		id: "", username: "", email: "", pfp: ""
+		id: "",
+		username: "",
+		email: "",
+		pfp: "",
 	});
 	const [messages, setMessages] = useState<Message[]>([]);
- 
+
 	// Ref for the chat container
 	const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +68,7 @@ function Chats(): React.ReactElement {
 					users[user.id] = user;
 				}
 				setUsers(users);
-			}
+			};
 			prepare_users();
 		});
 
@@ -179,7 +181,7 @@ function Chats(): React.ReactElement {
 
 	const handleInputValue = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
-	}
+	};
 
 	const handleEmojiClick = (emojiObject: { emoji: string }) => {
 		setInputValue((prev) => prev + emojiObject.emoji);

@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 // Local
 import { SERVER_IP } from "@/const.ts";
 
-const Auth: FC<{ children: React.ReactNode }> = ({ children }): React.ReactElement => {
+const Auth: FC<{ children: React.ReactNode }> = ({
+	children,
+}): React.ReactElement => {
 	const [auth, setAuth] = useState<boolean>(false);
 	const navigate = useNavigate();
 
@@ -23,9 +25,7 @@ const Auth: FC<{ children: React.ReactNode }> = ({ children }): React.ReactEleme
 		});
 	}, []);
 
-	return auth
-		? <div>{children}</div>
-		: <div></div>;
-}
+	return auth ? <div>{children}</div> : <div></div>;
+};
 
 export default Auth;
