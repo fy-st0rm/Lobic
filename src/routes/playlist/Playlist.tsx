@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import SongContainer from "../../components/SongContainer/SongContainer";
-import PlaylistImage from "/playlistimages/playlistimage.png";
+import SongContainer from "@/components/SongContainer/SongContainer";
 import User1 from "/user_images/manish.jpg";
 import User2 from "/user_images/sameep.jpg";
-import { Dot } from "lucide-react";
+import { Dot, Edit } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
 
 import {
 	fetchPlaylistById,
 	PlaylistResponse,
-	Playlist as PlaylistType, // Renamed to avoid conflict
-	Song,
+	updatePlaylistCoverImg,
+	fetchPlaylistCoverImg,
 } from "../../api/playlistApi";
 
-function Playlist() {
+function Playlist({}) {
 	const { appState } = useAppProvider();
 	const currentUserId = appState.user_id;
 	const { playlistId } = useParams<{ playlistId: string }>();
@@ -22,19 +21,22 @@ function Playlist() {
 		null,
 	);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [playlistCover, setPlaylistCover] = useState<string>(
+		"/playlistimages/playlistimage.png",
+	);
+	const [timestamp, setTimestamp] = useState<number>(Date.now());
 
 	useEffect(() => {
-		const loadPlaylistData = async () => {
+		const loadPlaylistData = async (): Promise<void> => {
 			try {
 				if (playlistId) {
 					const data: PlaylistResponse = await fetchPlaylistById(playlistId);
 					setPlaylistData(data);
+					const coverImageUrl = await fetchPlaylistCoverImg(playlistId);
+					setPlaylistCover(coverImageUrl);
 				}
 			} catch (error) {
-				setError(
-					error instanceof Error ? error.message : "An unknown error occurred",
-				);
+				console.error("Error:", error);
 			} finally {
 				setIsLoading(false);
 			}
@@ -43,22 +45,50 @@ function Playlist() {
 		loadPlaylistData();
 	}, [playlistId]);
 
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
+	const handleImageChange = async (
+		event: React.ChangeEvent<HTMLInputElement>,
+	) => {
+		const file = event.target.files?.[0];
+		if (!file || !playlistId) return;
 
-	if (error) {
-		return <div>Error: {error}</div>;
-	}
+		try {
+			const tempImageUrl = URL.createObjectURL(file);
+			setPlaylistCover(tempImageUrl);
+
+			await updatePlaylistCoverImg(playlistId, tempImageUrl);
+			setTimestamp(Date.now());
+
+			const newImageUrl = `${await fetchPlaylistCoverImg(playlistId)}?t=${Date.now()}`;
+			setPlaylistCover(newImageUrl);
+
+			URL.revokeObjectURL(tempImageUrl);
+		} catch (error) {
+			console.error("Error updating playlist cover image:", error);
+			setPlaylistCover("/playlistimages/playlistimage.png");
+		}
+	};
 
 	return (
 		<>
 			<div className="absolute flex gap-6 top-[20%] left-[10%] playlistinfo h-[50%] w-[20%]">
-				<div className="playlistcover relative self-center rounded-[10px]">
+				<div className="playlistcover relative self-center rounded-[10px] h-48 w-48">
 					<img
-						src={PlaylistImage}
-						className="h-[50%] w-[28.125]"
+						src={`${playlistCover}?t=${timestamp}`}
+						className="h-full w-full object-cover rounded-[10px]"
 						alt="Playlist Cover"
+					/>
+					<label
+						htmlFor="edit-cover"
+						className="absolute top-2 right-2 cursor-pointer"
+					>
+						<Edit className="h-4 w-4 text-white bg-black rounded-full p-1" />
+					</label>
+					<input
+						id="edit-cover"
+						type="file"
+						accept="image/*"
+						style={{ display: "none" }}
+						onChange={handleImageChange}
 					/>
 				</div>
 				<div className="playlistinfo self-center">

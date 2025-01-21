@@ -226,7 +226,7 @@ export const updateHostMusicState = (
 	socket: WebSocket | null,
 	appState: AppState,
 	lobbyState: LobbyState,
-	musicState: MusicState
+	musicState: MusicState,
 ) => {
 	if (!lobbyState.in_lobby) return;
 	if (!musicState.id) return;
@@ -245,4 +245,4 @@ export const updateHostMusicState = (
 		},
 	};
 	wsSend(socket, payload);
-}
+};

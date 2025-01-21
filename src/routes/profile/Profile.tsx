@@ -11,7 +11,6 @@ import { User, getUserData } from "api/userApi";
 // Assets
 import "./Profile.css";
 
-
 function Profile() {
 	const { appState } = useAppProvider();
 
@@ -39,11 +38,6 @@ function Profile() {
 
 		fetchUserData();
 	}, [appState]);
-
-	if (loading) {
-		return <div>Loading...</div>; // Add a loading state
-	}
-
 	return (
 		<>
 			<div className="home-container">

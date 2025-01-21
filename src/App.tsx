@@ -17,7 +17,6 @@ import Profile from "routes/profile/Profile";
 import MusicPlayer from "components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";
 
-
 function App(): React.ReactElement {
 	const location = useLocation(); // Get the current route location
 
@@ -76,12 +75,7 @@ function App(): React.ReactElement {
 						</Auth>
 					}
 				/>
-				<Route
-					path="/playlist/:playlistId"
-					element={
-						<Playlist />
-					}
-				/>
+				<Route path="/playlist/:playlistId" element={<Playlist />} />
 				<Route
 					path="/playlists"
 					element={

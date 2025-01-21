@@ -1,11 +1,17 @@
 // Node modules
-import React, { FC, createContext, useContext, useRef, useState, useEffect } from "react";
+import React, {
+	FC,
+	createContext,
+	useContext,
+	useRef,
+	useState,
+	useEffect,
+} from "react";
 
 // Local
 import { useAppProvider } from "providers/AppProvider.tsx";
 import { OpCode, SocketResponse, wsSend } from "api/socketApi.ts";
 import { WS_SERVER_IP } from "@/const.ts";
-
 
 /*
  * Types that defines the message handlers
@@ -15,7 +21,6 @@ type MsgHandler = (response: SocketResponse) => void;
 type MsgHandlers = {
 	[id in OpCode]: MsgHandler;
 };
-
 
 /*
  * SocketContext Type
@@ -28,7 +33,6 @@ export type SocketContextType = {
 	addMsgHandler: (tag: OpCode, handler: MsgHandler) => void;
 };
 
-
 // Creating context width default values will be assigned later in providers
 const defaultContext: SocketContextType = {
 	getSocket: () => null,
@@ -37,8 +41,9 @@ const defaultContext: SocketContextType = {
 
 const SocketContext = createContext<SocketContextType>(defaultContext);
 
-
-export const SocketProvider: FC<{ children: React.ReactNode }> = ({ children }): React.ReactElement => {
+export const SocketProvider: FC<{ children: React.ReactNode }> = ({
+	children,
+}): React.ReactElement => {
 	const ws = useRef<WebSocket>(new WebSocket(WS_SERVER_IP));
 	const msgHandlers = useRef<MsgHandlers>({} as MsgHandlers);
 
@@ -46,11 +51,11 @@ export const SocketProvider: FC<{ children: React.ReactNode }> = ({ children }):
 
 	const getSocket = (): WebSocket | null => {
 		return ws.current;
-	}
+	};
 
 	const addMsgHandler = (tag: OpCode, handler: MsgHandler) => {
 		msgHandlers.current[tag] = handler;
-	}
+	};
 
 	useEffect(() => {
 		ws.current.onopen = () => {
@@ -102,6 +107,6 @@ export const SocketProvider: FC<{ children: React.ReactNode }> = ({ children }):
 			{children}
 		</SocketContext.Provider>
 	);
-}
+};
 
 export const useSocketProvider = () => useContext(SocketContext);

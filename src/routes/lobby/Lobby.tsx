@@ -3,19 +3,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Locals
-import {
-	OpCode,
-	wsSend,
-	SocketResponse,
-	SocketPayload
-} from "api/socketApi";
+import { OpCode, wsSend, SocketResponse, SocketPayload } from "api/socketApi";
 import { LobbyModel, fetchLobbies } from "api/lobbyApi";
 import { MPState } from "api/musicApi";
 import { SERVER_IP } from "@/const";
-import {
-	LobbyCard,
-	CreateLobbyButton,
-} from "components/LobbyCard/LobbyCard";
+import { LobbyCard, CreateLobbyButton } from "components/LobbyCard/LobbyCard";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
@@ -163,6 +155,6 @@ const Lobby = (): React.ReactElement => {
 			</div>
 		</>
 	);
-}
+};
 
 export default Lobby;
