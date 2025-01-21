@@ -286,7 +286,7 @@ function MusicPlayer() {
 			<div className="queue self-center transition-all">
 				<Menu onClick={queueToggle} className="cursor-pointer"/>
 				{showQueue && (
-					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[50%] w-[20%] top-[39%] right-[5%] overflow-scroll no-scrollbar">
+					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[400px] w-[400px] bottom-[90px] right-[5%] overflow-scroll no-scrollbar">
 						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">Current Song</div>
 						<div className="">
 							<div className="flex items-center font-bold px-4 pb-2">
