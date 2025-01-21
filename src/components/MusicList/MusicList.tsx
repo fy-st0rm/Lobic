@@ -146,7 +146,7 @@ const MusicList: React.FC<MusicListProps> = ({
 		<div className="music-list-container">
 			<div className="list-header flex justify-between">
 				<h2 className="list-title">{list_title}</h2>
-				<div onClick={enqueueAllSongs} className="log-songs-button p-[10px] cursor-pointer hover:underline font-bold text-sm opacity-70">
+				<div onClick={enqueueAllSongs} className="log-songs-button m-[20px] cursor-pointer hover:underline font-bold text-sm opacity-70">
 					Enqueue
 				</div>
 			</div>
