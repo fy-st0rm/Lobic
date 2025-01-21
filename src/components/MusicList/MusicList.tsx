@@ -144,11 +144,11 @@ const MusicList: React.FC<MusicListProps> = ({
 
 	return (
 		<div className="music-list-container">
-			<div className="list-header">
+			<div className="list-header flex justify-between">
 				<h2 className="list-title">{list_title}</h2>
-				<button onClick={enqueueAllSongs} className="log-songs-button">
-					Enqueue All Songs
-				</button>
+				<div onClick={enqueueAllSongs} className="log-songs-button p-[10px] cursor-pointer hover:underline font-bold text-sm opacity-70">
+					Enqueue
+				</div>
 			</div>
 			<div className="music-list">
 				{musicItems.map((song) => (
