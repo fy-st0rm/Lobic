@@ -21,6 +21,7 @@ export type QueueContextType = {
 	queue: MusicTrack[];
 	enqueue: (track: MusicTrack) => void;
 	dequeue: () => MusicTrack | null;
+	clear: () => MusicTrack | null;
 };
 
 // Creating context width default values will be assigned later in providers
@@ -28,6 +29,7 @@ const defaultContext: QueueContextType = {
 	queue: [],
 	enqueue: () => {},
 	dequeue: () => null,
+	clear: () => null
 };
 
 const QueueContext = createContext<QueueContextType>(defaultContext);
@@ -48,6 +50,10 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		setQueue(rest);
 		return first;
 	};
+	const clear = ():  null => {
+		setQueue([]);
+		return null;
+	};
 
 	// TODO: Remove this in future when queue ui is done
 	useEffect(() => {
@@ -60,6 +66,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 				queue,
 				enqueue,
 				dequeue,
+				clear,
 			}}
 		>
 			{children}

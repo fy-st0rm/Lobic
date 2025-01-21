@@ -16,7 +16,7 @@ export enum MPState {
 
 // Define interfaces for the data structures
 export interface MusicTrack {
-	id: string;
+	id:string;
 	title: string;
 	artist: string;
 	album?: string;

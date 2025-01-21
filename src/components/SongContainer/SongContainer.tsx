@@ -57,7 +57,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 	if (error) console.error(error);
 
 	return (
-		<div className="absolute top-[11%] right-[4%] bg-primary-100 opacity-65 rounded-[18px] h-[75%] w-[40%] min-w-[300px] flex flex-col pb-5">
+		<div className="absolute top-[14%] right-[4%] bg-primary-100 opacity-65 rounded-[18px] h-[70%] w-[40%] min-w-[300px] flex flex-col pb-5">
 			{/* Header */}
 			<div className="sticky top-0 bg-primary-100 rounded-[18px] z-10">
 				<div className="flex justify-evenly mt-2 mx-2">
