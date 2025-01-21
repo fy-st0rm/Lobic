@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SongContainer from "@/components/SongContainer/SongContainer";
-import User1 from "/user_images/manish.jpg";
-import User2 from "/user_images/sameep.jpg";
+import User2 from "/user_images/sameep.jpg"; // @TODO
 import { Dot, Edit } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
+import { getUserData, fetchUserProfilePicture } from "@/api/userApi";
 
 import {
 	fetchPlaylistById,
@@ -17,14 +17,12 @@ function Playlist({}) {
 	const { appState } = useAppProvider();
 	const currentUserId = appState.user_id;
 	const { playlistId } = useParams<{ playlistId: string }>();
-	const [playlistData, setPlaylistData] = useState<PlaylistResponse | null>(
-		null,
-	);
+	const [playlistData, setPlaylistData] = useState<PlaylistResponse | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [playlistCover, setPlaylistCover] = useState<string>(
-		"/playlistimages/playlistimage.png",
-	);
+	const [playlistCover, setPlaylistCover] = useState<string>("/playlistimages/playlistimage.png");
 	const [timestamp, setTimestamp] = useState<number>(Date.now());
+	const [username, setUsername] = useState<string>("");
+	const [user1Pfp, setUser1Pfp] = useState<string>("/public/sadit.jpg"); //add a default user pfp
 
 	useEffect(() => {
 		const loadPlaylistData = async (): Promise<void> => {
@@ -45,9 +43,26 @@ function Playlist({}) {
 		loadPlaylistData();
 	}, [playlistId]);
 
-	const handleImageChange = async (
-		event: React.ChangeEvent<HTMLInputElement>,
-	) => {
+	useEffect(() => {
+		const fetchUser = async () => {
+			if (currentUserId) {
+				try {
+					const userData = await getUserData(currentUserId);
+					setUsername(userData.username);
+
+					// Fetch User1's profile picture
+					const pfpUrl = await fetchUserProfilePicture(currentUserId);
+					setUser1Pfp(pfpUrl);
+				} catch (error) {
+					console.error("Error fetching user data:", error);
+				}
+			}
+		};
+
+		fetchUser();
+	}, [currentUserId]);
+
+	const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (!file || !playlistId) return;
 
@@ -77,10 +92,7 @@ function Playlist({}) {
 						className="h-full w-full object-cover rounded-[10px]"
 						alt="Playlist Cover"
 					/>
-					<label
-						htmlFor="edit-cover"
-						className="absolute top-2 right-2 cursor-pointer"
-					>
+					<label htmlFor="edit-cover" className="absolute top-2 right-2 cursor-pointer">
 						<Edit className="h-4 w-4 text-white bg-black rounded-full p-1" />
 					</label>
 					<input
@@ -103,17 +115,17 @@ function Playlist({}) {
 							<div className="creatorimg px-1 py-[2px]">
 								<img
 									className="absolute h-[20px] w-[20px] rounded-full"
-									src={User1}
+									src={user1Pfp}
 									alt="Creator 1"
 								/>
 								<img
 									className="relative left-2 h-[20px] w-[20px] rounded-full"
-									src={User2}
+									src={User2} //@TODO
 									alt="Creator 2"
 								/>
 							</div>
 							<div className="creatorname text-white opacity-50 pb-0.5 text-[8px] font-bold self-center">
-								{currentUserId || "Unknown User"} and 1 other
+								{username || "Unknown User"} and 1 other
 							</div>
 						</div>
 						<div className="text-white opacity-50 text-[7px] font-bold self-center">
