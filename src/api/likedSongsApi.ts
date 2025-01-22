@@ -26,16 +26,14 @@ export const fetchLikedSongs = async (
 
 	try {
 		// Construct the URL with query parameters
-		const url = new URL(`${SERVER_IP}/music/liked_song/get`);
+		let url = `${SERVER_IP}/music/liked_song/get`;
 		const params = new URLSearchParams({
 			user_id: userId,
+			page_length: page_length.toString(),
+			start_index: start_index.toString(),
 		});
 
-		// Add pagination_limit if provided
-		params.append("page_length", page_length.toString());
-		params.append("start_index", start_index.toString());
-
-		url.search = params.toString();
+		url = `${url}?${params.toString()}`;
 
 		// Fetch the data
 		const response = await fetch(url, {
