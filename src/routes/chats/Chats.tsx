@@ -23,7 +23,7 @@ import crown from "/chats/crown.svg";
 function Chats(): React.ReactElement {
 	const { appState } = useAppProvider();
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
-	const { musicState, updateMusicState } = useMusicProvider();
+	const { musicState, updateMusicState, clearMusicState } = useMusicProvider();
 	const { getSocket, addMsgHandler } = useSocketProvider();
 	const navigate = useNavigate();
 
@@ -142,14 +142,7 @@ function Chats(): React.ReactElement {
 			});
 
 			// Clearing the current music when leaving lobby
-			updateMusicState({
-				id: null,
-				title: null,
-				artist: null,
-				cover_img: null,
-				state: MPState.EMPTY,
-				state_data: 0,
-			});
+			clearMusicState();
 
 			navigate("/lobby");
 		});

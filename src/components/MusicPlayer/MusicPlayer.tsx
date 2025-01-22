@@ -272,6 +272,7 @@ function MusicPlayer() {
 				</div>
 			</div>
 
+			{/* Queue */}
 			<div className="queue self-center transition-all">
 				<Menu onClick={queueToggle} className="cursor-pointer" />
 				{showQueue && (

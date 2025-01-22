@@ -37,8 +37,8 @@ function Playlist({}) {
 	);
 	const [timestamp, setTimestamp] = useState<number>(Date.now());
 	const [username, setUsername] = useState<string>("");
-	const { queue, enqueue, dequeue, clear } = useQueueProvider();
-	const { updateMusicState } = useMusicProvider();
+	const { queue, enqueue, dequeue, clearQueue } = useQueueProvider();
+	const { clearMusicState, updateMusicState } = useMusicProvider();
 
 	const [user1Pfp, setUser1Pfp] = useState<string>("/public/sadit.jpg");
 
@@ -79,9 +79,9 @@ function Playlist({}) {
 	}, [currentUserId]);
 
 	const playlistPlayed = () => {
-		queue.forEach(() => {
-			clear();
-		});
+		clearMusicState();
+		clearQueue();
+
 		let firstSong = playlistData?.songs[0];
 
 		if (firstSong) {

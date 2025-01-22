@@ -45,6 +45,7 @@ export type MusicContextType = {
 	controlsDisabled: boolean;
 	setControlsDisabled: (state: boolean) => void;
 	updateMusicState: (state: Partial<MusicState>) => void;
+	clearMusicState: () => void;
 	getAudioElement: () => HTMLAudioElement | null;
 };
 
@@ -65,6 +66,7 @@ const defaultContext: MusicContextType = {
 	controlsDisabled: false,
 	setControlsDisabled: () => {},
 	updateMusicState: () => {},
+	clearMusicState: () => {},
 	getAudioElement: () => null,
 };
 
@@ -114,6 +116,20 @@ export const MusicProvider: FC<{ children: React.ReactNode }> = ({
 		return audioRef.current;
 	};
 
+	const clearMusicState = () => {
+		updateMusicState({
+			id: null,
+			title: null,
+			artist: null,
+			cover_img: null,
+			timestamp: 0,
+			duration: 0,
+			volume: 50,
+			state: MPState.EMPTY,
+			state_data: 0,
+		});
+	};
+
 	return (
 		<MusicContext.Provider
 			value={{
@@ -123,6 +139,7 @@ export const MusicProvider: FC<{ children: React.ReactNode }> = ({
 				setControlsDisabled,
 				updateMusicState,
 				getAudioElement,
+				clearMusicState,
 			}}
 		>
 			{children}

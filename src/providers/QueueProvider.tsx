@@ -8,7 +8,8 @@ import React, {
 } from "react";
 
 // Local
-import { MusicTrack } from "api/musicApi";
+import { MPState, MusicTrack } from "api/musicApi";
+import { useMusicProvider } from "providers/MusicProvider";
 
 /*
  * QueueContext Type
@@ -21,7 +22,7 @@ export type QueueContextType = {
 	queue: MusicTrack[];
 	enqueue: (track: MusicTrack) => void;
 	dequeue: () => MusicTrack | null;
-	clear: () => MusicTrack | null;
+	clearQueue: () => void;
 };
 
 // Creating context width default values will be assigned later in providers
@@ -29,7 +30,7 @@ const defaultContext: QueueContextType = {
 	queue: [],
 	enqueue: () => {},
 	dequeue: () => null,
-	clear: () => null,
+	clearQueue: () => {},
 };
 
 const QueueContext = createContext<QueueContextType>(defaultContext);
@@ -37,10 +38,27 @@ const QueueContext = createContext<QueueContextType>(defaultContext);
 export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 	children,
 }): React.ReactElement => {
+	const { musicState, updateMusicState } = useMusicProvider();
+
 	const [queue, setQueue] = useState<MusicTrack[]>([]);
 
 	const enqueue = (track: MusicTrack) => {
-		setQueue((prevQueue) => [...prevQueue, track]);
+		setQueue((prevQueue) => {
+			// Play the song if the current song is not set
+			if (queue.length === 0 && !musicState.id) {
+				updateMusicState({
+					id: track.id,
+					title: track.title,
+					artist: track.artist,
+					cover_img: track.cover_img,
+					timestamp: 0,
+					state: MPState.CHANGE_MUSIC,
+				});
+				return [];
+			}
+			return [...prevQueue, track]
+		});
+
 	};
 
 	const dequeue = (): MusicTrack | null => {
@@ -50,15 +68,10 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		setQueue(rest);
 		return first;
 	};
-	const clear = (): null => {
-		setQueue([]);
-		return null;
-	};
 
-	// TODO: Remove this in future when queue ui is done
-	useEffect(() => {
-		console.log(queue);
-	}, [queue]);
+	const clearQueue = () => {
+		setQueue([]);
+	};
 
 	return (
 		<QueueContext.Provider
@@ -66,7 +79,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 				queue,
 				enqueue,
 				dequeue,
-				clear,
+				clearQueue,
 			}}
 		>
 			{children}

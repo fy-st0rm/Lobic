@@ -22,7 +22,7 @@ const Lobby = (): React.ReactElement => {
 	const { appState } = useAppProvider();
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { getSocket, addMsgHandler } = useSocketProvider();
-	const { musicState, updateMusicState } = useMusicProvider();
+	const { musicState, clearMusicState } = useMusicProvider();
 
 	const [showContent, setShowContent] = useState<boolean>(false);
 	const [lobbies, setLobbies] = useState<LobbyModel[]>([]);
@@ -73,14 +73,7 @@ const Lobby = (): React.ReactElement => {
 			});
 
 			// Clearing the current music when creating a new lobby
-			updateMusicState({
-				id: null,
-				title: null,
-				artist: null,
-				cover_img: null,
-				state: MPState.EMPTY,
-				state_data: 0,
-			});
+			clearMusicState();
 
 			// Switching to chat page when sucessfully created lobby
 			navigate("/chats");
@@ -107,14 +100,7 @@ const Lobby = (): React.ReactElement => {
 			});
 
 			// Clearing the current music when creating a new lobby
-			updateMusicState({
-				id: null,
-				title: null,
-				artist: null,
-				cover_img: null,
-				state: MPState.EMPTY,
-				state_data: 0,
-			});
+			clearMusicState();
 
 			navigate("/chats");
 		});
