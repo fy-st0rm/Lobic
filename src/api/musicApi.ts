@@ -59,16 +59,14 @@ export const fetchTrendingSongs = async (
 	page_length = 20,
 ): Promise<MusicTrack[]> => {
 	try {
-		// const response = await fetch(`${SERVER_IP}/music/get_trending`);
+		let url = `${SERVER_IP}/music/get_trending`;
+		const params = new URLSearchParams({
+			page_length: page_length.toString(),
+			start_index: start_index.toString(),
+		});
 
-		const url = new URL(`${SERVER_IP}/music/get_trending`);
-		const params = new URLSearchParams({});
-
-		params.append("page_length", page_length.toString());
-		params.append("start_index", start_index.toString());
-
-		url.search = params.toString();
-
+		// Append params to URL
+		url = `${url}?${params.toString()}`;
 		// Fetch the data
 		const response = await fetch(url, {
 			method: "GET",
@@ -89,13 +87,6 @@ export const fetchTrendingSongs = async (
 	}
 };
 
-/**
- * Fetches a list of recently played songs for a specific user.
- * @param {string | null} userId - The ID of the user.
- * @param {number} paginationLimit - The number of songs to fetch.
- * @returns {Promise<RecentlyPlayedSong[]>} - A list of recently played songs.
- * @throws {Error} If userId is null
- */
 export const fetchRecentlyPlayed = async (
 	userId: string | null,
 	start_index = 0,
@@ -106,14 +97,13 @@ export const fetchRecentlyPlayed = async (
 	}
 
 	try {
-		const url = new URL(`${SERVER_IP}/music/get_recently_played`);
+		let url = `${SERVER_IP}/music/get_recently_played`;
 		const params = new URLSearchParams({
 			user_id: userId,
 			page_length: page_length.toString(),
 			start_index: start_index.toString(),
 		});
-		url.search = params.toString();
-
+		url = `${url}?${params.toString()}`;
 		const response = await fetch(url, {
 			method: "GET",
 			headers: {

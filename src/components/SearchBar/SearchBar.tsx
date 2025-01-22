@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isDisabled, onClearInput }) => {
 		const fetchAndSetSuggestions = async () => {
 			if (inputValue.trim()) {
 				try {
-					const results = await searchMusic(inputValue, 8); // Fetch suggestions from API
+					const results = await searchMusic(inputValue, 0, 10); // Fetch suggestions from API
 					setSuggestions(results.map((result: any) => result.title)); // Adjust mapping based on API response
 					setShowSuggestions(true); // Show popup if suggestions exist
 				} catch (error) {

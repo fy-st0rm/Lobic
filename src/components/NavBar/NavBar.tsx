@@ -159,12 +159,7 @@ function NavBar() {
 					</li>
 				</ul>
 
-				<SearchBar
-					isDisabled={isDisabled}
-					inputValue={inputValue}
-					onInputChange={handleInputChange}
-					onClearInput={handleClearButton}
-				/>
+				<SearchBar isDisabled={isDisabled} onClearInput={handleClearButton} />
 
 				<div className="user-icon">
 					<button
