@@ -10,12 +10,6 @@ interface SearchResult {
 	// Add other fields as needed
 }
 
-/**
- * Searches for music tracks based on a search string and optional query parameters.
- * @param {string} searchString - The search query.
- * @param {number} [noResultsToGen] - Optional number of results to generate.
- * @returns {Promise<SearchResult[]>} - A list of search results.
- */
 export const searchMusic = async (
 	searchString: string,
 	start_index = 0,
@@ -27,9 +21,8 @@ export const searchMusic = async (
 			search_string: searchString,
 		});
 
-		// Add pagination_limit if provided
-		params.append("page_length", page_length.toString());
-		params.append("start_index", start_index.toString());
+		// Append params to URL
+		url = `${url}?${params.toString()}`;
 		const response = await fetch(url);
 
 		if (!response.ok) {
