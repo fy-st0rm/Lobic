@@ -135,7 +135,7 @@ function Playlist({}) {
 			<div className="absolute flex gap-6 top-[20%] left-[10%] playlistinfo h-[50%] w-[50%]">
 				<div className="playlistcover relative self-center rounded-[10px] h-[50%] w-[28.125] overflow-hidden">
 					<img
-					// playlist-cover-image
+						// playlist-cover-image
 						src={`${playlistCover}?t=${timestamp}`}
 						className="w-full h-full object-cover"
 						alt="Playlist Cover"
@@ -161,7 +161,9 @@ function Playlist({}) {
 						{playlistData?.playlist?.playlist_name || "Untitled Playlist"}
 					</div>
 					<div className="typeofplaylist text-white text-[15px] relative pl-2 top-[-9px] font-thin">
-						{playlistData?.playlist?.description || "Combined Playlist"}
+						{playlistData?.playlist?.is_playlist_combined
+							? "Combined Playlist"
+							: "Solo Playlist"}
 					</div>
 					<div className="infobar flex relative top-[-9px]">
 						<div className="playlistcreators flex gap-2">
