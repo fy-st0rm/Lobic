@@ -12,6 +12,7 @@ import { useAppProvider } from "providers/AppProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
+import { useQueueProvider } from "providers/QueueProvider";
 
 import { LobbyMembers, LobblersArea } from "./LobblersArea";
 import { Message, MessageArea } from "./MessageArea";
@@ -25,6 +26,7 @@ function Chats(): React.ReactElement {
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { musicState, updateMusicState, clearMusicState } = useMusicProvider();
 	const { getSocket, addMsgHandler } = useSocketProvider();
+	const { updateQueue } = useQueueProvider();
 	const navigate = useNavigate();
 
 	const [inputValue, setInputValue] = useState<string>("");
@@ -76,6 +78,21 @@ function Chats(): React.ReactElement {
 		const payload = {
 			op_code: OpCode.GET_LOBBY_MEMBERS,
 			value: { lobby_id: lobbyState.lobby_id },
+		};
+		wsSend(getSocket(), payload);
+	}, []);
+
+	// Responsible to sync queue in lobby
+	useEffect(() => {
+		addMsgHandler(OpCode.SYNC_QUEUE, (res: SocketResponse) => {
+			updateQueue(res.value);
+		});
+
+		const payload = {
+			op_code: OpCode.SYNC_QUEUE,
+			value: {
+				lobby_id: lobbyState.lobby_id
+			}
 		};
 		wsSend(getSocket(), payload);
 	}, []);
