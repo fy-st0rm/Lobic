@@ -22,7 +22,7 @@ function Playlists() {
 	const [playlists, setPlaylists] = useState<Playlist[]>([]);
 	const [showPlaylistAdder, setShowPlaylistAdder] = useState<boolean>(false);
 	const [playlistName, setPlaylistName] = useState<string>("UnknownPlaylist");
-	const [playlistType, setPlaylistType] = useState<string>("Solo Playlist");
+	const [playlistType, setPlaylistType] = useState<boolean>(false); // false for Solo Playlist, true for Combined Playlist
 	const [newPlaylistImage, setNewPlaylistImage] = useState<string>("");
 	const [playlistCovers, setPlaylistCovers] = useState<Record<string, string>>(
 		{},
@@ -33,7 +33,8 @@ function Playlists() {
 	};
 
 	const handleType = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setPlaylistType(e.target.value);
+		// Convert the string value to a boolean
+		setPlaylistType(e.target.value === "true");
 	};
 
 	const fetchPlaylists = async () => {
@@ -75,14 +76,15 @@ function Playlists() {
 	};
 
 	const handleAddPlaylistClick = async () => {
+		// Create the playlist data using the updated interface
 		const playlistData: CreatePlaylistData = {
 			playlist_name: playlistName,
 			user_id: currentUserId,
-			description: playlistType,
+			is_playlist_combined: playlistType, // Pass boolean for combined playlist type
 		};
 
 		try {
-			const newPlaylist = await createPlaylist(playlistData, currentUserId);
+			const newPlaylist = await createPlaylist(playlistData);
 
 			if (newPlaylistImage && newPlaylist.playlist_id) {
 				await updatePlaylistCoverImg(newPlaylist.playlist_id, newPlaylistImage);
@@ -132,7 +134,9 @@ function Playlists() {
 										{playlist.playlist_name}
 									</div>
 									<div className="text-sm text-white opacity-50">
-										{playlist.description || "No description"}
+										{playlist.is_playlist_combined
+											? "Combined PLaylist"
+											: "Solo Playlist"}
 									</div>
 								</div>
 							))}
@@ -206,10 +210,16 @@ function Playlists() {
 											>
 												Select Playlist Type
 											</option>
-											<option className="bg-[#1d586d] hover:bg-[#157697]">
+											<option
+												className="bg-[#1d586d] hover:bg-[#157697]"
+												value="false"
+											>
 												Solo Playlist
 											</option>
-											<option className="bg-[#1d586d] hover:bg-[#157697]">
+											<option
+												className="bg-[#1d586d] hover:bg-[#157697]"
+												value="true"
+											>
 												Combined Playlist
 											</option>
 										</select>

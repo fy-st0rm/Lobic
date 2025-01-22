@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { EllipsisVertical } from "lucide-react";
 
 // Local
-import { fetchUserPlaylists, addSongToPlaylist } from "api/playlistApi";
+import {
+	fetchUserPlaylists,
+	addSongToPlaylist,
+	//types
+	Playlist,
+	FetchUserPlaylistsResponse,
+} from "api/playlistApi";
 import { toggleSongLiked } from "api/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
@@ -17,14 +23,6 @@ interface MusicProps {
 	artist: string;
 	coverArt: string;
 	onClick: () => void;
-}
-
-interface Playlist {
-	playlist_id: string;
-	playlist_name: string;
-	creation_date_time: string;
-	description: string;
-	last_updated_date_time: string;
 }
 
 const Music: React.FC<MusicProps> = ({
@@ -51,11 +49,6 @@ const Music: React.FC<MusicProps> = ({
 
 		enqueue(track);
 	};
-
-	interface FetchUserPlaylistsResponse {
-		user_id: string;
-		playlists: Playlist[]; // Array of playlists
-	}
 
 	const handleAddToPlaylist = async (): Promise<void> => {
 		try {

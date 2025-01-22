@@ -5,20 +5,9 @@ export interface Playlist {
 	cover_image: any;
 	playlist_id: string;
 	playlist_name: string;
-	description: string;
+	is_playlist_combined: boolean;
 	creation_date_time: string;
 	last_updated_date_time: string;
-}
-
-export interface FetchUserPlaylistsResponse {
-	user_id: string;
-	playlists: Playlist[];
-}
-
-export interface CreatePlaylistData {
-	playlist_name: string;
-	user_id: string;
-	description?: string;
 }
 
 export interface Song {
@@ -40,7 +29,11 @@ export interface AddSongToPlaylistData {
 	music_id: string;
 }
 
-// API Functions
+export interface FetchUserPlaylistsResponse {
+	user_id: string;
+	playlists: Playlist[];
+}
+
 export const fetchUserPlaylists = async (
 	userId: string,
 ): Promise<FetchUserPlaylistsResponse> => {
@@ -66,9 +59,14 @@ export const fetchUserPlaylists = async (
 	}
 };
 
+export interface CreatePlaylistData {
+	playlist_name: string;
+	user_id: string;
+	is_playlist_combined: boolean;
+}
+
 export const createPlaylist = async (
 	playlistData: CreatePlaylistData,
-	userId: string,
 ): Promise<{
 	playlist_id: string;
 	message: string;
@@ -79,7 +77,8 @@ export const createPlaylist = async (
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ ...playlistData, user_id: userId }),
+			// body: JSON.stringify({ ...playlistData, user_id: userId }),
+			body: JSON.stringify(playlistData),
 		});
 
 		const result = await response.json();
