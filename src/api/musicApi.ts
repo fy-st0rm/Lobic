@@ -98,7 +98,7 @@ export const fetchTrendingSongs = async (
  */
 export const fetchRecentlyPlayed = async (
 	userId: string | null,
-	start_index = 10,
+	start_index = 0,
 	page_length = 20,
 ): Promise<RecentlyPlayedSong[]> => {
 	if (!userId) {
