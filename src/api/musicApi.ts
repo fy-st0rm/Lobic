@@ -54,9 +54,28 @@ export const fetchMusicList = async (): Promise<MusicTrack[]> => {
  * Fetches a list of trending music tracks.
  * @returns {Promise<MusicTrack[]>} - A list of trending music tracks.
  */
-export const fetchTrendingSongs = async (): Promise<MusicTrack[]> => {
+export const fetchTrendingSongs = async (
+	start_index = 0,
+	page_length = 20,
+): Promise<MusicTrack[]> => {
 	try {
-		const response = await fetch(`${SERVER_IP}/music/get_trending`);
+		// const response = await fetch(`${SERVER_IP}/music/get_trending`);
+
+		const url = new URL(`${SERVER_IP}/music/get_trending`);
+		const params = new URLSearchParams({});
+
+		params.append("page_length", page_length.toString());
+		params.append("start_index", start_index.toString());
+
+		url.search = params.toString();
+
+		// Fetch the data
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
 		if (!response.ok) {
 			throw new Error("Failed to fetch trending music data");
@@ -79,7 +98,8 @@ export const fetchTrendingSongs = async (): Promise<MusicTrack[]> => {
  */
 export const fetchRecentlyPlayed = async (
 	userId: string | null,
-	paginationLimit: number = 30,
+	start_index = 10,
+	page_length = 20,
 ): Promise<RecentlyPlayedSong[]> => {
 	if (!userId) {
 		throw new Error("User ID is required to fetch recently played songs");
@@ -89,7 +109,8 @@ export const fetchRecentlyPlayed = async (
 		const url = new URL(`${SERVER_IP}/music/get_recently_played`);
 		const params = new URLSearchParams({
 			user_id: userId,
-			pagination_limit: paginationLimit.toString(),
+			page_length: page_length.toString(),
+			start_index: start_index.toString(),
 		});
 		url.search = params.toString();
 

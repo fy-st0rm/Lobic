@@ -18,18 +18,18 @@ interface SearchResult {
  */
 export const searchMusic = async (
 	searchString: string,
-	noResultsToGen?: number,
+	start_index = 0,
+	page_length = 20,
 ): Promise<SearchResult[]> => {
 	try {
-		let url = `${SERVER_IP}/search?search_string=${encodeURIComponent(
-			searchString,
-		)}`;
+		let url = `${SERVER_IP}/search`;
+		const params = new URLSearchParams({
+			search_string: searchString,
+		});
 
-		// Add optional number of results parameter if specified
-		if (noResultsToGen !== undefined) {
-			url += `&no_results_to_gen=${encodeURIComponent(noResultsToGen)}`;
-		}
-
+		// Add pagination_limit if provided
+		params.append("page_length", page_length.toString());
+		params.append("start_index", start_index.toString());
 		const response = await fetch(url);
 
 		if (!response.ok) {
