@@ -16,7 +16,8 @@ interface LikedSong {
  */
 export const fetchLikedSongs = async (
 	userId: string | null,
-	paginationLimit?: number,
+	start_index = 0,
+	page_length = 20,
 ): Promise<LikedSong[]> => {
 	if (!userId) {
 		console.log("No user ID provided, returning empty playlist array");
@@ -31,9 +32,8 @@ export const fetchLikedSongs = async (
 		});
 
 		// Add pagination_limit if provided
-		if (paginationLimit !== undefined) {
-			params.append("pagination_limit", paginationLimit.toString());
-		}
+		params.append("page_length", page_length.toString());
+		params.append("start_index", start_index.toString());
 
 		url.search = params.toString();
 
