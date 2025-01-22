@@ -138,6 +138,10 @@ const MusicList: React.FC<MusicListProps> = ({
 		});
 	};
 
+	const handleShowAll = (): void => {
+		console.log(`Showing all songs in "${list_title}":`, musicItems);
+	};
+
 	if (renderOnlyOnSuccess && isEmpty) {
 		return null;
 	}
@@ -146,11 +150,19 @@ const MusicList: React.FC<MusicListProps> = ({
 		<div className="music-list-container">
 			<div className="list-header flex justify-between">
 				<h2 className="list-title">{list_title}</h2>
-				<div
-					onClick={enqueueAllSongs}
-					className="log-songs-button m-[20px] cursor-pointer hover:underline font-bold text-sm opacity-70"
-				>
-					Enqueue
+				<div className="flex items-center gap-4">
+					<div
+						onClick={enqueueAllSongs}
+						className="log-songs-button cursor-pointer hover:underline font-bold text-sm opacity-70"
+					>
+						Enqueue
+					</div>
+					<div
+						onClick={handleShowAll}
+						className="show-all-button cursor-pointer hover:underline font-bold text-sm opacity-70"
+					>
+						Show All
+					</div>
 				</div>
 			</div>
 			<div className="music-list">
@@ -170,6 +182,27 @@ const MusicList: React.FC<MusicListProps> = ({
 						/>
 					</div>
 				))}
+				{/* Add a "Show All" Music-like component */}
+				<div
+					className="music-item-wrapper show-all-music-item"
+					onClick={handleShowAll}
+				>
+					<div className="music-container">
+						<div className="music-photo-container">
+							<div className="music-photo show-all-photo">
+								<span className="show-all-text">Show All</span>
+							</div>
+						</div>
+						<div className="info-container">
+							<div className="music-info">
+								<h2 className="music-title">Show All</h2>
+								<h3 className="artist-name opacity-75">
+									{musicItems.length} songs
+								</h3>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
