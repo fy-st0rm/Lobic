@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SongInfo from "components/SongInfo/SongInfo";
-import { useMusicProvider } from "providers/MusicProvider";
+import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import { MPState, getMusicImageUrl } from "api/musicApi";
 
 interface Song {
@@ -8,15 +8,6 @@ interface Song {
 	title: string;
 	artist: string;
 	album: string;
-}
-
-interface MusicState {
-	id: string;
-	title: string;
-	artist: string;
-	cover_img: string;
-	timestamp: number;
-	state: MPState;
 }
 
 interface SongContainerProps {

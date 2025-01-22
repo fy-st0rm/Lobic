@@ -8,11 +8,12 @@ import {
 	fetchTrendingSongs,
 	fetchRecentlyPlayed,
 	logSongPlay,
+	MusicTrack as Song,
 } from "api/musicApi";
 import { fetchLikedSongs } from "api/likedSongsApi";
 import { fetchTopTracks } from "api/topTracksApi";
 import { useAppProvider } from "providers/AppProvider";
-import { useMusicProvider } from "providers/MusicProvider";
+import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import { useMusicLists } from "@/contexts/MusicListContext";
 import { useQueueProvider } from "providers/QueueProvider";
 
@@ -21,23 +22,6 @@ import "./MusicList.css";
 interface MusicListProps {
 	list_title: string;
 	renderOnlyOnSuccess: boolean;
-}
-
-interface Song {
-	id: string;
-	title: string;
-	artist: string;
-	album?: string;
-	genre?: string;
-}
-
-interface MusicState {
-	id: string;
-	title: string;
-	artist: string;
-	cover_img: string;
-	timestamp: number;
-	state: MPState;
 }
 
 type ListLoaderMap = {

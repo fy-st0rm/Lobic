@@ -7,22 +7,13 @@ import { useAppProvider } from "providers/AppProvider";
 import { getUserData, fetchUserProfilePicture } from "@/api/userApi";
 import { getMusicImageUrl, MPState } from "api/musicApi";
 import { useQueueProvider } from "providers/QueueProvider";
-import { useMusicProvider } from "providers/MusicProvider";
+import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import {
 	fetchPlaylistById,
 	PlaylistResponse,
 	updatePlaylistCoverImg,
 	fetchPlaylistCoverImg,
 } from "../../api/playlistApi";
-
-interface MusicState {
-	id: string;
-	title: string;
-	artist: string;
-	cover_img: string;
-	timestamp: number;
-	state: MPState;
-}
 
 function Playlist({}) {
 	const { appState } = useAppProvider();
