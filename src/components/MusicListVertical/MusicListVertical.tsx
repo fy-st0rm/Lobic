@@ -241,7 +241,6 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				{songs.map((song) => (
 					<div
 						key={song.id}
-						onClick={() => handleSongPlay(song)}
 						className={`relative flex items-center p-4 rounded-lg transition-colors ${
 							selectedSongId === song.id
 								? "bg-green-800"
@@ -253,6 +252,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 							src={song.cover_img}
 							alt={song.title}
 							className="w-16 h-16 rounded-lg object-cover"
+							onClick={() => handleSongPlay(song)}
 						/>
 
 						{/* Song Details */}
