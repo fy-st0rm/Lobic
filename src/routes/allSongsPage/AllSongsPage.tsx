@@ -9,15 +9,17 @@ import {
 import { useAppProvider } from "@/providers/AppProvider";
 import { fetchLikedSongs } from "@/api/likedSongsApi";
 import { fetchTopTracks } from "@/api/topTracksApi";
+import MusicListVertical from "@/components/MusicListVertical/MusicListVertical";
+import { MusicListsProvider } from "@/contexts/MusicListContext";
 
 const AllSongsPage: React.FC = () => {
 	const location = useLocation();
 	const { appState } = useAppProvider();
 
 	const [listTitle, setListTitle] = useState("All Songs");
-	const [songs, setSongs] = useState<MusicTrack[]>([]);
-
 	const userId = appState.user_id;
+
+	// Function to fetch songs based on listType
 	const fetchSongs = async (
 		listType: string,
 		userId: string,
@@ -38,33 +40,22 @@ const AllSongsPage: React.FC = () => {
 		}
 	};
 
-	useEffect(() => {
-		const loadSongs = async () => {
-			try {
-				const listType = location.state?.listTitle || "Featured Music";
-				setListTitle(listType);
-
-				// Fetch songs using the fetchSongs function
-				const fetchedSongs = await fetchSongs(listType, userId, 0, 10);
-				setSongs(fetchedSongs);
-
-				console.log(fetchedSongs);
-			} catch (error) {
-				console.error("Error fetching songs:", error);
-			}
-		};
-
-		loadSongs();
-	}, [location.state?.listTitle, userId]);
+	// Determine the listType and create a fetch function for MusicListVertical
+	const listType = location.state?.listTitle || "Featured Music";
+	const fetchSongsForList = async (
+		start_index: number,
+		page_length: number,
+	) => {
+		return fetchSongs(listType, userId, start_index, page_length);
+	};
 
 	return (
-		<div>
-			<h1>{listTitle}</h1>
-			{/* Render the songs here */}
-			{songs.map((song) => (
-				<div key={song.id}>{song.title}</div>
-			))}
-		</div>
+		<MusicListsProvider>
+			<div className="p-6 bg-gray-900 min-h-screen text-white">
+				<h1 className="text-3xl font-bold mb-6">{listTitle}</h1>
+				<MusicListVertical fetchSongs={fetchSongsForList} />
+			</div>
+		</MusicListsProvider>
 	);
 };
 
