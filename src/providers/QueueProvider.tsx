@@ -40,6 +40,19 @@ const defaultContext: QueueContextType = {
 
 const QueueContext = createContext<QueueContextType>(defaultContext);
 
+
+/*
+ * Loads QueueState from session storage
+ * @returns {MusicTrack[]} - The loaded queue state
+ */
+
+const loadQueueState = (): MusicTrack[] => {
+	const savedState = sessionStorage.getItem("QueueState");
+	return savedState
+		? JSON.parse(savedState).queue
+		: [];
+}
+
 export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 	children,
 }): React.ReactElement => {
@@ -47,7 +60,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 	const { lobbyState } = useLobbyProvider();
 	const { getSocket } = useSocketProvider();
 
-	const [queue, setQueue] = useState<MusicTrack[]>([]);
+	const [queue, setQueue] = useState<MusicTrack[]>(loadQueueState);
 
 	useEffect(() => {
 		if (lobbyState.in_lobby && lobbyState.is_host) {
@@ -72,11 +85,17 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 	}, [queue]);
 
 	const updateQueue = (queue: MusicTrack[]) => {
+		const newState = {
+			queue: queue
+		};
+		sessionStorage.setItem("QueueState", JSON.stringify(newState));
 		setQueue(queue);
 	}
 
 	const enqueue = (track: MusicTrack) => {
 		setQueue((prevQueue) => {
+			let newQueue: MusicTrack[] = [];
+
 			// Play the song if the current song is not set
 			if (queue.length === 0 && !musicState.id) {
 				updateMusicState({
@@ -87,9 +106,16 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 					timestamp: 0,
 					state: MPState.CHANGE_MUSIC,
 				});
-				return [];
+				newQueue = [];
+			} else {
+				newQueue = [...prevQueue, track]
 			}
-			return [...prevQueue, track]
+
+			const newState = {
+				queue: newQueue
+			};
+			sessionStorage.setItem("QueueState", JSON.stringify(newState));
+			return newQueue;
 		});
 
 	};
@@ -98,12 +124,13 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		if (queue.length === 0) return null;
 
 		const [first, ...rest] = queue;
-		setQueue(rest);
+
+		updateQueue(rest);
 		return first;
 	};
 
 	const clearQueue = () => {
-		setQueue([]);
+		updateQueue([]);
 	};
 
 	return (
