@@ -16,6 +16,7 @@ import { useAppProvider } from "providers/AppProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import { useMusicLists } from "@/contexts/MusicListContext";
 import { useQueueProvider } from "providers/QueueProvider";
+import { useNavigate } from "react-router-dom";
 
 import "./MusicList.css";
 
@@ -40,6 +41,7 @@ const MusicList: React.FC<MusicListProps> = ({
 	list_title,
 	renderOnlyOnSuccess,
 }) => {
+	const navigate = useNavigate();
 	const [musicItems, setMusicItems] = useState<Song[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
@@ -123,7 +125,7 @@ const MusicList: React.FC<MusicListProps> = ({
 	};
 
 	const handleShowAll = (): void => {
-		console.log(`Showing all songs in "${list_title}":`, musicItems);
+		navigate("/show_all", { state: { listTitle: list_title } });
 	};
 
 	if (renderOnlyOnSuccess && isEmpty) {
@@ -166,27 +168,6 @@ const MusicList: React.FC<MusicListProps> = ({
 						/>
 					</div>
 				))}
-				{/* Add a "Show All" Music-like component */}
-				<div
-					className="music-item-wrapper show-all-music-item"
-					onClick={handleShowAll}
-				>
-					<div className="music-container">
-						<div className="music-photo-container">
-							<div className="music-photo show-all-photo">
-								<span className="show-all-text">Show All</span>
-							</div>
-						</div>
-						<div className="info-container">
-							<div className="music-info">
-								<h2 className="music-title">Show All</h2>
-								<h3 className="artist-name opacity-75">
-									{musicItems.length} songs
-								</h3>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	);

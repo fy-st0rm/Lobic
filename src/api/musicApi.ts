@@ -33,19 +33,35 @@ interface RecentlyPlayedSong extends MusicTrack {
  * Fetches a list of music tracks.
  * @returns {Promise<MusicTrack[]>} - A list of music tracks.
  */
-export const fetchMusicList = async (): Promise<MusicTrack[]> => {
+export const fetchMusicList = async (
+	start_index = 0,
+	page_length = 20,
+): Promise<MusicTrack[]> => {
 	try {
-		const url = `${SERVER_IP}/get_music`;
-		const response = await fetch(url);
+		let url = `${SERVER_IP}/music/get_music`;
+		const params = new URLSearchParams({
+			page_length: page_length.toString(),
+			start_index: start_index.toString(),
+		});
+
+		// Append params to URL
+		url = `${url}?${params.toString()}`;
+		// Fetch the data
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
 		if (!response.ok) {
-			throw new Error("Failed to fetch music data");
+			throw new Error("Failed to fetch featured music data");
 		}
 
 		const data: MusicTrack[] = await response.json();
 		return data;
 	} catch (error) {
-		console.error("Error fetching music list:", error);
+		console.error("Error fetching trending songs:", error);
 		throw error;
 	}
 };
