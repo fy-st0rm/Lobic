@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Play, MoreVertical } from "lucide-react";
+import { EllipsisVertical, Play } from "lucide-react";
 import {
 	MusicTrack as Song,
 	getMusicImageUrl,
@@ -241,6 +241,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				{songs.map((song) => (
 					<div
 						key={song.id}
+						onClick={() => handleSongPlay(song)}
 						className={`relative flex items-center p-4 rounded-lg transition-colors ${
 							selectedSongId === song.id
 								? "bg-green-800"
@@ -252,7 +253,6 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 							src={song.cover_img}
 							alt={song.title}
 							className="w-16 h-16 rounded-lg object-cover"
-							onClick={() => handleSongPlay(song)}
 						/>
 
 						{/* Song Details */}
@@ -265,9 +265,9 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 						<div className="relative">
 							<button
 								onClick={() => toggleDropdown(song.id)}
-								className="hover:bg-gray-700 rounded-full p-2"
+								className="opacity-100 hover:bg-gray-700 rounded-full p-2"
 							>
-								<MoreVertical className="h-5 w-5 text-white" />
+								<EllipsisVertical className="opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" />
 							</button>
 
 							{openDropdownId === song.id && (
@@ -304,13 +304,6 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 						</div>
 					</div>
 				))}
-
-				{/* Loading Spinner */}
-				{isLoading && (
-					<div className="flex justify-center py-4">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-					</div>
-				)}
 
 				{/* No More Songs */}
 				{!hasMore && !isLoading && (
