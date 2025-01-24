@@ -1,7 +1,7 @@
 // Node modules
 import React, { FC, useState, useEffect } from "react";
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 
 // Local
@@ -10,7 +10,7 @@ import { useSocketProvider } from "providers/SocketProvider";
 import { fetchUserProfilePicture, getUserData } from "api/userApi";
 
 type Notification = {
-	id: string,
+	id: string;
 	op_code: OpCode;
 	value: any;
 };
@@ -49,28 +49,39 @@ const NotificationSystem = (): React.ReactElement => {
 				const onAccept = (id: string | number) => {
 					// TODO: Add friend
 					toast.dismiss(id);
-				}
+				};
 
 				const onReject = (id: string | number) => {
 					// TODO: Remove from notification
 					toast.dismiss(id);
-				}
+				};
 
 				let tId = toast(
 					<div>
 						<div className="flex items-center justify-center space-x-4">
-								<img src={pfp} className="w-[70px] h-[70px] rounded-[10px] m-[5px]"></img>
+							<img
+								src={pfp}
+								className="w-[70px] h-[70px] rounded-[10px] m-[5px]"
+							></img>
 							<div className="flex flex-col">
 								<p> @{user.username} sent you a friend request.</p>
 								<div className="flex space-x-4">
-									<Button onClick={() => onAccept(tId)}> <Check /> </Button>
-									<Button variant="destructive" onClick={() => onReject(tId)}> <X /> </Button>
+									<Button onClick={() => onAccept(tId)}>
+										{" "}
+										<Check />{" "}
+									</Button>
+									<Button variant="destructive" onClick={() => onReject(tId)}>
+										{" "}
+										<X />{" "}
+									</Button>
 								</div>
 							</div>
 						</div>
-					</div>, {
-					duration: 3000,
-				});
+					</div>,
+					{
+						duration: 3000,
+					},
+				);
 			}
 		});
 	}, [notifs]);
@@ -86,15 +97,15 @@ const NotificationSystem = (): React.ReactElement => {
 			...prevNotifs,
 			[notif.id]: notif,
 		}));
-	}
+	};
 
 	return (
 		<>
 			<Button variant="destructive" onClick={dummy}>
-				dummy notif pls ignore
+				dummy notif pls ignore it woks btw
 			</Button>
 		</>
 	);
-}
+};
 
 export default NotificationSystem;
