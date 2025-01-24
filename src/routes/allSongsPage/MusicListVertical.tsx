@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { EllipsisVertical, Play } from "lucide-react";
+import { EllipsisVertical, Heart, Play, Plus } from "lucide-react";
 import {
 	MusicTrack as Song,
 	getMusicImageUrl,
@@ -180,7 +180,6 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 	const handleAddToLikedSongs = async (song: Song): Promise<void> => {
 		try {
 			await toggleSongLiked(userId, song.id);
-			notifyMusicPlayed(song.id, "Liked Songs");
 		} catch (error) {
 			console.error("Error adding to liked songs:", error);
 		}
@@ -221,12 +220,12 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 	};
 
 	return (
-		<div
-			className="h-[600px] w-full bg-gray-900 overflow-y-auto"
-			onScroll={handleScroll}
-		>
-			{/* Play All Button */}
-			<div className="sticky top-0 z-10 bg-gray-900 p-4 flex justify-end">
+		<div className="fixed right-[10%] top-[10%] w-[80%] h-[80%] bg-gray-900 rounded-l-2xl shadow-lg overflow-hidden flex flex-col">
+			{/* Header with Play All Button */}
+			<div className="sticky top-0 z-10 bg-gray-900 p-4 flex justify-between items-center border-b border-gray-800">
+				<h2 className="flex items-center font-bold px-4 pb-3 text-xl text-white">
+					Playlist
+				</h2>
 				<button
 					onClick={playAllSongs}
 					className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-colors"
@@ -236,81 +235,93 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				</button>
 			</div>
 
-			<div className="space-y-4 p-4">
-				{/* Music List */}
+			{/* Music List Scroll Area */}
+			<div
+				className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-green-600"
+				onScroll={handleScroll}
+			>
 				{songs.map((song) => (
 					<div
 						key={song.id}
-						className={`relative flex items-center p-4 rounded-lg transition-colors ${
+						className={`flex items-center p-4 transition-colors group ${
 							selectedSongId === song.id
 								? "bg-green-800"
-								: "bg-gray-800 hover:bg-gray-700"
+								: "bg-gray-900 hover:bg-gray-800"
 						}`}
 					>
 						{/* Song Cover Image */}
 						<img
 							src={song.cover_img}
 							alt={song.title}
-							className="w-16 h-16 rounded-lg object-cover"
+							className="w-16 h-16 rounded-lg object-cover cursor-pointer"
 							onClick={() => handleSongPlay(song)}
 						/>
 
 						{/* Song Details */}
 						<div className="ml-4 flex-1">
-							<h3 className="text-lg font-semibold text-white">{song.title}</h3>
-							<p className="text-sm text-gray-400">{song.artist}</p>
+							<h3 className="text-lg font-semibold text-white truncate">
+								{song.title}
+							</h3>
+							<p className="text-sm text-gray-400 truncate">{song.artist}</p>
 						</div>
 
 						{/* More Actions */}
 						<div className="relative">
-							<button
-								onClick={() => toggleDropdown(song.id)}
-								className="opacity-100 hover:bg-gray-700 rounded-full p-2"
-							>
-								<EllipsisVertical className="opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" />
-							</button>
+							<div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+								<button
+									onClick={() => handleAddToQueue(song)}
+									className="hover:bg-gray-700 rounded-full p-2"
+								>
+									<Plus className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
+								</button>
+								<button
+									onClick={() => handleAddToLikedSongs(song)}
+									className="hover:bg-gray-700 rounded-full p-2"
+								>
+									<Heart className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
+								</button>
+								<button
+									onClick={() => toggleDropdown(song.id)}
+									className="hover:bg-gray-700 rounded-full p-2"
+								>
+									<EllipsisVertical className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
+								</button>
+							</div>
 
 							{openDropdownId === song.id && (
 								<div className="absolute right-0 top-full mt-2 w-48 bg-gray-700 rounded-lg shadow-lg z-50">
 									<div
-										className="px-4 py-2 hover:bg-gray-600 cursor-pointer"
+										className="px-4 py-2 hover:bg-gray-600 cursor-pointer flex items-center"
 										onClick={() => {
 											handleAddToQueue(song);
 											toggleDropdown(song.id);
 										}}
 									>
-										Add to Queue
+										<Plus className="h-4 w-4 mr-2" /> Add to Queue
 									</div>
 									<div
-										className="px-4 py-2 hover:bg-gray-600 cursor-pointer"
+										className="px-4 py-2 hover:bg-gray-600 cursor-pointer flex items-center"
 										onClick={() => {
 											handleAddToPlaylist(song);
 											toggleDropdown(song.id);
 										}}
 									>
-										Add to Playlist
+										<Plus className="h-4 w-4 mr-2" /> Add to Playlist
 									</div>
 									<div
-										className="px-4 py-2 hover:bg-gray-600 cursor-pointer"
+										className="px-4 py-2 hover:bg-gray-600 cursor-pointer flex items-center"
 										onClick={() => {
 											handleAddToLikedSongs(song);
 											toggleDropdown(song.id);
 										}}
 									>
-										Add to Liked Songs
+										<Heart className="h-4 w-4 mr-2" /> Add to Liked Songs
 									</div>
 								</div>
 							)}
 						</div>
 					</div>
 				))}
-
-				{/* No More Songs */}
-				{!hasMore && !isLoading && (
-					<div className="text-center text-gray-400 py-4">
-						No more songs to load.
-					</div>
-				)}
 			</div>
 		</div>
 	);
