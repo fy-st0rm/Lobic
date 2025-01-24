@@ -1,5 +1,5 @@
 import React from "react";
-import MusicList from "components/MusicList/MusicList";
+import MusicList from "@/routes/home/MusicList";
 import { MusicListsProvider } from "@/contexts/MusicListContext";
 import "./Home.css";
 

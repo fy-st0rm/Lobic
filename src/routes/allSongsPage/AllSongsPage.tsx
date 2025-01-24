@@ -9,7 +9,7 @@ import {
 import { useAppProvider } from "@/providers/AppProvider";
 import { fetchLikedSongs } from "@/api/likedSongsApi";
 import { fetchTopTracks } from "@/api/topTracksApi";
-import MusicListVertical from "@/components/MusicListVertical/MusicListVertical";
+import MusicListVertical from "@/routes/showAllView/MusicListVertical";
 import { MusicListsProvider } from "@/contexts/MusicListContext";
 
 const AllSongsPage: React.FC = () => {
