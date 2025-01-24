@@ -17,7 +17,7 @@ import { toggleSongLiked } from "api/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
-import { useMusicLists } from "@/contexts/MusicListContext";
+import { useMusicLists } from "@/providers/MusicListContextProvider";
 
 interface MusicListVerticalProps {
 	fetchSongs: (start_index: number, page_length: number) => Promise<Song[]>;

@@ -9,8 +9,8 @@ import {
 import { useAppProvider } from "@/providers/AppProvider";
 import { fetchLikedSongs } from "@/api/likedSongsApi";
 import { fetchTopTracks } from "@/api/topTracksApi";
-import MusicListVertical from "@/routes/showAllView/MusicListVertical";
-import { MusicListsProvider } from "@/contexts/MusicListContext";
+import MusicListVertical from "@/routes/allSongsPage/MusicListVertical";
+import { MusicListsProvider } from "@/providers/MusicListContextProvider";
 
 const AllSongsPage: React.FC = () => {
 	const location = useLocation();

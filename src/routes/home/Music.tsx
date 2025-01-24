@@ -12,7 +12,7 @@ import {
 import { toggleSongLiked } from "api/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
-import { useMusicLists } from "@/contexts/MusicListContext";
+import { useMusicLists } from "@/providers/MusicListContextProvider";
 
 // Assets
 import "./Music.css";

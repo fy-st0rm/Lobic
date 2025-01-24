@@ -1,6 +1,6 @@
 import React from "react";
 import MusicList from "@/routes/home/MusicList";
-import { MusicListsProvider } from "@/contexts/MusicListContext";
+import { MusicListsProvider } from "@/providers/MusicListContextProvider";
 import "./Home.css";
 
 function Home() {

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 
 // Local
-import ProfileCard from "components/ProfileCard/ProfileCard";
+import ProfileCard from "./ProfileCard";
 import SearchList from "components/SearchList/SearchList";
 import PlaylistsContainer from "components/PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";

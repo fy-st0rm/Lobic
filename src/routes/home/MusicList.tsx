@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Music from "components/Music/Music";
+import Music from "@/routes/home/Music";
 import { MPState } from "api/musicApi";
 import {
 	fetchMusicList,
@@ -14,7 +14,7 @@ import { fetchLikedSongs } from "api/likedSongsApi";
 import { fetchTopTracks } from "api/topTracksApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
-import { useMusicLists } from "@/contexts/MusicListContext";
+import { useMusicLists } from "@/providers/MusicListContextProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useNavigate } from "react-router-dom";
 
