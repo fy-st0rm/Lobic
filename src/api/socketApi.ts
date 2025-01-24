@@ -18,6 +18,7 @@ export enum OpCode {
 	SYNC_QUEUE = "SYNC_QUEUE",
 	ADD_FRIEND = "ADD_FRIEND",
 	REMOVE_FRIEND = "REMOVE_FRIEND",
+	NOTIFICATION = "NOTIFICATION",
 }
 
 export type SocketResponse = {

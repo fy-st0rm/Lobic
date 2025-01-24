@@ -117,7 +117,6 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 			sessionStorage.setItem("QueueState", JSON.stringify(newState));
 			return newQueue;
 		});
-
 	};
 
 	const dequeue = (): MusicTrack | null => {
