@@ -117,12 +117,12 @@ function Playlists() {
 									onClick={() => handlePlaylistClick(playlist)}
 									className="bg-gray-800 group transition-all duration-300 ease-in-out h-[240px] w-48 p-4 rounded-lg cursor-pointer bg-opacity-55 mx-3 relative hover:bg-opacity-75 hover:scale-105 my-2"
 								>
-									<div className="rounded-[10px] h-44 w-40 overflow-hidden flex items-center justify-center">
+									<div className=" h-44 w-[100%]">
 										{playlistCovers[playlist.playlist_id] ? (
 											<img
 												src={playlistCovers[playlist.playlist_id]}
 												alt={playlist.playlist_name}
-												className="h-full w-full object-contain"
+												className="h-full w-full"
 											/>
 										) : (
 											<div className="flex justify-center items-center bg-gray-700 h-full w-full rounded-md">

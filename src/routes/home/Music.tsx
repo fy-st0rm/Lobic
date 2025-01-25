@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { EllipsisVertical } from "lucide-react";
 
 // Local
@@ -14,8 +14,10 @@ import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicLists } from "@/providers/MusicListContextProvider";
 
+
 // Assets
 import "./Music.css";
+import { pathToFileURL } from "url";
 
 interface MusicProps {
 	musicId: string;
@@ -35,9 +37,17 @@ const Music: React.FC<MusicProps> = ({
 	const { appState } = useAppProvider();
 	const { queue, enqueue } = useQueueProvider();
 	const { notifyMusicPlayed } = useMusicLists();
-
+	const currentUserId = appState.user_id;
 	const userId = appState.user_id;
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [playlistListState, setPlaylistList] = useState<boolean>(false);
+	const [playlists, setPlaylists] = useState<Playlist[]>([]);
+
+	useEffect(() => {
+		if (currentUserId) {
+			fetchPlaylists();
+		}
+	}, [currentUserId]);
 
 	const handleAddToQueue = () => {
 		const track = {
@@ -48,9 +58,8 @@ const Music: React.FC<MusicProps> = ({
 		};
 
 		enqueue(track);
-	};
-
-	const handleAddToPlaylist = async (): Promise<void> => {
+	}; 
+	const handleAddToPlaylist = async (playlistId: string): Promise<void> => {
 		try {
 			const response: FetchUserPlaylistsResponse =
 				await fetchUserPlaylists(userId);
@@ -61,7 +70,7 @@ const Music: React.FC<MusicProps> = ({
 				return;
 			}
 
-			const playlistId = response.playlists[0].playlist_id;
+		
 			console.log("playlistId:", playlistId);
 
 			const songData = {
@@ -93,6 +102,20 @@ const Music: React.FC<MusicProps> = ({
 		setIsOpen(false);
 	};
 
+	const togglePlaylistList = () => {
+		setPlaylistList(!playlistListState)
+
+	}
+	const fetchPlaylists = async () => {
+		try {
+			const playlistsData: FetchUserPlaylistsResponse =
+				await fetchUserPlaylists(currentUserId);
+			setPlaylists(playlistsData.playlists);
+		} catch (error) {
+			console.error("Error fetching playlists:", error);
+		}
+	};
+
 	return (
 		<div className="music-container">
 			<div className="music-photo-container" onClick={onClick}>
@@ -106,11 +129,10 @@ const Music: React.FC<MusicProps> = ({
 			</div>
 			<div
 				className="dropdown absolute right-0 bottom-3"
-				onClick={toggleDropdown}
 			>
-				<EllipsisVertical className="opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" />
+				<EllipsisVertical className="opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" onClick={toggleDropdown}/>
 				{isOpen && (
-					<div className="dropdown-items">
+					<div className="dropdown-items fixed">
 						<div
 							className="dropdown-item"
 							onClick={() => {
@@ -121,14 +143,35 @@ const Music: React.FC<MusicProps> = ({
 							Add to Queue
 						</div>
 						<div
-							className="dropdown-item"
+							className="dropdown-item p-2"
+							
 							onClick={() => {
-								closeDropdown();
-								handleAddToPlaylist();
+								togglePlaylistList();
 							}}
 						>
 							Add to Playlist
 						</div>
+						{
+							playlistListState && (
+								<>
+									<div className="fixed left-[190px] top-32 h-[50%] overflow-scroll no-scrollbar bg-[#072631] rounded-sm opacity-80">
+										{playlists.map((playlist) => (
+
+											<div
+												className="p-2   bg-[#072631] hover:bg-[#157697]"
+												onClick={() => {
+													handleAddToPlaylist(playlist.playlist_id);
+													closeDropdown();
+													togglePlaylistList();
+												}}
+											>
+												{playlist.playlist_name}
+											</div>
+
+										))}</div></>
+
+							)
+						}
 						<div
 							className="dropdown-item"
 							onClick={() => {
@@ -141,8 +184,10 @@ const Music: React.FC<MusicProps> = ({
 					</div>
 				)}
 			</div>
+
 		</div>
 	);
+
 };
 
 export default Music;
