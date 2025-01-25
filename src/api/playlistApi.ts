@@ -195,3 +195,50 @@ export const updatePlaylistCoverImg = async (
 		throw error;
 	}
 };
+export const removeSongFromPlaylist = async (
+	playlist_id: string,
+	music_id: string,
+): Promise<string> => {
+	try {
+		const response = await fetch(`${SERVER_IP}/playlist/remove_song`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ playlist_id, music_id }),
+		});
+
+		const result = await response.json();
+
+		if (response.status !== 200) {
+			throw new Error(result.message || "Failed to remove song from playlist");
+		}
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const deletePlaylist = async (playlist_id: string): Promise<string> => {
+	try {
+		const response = await fetch(`${SERVER_IP}/playlist/delete`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ playlist_id }),
+		});
+
+		const result = await response.json();
+
+		if (response.status !== 200) {
+			throw new Error(result.message || "Failed to delete playlist");
+		}
+
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
