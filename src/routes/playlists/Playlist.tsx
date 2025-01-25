@@ -151,14 +151,14 @@ function Playlist({}) {
 					<div className="playlistname text-white text-[50px] font-bold text-nowrap w-50">
 						{playlistData?.playlist?.playlist_name || "Untitled Playlist"}
 					</div>
-					<div className="typeofplaylist text-white text-[15px] relative pl-2 top-[-9px] font-thin">
+					<div className="typeofplaylist text-white text-[15px] relative text-lg pl-1 top-[-9px] font-thin">
 						{playlistData?.playlist?.is_playlist_combined
 							? "Combined Playlist"
 							: "Solo Playlist"}
 					</div>
 					<div className="infobar flex relative top-[-9px]">
 						<div className="playlistcreators flex gap-2">
-							<div className="creatorimg px-1 py-[2px]">
+							<div className="self-center p-1">
 								<img
 									className="absolute h-[20px] w-[20px] rounded-full"
 									src={user1Pfp}
@@ -170,7 +170,7 @@ function Playlist({}) {
 									alt="Creator 2"
 								/>
 							</div>
-							<div className="creatorname text-white opacity-50 pb-0.5 text-[8px] font-bold self-center">
+							<div className="creatorname text-white opacity-50 pb-0.5 text-[10px] font-semibold self-center">
 								{username || "Unknown User"} and 1 other
 							</div>
 						</div>
@@ -183,7 +183,7 @@ function Playlist({}) {
 					</div>
 					<div className="controlbuttons">
 						<div className="playbutton cursor-pointer" onClick={playlistPlayed}>
-							<Play className="bg-[black] text-white" />
+							<Play className="bg-[black] text-slate-300 rounded-full p-2 text-lg hover:bg-opacity-80 " />
 						</div>
 						<div className="addtoplaylist"></div>
 					</div>
