@@ -1,12 +1,17 @@
 // Node modules
-import React, { FC, createContext, useContext, useState, useEffect } from "react";
+import React, {
+	FC,
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+} from "react";
 
 // Local
 import { SERVER_IP } from "@/const";
 import { OpCode, SocketResponse } from "api/socketApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useSocketProvider } from "providers/SocketProvider";
-
 
 /*
  * Notification Type
@@ -24,7 +29,6 @@ export type Notification = {
 type Notifications = {
 	[id: string]: Notification;
 };
-
 
 /*
  * NotificationContext Type
@@ -50,13 +54,13 @@ const defaultContext: NotificationContextType = {
 	removeNotif: () => {},
 };
 
-const NotificationContext = createContext<NotificationContextType>(defaultContext);
-
+const NotificationContext =
+	createContext<NotificationContextType>(defaultContext);
 
 // Notification Provider
 
 export const NotificationProvider: FC<{ children: React.ReactNode }> = ({
-	children
+	children,
 }): React.ReactElement => {
 	const { appState } = useAppProvider();
 	const { addMsgHandler } = useSocketProvider();

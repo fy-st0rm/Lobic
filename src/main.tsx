@@ -2,7 +2,7 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
 
 // Local
 import App from "@/App";
@@ -24,7 +24,7 @@ createRoot(root).render(
 	<StrictMode>
 		<Providers>
 			<AudioElement />
-			<Toaster position="top-right"/>
+			<Toaster position="top-right" />
 			<NotificationSystem />
 			<Router>
 				<App />

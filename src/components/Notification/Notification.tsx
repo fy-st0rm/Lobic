@@ -7,9 +7,11 @@ import { Check, X } from "lucide-react";
 // Local
 import { OpCode, wsSend, SocketResponse } from "api/socketApi";
 import { useAppProvider } from "providers/AppProvider";
-import { Notification, useNotificationProvider } from "providers/NotificationProvider";
+import {
+	Notification,
+	useNotificationProvider,
+} from "providers/NotificationProvider";
 import { fetchUserProfilePicture, getUserData, addFriend } from "api/userApi";
-
 
 const NotificationSystem = (): React.ReactElement => {
 	const { appState } = useAppProvider();
@@ -20,8 +22,7 @@ const NotificationSystem = (): React.ReactElement => {
 		Object.entries(tempNotifs).map(([id, notif]) => {
 			if (notif.op_code === OpCode.OK) {
 				okHandler(notif);
-			}
-			else if (notif.op_code === OpCode.ADD_FRIEND) {
+			} else if (notif.op_code === OpCode.ADD_FRIEND) {
 				addFriendHandler(notif);
 			}
 		});
@@ -62,7 +63,7 @@ const NotificationSystem = (): React.ReactElement => {
 			addTempNotif({
 				id: "some-random-id",
 				op_code: OpCode.OK,
-				value: `Yeppy! @${user.username} is now your friend!`
+				value: `Yeppy! @${user.username} is now your friend!`,
 			});
 		};
 
@@ -84,10 +85,12 @@ const NotificationSystem = (): React.ReactElement => {
 						<p> @{user.username} sent you a friend request.</p>
 						<div className="flex space-x-4">
 							<Button onClick={() => onAccept(tId)}>
-								{" "} <Check /> {" "}
+								{" "}
+								<Check />{" "}
 							</Button>
 							<Button variant="destructive" onClick={() => onReject(tId)}>
-								{" "} <X /> {" "}
+								{" "}
+								<X />{" "}
 							</Button>
 						</div>
 					</div>
@@ -100,6 +103,6 @@ const NotificationSystem = (): React.ReactElement => {
 	};
 
 	return <></>;
-}
+};
 
 export default NotificationSystem;
