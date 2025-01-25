@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Plus, PlusCircle, Heart } from "lucide-react";
 
 // Local
 import {
@@ -14,10 +14,18 @@ import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicLists } from "@/providers/MusicListContextProvider";
 
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Assets
 import "./Music.css";
-import { pathToFileURL } from "url";
 
 interface MusicProps {
 	musicId: string;
@@ -39,8 +47,6 @@ const Music: React.FC<MusicProps> = ({
 	const { notifyMusicPlayed } = useMusicLists();
 	const currentUserId = appState.user_id;
 	const userId = appState.user_id;
-	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const [playlistListState, setPlaylistList] = useState<boolean>(false);
 	const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
 	useEffect(() => {
@@ -58,20 +64,17 @@ const Music: React.FC<MusicProps> = ({
 		};
 
 		enqueue(track);
-	}; 
+	};
+
 	const handleAddToPlaylist = async (playlistId: string): Promise<void> => {
 		try {
 			const response: FetchUserPlaylistsResponse =
 				await fetchUserPlaylists(userId);
-			console.log("playlists:", response.playlists);
 
 			if (response.playlists.length === 0) {
 				console.log("No playlists found for the user.");
 				return;
 			}
-
-		
-			console.log("playlistId:", playlistId);
 
 			const songData = {
 				playlist_id: playlistId,
@@ -88,24 +91,12 @@ const Music: React.FC<MusicProps> = ({
 	const handleAddToLikedSongs = async (): Promise<void> => {
 		try {
 			await toggleSongLiked(userId, musicId);
-			notifyMusicPlayed(musicId, "Liked Songs"); // rerender the likedSongs
+			notifyMusicPlayed(musicId, "Liked Songs");
 		} catch (error) {
 			console.error("Error adding to liked songs:", error);
 		}
 	};
 
-	const toggleDropdown = (): void => {
-		setIsOpen(!isOpen);
-	};
-
-	const closeDropdown = (): void => {
-		setIsOpen(false);
-	};
-
-	const togglePlaylistList = () => {
-		setPlaylistList(!playlistListState)
-
-	}
 	const fetchPlaylists = async () => {
 		try {
 			const playlistsData: FetchUserPlaylistsResponse =
@@ -127,67 +118,54 @@ const Music: React.FC<MusicProps> = ({
 					<h3 className="artist-name opacity-75">{artist}</h3>
 				</div>
 			</div>
-			<div
-				className="dropdown absolute right-0 bottom-3"
-			>
-				<EllipsisVertical className="opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" onClick={toggleDropdown}/>
-				{isOpen && (
-					<div className="dropdown-items fixed">
-						<div
-							className="dropdown-item"
-							onClick={() => {
-								closeDropdown();
-								handleAddToQueue();
-							}}
-						>
-							Add to Queue
-						</div>
-						<div
-							className="dropdown-item p-2"
-							
-							onClick={() => {
-								togglePlaylistList();
-							}}
-						>
-							Add to Playlist
-						</div>
-						{
-							playlistListState && (
-								<>
-									<div className="fixed left-[190px] top-32 h-[50%] overflow-scroll no-scrollbar bg-[#072631] rounded-sm opacity-80">
-										{playlists.map((playlist) => (
+			<DropdownMenu>
+				{/* Dropdown Trigger */}
+				<DropdownMenuTrigger className="dropdown absolute right-0 bottom-3 bg-transparent p-2">
+					<EllipsisVertical className="text-white opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" />
+				</DropdownMenuTrigger>
 
-											<div
-												className="p-2   bg-[#072631] hover:bg-[#157697]"
-												onClick={() => {
-													handleAddToPlaylist(playlist.playlist_id);
-													closeDropdown();
-													togglePlaylistList();
-												}}
-											>
-												{playlist.playlist_name}
-											</div>
+				{/* Dropdown Content */}
+				<DropdownMenuContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg w-56">
+					{/* Add to Queue */}
+					<DropdownMenuItem
+						className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+						onSelect={handleAddToQueue}
+					>
+						<Plus className="mr-2 h-4 w-4" />
+						<span>Add to Queue</span>
+					</DropdownMenuItem>
 
-										))}</div></>
+					{/* Add to Playlist Submenu */}
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-white hover:text-black hover:rounded-lg">
+							<PlusCircle className="mr-2 h-4 w-4" />
+							<span>Add to Playlist</span>
+						</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg">
+							{playlists.map((playlist) => (
+								<DropdownMenuItem
+									key={playlist.playlist_id}
+									className="flex items-center px-3 py-2 text-sm font-bold text-white  hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+									onSelect={() => handleAddToPlaylist(playlist.playlist_id)}
+								>
+									{playlist.playlist_name}
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuSubContent>
+					</DropdownMenuSub>
 
-							)
-						}
-						<div
-							className="dropdown-item"
-							onClick={() => {
-								closeDropdown();
-								handleAddToLikedSongs();
-							}}
-						>
-							Add to Liked Songs
-						</div>
-					</div>
-				)}
-			</div>
-
+					{/* Add to Liked Songs */}
+					<DropdownMenuItem
+						className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+						onSelect={handleAddToLikedSongs}
+					>
+						<Heart className="mr-2 h-4 w-4" />
+						<span>Add to Liked Songs</span>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
 		</div>
 	);
-
 };
 
 export default Music;

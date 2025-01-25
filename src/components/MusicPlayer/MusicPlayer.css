@@ -2,9 +2,10 @@
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Style for the music player */
 .music-player {
 	height: 55px;
-	position: absolute;
+	position: fixed; /* Fixed position to stick to the viewport */
 	bottom: 0;
 	left: 0;
 	right: 0;
@@ -17,6 +18,7 @@
 	gap: 1rem;
 	background-color: #072631;
 	color: white;
+	z-index: 1000; /* Ensure it stays on top of other content */
 }
 
 .song-info {
