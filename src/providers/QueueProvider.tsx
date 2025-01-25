@@ -40,7 +40,6 @@ const defaultContext: QueueContextType = {
 
 const QueueContext = createContext<QueueContextType>(defaultContext);
 
-
 /*
  * Loads QueueState from session storage
  * @returns {MusicTrack[]} - The loaded queue state
@@ -48,10 +47,8 @@ const QueueContext = createContext<QueueContextType>(defaultContext);
 
 const loadQueueState = (): MusicTrack[] => {
 	const savedState = sessionStorage.getItem("QueueState");
-	return savedState
-		? JSON.parse(savedState).queue
-		: [];
-}
+	return savedState ? JSON.parse(savedState).queue : [];
+};
 
 export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 	children,
@@ -77,8 +74,8 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 							timestamp: 0,
 							state: MPState.PAUSE,
 						};
-					})
-				}
+					}),
+				},
 			};
 			wsSend(getSocket(), payload);
 		}
@@ -86,11 +83,11 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 
 	const updateQueue = (queue: MusicTrack[]) => {
 		const newState = {
-			queue: queue
+			queue: queue,
 		};
 		sessionStorage.setItem("QueueState", JSON.stringify(newState));
 		setQueue(queue);
-	}
+	};
 
 	const enqueue = (track: MusicTrack) => {
 		setQueue((prevQueue) => {
@@ -108,11 +105,11 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 				});
 				newQueue = [];
 			} else {
-				newQueue = [...prevQueue, track]
+				newQueue = [...prevQueue, track];
 			}
 
 			const newState = {
-				queue: newQueue
+				queue: newQueue,
 			};
 			sessionStorage.setItem("QueueState", JSON.stringify(newState));
 			return newQueue;

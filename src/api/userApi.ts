@@ -230,7 +230,10 @@ export const getUserData = async (userId: string | null): Promise<User> => {
  * @param {string} friendId - Id of the user to whom the friend request is sent.
  * @returns {Promise<Response>} - The response from the server.
  */
-export const addFriend = async (userId: string, friendId: string): Promise<Response> => {
+export const addFriend = async (
+	userId: string,
+	friendId: string,
+): Promise<Response> => {
 	const payload = {
 		user_id: userId,
 		friend_id: friendId,
@@ -244,4 +247,4 @@ export const addFriend = async (userId: string, friendId: string): Promise<Respo
 		body: JSON.stringify(payload),
 	});
 	return response;
-}
+};

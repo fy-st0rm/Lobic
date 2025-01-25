@@ -18,9 +18,7 @@ export const Providers: React.FC<{ children: React.ReactNode }> = ({
 				<MusicProvider>
 					<SocketProvider>
 						<QueueProvider>
-							<NotificationProvider>
-								{children}
-							</NotificationProvider>
+							<NotificationProvider>{children}</NotificationProvider>
 						</QueueProvider>
 					</SocketProvider>
 				</MusicProvider>

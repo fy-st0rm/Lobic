@@ -15,14 +15,14 @@ import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicLists } from "@/providers/MusicListContextProvider";
 
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSub,
+	ContextMenuSubContent,
+	ContextMenuSubTrigger,
+	ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 // Assets
 import "./Music.css";
@@ -108,63 +108,58 @@ const Music: React.FC<MusicProps> = ({
 	};
 
 	return (
-		<div className="music-container">
-			<div className="music-photo-container" onClick={onClick}>
-				<img className="music-photo" src={coverArt} alt={`${title} cover`} />
-			</div>
-			<div className="info-container">
-				<div className="music-info">
-					<h2 className="music-title">{title}</h2>
-					<h3 className="artist-name opacity-75">{artist}</h3>
+		<ContextMenu>
+			<ContextMenuTrigger className="music-container">
+				<div className="music-photo-container" onClick={onClick}>
+					<img className="music-photo" src={coverArt} alt={`${title} cover`} />
 				</div>
-			</div>
-			<DropdownMenu>
-				{/* Dropdown Trigger */}
-				<DropdownMenuTrigger className="dropdown absolute right-0 bottom-3 bg-transparent p-2">
-					<EllipsisVertical className="text-white opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer" />
-				</DropdownMenuTrigger>
+				<div className="info-container">
+					<div className="music-info">
+						<h2 className="music-title">{title}</h2>
+						<h3 className="artist-name opacity-75">{artist}</h3>
+					</div>
+				</div>
+			</ContextMenuTrigger>
 
-				{/* Dropdown Content */}
-				<DropdownMenuContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg w-56">
-					{/* Add to Queue */}
-					<DropdownMenuItem
-						className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
-						onSelect={handleAddToQueue}
-					>
-						<Plus className="mr-2 h-4 w-4" />
-						<span>Add to Queue</span>
-					</DropdownMenuItem>
+			<ContextMenuContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg w-56">
+				{/* Add to Queue */}
+				<ContextMenuItem
+					className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+					onSelect={handleAddToQueue}
+				>
+					<Plus className="mr-2 h-4 w-4" />
+					<span>Add to Queue</span>
+				</ContextMenuItem>
 
-					{/* Add to Playlist Submenu */}
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-white hover:text-black hover:rounded-lg">
-							<PlusCircle className="mr-2 h-4 w-4" />
-							<span>Add to Playlist</span>
-						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg">
-							{playlists.map((playlist) => (
-								<DropdownMenuItem
-									key={playlist.playlist_id}
-									className="flex items-center px-3 py-2 text-sm font-bold text-white  hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
-									onSelect={() => handleAddToPlaylist(playlist.playlist_id)}
-								>
-									{playlist.playlist_name}
-								</DropdownMenuItem>
-							))}
-						</DropdownMenuSubContent>
-					</DropdownMenuSub>
+				{/* Add to Playlist Submenu */}
+				<ContextMenuSub>
+					<ContextMenuSubTrigger className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-white hover:text-black hover:rounded-lg">
+						<PlusCircle className="mr-2 h-4 w-4" />
+						<span>Add to Playlist</span>
+					</ContextMenuSubTrigger>
+					<ContextMenuSubContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg">
+						{playlists.map((playlist) => (
+							<ContextMenuItem
+								key={playlist.playlist_id}
+								className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+								onSelect={() => handleAddToPlaylist(playlist.playlist_id)}
+							>
+								{playlist.playlist_name}
+							</ContextMenuItem>
+						))}
+					</ContextMenuSubContent>
+				</ContextMenuSub>
 
-					{/* Add to Liked Songs */}
-					<DropdownMenuItem
-						className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
-						onSelect={handleAddToLikedSongs}
-					>
-						<Heart className="mr-2 h-4 w-4" />
-						<span>Add to Liked Songs</span>
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</div>
+				{/* Add to Liked Songs */}
+				<ContextMenuItem
+					className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+					onSelect={handleAddToLikedSongs}
+				>
+					<Heart className="mr-2 h-4 w-4" />
+					<span>Add to Liked Songs</span>
+				</ContextMenuItem>
+			</ContextMenuContent>
+		</ContextMenu>
 	);
 };
 
