@@ -24,7 +24,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 	const handleMusicClick = async (item: Song): Promise<void> => {
 		try {
 			setIsLoading(true);
-			const coverArt = getMusicImageUrl(item.music_id);
+			const coverArt = getMusicImageUrl(item.artist, item.album);
 			setSelectedSongId(item.music_id);
 
 			// Updating Music State globally
@@ -78,7 +78,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 							artistName={item.artist}
 							duration={item.album}
 							addedBy="Unknown"
-							coverImg={getMusicImageUrl(item.music_id)}
+							coverImg={getMusicImageUrl(item.artist, item.album)}
 						/>
 					</div>
 				))}

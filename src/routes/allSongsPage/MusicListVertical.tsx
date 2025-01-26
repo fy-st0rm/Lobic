@@ -17,7 +17,7 @@ import { toggleSongLiked } from "api/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
-import { useMusicLists } from "@/providers/MusicListContextProvider";
+import { it } from "node:test";
 
 interface MusicListVerticalProps {
 	fetchSongs: (start_index: number, page_length: number) => Promise<Song[]>;
@@ -39,7 +39,6 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 	const { appState } = useAppProvider();
 	const { enqueue, clearQueue } = useQueueProvider();
 	const { clearMusicState, updateMusicState } = useMusicProvider();
-	const { notifyMusicPlayed } = useMusicLists();
 	const userId = appState.user_id;
 
 	// Fetch initial songs on mount
@@ -51,7 +50,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 
 				const songsWithCoverImages = await Promise.all(
 					fetchedSongs.map(async (song) => {
-						const coverImageUrl = await getMusicImageUrl(song.id);
+						const coverImageUrl = getMusicImageUrl(song.artist, song.album);
 						return {
 							...song,
 							cover_img: coverImageUrl,
@@ -88,7 +87,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				if (newSongs.length > 0) {
 					const newSongsWithCovers = await Promise.all(
 						newSongs.map(async (song) => {
-							const coverImageUrl = await getMusicImageUrl(song.id);
+							const coverImageUrl = getMusicImageUrl(song.artist, song.album);
 							return {
 								...song,
 								cover_img: coverImageUrl,
@@ -116,7 +115,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 			setSelectedSongId(song.id);
 			setIsLoading(true);
 
-			const coverArt = getMusicImageUrl(song.id);
+			const coverArt = getMusicImageUrl(song.artist, song.album);
 
 			await Promise.all([
 				incrementPlayCount(song.id),
@@ -147,6 +146,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 			id: song.id,
 			title: song.title,
 			artist: song.artist,
+			album: song.album,
 			cover_img: song.cover_img,
 		};
 		enqueue(track);
@@ -193,7 +193,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 		let firstSong = songs[0];
 
 		if (firstSong) {
-			const coverArt = getMusicImageUrl(firstSong.id);
+			const coverArt = getMusicImageUrl(firstSong.artist, firstSong.album);
 			updateMusicState({
 				id: firstSong.id,
 				title: firstSong.title,
@@ -205,7 +205,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 		}
 
 		songs.slice(1).forEach((item) => {
-			const coverArt = getMusicImageUrl(item.id);
+			const coverArt = getMusicImageUrl(item.artist, item.album);
 			let track = {
 				...item,
 				cover_img: coverArt,

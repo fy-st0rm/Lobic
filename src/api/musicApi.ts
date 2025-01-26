@@ -19,7 +19,7 @@ export interface MusicTrack {
 	id: string;
 	title: string;
 	artist: string;
-	album?: string;
+	album: string;
 	duration?: number;
 	cover_img?: string;
 	// Add other fields as needed
@@ -204,13 +204,8 @@ export const incrementPlayCount = async (songId: string): Promise<string> => {
 	}
 };
 
-/**
- * Gets the URL for a music image.
- * @param {string} songId - The ID of the song.
- * @returns {string} - The URL of the music image.
- */
-export const getMusicImageUrl = (songId: string): string =>
-	`${SERVER_IP}/image/${songId}.png`;
+export const getMusicImageUrl = (artist: string, album: string): string =>
+	`${SERVER_IP}/image/${artist}/${album}`;
 
 /**
  * Fetches the music from the backend based on the given music id

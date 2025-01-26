@@ -76,7 +76,7 @@ function Playlist({}) {
 		let firstSong = playlistData?.songs[0];
 
 		if (firstSong) {
-			const coverArt = getMusicImageUrl(firstSong.music_id);
+			const coverArt = getMusicImageUrl(firstSong.artist, firstSong.album);
 			updateMusicState({
 				id: firstSong.music_id,
 				title: firstSong.title,
@@ -88,7 +88,7 @@ function Playlist({}) {
 		}
 
 		playlistData?.songs.slice(1).forEach((item) => {
-			const coverArt = getMusicImageUrl(item.music_id);
+			const coverArt = getMusicImageUrl(item.artist, item.album);
 			let track = {
 				id: item.music_id,
 				cover_img: coverArt,

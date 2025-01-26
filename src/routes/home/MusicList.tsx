@@ -86,7 +86,7 @@ const MusicList: React.FC<MusicListProps> = ({
 			setSelectedSongId(song.id);
 			setIsLoading(true);
 
-			const coverArt = getMusicImageUrl(song.id);
+			const coverArt = getMusicImageUrl(song.artist, song.album);
 
 			await Promise.all([
 				incrementPlayCount(song.id),
@@ -118,7 +118,8 @@ const MusicList: React.FC<MusicListProps> = ({
 				id: song.id,
 				title: song.title,
 				artist: song.artist,
-				cover_img: getMusicImageUrl(song.id),
+				album: song.album,
+				cover_img: getMusicImageUrl(song.artist, song.album),
 			};
 			enqueue(track); // Enqueue each song
 		});
@@ -163,8 +164,9 @@ const MusicList: React.FC<MusicListProps> = ({
 							musicId={song.id}
 							title={song.title}
 							artist={song.artist}
-							coverArt={getMusicImageUrl(song.id)}
+							album={song.album}
 							onClick={() => handleMusicClick(song)}
+							coverArt={getMusicImageUrl(song.artist, song.album)}
 						/>
 					</div>
 				))}
