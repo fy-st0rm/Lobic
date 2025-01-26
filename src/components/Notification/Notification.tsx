@@ -15,29 +15,30 @@ import { fetchUserProfilePicture, getUserData, addFriend } from "api/userApi";
 
 const NotificationSystem = (): React.ReactElement => {
 	const { appState } = useAppProvider();
-	const { notifs, addNotif, removeNotif } = useNotificationProvider();
+	const { tempNotifs, addTempNotif, removeNotif } = useNotificationProvider();
 
 	// Notification handlers according to there opcodes
 	useEffect(() => {
-		console.log(notifs);
-		Object.entries(notifs).map(([id, notif]) => {
+		Object.entries(tempNotifs).map(([id, notif]) => {
 			if (notif.op_code === OpCode.OK) {
 				okHandler(notif);
 			} else if (notif.op_code === OpCode.ADD_FRIEND) {
 				addFriendHandler(notif);
 			}
 		});
-	}, [notifs]);
+	}, [tempNotifs]);
 
 	// Handlers
 	const okHandler = async (notif: Notification) => {
 		let msg = notif.value;
-		toast(<div>{msg}</div>, {
-			duration: 3000,
-		});
-		setTimeout(() => {
-			removeNotif(notif.id);
-		}, 3000);
+		toast(
+			<div>
+				{msg}
+			</div>,
+			{
+				duration: 5000,
+			},
+		);
 	};
 
 	const addFriendHandler = async (notif: Notification) => {
@@ -58,8 +59,8 @@ const NotificationSystem = (): React.ReactElement => {
 			// Remove the notification
 			removeNotif(notif.id);
 
-			// Add a new notification for sucess message
-			addNotif({
+			// Add a new temporary notification for sucess message
+			addTempNotif({
 				id: "some-random-id",
 				op_code: OpCode.OK,
 				value: `Yeppy! @${user.username} is now your friend!`,
@@ -96,7 +97,7 @@ const NotificationSystem = (): React.ReactElement => {
 				</div>
 			</div>,
 			{
-				duration: 3000,
+				duration: 5000,
 			},
 		);
 	};
