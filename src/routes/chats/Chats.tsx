@@ -91,8 +91,8 @@ function Chats(): React.ReactElement {
 		const payload = {
 			op_code: OpCode.SYNC_QUEUE,
 			value: {
-				lobby_id: lobbyState.lobby_id
-			}
+				lobby_id: lobbyState.lobby_id,
+			},
 		};
 		wsSend(getSocket(), payload);
 	}, []);

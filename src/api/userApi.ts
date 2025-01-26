@@ -197,7 +197,7 @@ export const updateProfilePicture = async (
 /**
  * Fetches user data from the server.
  * @param {string} userUuid - The user's UUID.
- * @returns {Promise<{ username: string; email: string }>} - The user's data.
+ * @returns {Promise<User>} - The user's data.
  */
 export const getUserData = async (userId: string | null): Promise<User> => {
 	try {
@@ -222,4 +222,29 @@ export const getUserData = async (userId: string | null): Promise<User> => {
 		console.error("Error fetching user data:", error);
 		throw error;
 	}
+};
+
+/*
+ * Sends friend request to the designated user.
+ * @param {string} userId - Id of the user who's sending the friend request.
+ * @param {string} friendId - Id of the user to whom the friend request is sent.
+ * @returns {Promise<Response>} - The response from the server.
+ */
+export const addFriend = async (
+	userId: string,
+	friendId: string,
+): Promise<Response> => {
+	const payload = {
+		user_id: userId,
+		friend_id: friendId,
+	};
+	const response = await fetch(`${SERVER_IP}/add_friend`, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(payload),
+	});
+	return response;
 };

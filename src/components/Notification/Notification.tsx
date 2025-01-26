@@ -6,106 +6,102 @@ import { Check, X } from "lucide-react";
 
 // Local
 import { OpCode, wsSend, SocketResponse } from "api/socketApi";
-import { useSocketProvider } from "providers/SocketProvider";
-import { fetchUserProfilePicture, getUserData } from "api/userApi";
-
-type Notification = {
-	id: string;
-	op_code: OpCode;
-	value: any;
-};
-
-type Notifications = {
-	[id: string]: Notification;
-};
+import { useAppProvider } from "providers/AppProvider";
+import {
+	Notification,
+	useNotificationProvider,
+} from "providers/NotificationProvider";
+import { fetchUserProfilePicture, getUserData, addFriend } from "api/userApi";
 
 const NotificationSystem = (): React.ReactElement => {
-	const { addMsgHandler } = useSocketProvider();
-	const { getSocket } = useSocketProvider();
+	const { appState } = useAppProvider();
+	const { notifs, addNotif, removeNotif } = useNotificationProvider();
 
-	const [notifs, setNotifs] = useState<Notifications>({} as Notifications);
-
+	// Notification handlers according to there opcodes
 	useEffect(() => {
-		addMsgHandler(OpCode.NOTIFICATION, (res: SocketResponse) => {
-			let notif: Notification = res.value;
-
-			// Adding notification to the list
-			setNotifs((prevNotifs) => ({
-				...prevNotifs,
-				[notif.id]: notif,
-			}));
-		});
-	}, []);
-
-	useEffect(() => {
-		// Showing the notification
-		Object.entries(notifs).map(async ([id, notif]) => {
-			if (notif.op_code === OpCode.ADD_FRIEND) {
-				let user_id = notif.value;
-
-				let user = await getUserData(user_id);
-				let pfp = await fetchUserProfilePicture(user_id);
-
-				const onAccept = (id: string | number) => {
-					// TODO: Add friend
-					toast.dismiss(id);
-				};
-
-				const onReject = (id: string | number) => {
-					// TODO: Remove from notification
-					toast.dismiss(id);
-				};
-
-				let tId = toast(
-					<div>
-						<div className="flex items-center justify-center space-x-4">
-							<img
-								src={pfp}
-								className="w-[70px] h-[70px] rounded-[10px] m-[5px]"
-							></img>
-							<div className="flex flex-col">
-								<p> @{user.username} sent you a friend request.</p>
-								<div className="flex space-x-4">
-									<Button onClick={() => onAccept(tId)}>
-										{" "}
-										<Check />{" "}
-									</Button>
-									<Button variant="destructive" onClick={() => onReject(tId)}>
-										{" "}
-										<X />{" "}
-									</Button>
-								</div>
-							</div>
-						</div>
-					</div>,
-					{
-						duration: 3000,
-					},
-				);
+		console.log(notifs);
+		Object.entries(notifs).map(([id, notif]) => {
+			if (notif.op_code === OpCode.OK) {
+				okHandler(notif);
+			} else if (notif.op_code === OpCode.ADD_FRIEND) {
+				addFriendHandler(notif);
 			}
 		});
 	}, [notifs]);
 
-	const dummy = () => {
-		let notif: Notification = {
-			id: "asd",
-			op_code: OpCode.ADD_FRIEND,
-			value: "0ee42983-05c2-40ff-a829-371c02607100",
-		};
-		console.log(notif);
-		setNotifs((prevNotifs) => ({
-			...prevNotifs,
-			[notif.id]: notif,
-		}));
+	// Handlers
+	const okHandler = async (notif: Notification) => {
+		let msg = notif.value;
+		toast(<div>{msg}</div>, {
+			duration: 3000,
+		});
+		setTimeout(() => {
+			removeNotif(notif.id);
+		}, 3000);
 	};
 
-	return (
-		<>
-			<Button variant="destructive" onClick={dummy}>
-				dummy notif pls ignore it woks btw
-			</Button>
-		</>
-	);
+	const addFriendHandler = async (notif: Notification) => {
+		let user_id = notif.value;
+
+		let user = await getUserData(user_id);
+		let pfp = await fetchUserProfilePicture(user_id);
+
+		const onAccept = async (id: string | number) => {
+			// Add friend
+			let response = await addFriend(appState.user_id, user_id);
+			if (!response.ok) {
+				let log = await response.text();
+				console.error(log);
+			}
+			toast.dismiss(id);
+
+			// Remove the notification
+			removeNotif(notif.id);
+
+			// Add a new notification for sucess message
+			addNotif({
+				id: "some-random-id",
+				op_code: OpCode.OK,
+				value: `Yeppy! @${user.username} is now your friend!`,
+			});
+		};
+
+		const onReject = (id: string | number) => {
+			toast.dismiss(id);
+
+			// Remove the notification
+			removeNotif(notif.id);
+		};
+
+		let tId = toast(
+			<div>
+				<div className="flex items-center justify-center space-x-4">
+					<img
+						src={pfp}
+						className="w-[70px] h-[70px] rounded-[10px] m-[5px]"
+					></img>
+					<div className="flex flex-col">
+						<p> @{user.username} sent you a friend request.</p>
+						<div className="flex space-x-4">
+							<Button onClick={() => onAccept(tId)}>
+								{" "}
+								<Check />{" "}
+							</Button>
+							<Button variant="destructive" onClick={() => onReject(tId)}>
+								{" "}
+								<X />{" "}
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>,
+			{
+				duration: 3000,
+			},
+		);
+	};
+
+	return <></>;
 };
 
 export default NotificationSystem;
