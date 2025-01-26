@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
 import { SERVER_IP } from "@/const";
-import { MPState, MusicTrack } from "api/musicApi";
+import { getMusicImageUrl, MPState, MusicTrack } from "api/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
@@ -176,9 +176,7 @@ function MusicPlayer() {
 			<div>
 				<img
 					src={
-						musicState.id
-							? `${SERVER_IP}/image/${musicState.id}.png`
-							: placeholder_logo
+						musicState.id ? getMusicImageUrl(musicState.id) : placeholder_logo
 					}
 					alt="Album cover"
 					className="cover-image"
@@ -286,7 +284,7 @@ function MusicPlayer() {
 									<img
 										src={
 											musicState.id
-												? `${SERVER_IP}/image/${musicState.id}.png`
+												? getMusicImageUrl(musicState.id)
 												: placeholder_logo
 										}
 										alt="Album cover"

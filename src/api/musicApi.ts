@@ -210,7 +210,7 @@ export const incrementPlayCount = async (songId: string): Promise<string> => {
  * @returns {string} - The URL of the music image.
  */
 export const getMusicImageUrl = (songId: string): string =>
-	`${SERVER_IP}/image/${songId}.png`;
+	`${SERVER_IP}/image/${songId}`;
 
 /**
  * Fetches the music from the backend based on the given music id
