@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 // Locals
 import { OpCode, wsSend, SocketResponse, SocketPayload } from "api/socketApi";
 import { LobbyModel, fetchLobbies } from "api/lobbyApi";
-import { MPState } from "api/musicApi";
+import { MPState } from "@/api/music/musicApi";
 import { SERVER_IP } from "@/const";
 import { LobbyCard, CreateLobbyButton } from "components/LobbyCard/LobbyCard";
 import { useAppProvider } from "providers/AppProvider";

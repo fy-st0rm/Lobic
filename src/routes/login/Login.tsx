@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { CircleAlert } from "lucide-react";
 
 // Local
-import { performLogin, initClientState } from "api/userApi";
+import { performLogin, initClientState } from "@/api/user/userApi";
 import { useAppProvider } from "providers/AppProvider";
 
 // Assets

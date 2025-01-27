@@ -6,7 +6,7 @@ import ProfileCard from "./ProfileCard";
 import SearchList from "components/SearchList/SearchList";
 import PlaylistsContainer from "components/PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
-import { User, getUserData } from "api/userApi";
+import { User, getUserData } from "@/api/user/userApi";
 
 // Assets
 import "./Profile.css";

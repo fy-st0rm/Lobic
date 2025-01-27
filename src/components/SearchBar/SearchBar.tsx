@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
-import { searchMusic } from "../../api/musicSearchApi"; // Replace with your actual API
+import { searchMusic } from "../../api/music/musicSearchApi"; // Replace with your actual API
 import "./SearchBar.css";
 
 interface SearchBarProps {

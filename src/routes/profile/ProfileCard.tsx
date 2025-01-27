@@ -3,7 +3,7 @@ import "./ProfileCard.css";
 import {
 	updateProfilePicture,
 	fetchUserProfilePicture,
-} from "../../api/userApi";
+} from "../../api/user/userApi";
 import SearchList from "components/SearchList/SearchList";
 
 interface ProfileCardProps {

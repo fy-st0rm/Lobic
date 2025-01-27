@@ -8,15 +8,15 @@ function Home() {
 		<MusicListsProvider>
 			<div className="home-container">
 				<div className="scrollable-area">
-					<MusicList list_title="Liked Songs" renderOnlyOnSuccess={true} />
-					<MusicList list_title="Featured Music" renderOnlyOnSuccess={false} />
-					<MusicList list_title="Recently Played" renderOnlyOnSuccess={true} />
-					<MusicList list_title="Trending Now" renderOnlyOnSuccess={false} />
-					<MusicList list_title="My Top Tracks" renderOnlyOnSuccess={false} />
+					<MusicList list_title="Liked Songs" />
+					<MusicList list_title="Featured Music" />
+					<MusicList list_title="Recently Played" />
+					<MusicList list_title="Trending Now" />
+					<MusicList list_title="My Top Tracks" />
 				</div>
 			</div>
 		</MusicListsProvider>
 	);
 }
 
-export default Home;
+export default React.memo(Home);

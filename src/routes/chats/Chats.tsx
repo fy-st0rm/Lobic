@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import React, { FC, useState, useEffect, useRef, RefObject } from "react";
 
 // Local
-import { MPState } from "api/musicApi";
-import { User, getUserData, fetchUserProfilePicture } from "api/userApi";
+import { MPState } from "@/api/music/musicApi";
+import { User, getUserData, fetchUserProfilePicture } from "@/api/user/userApi";
 import { OpCode, wsSend, SocketResponse } from "api/socketApi";
 import MusicPlayer from "components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";

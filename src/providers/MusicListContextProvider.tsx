@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useCallback, useState } from "react";
+import React, {
+	createContext,
+	useContext,
+	useCallback,
+	useReducer,
+} from "react";
 
 type ListType =
 	| "Liked Songs"
@@ -19,38 +24,64 @@ const MusicListsContext = createContext<MusicListsContextType | undefined>(
 	undefined,
 );
 
+type State = Map<ListType, Set<() => void>>;
+
+type Action =
+	| { type: "REGISTER_HANDLER"; listType: ListType; handler: () => void }
+	| { type: "UNREGISTER_HANDLER"; listType: ListType; handler: () => void }
+	| { type: "NOTIFY_PLAYED"; songId: string; sourceList?: ListType };
+
+function reducer(state: State, action: Action): State {
+	switch (action.type) {
+		case "REGISTER_HANDLER":
+			const handlers = state.get(action.listType) || new Set();
+			handlers.add(action.handler);
+			state.set(action.listType, handlers);
+			return new Map(state);
+		case "UNREGISTER_HANDLER":
+			const existingHandlers = state.get(action.listType);
+			if (existingHandlers) {
+				existingHandlers.delete(action.handler);
+				if (existingHandlers.size === 0) {
+					state.delete(action.listType);
+				} else {
+					state.set(action.listType, existingHandlers);
+				}
+			}
+			return new Map(state);
+		case "NOTIFY_PLAYED":
+			// Always reload Recently Played and My Top Tracks lists when any song is played
+			(
+				["Recently Played", "My Top Tracks", "Liked Songs"] as ListType[]
+			).forEach((listType) => {
+				state.get(listType)?.forEach((handler) => handler());
+			});
+			return state;
+		default:
+			return state;
+	}
+}
+
 export const MusicListsProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
-	// Store reload handlers for each list type
-	const [reloadHandlers] = useState<Map<ListType, Set<() => void>>>(new Map());
+	const [reloadHandlers, dispatch] = useReducer(reducer, new Map());
 
 	const registerReloadHandler = useCallback(
 		(listType: ListType, handler: () => void) => {
-			if (!reloadHandlers.has(listType)) {
-				reloadHandlers.set(listType, new Set());
-			}
-			reloadHandlers.get(listType)?.add(handler);
-
-			// Return cleanup function
+			dispatch({ type: "REGISTER_HANDLER", listType, handler });
 			return () => {
-				reloadHandlers.get(listType)?.delete(handler);
+				dispatch({ type: "UNREGISTER_HANDLER", listType, handler });
 			};
 		},
-		[reloadHandlers],
+		[],
 	);
 
 	const notifyMusicPlayed = useCallback(
 		(songId: string, sourceList?: ListType) => {
-			// Always reload Recently Played list when any song is played
-			reloadHandlers.get("Recently Played")?.forEach((handler) => handler());
-			// Always reload My Top Tracks list when any song is played
-
-			reloadHandlers.get("My Top Tracks")?.forEach((handler) => handler());
-
-			reloadHandlers.get("Liked Songs")?.forEach((handler) => handler());
+			dispatch({ type: "NOTIFY_PLAYED", songId, sourceList });
 		},
-		[reloadHandlers],
+		[],
 	);
 
 	return (

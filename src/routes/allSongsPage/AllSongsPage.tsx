@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import {
-	fetchTrendingSongs,
-	fetchRecentlyPlayed,
-	fetchMusicList,
-	MusicTrack,
-} from "@/api/musicApi";
+import { fetchMusicList, MusicTrack } from "@/api/music/musicApi";
 import { useAppProvider } from "@/providers/AppProvider";
-import { fetchLikedSongs } from "@/api/likedSongsApi";
-import { fetchTopTracks } from "@/api/topTracksApi";
+import { fetchLikedSongs } from "@/api/music/likedSongsApi";
+import { fetchTopTracks } from "@/api/music/topTracksApi";
+import { fetchRecentlyPlayed } from "@/api/music/recentlyPlayedApi";
+import { fetchTrendingSongs } from "@/api/music/trendingApi";
 import MusicListVertical from "@/routes/allSongsPage/MusicListVertical";
 import { MusicListsProvider } from "@/providers/MusicListContextProvider";
 

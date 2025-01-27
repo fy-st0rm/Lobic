@@ -1,0 +1,141 @@
+import { SERVER_IP } from "@/const";
+import { OpCode, wsSend } from "api/socketApi";
+import { AppState } from "providers/AppProvider";
+import { LobbyState } from "providers/LobbyProvider";
+import { MusicState } from "providers/MusicProvider";
+
+export enum MPState {
+	PLAY = "PLAY",
+	PAUSE = "PAUSE",
+	CHANGE_MUSIC = "CHANGE_MUSIC",
+	CHANGE_VOLUME = "CHANGE_VOLUME",
+	CHANGE_TIME = "CHANGE_TIME",
+	EMPTY = "EMPTY",
+}
+
+export interface MusicTrack {
+	id: string;
+	title: string;
+	artist: string;
+	album: string;
+	duration?: number;
+	cover_img: string;
+}
+
+/**
+ * Fetches a list of music tracks.
+ * @returns {Promise<MusicTrack[]>} - A list of music tracks.
+ */
+export const fetchMusicList = async (
+	start_index = 0,
+	page_length = 20,
+	title?: string,
+	uuid?: string,
+	artist?: string,
+	album?: string,
+	genre?: string,
+): Promise<MusicTrack[]> => {
+	try {
+		let url = `${SERVER_IP}/music/get_music`;
+		const params = new URLSearchParams({
+			page_length: page_length.toString(),
+			start_index: start_index.toString(),
+		});
+
+		// Add optional parameters if provided
+		if (uuid) params.append("uuid", uuid);
+		if (title) params.append("title", title);
+		if (artist) params.append("artist", artist);
+		if (album) params.append("album", album);
+		if (genre) params.append("genre", genre);
+
+		// Append params to URL
+		url = `${url}?${params.toString()}`;
+
+		// Fetch the data
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (!response.ok) {
+			throw new Error("Failed to fetch music data");
+		}
+
+		const data: MusicTrack[] = await response.json();
+		return data.map((song) => ({
+			...song,
+			cover_img: getMusicImageUrl(song.id),
+		}));
+	} catch (error) {
+		console.error("Error fetching music list:", error);
+		throw error;
+	}
+};
+
+/**
+ * Fetches the music from the backend based on the given music id
+ * @param {string|null} id - The ID of the music
+ * @returns {Promise<string>} - The blob URL of the music
+ * @throws {Error} If id is null
+ */
+export const fetchMusicUrl = async (id: string | null): Promise<string> => {
+	if (!id) {
+		throw new Error("Music ID is required to fetch music URL");
+	}
+
+	try {
+		const url = `${SERVER_IP}/music/${encodeURIComponent(id)}`;
+		const response = await fetch(url, {
+			method: "GET",
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		const blob = await response.blob();
+		const audioUrl = URL.createObjectURL(blob);
+		return audioUrl;
+	} catch (error) {
+		console.error("Failed to fetch music:", error);
+		throw error;
+	}
+};
+
+/*
+ * Updates the host music state in the server
+ * @param {WebSocket} socket - Instance of the websocket
+ * @param {AppState} appState - Instance of the app state
+ * @param {LobbyState} lobbyState - Instance of the lobby state
+ * @param {MusicState} musicState - Instance of the music state
+ */
+export const updateHostMusicState = (
+	socket: WebSocket | null,
+	appState: AppState,
+	lobbyState: LobbyState,
+	musicState: MusicState,
+) => {
+	if (!lobbyState.in_lobby) return;
+	if (!musicState.id) return;
+
+	const payload = {
+		op_code: OpCode.SET_MUSIC_STATE,
+		value: {
+			lobby_id: lobbyState.lobby_id,
+			user_id: appState.user_id,
+			music_id: musicState.id,
+			title: musicState.title,
+			artist: musicState.artist,
+			cover_img: musicState.cover_img,
+			timestamp: musicState.timestamp,
+			state: musicState.state,
+		},
+	};
+	wsSend(socket, payload);
+};
+
+export const getMusicImageUrl = (songId: string): string =>
+	`${SERVER_IP}/image/${songId}`;

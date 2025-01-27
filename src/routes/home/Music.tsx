@@ -9,8 +9,8 @@ import {
 	//types
 	Playlist,
 	FetchUserPlaylistsResponse,
-} from "api/playlistApi";
-import { toggleSongLiked } from "api/likedSongsApi";
+} from "@/api/playlist/playlistApi";
+import { toggleSongLiked } from "@/api/music/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicLists } from "@/providers/MusicListContextProvider";
@@ -45,9 +45,6 @@ const Music: React.FC<MusicProps> = ({
 	coverArt,
 	onClick,
 }) => {
-	const useAverageColor = true;
-	// toggle to go back to original
-
 	const { appState } = useAppProvider();
 	const { queue, enqueue } = useQueueProvider();
 	const { notifyMusicPlayed } = useMusicLists();
@@ -67,12 +64,6 @@ const Music: React.FC<MusicProps> = ({
 	}, [currentUserId]);
 
 	useEffect(() => {
-		if (!useAverageColor) {
-			setBackgroundColor(defaultBgColor);
-			setTextColor("white");
-			return;
-		}
-
 		const fac = new FastAverageColor();
 
 		const getAverageColor = async () => {
@@ -95,7 +86,7 @@ const Music: React.FC<MusicProps> = ({
 		return () => {
 			fac.destroy();
 		};
-	}, [coverArt, useAverageColor]);
+	}, [coverArt]);
 
 	const handleAddToQueue = () => {
 		const track = {

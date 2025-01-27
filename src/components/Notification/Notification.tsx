@@ -11,7 +11,11 @@ import {
 	Notification,
 	useNotificationProvider,
 } from "providers/NotificationProvider";
-import { fetchUserProfilePicture, getUserData, addFriend } from "api/userApi";
+import {
+	fetchUserProfilePicture,
+	getUserData,
+	addFriend,
+} from "@/api/user/userApi";
 
 const NotificationSystem = (): React.ReactElement => {
 	const { appState } = useAppProvider();
@@ -31,14 +35,9 @@ const NotificationSystem = (): React.ReactElement => {
 	// Handlers
 	const okHandler = async (notif: Notification) => {
 		let msg = notif.value;
-		toast(
-			<div>
-				{msg}
-			</div>,
-			{
-				duration: 5000,
-			},
-		);
+		toast(<div>{msg}</div>, {
+			duration: 5000,
+		});
 	};
 
 	const addFriendHandler = async (notif: Notification) => {
