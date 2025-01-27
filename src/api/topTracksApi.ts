@@ -1,20 +1,11 @@
 import { SERVER_IP } from "@/const";
-
-interface TopTrack {
-	album: string;
-	artist: string;
-	cover_art_path: string;
-	genre: string;
-	id: string;
-	times_played: number;
-	title: string;
-}
+import { getMusicImageUrl, MusicTrack } from "./musicApi";
 
 export const fetchTopTracks = async (
 	userId: string | null,
 	start_index = 0,
 	page_length = 20,
-): Promise<TopTrack[]> => {
+): Promise<MusicTrack[]> => {
 	if (!userId) {
 		console.log("No user ID provided, returning empty top tracks array");
 		return [];
@@ -41,8 +32,11 @@ export const fetchTopTracks = async (
 		if (!response.ok) {
 			throw new Error("Failed to fetch top tracks");
 		}
-		const data: TopTrack[] = await response.json();
-		return data;
+		const data: MusicTrack[] = await response.json();
+		return data.map((song) => ({
+			...song,
+			cover_img: getMusicImageUrl(song.id),
+		}));
 	} catch (error) {
 		console.error("Error fetching top tracks:", error);
 		throw error;

@@ -4,7 +4,6 @@ import { AppState } from "providers/AppProvider";
 import { LobbyState } from "providers/LobbyProvider";
 import { MusicState } from "providers/MusicProvider";
 
-// Enum to define Music Player State
 export enum MPState {
 	PLAY = "PLAY",
 	PAUSE = "PAUSE",
@@ -14,19 +13,13 @@ export enum MPState {
 	EMPTY = "EMPTY",
 }
 
-// Define interfaces for the data structures
 export interface MusicTrack {
 	id: string;
 	title: string;
 	artist: string;
-	album?: string;
+	album: string;
 	duration?: number;
-	cover_img?: string;
-	// Add other fields as needed
-}
-
-interface RecentlyPlayedSong extends MusicTrack {
-	playedAt: string;
+	cover_img: string;
 }
 
 /**
@@ -59,7 +52,10 @@ export const fetchMusicList = async (
 		}
 
 		const data: MusicTrack[] = await response.json();
-		return data;
+		return data.map((song) => ({
+			...song,
+			cover_img: getMusicImageUrl(song.id),
+		}));
 	} catch (error) {
 		console.error("Error fetching trending songs:", error);
 		throw error;
@@ -96,7 +92,10 @@ export const fetchTrendingSongs = async (
 		}
 
 		const data: MusicTrack[] = await response.json();
-		return data;
+		return data.map((song) => ({
+			...song,
+			cover_img: getMusicImageUrl(song.id),
+		}));
 	} catch (error) {
 		console.error("Error fetching trending songs:", error);
 		throw error;
@@ -107,7 +106,7 @@ export const fetchRecentlyPlayed = async (
 	userId: string | null,
 	start_index = 0,
 	page_length = 20,
-): Promise<RecentlyPlayedSong[]> => {
+): Promise<MusicTrack[]> => {
 	if (!userId) {
 		throw new Error("User ID is required to fetch recently played songs");
 	}
@@ -131,8 +130,11 @@ export const fetchRecentlyPlayed = async (
 			throw new Error("Failed to fetch recently played songs");
 		}
 
-		const data: RecentlyPlayedSong[] = await response.json();
-		return data;
+		const data: MusicTrack[] = await response.json();
+		return data.map((song) => ({
+			...song,
+			cover_img: getMusicImageUrl(song.id),
+		}));
 	} catch (error) {
 		console.error("Error fetching recently played songs:", error);
 		throw error;
@@ -205,14 +207,6 @@ export const incrementPlayCount = async (songId: string): Promise<string> => {
 };
 
 /**
- * Gets the URL for a music image.
- * @param {string} songId - The ID of the song.
- * @returns {string} - The URL of the music image.
- */
-export const getMusicImageUrl = (songId: string): string =>
-	`${SERVER_IP}/image/${songId}`;
-
-/**
  * Fetches the music from the backend based on the given music id
  * @param {string|null} id - The ID of the music
  * @returns {Promise<string>} - The blob URL of the music
@@ -273,3 +267,6 @@ export const updateHostMusicState = (
 	};
 	wsSend(socket, payload);
 };
+
+export const getMusicImageUrl = (songId: string): string =>
+	`${SERVER_IP}/image/${songId}`;

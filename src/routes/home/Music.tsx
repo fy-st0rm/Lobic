@@ -31,6 +31,7 @@ interface MusicProps {
 	musicId: string;
 	title: string;
 	artist: string;
+	album: string;
 	coverArt: string;
 	onClick: () => void;
 }
@@ -39,6 +40,7 @@ const Music: React.FC<MusicProps> = ({
 	musicId,
 	title,
 	artist,
+	album,
 	coverArt,
 	onClick,
 }) => {
@@ -60,6 +62,7 @@ const Music: React.FC<MusicProps> = ({
 			id: musicId,
 			title: title,
 			artist: artist,
+			album: album,
 			cover_img: coverArt,
 		};
 

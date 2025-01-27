@@ -1,24 +1,11 @@
 import { SERVER_IP } from "@/const";
+import { MusicTrack, getMusicImageUrl } from "./musicApi";
 
-interface LikedSong {
-	id: string;
-	title: string;
-	artist: string;
-	album?: string;
-	duration?: number;
-}
-
-/**
- * Fetches a list of liked songs for a specific user.
- * @param {string | null} userId - The ID of the user.
- * @param {number} [paginationLimit] - Optional. The number of songs to fetch. Fetches all if nothing is provided.
- * @returns {Promise<LikedSong[]>} - A list of liked songs.
- */
 export const fetchLikedSongs = async (
 	userId: string | null,
 	start_index = 0,
 	page_length = 20,
-): Promise<LikedSong[]> => {
+): Promise<MusicTrack[]> => {
 	if (!userId) {
 		console.log("No user ID provided, returning empty playlist array");
 		return [];
@@ -47,20 +34,17 @@ export const fetchLikedSongs = async (
 			throw new Error("Failed to fetch liked songs");
 		}
 
-		const data: LikedSong[] = await response.json();
-		return data;
+		const data: MusicTrack[] = await response.json();
+		return data.map((song) => ({
+			...song,
+			cover_img: getMusicImageUrl(song.id),
+		}));
 	} catch (error) {
 		console.error("Error fetching liked songs:", error);
 		throw error;
 	}
 };
 
-/**
- * Adds a song to the user's liked songs.
- * @param {string | null} userId - The ID of the user.
- * @param {string | null} musicId - The ID of the song.
- * @returns {Promise<string | object>} - A confirmation message or JSON response.
- */
 export const addToLikedSongs = async (
 	userId: string | null,
 	musicId: string | null,
@@ -115,12 +99,6 @@ export const addToLikedSongs = async (
 	}
 };
 
-/**
- * Removes a song from the user's liked songs.
- * @param {string | null} userId - The ID of the user.
- * @param {string | null} musicId - The ID of the song.
- * @returns {Promise<string>} - A confirmation message.
- */
 export const removeFromLikedSongs = async (
 	userId: string | null,
 	musicId: string | null,
@@ -159,12 +137,6 @@ export const removeFromLikedSongs = async (
 	}
 };
 
-/**
- * Fetches whether a song is liked by a user.
- * @param {string | null} userId - The ID of the user.
- * @param {string} musicId - The ID of the song.
- * @returns {Promise<boolean>} A boolean indicating whether the song is liked.
- */
 export const fetchIsSongLiked = async (
 	userId: string | null,
 	musicId: string,
@@ -188,12 +160,6 @@ export const fetchIsSongLiked = async (
 	}
 };
 
-/**
- * Toggles the liked state of a song for a user.
- * @param {string | null} userId - The ID of the user.
- * @param {string} musicId - The ID of the song.
- * @returns {Promise<string>} A string indicating the result of the operation.
- */
 export const toggleSongLiked = async (
 	userId: string | null,
 	musicId: string,

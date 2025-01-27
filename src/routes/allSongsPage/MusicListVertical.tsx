@@ -147,6 +147,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 			id: song.id,
 			title: song.title,
 			artist: song.artist,
+			album: song.album,
 			cover_img: song.cover_img,
 		};
 		enqueue(track);
