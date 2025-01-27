@@ -4,8 +4,8 @@ import SongContainer from "@/components/SongContainer/SongContainer";
 import User2 from "/user_images/sameep.jpg"; // @TODO
 import { Dot, Edit, Play } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
-import { getUserData, fetchUserProfilePicture } from "@/api/userApi";
-import { getMusicImageUrl, MPState } from "api/musicApi";
+import { getUserData, fetchUserProfilePicture } from "@/api/user/userApi";
+import { getMusicImageUrl, MPState } from "@/api/music/musicApi";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import {
@@ -13,7 +13,7 @@ import {
 	PlaylistResponse,
 	updatePlaylistCoverImg,
 	fetchPlaylistCoverImg,
-} from "../../api/playlistApi";
+} from "../../api/playlist/playlistApi";
 
 function Playlist({}) {
 	const { appState } = useAppProvider();

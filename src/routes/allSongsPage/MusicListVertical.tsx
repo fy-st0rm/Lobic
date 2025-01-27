@@ -4,16 +4,14 @@ import {
 	MusicTrack as Song,
 	getMusicImageUrl,
 	MPState,
-	incrementPlayCount,
-	logSongPlay,
-} from "@/api/musicApi";
+} from "@/api/music/musicApi";
 import {
 	fetchUserPlaylists,
 	addSongToPlaylist,
 	Playlist,
 	FetchUserPlaylistsResponse,
-} from "api/playlistApi";
-import { toggleSongLiked } from "api/likedSongsApi";
+} from "@/api/playlist/playlistApi";
+import { toggleSongLiked } from "@/api/music/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
@@ -115,17 +113,9 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 		try {
 			setSelectedSongId(song.id);
 			setIsLoading(true);
-
 			const coverArt = getMusicImageUrl(song.id);
-
-			await Promise.all([
-				incrementPlayCount(song.id),
-				logSongPlay(userId, song.id),
-			]);
-
 			clearMusicState();
 			clearQueue();
-
 			updateMusicState({
 				id: song.id,
 				title: song.title,
@@ -171,7 +161,6 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 			};
 
 			const result = await addSongToPlaylist(songData);
-			console.log("Song added to playlist successfully:", result);
 		} catch (error) {
 			console.error("Error adding song to playlist:", error);
 		}

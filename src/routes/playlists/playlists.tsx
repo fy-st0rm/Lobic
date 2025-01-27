@@ -11,7 +11,7 @@ import {
 	CreatePlaylistData,
 	fetchPlaylistCoverImg,
 	updatePlaylistCoverImg,
-} from "api/playlistApi";
+} from "@/api/playlist/playlistApi";
 
 import img from "/playlistimages/playlistimage.png";
 

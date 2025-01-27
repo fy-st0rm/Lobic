@@ -2,7 +2,7 @@
 import React from "react";
 
 // Local
-import { User } from "api/userApi";
+import { User } from "@/api/user/userApi";
 
 export type LobbyMembers = {
 	[id: string]: User;

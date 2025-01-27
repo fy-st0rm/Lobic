@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SongInfo from "components/SongInfo/SongInfo";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
-import { MPState, getMusicImageUrl } from "api/musicApi";
+import { MPState, getMusicImageUrl } from "@/api/music/musicApi";
 
 interface Song {
 	music_id: string;

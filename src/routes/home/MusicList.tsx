@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Music from "@/routes/home/Music";
-import { MPState } from "api/musicApi";
-import {
-	fetchMusicList,
-	incrementPlayCount,
-	fetchTrendingSongs,
-	fetchRecentlyPlayed,
-	logSongPlay,
-	MusicTrack as Song,
-} from "api/musicApi";
-import { fetchLikedSongs } from "api/likedSongsApi";
-import { fetchTopTracks } from "api/topTracksApi";
+import { MPState } from "@/api/music/musicApi";
+import { fetchMusicList, MusicTrack as Song } from "@/api/music/musicApi";
+import { fetchLikedSongs } from "@/api/music/likedSongsApi";
+import { fetchTopTracks } from "@/api/music/topTracksApi";
+import { fetchRecentlyPlayed } from "@/api/music/recentlyPlayedApi";
+import { fetchTrendingSongs } from "@/api/music/trendingApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import { useMusicLists } from "@/providers/MusicListContextProvider";
@@ -19,13 +14,20 @@ import { useNavigate } from "react-router-dom";
 
 import "./MusicList.css";
 
+// Define ListType as a union of specific strings
+type ListType =
+	| "Trending Now"
+	| "Recently Played"
+	| "Liked Songs"
+	| "My Top Tracks"
+	| "Featured Music";
+
 interface MusicListProps {
-	list_title: string;
-	renderOnlyOnSuccess: boolean;
+	list_title: ListType; // Update the type to ListType
 }
 
 type ListLoaderMap = {
-	[key: string]: (userId: string) => Promise<Song[]>;
+	[key in ListType]: (userId: string) => Promise<Song[]>;
 };
 
 const listLoaders: ListLoaderMap = {
@@ -36,10 +38,7 @@ const listLoaders: ListLoaderMap = {
 	"Featured Music": () => fetchMusicList(),
 };
 
-const MusicList: React.FC<MusicListProps> = ({
-	list_title,
-	renderOnlyOnSuccess,
-}) => {
+const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 	const navigate = useNavigate();
 	const [musicItems, setMusicItems] = useState<Song[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -48,8 +47,7 @@ const MusicList: React.FC<MusicListProps> = ({
 
 	const { appState } = useAppProvider();
 	const { updateMusicState } = useMusicProvider();
-	const { queue, enqueue } = useQueueProvider();
-
+	const { enqueue } = useQueueProvider();
 	const { notifyMusicPlayed, registerReloadHandler } = useMusicLists();
 
 	const userId = appState.user_id;
@@ -58,13 +56,12 @@ const MusicList: React.FC<MusicListProps> = ({
 		setIsLoading(true);
 
 		try {
-			const loader = listLoaders[list_title] || listLoaders["Featured Music"];
+			const loader = listLoaders[list_title]; // No need for fallback since list_title is guaranteed to be a valid key
 			const data = await loader(userId);
 			setMusicItems(data);
 			setEmpty(data.length === 0);
 		} catch (err) {
-			const error = err as Error;
-			console.error(`Error loading ${list_title}:`, error);
+			console.error(`Error loading ${list_title}:`, err);
 		} finally {
 			setIsLoading(false);
 		}
@@ -72,7 +69,7 @@ const MusicList: React.FC<MusicListProps> = ({
 
 	useEffect(() => {
 		// Register this list's reload handler
-		const cleanup = registerReloadHandler(list_title as any, loadMusicData);
+		const cleanup = registerReloadHandler(list_title, loadMusicData);
 
 		// Initial load
 		loadMusicData();
@@ -83,13 +80,6 @@ const MusicList: React.FC<MusicListProps> = ({
 	const handleMusicClick = async (song: Song): Promise<void> => {
 		try {
 			setSelectedSongId(song.id);
-			setIsLoading(true);
-
-			await Promise.all([
-				incrementPlayCount(song.id),
-				logSongPlay(userId, song.id),
-			]);
-
 			updateMusicState({
 				id: song.id,
 				title: song.title,
@@ -100,12 +90,9 @@ const MusicList: React.FC<MusicListProps> = ({
 			} as MusicState);
 
 			// Notify other lists that a song was played
-			notifyMusicPlayed(song.id, list_title as any);
+			notifyMusicPlayed(song.id, list_title);
 		} catch (err) {
-			const error = err as Error;
-			console.error("Failed to handle music click:", error);
-		} finally {
-			setIsLoading(false);
+			console.error("Failed to handle music click:", err);
 		}
 	};
 
@@ -126,7 +113,7 @@ const MusicList: React.FC<MusicListProps> = ({
 		navigate("/show_all", { state: { listTitle: list_title } });
 	};
 
-	if (renderOnlyOnSuccess && isEmpty) {
+	if (isEmpty) {
 		return null;
 	}
 
@@ -170,6 +157,6 @@ const MusicList: React.FC<MusicListProps> = ({
 			</div>
 		</div>
 	);
-};
+});
 
 export default MusicList;

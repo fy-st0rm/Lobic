@@ -10,7 +10,6 @@ export const fetchTopTracks = async (
 		console.log("No user ID provided, returning empty top tracks array");
 		return [];
 	}
-
 	try {
 		// Construct the URL with query parameters
 		let url = `${SERVER_IP}/music/get_top_tracks`;
@@ -39,6 +38,34 @@ export const fetchTopTracks = async (
 		}));
 	} catch (error) {
 		console.error("Error fetching top tracks:", error);
+		throw error;
+	}
+};
+
+export const updateUserPlayLog = async (
+	userId: string,
+	musicId: string,
+): Promise<string> => {
+	try {
+		const response = await fetch(`${SERVER_IP}/music/log_song_play`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				user_id: userId,
+				music_id: musicId,
+			}),
+		});
+
+		if (!response.ok) {
+			throw new Error("Failed to log song play");
+		}
+
+		const text: string = await response.text();
+		return text;
+	} catch (error) {
+		console.error("Error logging song play:", error);
 		throw error;
 	}
 };

@@ -2,13 +2,14 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
-import { SERVER_IP } from "@/const";
-import { MPState, MusicTrack } from "api/musicApi";
+import { MPState, MusicTrack } from "@/api/music/musicApi";
+import { updateUserPlayLog } from "@/api/music/topTracksApi";
+import { incrementGLobalPlayCount } from "@/api/music/trendingApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
-import { fetchIsSongLiked, toggleSongLiked } from "api/likedSongsApi";
+import { fetchIsSongLiked, toggleSongLiked } from "@/api/music/likedSongsApi";
 import { useQueueProvider } from "providers/QueueProvider";
 
 // Assets
@@ -48,8 +49,24 @@ function MusicPlayer() {
 	};
 
 	useEffect(() => {
-		fetchLikedState();
+		if (appState.user_id && musicState.id) {
+			(async () => {
+				try {
+					await fetchLikedState();
+					await updateUserPlayLog(appState.user_id!, musicState.id!);
+					await incrementGLobalPlayCount(musicState.id!);
+				} catch (error) {
+					console.error("Error in play logging sequence:", error);
+				}
+			})();
+		}
 	}, [appState.user_id, musicState.id]);
+
+	useEffect(() => {
+		if (musicState.cover_img) {
+			setIsLoading(false);
+		}
+	}, [musicState.cover_img]);
 
 	// Fetch the liked state of the song when the component mounts or when the song changes
 	const fetchLikedState = async () => {
@@ -58,7 +75,6 @@ function MusicPlayer() {
 			setIsSongLiked(false);
 			return;
 		}
-
 		try {
 			const isLiked = await fetchIsSongLiked(appState.user_id, musicState.id);
 			setIsSongLiked(isLiked);
@@ -77,13 +93,10 @@ function MusicPlayer() {
 			);
 			return;
 		}
-
 		const newLikedState = !isSongLiked;
 		setIsSongLiked(newLikedState);
-
 		try {
-			const result = await toggleSongLiked(appState.user_id, musicState.id);
-			console.log("Song liked state updated successfully:", result);
+			toggleSongLiked(appState.user_id, musicState.id);
 		} catch (err) {
 			console.error("Failed to update song liked state:", err);
 			setIsSongLiked(!newLikedState); // Revert the local state on error

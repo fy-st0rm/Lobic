@@ -8,7 +8,7 @@ import React, {
 } from "react";
 
 // Local
-import { MPState, MusicTrack } from "api/musicApi";
+import { MPState, MusicTrack } from "@/api/music/musicApi";
 import { OpCode, wsSend } from "api/socketApi";
 import { useMusicProvider } from "providers/MusicProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";

@@ -8,7 +8,7 @@ import {
 	MPState,
 	fetchMusicUrl,
 	updateHostMusicState,
-} from "api/musicApi";
+} from "@/api/music/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useMusicProvider } from "providers/MusicProvider";

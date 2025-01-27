@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 // Local
 import SearchBar from "components/SearchBar/SearchBar";
 import { OpCode, wsSend } from "api/socketApi.ts";
-import { fetchUserProfilePicture, logoutUser } from "api/userApi.ts";
+import { fetchUserProfilePicture, logoutUser } from "@/api/user/userApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
