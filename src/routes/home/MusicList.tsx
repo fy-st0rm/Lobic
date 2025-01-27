@@ -51,7 +51,7 @@ const MusicList: React.FC<MusicListProps> = ({
 	const { updateMusicState } = useMusicProvider();
 	const { queue, enqueue } = useQueueProvider();
 
-	const { notifyMusicPlayed } = useMusicLists();
+	const { notifyMusicPlayed, registerReloadHandler } = useMusicLists();
 
 	const userId = appState.user_id;
 
@@ -72,9 +72,14 @@ const MusicList: React.FC<MusicListProps> = ({
 	}, [list_title, userId]);
 
 	useEffect(() => {
+		// Register this list's reload handler
+		const cleanup = registerReloadHandler(list_title as any, loadMusicData);
+
+		// Initial load
 		loadMusicData();
-		return;
-	}, [list_title, loadMusicData]);
+
+		return cleanup;
+	}, [list_title, loadMusicData, registerReloadHandler]);
 
 	const handleMusicClick = async (song: Song): Promise<void> => {
 		try {

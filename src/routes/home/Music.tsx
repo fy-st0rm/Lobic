@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { EllipsisVertical, Plus, PlusCircle, Heart } from "lucide-react";
+import { FastAverageColor } from "fast-average-color";
 
 // Local
 import {
@@ -44,18 +45,57 @@ const Music: React.FC<MusicProps> = ({
 	coverArt,
 	onClick,
 }) => {
+	const useAverageColor = true;
+	// toggle to go back to original
+
 	const { appState } = useAppProvider();
 	const { queue, enqueue } = useQueueProvider();
 	const { notifyMusicPlayed } = useMusicLists();
 	const currentUserId = appState.user_id;
 	const userId = appState.user_id;
 	const [playlists, setPlaylists] = useState<Playlist[]>([]);
+	const [backgroundColor, setBackgroundColor] = useState<string>("transparent");
+	const [textColor, setTextColor] = useState<string>("white");
+
+	// Original background color
+	const defaultBgColor = "#072631";
 
 	useEffect(() => {
 		if (currentUserId) {
 			fetchPlaylists();
 		}
 	}, [currentUserId]);
+
+	useEffect(() => {
+		if (!useAverageColor) {
+			setBackgroundColor(defaultBgColor);
+			setTextColor("white");
+			return;
+		}
+
+		const fac = new FastAverageColor();
+
+		const getAverageColor = async () => {
+			try {
+				const color = await fac.getColorAsync(coverArt);
+				const rgbaColor = `rgba(${color.value[0]}, ${color.value[1]}, ${color.value[2]}, 0.75)`;
+				setBackgroundColor(rgbaColor);
+				setTextColor(color.isDark ? "white" : "black");
+			} catch (error) {
+				console.error("Error getting average color:", error);
+				setBackgroundColor(defaultBgColor);
+				setTextColor("white");
+			}
+		};
+
+		if (coverArt) {
+			getAverageColor();
+		}
+
+		return () => {
+			fac.destroy();
+		};
+	}, [coverArt, useAverageColor]);
 
 	const handleAddToQueue = () => {
 		const track = {
@@ -112,20 +152,31 @@ const Music: React.FC<MusicProps> = ({
 
 	return (
 		<ContextMenu>
-			<ContextMenuTrigger className="music-container">
+			<ContextMenuTrigger
+				className="music-container transition-all duration-300"
+				style={{
+					backgroundColor,
+					color: textColor,
+					borderRadius: "0.5rem",
+					padding: "0.5rem",
+				}}
+			>
 				<div className="music-photo-container" onClick={onClick}>
-					<img className="music-photo" src={coverArt} alt={`${title} cover`} />
+					<img
+						className="music-photo rounded-lg shadow-lg"
+						src={coverArt}
+						alt={`${title} cover`}
+					/>
 				</div>
 				<div className="info-container">
 					<div className="music-info">
-						<h2 className="music-title">{title}</h2>
+						<h2 className="music-title font-semibold">{title}</h2>
 						<h3 className="artist-name opacity-75">{artist}</h3>
 					</div>
 				</div>
 			</ContextMenuTrigger>
 
 			<ContextMenuContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg w-56">
-				{/* Add to Queue */}
 				<ContextMenuItem
 					className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
 					onSelect={handleAddToQueue}
@@ -134,7 +185,6 @@ const Music: React.FC<MusicProps> = ({
 					<span>Add to Queue</span>
 				</ContextMenuItem>
 
-				{/* Add to Playlist Submenu */}
 				<ContextMenuSub>
 					<ContextMenuSubTrigger className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-white hover:text-black hover:rounded-lg">
 						<PlusCircle className="mr-2 h-4 w-4" />
@@ -153,7 +203,6 @@ const Music: React.FC<MusicProps> = ({
 					</ContextMenuSubContent>
 				</ContextMenuSub>
 
-				{/* Add to Liked Songs */}
 				<ContextMenuItem
 					className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
 					onSelect={handleAddToLikedSongs}
