@@ -4,7 +4,6 @@ import { MPState } from "api/musicApi";
 import {
 	fetchMusicList,
 	incrementPlayCount,
-	getMusicImageUrl,
 	fetchTrendingSongs,
 	fetchRecentlyPlayed,
 	logSongPlay,
@@ -86,8 +85,6 @@ const MusicList: React.FC<MusicListProps> = ({
 			setSelectedSongId(song.id);
 			setIsLoading(true);
 
-			const coverArt = getMusicImageUrl(song.id);
-
 			await Promise.all([
 				incrementPlayCount(song.id),
 				logSongPlay(userId, song.id),
@@ -97,7 +94,7 @@ const MusicList: React.FC<MusicListProps> = ({
 				id: song.id,
 				title: song.title,
 				artist: song.artist,
-				cover_img: coverArt,
+				cover_img: song.cover_img,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
@@ -119,7 +116,7 @@ const MusicList: React.FC<MusicListProps> = ({
 				title: song.title,
 				artist: song.artist,
 				album: song.album,
-				cover_img: getMusicImageUrl(song.id),
+				cover_img: song.cover_img,
 			};
 			enqueue(track); // Enqueue each song
 		});
@@ -165,7 +162,7 @@ const MusicList: React.FC<MusicListProps> = ({
 							title={song.title}
 							artist={song.artist}
 							album={song.album}
-							coverArt={getMusicImageUrl(song.id)}
+							coverArt={song.cover_img}
 							onClick={() => handleMusicClick(song)}
 						/>
 					</div>
