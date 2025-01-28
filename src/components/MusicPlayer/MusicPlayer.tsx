@@ -3,8 +3,6 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
 import { MPState, MusicTrack } from "@/api/music/musicApi";
-import { updateUserPlayLog } from "@/api/music/topTracksApi";
-import { incrementGLobalPlayCount } from "@/api/music/trendingApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
@@ -54,7 +52,6 @@ function MusicPlayer() {
 				try {
 					await fetchLikedState();
 					await updateUserPlayLog(appState.user_id!, musicState.id!);
-					await incrementGLobalPlayCount(musicState.id!);
 				} catch (error) {
 					console.error("Error in play logging sequence:", error);
 				}
@@ -371,3 +368,6 @@ function MusicPlayer() {
 }
 
 export default MusicPlayer;
+function updateUserPlayLog(arg0: string, arg1: string) {
+	throw new Error("Function not implemented.");
+}

@@ -42,7 +42,7 @@ export const fetchTopTracks = async (
 	}
 };
 
-export const updateUserPlayLog = async (
+export const updatePlayLog = async (
 	userId: string,
 	musicId: string,
 ): Promise<string> => {

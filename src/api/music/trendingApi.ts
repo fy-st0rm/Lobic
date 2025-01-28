@@ -40,26 +40,3 @@ export const fetchTrendingSongs = async (
 		throw error;
 	}
 };
-
-export const incrementGLobalPlayCount = async (
-	songId: string,
-): Promise<string> => {
-	try {
-		const response = await fetch(
-			`${SERVER_IP}/music/incr_times_played/${songId}`,
-			{
-				method: "POST",
-			},
-		);
-
-		if (!response.ok) {
-			throw new Error("Failed to increment play count");
-		}
-
-		const text: string = await response.text();
-		return text;
-	} catch (error) {
-		console.error("Error incrementing play count:", error);
-		throw error;
-	}
-};
