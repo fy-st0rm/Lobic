@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { EllipsisVertical, Heart, Play, Plus } from "lucide-react";
-import { MusicTrack as Song, MPState } from "@/api/music/musicApi";
+import {
+	MusicTrack as Song,
+	MPState,
+	ImageFromUrl,
+} from "@/api/music/musicApi";
 import {
 	fetchUserPlaylists,
 	addSongToPlaylist,
@@ -222,7 +226,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 					>
 						{/* Song Cover Image */}
 						<img
-							src={`http://127.0.0.1:8080/image/${song.image_url}`}
+							src={ImageFromUrl(song.image_url)}
 							alt={song.title}
 							className="w-16 h-16 rounded-lg object-cover cursor-pointer"
 							onClick={() => handleSongPlay(song)}

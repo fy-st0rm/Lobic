@@ -34,12 +34,14 @@ export const fetchMusicList = async (
 	artist?: string,
 	album?: string,
 	genre?: string,
+	randomizer = true,
 ): Promise<MusicTrack[]> => {
 	try {
 		let url = `${SERVER_IP}/music/get_music`;
 		const params = new URLSearchParams({
 			page_length: page_length.toString(),
 			start_index: start_index.toString(),
+			randomizer: randomizer.toString(),
 		});
 
 		// Add optional parameters if provided
@@ -163,5 +165,5 @@ export const updateHostMusicState = (
 	wsSend(socket, payload);
 };
 
-// export const getMusicImageUrl = (songId: string): string =>
-// 	`${SERVER_IP}/image/${songId}`;
+export const ImageFromUrl = (image_url: string): string =>
+	`${SERVER_IP}/image/${image_url}`;

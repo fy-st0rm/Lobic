@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 // Local
-import { MPState, MusicTrack } from "@/api/music/musicApi";
+import { ImageFromUrl, MPState, MusicTrack } from "@/api/music/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
@@ -188,7 +188,7 @@ function MusicPlayer() {
 				<img
 					src={
 						musicState.image_url
-							? `http://127.0.0.1:8080/image/${musicState.image_url}`
+							? ImageFromUrl(musicState.image_url)
 							: placeholder_logo
 					}
 					alt="Album cover"
@@ -297,7 +297,7 @@ function MusicPlayer() {
 									<img
 										src={
 											musicState.image_url
-												? `http://127.0.0.1:8080/image/${musicState.image_url}`
+												? ImageFromUrl(musicState.image_url)
 												: placeholder_logo
 										}
 										alt="Album cover"
@@ -321,7 +321,7 @@ function MusicPlayer() {
 							<div className="flex items-center font-bold px-4 pb-3">
 								<div className="h-[66px] w-[66px] py-1 self-start rounded-sm">
 									<img
-										src={`http://127.0.0.1:8080/image/${item.image_url}`}
+										src={ImageFromUrl(item.image_url)}
 										alt="Album cover"
 										className="h-[100%] w-[100%] rounded-sm"
 									/>
@@ -371,8 +371,4 @@ function MusicPlayer() {
 		</div>
 	);
 }
-
 export default MusicPlayer;
-function updateUserPlayLog(arg0: string, arg1: string) {
-	throw new Error("Function not implemented.");
-}
