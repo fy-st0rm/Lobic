@@ -9,6 +9,7 @@ import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "@/api/music/likedSongsApi";
 import { useQueueProvider } from "providers/QueueProvider";
+import { updatePlayLog } from "@/api/music/musicApi";
 
 // Assets
 import previousButton from "/controlbar/PreviousButton.svg";
@@ -51,7 +52,7 @@ function MusicPlayer() {
 			(async () => {
 				try {
 					await fetchLikedState();
-					await updateUserPlayLog(appState.user_id!, musicState.id!);
+					await updatePlayLog(appState.user_id!, musicState.id!);
 				} catch (error) {
 					console.error("Error in play logging sequence:", error);
 				}
