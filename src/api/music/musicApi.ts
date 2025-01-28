@@ -34,12 +34,14 @@ export const fetchMusicList = async (
 	artist?: string,
 	album?: string,
 	genre?: string,
+	randomizer = true,
 ): Promise<MusicTrack[]> => {
 	try {
 		let url = `${SERVER_IP}/music/get_music`;
 		const params = new URLSearchParams({
 			page_length: page_length.toString(),
 			start_index: start_index.toString(),
+			randomizer: randomizer.toString(),
 		});
 
 		// Add optional parameters if provided
