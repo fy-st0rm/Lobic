@@ -84,7 +84,7 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 				id: song.id,
 				title: song.title,
 				artist: song.artist,
-				cover_img: song.cover_img,
+				image_url: song.image_url,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
@@ -103,7 +103,7 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 				title: song.title,
 				artist: song.artist,
 				album: song.album,
-				cover_img: song.cover_img,
+				image_url: song.image_url,
 			};
 			enqueue(track); // Enqueue each song
 		});
@@ -149,7 +149,7 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 							title={song.title}
 							artist={song.artist}
 							album={song.album}
-							coverArt={song.cover_img}
+							image_url={song.image_url}
 							onClick={() => handleMusicClick(song)}
 						/>
 					</div>

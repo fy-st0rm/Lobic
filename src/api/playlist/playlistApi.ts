@@ -17,6 +17,7 @@ export interface Song {
 	album: string;
 	genre: string;
 	song_added_date_time: string;
+	image_url: string;
 }
 
 export interface PlaylistResponse {

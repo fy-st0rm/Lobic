@@ -1,13 +1,14 @@
 import { useState } from "react";
 import SongInfo from "components/SongInfo/SongInfo";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
-import { MPState, getMusicImageUrl } from "@/api/music/musicApi";
+import { MPState } from "@/api/music/musicApi";
 
 interface Song {
 	music_id: string;
 	title: string;
 	artist: string;
 	album: string;
+	image_url: string;
 }
 
 interface SongContainerProps {
@@ -24,7 +25,6 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 	const handleMusicClick = async (item: Song): Promise<void> => {
 		try {
 			setIsLoading(true);
-			const coverArt = getMusicImageUrl(item.music_id);
 			setSelectedSongId(item.music_id);
 
 			// Updating Music State globally
@@ -32,7 +32,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 				id: item.music_id,
 				title: item.title,
 				artist: item.artist,
-				cover_img: coverArt,
+				image_url: item.image_url,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
@@ -78,7 +78,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 							artistName={item.artist}
 							duration={item.album}
 							addedBy="Unknown"
-							coverImg={getMusicImageUrl(item.music_id)}
+							image_url={item.image_url}
 						/>
 					</div>
 				))}

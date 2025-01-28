@@ -1,5 +1,5 @@
 import { SERVER_IP } from "@/const";
-import { MusicTrack, getMusicImageUrl } from "./musicApi";
+import { MusicTrack } from "./musicApi";
 
 export const fetchLikedSongs = async (
 	userId: string | null,
@@ -35,10 +35,7 @@ export const fetchLikedSongs = async (
 		}
 
 		const data: MusicTrack[] = await response.json();
-		return data.map((song) => ({
-			...song,
-			cover_img: getMusicImageUrl(song.id),
-		}));
+		return data;
 	} catch (error) {
 		console.error("Error fetching liked songs:", error);
 		throw error;

@@ -70,7 +70,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 							id: item.id,
 							title: item.title,
 							artist: item.artist,
-							cover_img: item.cover_img,
+							image_url: item.image_url,
 							timestamp: 0,
 							state: MPState.PAUSE,
 						};
@@ -99,7 +99,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 					id: track.id,
 					title: track.title,
 					artist: track.artist,
-					cover_img: track.cover_img,
+					image_url: track.image_url,
 					timestamp: 0,
 					state: MPState.CHANGE_MUSIC,
 				});

@@ -114,7 +114,7 @@ function Chats(): React.ReactElement {
 				id: music.id,
 				title: music.title,
 				artist: music.artist,
-				cover_img: music.cover_img,
+				image_url: music.image_url,
 			});
 
 			if (

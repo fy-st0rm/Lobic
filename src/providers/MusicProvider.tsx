@@ -21,7 +21,7 @@ export type MusicState = {
 	id: string | null;
 	title: string | null;
 	artist: string | null;
-	cover_img: string | null;
+	image_url: string | null;
 	timestamp: number;
 	duration: number;
 	volume: number;
@@ -56,7 +56,7 @@ const defaultContext: MusicContextType = {
 		id: null,
 		title: null,
 		artist: null,
-		cover_img: null,
+		image_url: null,
 		timestamp: 0,
 		duration: 0,
 		volume: 50,
@@ -85,7 +85,7 @@ const loadMusicState = (): MusicState => {
 				id: null,
 				title: null,
 				artist: null,
-				cover_img: null,
+				image_url: null,
 				timestamp: 0,
 				duration: 0,
 				volume: 50,
@@ -121,7 +121,7 @@ export const MusicProvider: FC<{ children: React.ReactNode }> = ({
 			id: null,
 			title: null,
 			artist: null,
-			cover_img: null,
+			image_url: null,
 			timestamp: 0,
 			duration: 0,
 			volume: 50,

@@ -164,7 +164,7 @@ const AudioElement = () => {
 				id: nextTrack.id,
 				title: nextTrack.title,
 				artist: nextTrack.artist,
-				cover_img: nextTrack.cover_img,
+				image_url: nextTrack.image_url,
 				state: MPState.CHANGE_MUSIC,
 				state_data: 0,
 				timestamp: 0,
@@ -177,7 +177,7 @@ const AudioElement = () => {
 			id: null,
 			title: null,
 			artist: null,
-			cover_img: null,
+			image_url: null,
 			state: MPState.EMPTY,
 			state_data: 0,
 		});

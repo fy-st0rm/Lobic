@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { EllipsisVertical, Heart, Play, Plus } from "lucide-react";
-import {
-	MusicTrack as Song,
-	getMusicImageUrl,
-	MPState,
-} from "@/api/music/musicApi";
+import { MusicTrack as Song, MPState } from "@/api/music/musicApi";
 import {
 	fetchUserPlaylists,
 	addSongToPlaylist,
@@ -49,11 +45,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 
 				const songsWithCoverImages = await Promise.all(
 					fetchedSongs.map(async (song) => {
-						const coverImageUrl = await getMusicImageUrl(song.id);
-						return {
-							...song,
-							cover_img: coverImageUrl,
-						};
+						return song;
 					}),
 				);
 
@@ -86,11 +78,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				if (newSongs.length > 0) {
 					const newSongsWithCovers = await Promise.all(
 						newSongs.map(async (song) => {
-							const coverImageUrl = await getMusicImageUrl(song.id);
-							return {
-								...song,
-								cover_img: coverImageUrl,
-							};
+							return song;
 						}),
 					);
 
@@ -113,14 +101,13 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 		try {
 			setSelectedSongId(song.id);
 			setIsLoading(true);
-			const coverArt = getMusicImageUrl(song.id);
 			clearMusicState();
 			clearQueue();
 			updateMusicState({
 				id: song.id,
 				title: song.title,
 				artist: song.artist,
-				cover_img: coverArt,
+				image_url: song.image_url,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
@@ -138,7 +125,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 			title: song.title,
 			artist: song.artist,
 			album: song.album,
-			cover_img: song.cover_img,
+			image_url: song.image_url,
 		};
 		enqueue(track);
 	};
@@ -183,23 +170,17 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 		let firstSong = songs[0];
 
 		if (firstSong) {
-			const coverArt = getMusicImageUrl(firstSong.id);
 			updateMusicState({
 				id: firstSong.id,
 				title: firstSong.title,
 				artist: firstSong.artist,
-				cover_img: coverArt,
+				image_url: firstSong.image_url,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
 		}
 
-		songs.slice(1).forEach((item) => {
-			const coverArt = getMusicImageUrl(item.id);
-			let track = {
-				...item,
-				cover_img: coverArt,
-			};
+		songs.slice(1).forEach((track) => {
 			enqueue(track);
 		});
 	};
@@ -241,7 +222,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 					>
 						{/* Song Cover Image */}
 						<img
-							src={song.cover_img}
+							src={`http://127.0.0.1:8080/image/${song.image_url}`}
 							alt={song.title}
 							className="w-16 h-16 rounded-lg object-cover cursor-pointer"
 							onClick={() => handleSongPlay(song)}
