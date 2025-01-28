@@ -68,7 +68,9 @@ const Music: React.FC<MusicProps> = ({
 
 		const getAverageColor = async () => {
 			try {
-				const color = await fac.getColorAsync(image_url);
+				const color = await fac.getColorAsync(
+					`http://127.0.0.1:8080/image/${image_url}`,
+				);
 				const rgbaColor = `rgba(${color.value[0]}, ${color.value[1]}, ${color.value[2]}, 0.75)`;
 				setBackgroundColor(rgbaColor);
 				setTextColor(color.isDark ? "white" : "black");
