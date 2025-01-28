@@ -5,7 +5,7 @@ import User2 from "/user_images/sameep.jpg"; // @TODO
 import { Dot, Edit, Play } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
 import { getUserData, fetchUserProfilePicture } from "@/api/user/userApi";
-import { getMusicImageUrl, MPState } from "@/api/music/musicApi";
+import { MPState } from "@/api/music/musicApi";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import {
@@ -76,23 +76,24 @@ function Playlist({}) {
 		let firstSong = playlistData?.songs[0];
 
 		if (firstSong) {
-			const coverArt = getMusicImageUrl(firstSong.music_id);
+			// const coverArt = getMusicImageUrl(firstSong.music_id);
+
 			updateMusicState({
 				id: firstSong.music_id,
 				title: firstSong.title,
 				artist: firstSong.artist,
-				cover_img: coverArt,
+				image_url: firstSong.image_url,
 				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
 		}
 
 		playlistData?.songs.slice(1).forEach((item) => {
-			const coverArt = getMusicImageUrl(item.music_id);
+			// const coverArt = getMusicImageUrl(item.music_id);
 			let track = {
 				id: item.music_id,
-				cover_img: coverArt,
 				...item,
+				image_url: item.image_url,
 			};
 			enqueue(track);
 		});

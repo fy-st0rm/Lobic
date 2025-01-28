@@ -33,7 +33,7 @@ interface MusicProps {
 	title: string;
 	artist: string;
 	album: string;
-	coverArt: string;
+	image_url: string;
 	onClick: () => void;
 }
 
@@ -42,7 +42,7 @@ const Music: React.FC<MusicProps> = ({
 	title,
 	artist,
 	album,
-	coverArt,
+	image_url,
 	onClick,
 }) => {
 	const { appState } = useAppProvider();
@@ -68,7 +68,7 @@ const Music: React.FC<MusicProps> = ({
 
 		const getAverageColor = async () => {
 			try {
-				const color = await fac.getColorAsync(coverArt);
+				const color = await fac.getColorAsync(image_url);
 				const rgbaColor = `rgba(${color.value[0]}, ${color.value[1]}, ${color.value[2]}, 0.75)`;
 				setBackgroundColor(rgbaColor);
 				setTextColor(color.isDark ? "white" : "black");
@@ -79,14 +79,14 @@ const Music: React.FC<MusicProps> = ({
 			}
 		};
 
-		if (coverArt) {
+		if (image_url) {
 			getAverageColor();
 		}
 
 		return () => {
 			fac.destroy();
 		};
-	}, [coverArt]);
+	}, [image_url]);
 
 	const handleAddToQueue = () => {
 		const track = {
@@ -94,7 +94,7 @@ const Music: React.FC<MusicProps> = ({
 			title: title,
 			artist: artist,
 			album: album,
-			cover_img: coverArt,
+			image_url: image_url,
 		};
 
 		enqueue(track);
@@ -155,7 +155,7 @@ const Music: React.FC<MusicProps> = ({
 				<div className="music-photo-container" onClick={onClick}>
 					<img
 						className="music-photo rounded-lg shadow-lg"
-						src={coverArt}
+						src={`http://127.0.0.1:8080/image/${image_url}`}
 						alt={`${title} cover`}
 					/>
 				</div>

@@ -1,5 +1,5 @@
 import { SERVER_IP } from "@/const";
-import { getMusicImageUrl, MusicTrack } from "./musicApi";
+import { MusicTrack } from "./musicApi";
 
 export const fetchTopTracks = async (
 	userId: string | null,
@@ -32,10 +32,7 @@ export const fetchTopTracks = async (
 			throw new Error("Failed to fetch top tracks");
 		}
 		const data: MusicTrack[] = await response.json();
-		return data.map((song) => ({
-			...song,
-			cover_img: getMusicImageUrl(song.id),
-		}));
+		return data;
 	} catch (error) {
 		console.error("Error fetching top tracks:", error);
 		throw error;

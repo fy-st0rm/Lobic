@@ -1,5 +1,5 @@
 import { SERVER_IP } from "@/const";
-import { MusicTrack, getMusicImageUrl } from "./musicApi";
+import { MusicTrack } from "./musicApi";
 
 /**
  * Fetches a list of trending music tracks.
@@ -31,10 +31,7 @@ export const fetchTrendingSongs = async (
 		}
 
 		const data: MusicTrack[] = await response.json();
-		return data.map((song) => ({
-			...song,
-			cover_img: getMusicImageUrl(song.id),
-		}));
+		return data;
 	} catch (error) {
 		console.error("Error fetching trending songs:", error);
 		throw error;

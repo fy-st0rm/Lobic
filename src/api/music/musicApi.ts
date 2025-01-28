@@ -19,7 +19,7 @@ export interface MusicTrack {
 	artist: string;
 	album: string;
 	duration?: number;
-	cover_img: string;
+	image_url: string;
 }
 
 /**
@@ -65,10 +65,7 @@ export const fetchMusicList = async (
 		}
 
 		const data: MusicTrack[] = await response.json();
-		return data.map((song) => ({
-			...song,
-			cover_img: getMusicImageUrl(song.id),
-		}));
+		return data;
 	} catch (error) {
 		console.error("Error fetching music list:", error);
 		throw error;
@@ -158,7 +155,7 @@ export const updateHostMusicState = (
 			music_id: musicState.id,
 			title: musicState.title,
 			artist: musicState.artist,
-			cover_img: musicState.cover_img,
+			image_url: musicState.image_url,
 			timestamp: musicState.timestamp,
 			state: musicState.state,
 		},
@@ -166,5 +163,5 @@ export const updateHostMusicState = (
 	wsSend(socket, payload);
 };
 
-export const getMusicImageUrl = (songId: string): string =>
-	`${SERVER_IP}/image/${songId}`;
+// export const getMusicImageUrl = (songId: string): string =>
+// 	`${SERVER_IP}/image/${songId}`;

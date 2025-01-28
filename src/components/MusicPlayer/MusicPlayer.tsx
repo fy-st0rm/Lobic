@@ -61,10 +61,10 @@ function MusicPlayer() {
 	}, [appState.user_id, musicState.id]);
 
 	useEffect(() => {
-		if (musicState.cover_img) {
+		if (musicState.image_url) {
 			setIsLoading(false);
 		}
-	}, [musicState.cover_img]);
+	}, [musicState.image_url]);
 
 	// Fetch the liked state of the song when the component mounts or when the song changes
 	const fetchLikedState = async () => {
@@ -173,7 +173,7 @@ function MusicPlayer() {
 				id: nextTrack.id,
 				title: nextTrack.title,
 				artist: nextTrack.artist,
-				cover_img: nextTrack.cover_img,
+				image_url: nextTrack.image_url,
 				state: MPState.CHANGE_MUSIC,
 				state_data: 0,
 				timestamp: 0,
@@ -186,7 +186,11 @@ function MusicPlayer() {
 		<div className="music-player">
 			<div>
 				<img
-					src={musicState.cover_img ? musicState.cover_img : placeholder_logo}
+					src={
+						musicState.image_url
+							? `http://127.0.0.1:8080/image/${musicState.image_url}`
+							: placeholder_logo
+					}
 					alt="Album cover"
 					className="cover-image"
 				/>
@@ -292,8 +296,8 @@ function MusicPlayer() {
 								<div className="h-[66px] w-[66px] py-1 self-start rounded-sm">
 									<img
 										src={
-											musicState.cover_img
-												? musicState.cover_img
+											musicState.image_url
+												? `http://127.0.0.1:8080/image/${musicState.image_url}`
 												: placeholder_logo
 										}
 										alt="Album cover"
@@ -317,7 +321,7 @@ function MusicPlayer() {
 							<div className="flex items-center font-bold px-4 pb-3">
 								<div className="h-[66px] w-[66px] py-1 self-start rounded-sm">
 									<img
-										src={item.cover_img}
+										src={`http://127.0.0.1:8080/image/${item.image_url}`}
 										alt="Album cover"
 										className="h-[100%] w-[100%] rounded-sm"
 									/>

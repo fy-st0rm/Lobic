@@ -3,7 +3,7 @@ interface SongInfoProps {
 	artistName: string;
 	duration: string;
 	addedBy: string;
-	coverImg: string;
+	image_url: string;
 }
 
 const SongInfo: React.FC<SongInfoProps> = ({
@@ -11,14 +11,14 @@ const SongInfo: React.FC<SongInfoProps> = ({
 	artistName,
 	duration,
 	addedBy,
-	coverImg,
+	image_url,
 }) => {
 	return (
 		<div className="flex justify-evenly items-center mt-0 mx-2">
 			<div className="flex items-center gap-0 font-bold w-[40%] px-4 py-[2px]">
 				<div className="cover h-[66px] w-[66px] py-1 self-start cursor-pointer">
 					<img
-						src={coverImg}
+						src={image_url}
 						alt=""
 						className="h-[66px] w-[66px] cover rounded"
 					/>
