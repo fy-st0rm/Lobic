@@ -163,5 +163,5 @@ export const updateHostMusicState = (
 	wsSend(socket, payload);
 };
 
-// export const getMusicImageUrl = (songId: string): string =>
-// 	`${SERVER_IP}/image/${songId}`;
+export const ImageFromUrl = (image_url: string): string =>
+	`${SERVER_IP}/image/${image_url}`;

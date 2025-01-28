@@ -88,7 +88,6 @@ export const createPlaylist = async (
 			throw new Error(result.message || "Failed to create playlist");
 		}
 
-		console.log("Playlist created successfully:", result.message);
 		return result;
 	} catch (error) {
 		throw error;
@@ -114,7 +113,6 @@ export const fetchPlaylistById = async (
 		}
 
 		const result: PlaylistResponse = await response.json();
-		console.log(result);
 		return result;
 	} catch (error) {
 		throw error;
@@ -136,7 +134,6 @@ export const addSongToPlaylist = async (
 		if (response.status !== 201) {
 			throw new Error(result.message || "Failed to add song to playlist");
 		}
-		console.log("Song added to playlist successfully:", result);
 		return result;
 	} catch (error) {
 		throw error;
@@ -189,7 +186,6 @@ export const updatePlaylistCoverImg = async (
 		}
 
 		const result: string = await uploadResponse.text();
-		console.log("Upload successful:", result);
 		return result;
 	} catch (error) {
 		console.error("Error updating playlist cover image:", error);

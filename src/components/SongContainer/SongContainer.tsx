@@ -39,13 +39,10 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 		} catch (err) {
 			const error = err as Error;
 			console.error("Failed to fetch music URL:", error);
-			setError("Failed to fetch music URL: " + error.message);
 		} finally {
 			setIsLoading(false);
 		}
 	};
-
-	if (error) console.error(error);
 
 	return (
 		<div className="absolute top-[14%] right-[4%] bg-primary-100 bg-opacity-65 rounded-[18px] h-[70%] w-[40%] min-w-[300px] flex flex-col pb-5">

@@ -1,3 +1,5 @@
+import { ImageFromUrl } from "@/api/music/musicApi";
+
 interface SongInfoProps {
 	songName: string;
 	artistName: string;
@@ -18,7 +20,7 @@ const SongInfo: React.FC<SongInfoProps> = ({
 			<div className="flex items-center gap-0 font-bold w-[40%] px-4 py-[2px]">
 				<div className="cover h-[66px] w-[66px] py-1 self-start cursor-pointer">
 					<img
-						src={image_url}
+						src={ImageFromUrl(image_url)}
 						alt=""
 						className="h-[66px] w-[66px] cover rounded"
 					/>
