@@ -16,7 +16,8 @@
 	margin-bottom: 10px;
 	display: flex;
 	gap: 1rem;
-	background-color: #072631;
+	/* background-color: #072631; */
+	background-color: hsl(var(--accent));
 	color: white;
 	z-index: 1000; /* Ensure it stays on top of other content */
 }

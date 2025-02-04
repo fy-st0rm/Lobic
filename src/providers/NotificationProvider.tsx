@@ -66,7 +66,9 @@ export const NotificationProvider: FC<{ children: React.ReactNode }> = ({
 	const { addMsgHandler } = useSocketProvider();
 
 	const [notifs, setNotifs] = useState<Notifications>({} as Notifications);
-	const [tempNotifs, setTempNotifs] = useState<Notifications>({} as Notifications);
+	const [tempNotifs, setTempNotifs] = useState<Notifications>(
+		{} as Notifications,
+	);
 
 	// Loads the notification from the backend
 	useEffect(() => {
@@ -131,14 +133,14 @@ export const NotificationProvider: FC<{ children: React.ReactNode }> = ({
 			const { [id]: _, ...rest } = prevNotifs;
 			return rest;
 		});
-		
+
 		const removeFromDB = async () => {
 			let response = await fetch(`${SERVER_IP}/notif/delete/${id}`, {
 				method: "POST",
 				credentials: "include",
 			});
 
-			let log = await response.text()
+			let log = await response.text();
 			if (response.ok) {
 				console.log(log);
 			} else {
@@ -146,16 +148,18 @@ export const NotificationProvider: FC<{ children: React.ReactNode }> = ({
 			}
 		};
 		removeFromDB();
-	}
+	};
 
 	return (
-		<NotificationContext.Provider value={{
-			notifs,
-			tempNotifs,
-			addNotif,
-			addTempNotif,
-			removeNotif,
-		}}>
+		<NotificationContext.Provider
+			value={{
+				notifs,
+				tempNotifs,
+				addNotif,
+				addTempNotif,
+				removeNotif,
+			}}
+		>
 			{children}
 		</NotificationContext.Provider>
 	);
