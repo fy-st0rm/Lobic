@@ -1,102 +1,22 @@
-// Node modules
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import React, { useState } from "react";
+import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
-
-// Routes
-import Login from "routes/login/Login";
-import Home from "routes/home/Home";
-import Auth from "routes/auth/Auth";
-import Signup from "routes/signup/Signup";
-import ForgotPassword from "routes/login/ForgotPassword";
-import Lobby from "routes/lobby/Lobby";
-import Chats from "routes/chats/Chats";
-import Playlist from "routes/playlists/Playlist";
-import Playlists from "routes/playlists/playlists";
-import Profile from "routes/profile/Profile.tsx";
-import MusicPlayer from "components/MusicPlayer/MusicPlayer";
-import NavBar from "components/NavBar/NavBar";
-import AllSongsPage from "./routes/allSongsPage/AllSongsPage";
+import AppRoutes from "./routes/AppRoutes";
+import AuthRoutes from "./routes/AuthRoutes";
 
 function App(): React.ReactElement {
-	const location = useLocation(); // Get the current route location
-
-	// List of routes where MusicPlayer should NOT be rendered
-	const excludedRoutes = ["/login", "/signup", "/forgotpassword"];
-
-	// Check if the current route is excluded
-	const shouldRenderMusicPlayer = !excludedRoutes.includes(location.pathname);
-	const shouldRenderNavBar = shouldRenderMusicPlayer;
+	const location = useLocation();
+	const authRoutes = ["/login", "/signup", "/forgotpassword", "/"];
+	const isAuthPage = authRoutes.includes(location.pathname);
 
 	return (
-		<div>
+		<>
 			<Helmet>
 				<title> Lobic </title>
-				<link rel="icon" href="public\lobic_logo.png" />
+				<link rel="icon" href="public/lobic_logo.png" />
 			</Helmet>
 
-			{/* Globally rendering navbar */}
-			{shouldRenderNavBar && <NavBar />}
-
-			{/* Render MusicPlayer globally if the route is not excluded */}
-			{shouldRenderMusicPlayer && <MusicPlayer />}
-
-			{/* Routes */}
-			<Routes>
-				{/* Default route */}
-				<Route path="/" element={<Navigate to="/login" replace />} />
-
-				{/* Public routes */}
-				<Route path="/login" element={<Login />} />
-				<Route path="/signup" element={<Signup />} />
-				<Route path="/forgotpassword" element={<ForgotPassword />} />
-
-				{/* Protected routes */}
-				<Route
-					path="/home"
-					element={
-						<Auth>
-							<Home />
-						</Auth>
-					}
-				/>
-				<Route
-					path="/lobby"
-					element={
-						<Auth>
-							<Lobby key={location.pathname} />
-						</Auth>
-					}
-				/>
-				<Route
-					path="/chats"
-					element={
-						<Auth>
-							<Chats />
-						</Auth>
-					}
-				/>
-				<Route path="/show_all" element={<AllSongsPage />} />
-
-				<Route path="/playlist/:playlistId" element={<Playlist />} />
-				<Route
-					path="/playlists"
-					element={
-						<Auth>
-							<Playlists />
-						</Auth>
-					}
-				/>
-				<Route
-					path="/profile"
-					element={
-						<Auth>
-							<Profile />
-						</Auth>
-					}
-				/>
-			</Routes>
-		</div>
+			{isAuthPage ? <AuthRoutes /> : <AppRoutes />}
+		</>
 	);
 }
 
