@@ -1,10 +1,15 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-	/* background: linear-gradient(0deg, #157697, #072631); */
-	--background-color: 222 47% 6%;
-	height: 100vh;
+	/* pallete */
+	--color1: 218 22% 10%;
+	--color2: 216 18% 11%;
+	--color3: 0 0% 91%;
+	--color4: 210 41% 11%;
+	--color5: 300 1% 43%;
+	/*  */
 
+	background-color: hsl(var(--color1));
 	--foreground: 222.2 47.4% 11.2%;
 
 	--muted: 210 40% 96.1%;
