@@ -116,34 +116,18 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 	if (isEmpty) {
 		return null;
 	}
-
 	return (
 		<div className="music-list-container">
-			<div className="list-header flex justify-between">
+			<div className="list-header">
 				<h2 className="list-title">{list_title}</h2>
-				<div className="flex items-center gap-4">
-					<div
-						onClick={enqueueAllSongs}
-						className="log-songs-button cursor-pointer hover:underline font-bold text-sm opacity-70"
-					>
-						Enqueue
-					</div>
-					<div
-						onClick={handleShowAll}
-						className="show-all-button cursor-pointer hover:underline font-bold text-sm opacity-70"
-					>
-						Show All
-					</div>
+				<div className="button-container">
+					<div onClick={enqueueAllSongs} className="log-songs-button">Enqueue</div>
+					<div onClick={handleShowAll} className="show-all-button">Show All</div>
 				</div>
 			</div>
 			<div className="music-list">
 				{musicItems.map((song) => (
-					<div
-						key={song.id}
-						className={`music-item-wrapper ${
-							selectedSongId === song.id ? "selected" : ""
-						}`}
-					>
+					<div key={song.id} className={`music-item-wrapper ${selectedSongId === song.id ? "selected" : ""}`}>
 						<Music
 							musicId={song.id}
 							title={song.title}
@@ -157,6 +141,7 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 			</div>
 		</div>
 	);
+	
 });
 
 export default MusicList;

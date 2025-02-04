@@ -5,7 +5,6 @@ export default {
 		extend: {
 			colors: {
 				primary: {
-					100: "#072631",
 					DEFAULT: "hsl(var(--primary))",
 					foreground: "hsl(var(--primary-foreground))",
 				},
