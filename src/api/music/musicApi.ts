@@ -157,7 +157,7 @@ export const updateHostMusicState = (
 			music_id: musicState.id,
 			title: musicState.title,
 			artist: musicState.artist,
-			image_url: musicState.image_url,
+			cover_img: musicState.image_url,
 			timestamp: musicState.timestamp,
 			state: musicState.state,
 		},
