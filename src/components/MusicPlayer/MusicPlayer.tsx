@@ -13,15 +13,16 @@ import { updatePlayLog } from "@/api/music/musicApi";
 
 // Assets
 import previousButton from "/controlbar/PreviousButton.svg";
-import playButton from "/controlbar/ButtonPlay.svg";
-import pauseButton from "/controlbar/ButtonPause.svg";
+import playButton from "/controlbar/Pause.svg";
+import pauseButton from "/controlbar/Play.svg";
 import NextButton from "/controlbar/ButtonNext.svg";
-import VolumeLow from "/volumecontrols/Volume Level Low.png";
-import Mute from "/volumecontrols/Volume Mute.png";
-import VolumeHigh from "/volumecontrols/Volume Level High.png";
+import VolumeLow from "/volumecontrols/Volume Level Low.svg";
+import Mute from "/volumecontrols/Volume Level Off.svg";
+import VolumeHigh from "/volumecontrols/Volume Level High.svg";
 import placeholder_logo from "/covers/cover.jpg";
-import likedSong from "/controlbar/love-svgrepo-com.svg";
-import likedSongFilled from "/controlbar/love-svgrepo-com-filled.svg";
+import likedSong from "/controlbar/favourite.svg";
+import likedSongFilled from "/controlbar/favouriteFilled.svg";
+import Queue from "/controlbar/queue.svg"
 import { Menu } from "lucide-react";
 
 import "./MusicPlayer.css";
@@ -199,11 +200,11 @@ function MusicPlayer() {
 			</div>
 			<div className="flex w-[20%]">
 				<div className="self-center">
-					<div className="song-info overflow-hidden p-2">
-						<div className="song-name">
+					<div className="song-info overflow-hidden p-2 flex flex-col " >
+						<div className="song-name p-0">
 							{musicState.id ? musicState.title : "No Song Selected"}
 						</div>
-						<div className="artist-name">
+						<div className="artist-name p-0">
 							{musicState.id ? musicState.artist : ""}
 						</div>
 					</div>
@@ -254,7 +255,7 @@ function MusicPlayer() {
 						<img
 							src={musicState.state === MPState.PLAY ? pauseButton : playButton}
 							alt={musicState.state === MPState.PLAY ? "Pause" : "Play"}
-							className={`button-group ${controlsDisabled ? "disabled" : ""}`}
+							className={`button-group ${controlsDisabled ? "disabled" : ""} h-9 w-9`}
 						/>
 					</button>
 					<button
@@ -287,7 +288,7 @@ function MusicPlayer() {
 
 			{/* Queue */}
 			<div className="queue self-center transition-all">
-				<Menu onClick={queueToggle} className="cursor-pointer" />
+				<img src = {Queue} onClick={queueToggle} className="cursor-pointer h-6 w-6 m-2" />
 				{showQueue && (
 					<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[400px] w-[400px] bottom-[90px] right-[5%] overflow-scroll no-scrollbar">
 						<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">

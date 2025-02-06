@@ -8,6 +8,9 @@ export default {
 				secondary: '#1E212A',
 				primary_fg: '#E7E7E7',
 				secondary_fg:'#E0E1DD'
+			},
+			fontFamily: {
+				DM_Sans: 'DM Sans'
 			}
 		},
 	},

@@ -1,18 +1,19 @@
 * {
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	font-family: 'DM Sans', serif;
 }
 
 /* Style for the music player */
 .music-player {
-	height: 45px;
+	
+	height: 55px;
 	width: 100%;
 	position: fixed; /* Fixed position to stick to the viewport */
 	bottom: 0;
 	left: 0;
 	right: 0;
-	padding: 10px;
+	padding: 8px 12px;
 	display: flex;
-	gap: 1rem;
+	gap: 2px;
 	color: white;
 	z-index: 1000; /* Ensure it stays on top of other content */
 }
@@ -24,19 +25,23 @@
 }
 
 .cover-image {
+	border-radius: 5px;
 	padding-top: 0px;
-	border-radius: 100%;
-	height: 100%;
-	width: 100%;
+	height: 55px;
+	width:  55px;
 }
 
 .song-name {
+	font-size: 15px;
 	overflow: hidden;
 	white-space: nowrap;
 	font-weight: bold;
 }
 
 .artist-name {
+	font-size: 10px;
+	font-weight: bold;
+	opacity: 70%;
 	overflow: hidden;
 	white-space: nowrap;
 	font-size: auto;
@@ -55,8 +60,10 @@
 }
 
 .volume-control-bar {
-	width: 100%;
+	opacity: 80%;
+	width: 50%;
 	align-self: center;
+	margin-bottom: 6px;
 	margin-right: 10px;
 	appearance: none;
 	height: 2px;
@@ -98,28 +105,26 @@
 	border-radius: 100%;
 }
 
-.control-bar {
+.control-bar { 
+	margin-top: 5px;
 	display: flex;
-	margin: 5px;
 	height: 100%;
 	width: 100%;
 	justify-content: center;
 }
 
 .button-group {
-	height: 25px;
-	width: 25px;
+	height: 22px;
+	width: 22px;
 	cursor: pointer;
 }
 
 .button-group.disabled {
 	cursor: not-allowed;
-	opacity: 0.5;
-	pointer-events: none;
 }
 
 .status {
-	margin: 5px;
+	margin-bottom: 10px;
 	height: 80%;
 	width: 100%;
 	display: flex;
@@ -134,7 +139,7 @@
 }
 
 .control-button {
-	margin: 2px;
+	padding: 2px;
 	background: none;
 	border: none;
 }
@@ -144,6 +149,7 @@
 	background: none;
 	border: none;
 	padding: 8px;
+	padding-right: 5px;
 }
 
 .volume-image {
