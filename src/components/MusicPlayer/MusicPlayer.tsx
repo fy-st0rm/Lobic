@@ -139,7 +139,9 @@ function MusicPlayer() {
 			updateMusicState({
 				state: MPState.CHANGE_VOLUME,
 				state_data: initialVolume,
+				
 			});
+
 		}
 	};
 
@@ -183,7 +185,7 @@ function MusicPlayer() {
 	};
 
 	return (
-		<div className="music-player">
+		<div className="music-player bg-secondary">
 			<div>
 				<img
 					src={
