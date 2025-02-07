@@ -286,7 +286,7 @@ function MusicPlayer() {
 				</div>
 			</div>
 
-			{/* Queue */}
+	
 			<div className="queue self-center transition-all">
 				<img src = {Queue} onClick={queueToggle} className="cursor-pointer h-6 w-6 m-2" />
 				{showQueue && (
