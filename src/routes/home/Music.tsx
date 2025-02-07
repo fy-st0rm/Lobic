@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { EllipsisVertical, Plus, PlusCircle, Heart } from "lucide-react";
+import { Plus, PlusCircle, Heart } from "lucide-react";
 import { FastAverageColor } from "fast-average-color";
-
-// Local
-import {
-	fetchUserPlaylists,
-	addSongToPlaylist,
-	//types
-	Playlist,
-	FetchUserPlaylistsResponse,
-} from "@/api/playlist/playlistApi";
+import { addSongToPlaylist } from "@/api/playlist/playlistApi";
 import { toggleSongLiked } from "@/api/music/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicLists } from "@/providers/MusicListContextProvider";
-
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -25,7 +16,6 @@ import {
 	ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
-// Assets
 import "./Music.css";
 import { ImageFromUrl } from "@/api/music/musicApi";
 
@@ -47,22 +37,12 @@ const Music: React.FC<MusicProps> = ({
 	onClick,
 }) => {
 	const { appState } = useAppProvider();
-	const { queue, enqueue } = useQueueProvider();
-	const { notifyMusicPlayed } = useMusicLists();
-	const currentUserId = appState.user_id;
+	const { enqueue } = useQueueProvider();
+	const { notifyMusicPlayed, playlists, refreshPlaylists } = useMusicLists();
 	const userId = appState.user_id;
-	const [playlists, setPlaylists] = useState<Playlist[]>([]);
 	const [backgroundColor, setBackgroundColor] = useState<string>("transparent");
 	const [textColor, setTextColor] = useState<string>("white");
-
-	// Original background color
 	const defaultBgColor = "#072631";
-
-	useEffect(() => {
-		if (currentUserId) {
-			fetchPlaylists();
-		}
-	}, [currentUserId]);
 
 	useEffect(() => {
 		const fac = new FastAverageColor();
@@ -92,32 +72,22 @@ const Music: React.FC<MusicProps> = ({
 	const handleAddToQueue = () => {
 		const track = {
 			id: musicId,
-			title: title,
-			artist: artist,
-			album: album,
-			image_url: image_url,
+			title,
+			artist,
+			album,
+			image_url,
 		};
-
 		enqueue(track);
 	};
 
 	const handleAddToPlaylist = async (playlistId: string): Promise<void> => {
 		try {
-			const response: FetchUserPlaylistsResponse =
-				await fetchUserPlaylists(userId);
-
-			if (response.playlists.length === 0) {
-				console.log("No playlists found for the user.");
-				return;
-			}
-
 			const songData = {
 				playlist_id: playlistId,
 				music_id: musicId,
 			};
-
-			const result = await addSongToPlaylist(songData);
-			console.log("Song added to playlist successfully:", result);
+			await addSongToPlaylist(songData);
+			await refreshPlaylists(); // Refresh playlists after adding song
 		} catch (error) {
 			console.error("Error adding song to playlist:", error);
 		}
@@ -129,16 +99,6 @@ const Music: React.FC<MusicProps> = ({
 			notifyMusicPlayed(musicId, "Liked Songs");
 		} catch (error) {
 			console.error("Error adding to liked songs:", error);
-		}
-	};
-
-	const fetchPlaylists = async () => {
-		try {
-			const playlistsData: FetchUserPlaylistsResponse =
-				await fetchUserPlaylists(currentUserId);
-			setPlaylists(playlistsData.playlists);
-		} catch (error) {
-			console.error("Error fetching playlists:", error);
 		}
 	};
 

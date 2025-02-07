@@ -3,7 +3,11 @@ import React, {
 	useContext,
 	useCallback,
 	useReducer,
+	useEffect,
+	useState,
 } from "react";
+import { fetchUserPlaylists, Playlist } from "@/api/playlist/playlistApi";
+import { useAppProvider } from "providers/AppProvider";
 
 type ListType =
 	| "Liked Songs"
@@ -18,6 +22,8 @@ interface MusicListsContextType {
 		listType: ListType,
 		handler: () => void,
 	) => () => void;
+	playlists: Playlist[];
+	refreshPlaylists: () => Promise<void>;
 }
 
 const MusicListsContext = createContext<MusicListsContextType | undefined>(
@@ -66,6 +72,26 @@ export const MusicListsProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [reloadHandlers, dispatch] = useReducer(reducer, new Map());
+	const [playlists, setPlaylists] = useState<Playlist[]>([]);
+	const { appState } = useAppProvider();
+	const userId = appState.user_id;
+
+	const refreshPlaylists = useCallback(async () => {
+		if (!userId) return;
+
+		try {
+			const response = await fetchUserPlaylists(userId);
+			setPlaylists(response.playlists);
+		} catch (error) {
+			console.error("Error fetching playlists:", error);
+		}
+	}, [userId]);
+
+	useEffect(() => {
+		if (userId) {
+			refreshPlaylists();
+		}
+	}, [userId, refreshPlaylists]);
 
 	const registerReloadHandler = useCallback(
 		(listType: ListType, handler: () => void) => {
@@ -86,7 +112,12 @@ export const MusicListsProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	return (
 		<MusicListsContext.Provider
-			value={{ notifyMusicPlayed, registerReloadHandler }}
+			value={{
+				notifyMusicPlayed,
+				registerReloadHandler,
+				playlists,
+				refreshPlaylists,
+			}}
 		>
 			{children}
 		</MusicListsContext.Provider>
