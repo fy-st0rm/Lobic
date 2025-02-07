@@ -4,8 +4,11 @@
 	display: flex;
 	flex-direction: column;
 	height: 83vh;
+	width: 89vw;
 	overflow: hidden;
 	margin-top: 90px;
+	position: relative;
+	left: 10vw;
 }
 
 .music-player {
