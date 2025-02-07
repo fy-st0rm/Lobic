@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signupUser } from "../../api/user/userApi";
+import { signupUser } from "@/api/user/userApi";
 import logo from "/lobic_logo.png";
 import { CircleAlert } from "lucide-react";
 

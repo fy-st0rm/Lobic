@@ -6,7 +6,7 @@ import { fetchLikedSongs } from "@/api/music/likedSongsApi";
 import { fetchTopTracks } from "@/api/music/topTracksApi";
 import { fetchRecentlyPlayed } from "@/api/music/recentlyPlayedApi";
 import { fetchTrendingSongs } from "@/api/music/trendingApi";
-import MusicListVertical from "@/routes/allSongsPage/MusicListVertical";
+import MusicListVertical from "@/routes/home/allSongsPage/MusicListVertical";
 import { MusicListsProvider } from "@/providers/MusicListContextProvider";
 
 const AllSongsPage: React.FC = () => {
