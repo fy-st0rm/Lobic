@@ -9,12 +9,13 @@ import Profile from "routes/profile/Profile.tsx";
 import AllSongsPage from "@/routes/home/allSongsPage/AllSongsPage";
 import NavBar from "components/NavBar/NavBar";
 import MusicPlayer from "@/components/MusicPlayer/MusicPlayer";
-import SideBar from "@/components/SideBar/SideBar";
+import SideBar, { SidebarProvider } from "@/components/SideBar/SideBar";
 function AppRoutes() {
 	const location = useLocation();
 
 	return (
 		<Auth>	
+			<SidebarProvider>
 			<NavBar/>
 			<SideBar />
 			<Routes>
@@ -27,6 +28,7 @@ function AppRoutes() {
 				<Route path="/profile" element={<Profile />} />
 			</Routes>
 			<MusicPlayer />
+			</SidebarProvider>
 		</Auth>
 	);
 }
