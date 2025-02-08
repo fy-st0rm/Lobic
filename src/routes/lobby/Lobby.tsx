@@ -135,7 +135,7 @@ const Lobby = (): React.ReactElement => {
 								onClick={handleJoinLobby}
 							/>
 						))}
-						<CreateLobbyButton card_index={3} onClick={handleCreateLobby} />
+						<CreateLobbyButton onClick={handleCreateLobby} />
 					</div>
 				</div>
 			</div>

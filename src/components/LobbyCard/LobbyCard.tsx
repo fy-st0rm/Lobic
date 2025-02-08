@@ -3,10 +3,8 @@ import { FC, useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 
 // Assets
-import equalizer_logo from "/music_equalizer.png";
-import PlusIcon from "/plus.svg";
+import { Plus, AudioLines } from "lucide-react";
 import test_logo from "/covers/cover.jpg";
-import "./LobbyCard.css";
 
 /*
  * React component for lobby card
@@ -35,21 +33,13 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 }) => {
 	const [isLobbyNameOF, setLobbyNameOF] = useState<boolean>(false);
 	const [isSongNameOF, setSongNameOF] = useState<boolean>(false);
-	const [isHovered, setIsHovered] = useState<boolean>(false);
-	const [animate, setAnimate] = useState<boolean>(false);
+	const [isArtistNameOF, setArtistNameOF] = useState<boolean>(false);
 
 	const cardRef = useRef<HTMLDivElement | null>(null);
 	const lobbyNameRef = useRef<HTMLDivElement | null>(null);
 	const songCardRef = useRef<HTMLDivElement | null>(null);
 	const songNameRef = useRef<HTMLDivElement | null>(null);
-
-	const handleMouseEnter = () => setIsHovered(true);
-	const handleMouseLeave = () => setIsHovered(false);
-
-	useEffect(() => {
-		const timer = setTimeout(() => setAnimate(true), 0);
-		return () => clearTimeout(timer);
-	}, []);
+	const artistNameRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		const checkOverflow = () => {
@@ -63,43 +53,72 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 					songNameRef.current.scrollWidth > songCardRef.current.clientWidth,
 				);
 			}
+
+			if (artistNameRef.current && songCardRef.current) {
+				setArtistNameOF(
+					artistNameRef.current.scrollWidth > songCardRef.current.clientWidth,
+				);
+			}
 		};
 
 		checkOverflow();
 
 		window.addEventListener("resize", checkOverflow);
 		return () => window.removeEventListener("resize", checkOverflow);
-	}, []);
+	}, [lobby_name, song_name, artist_name]);
 
-	const create_music_info = () => {
+	const MusicInfo = () => {
 		return (
 			<>
-				{/* Body for the music info */}
-				<div className="lobby-card-song-canvas">
-					{/* Music equalizer image */}
-					<img src={equalizer_logo} className="lobby-card-music-logo" />
+				<div className="absolute w-[80%] top-3 bg-secondary bg-opacity-85 rounded-full">
+					<div className="py-2 px-4 flex items-center justify-center">
 
-					{/* Music info */}
-					<div ref={songCardRef} className="lobby-card-song-info">
-						<div
-							ref={songNameRef}
-							className="lobby-card-song-name"
-							style={{
-								animationName:
-									isSongNameOF && isHovered ? "scroll-text" : "none",
-								animationDuration: "10s",
-								animationTimingFunction: "linear",
-								animationIterationCount: "infinite",
-								animationPlayState: "running",
-								justifyContent: isSongNameOF ? "left" : "center",
-							}}
-						>
-							{song_name}
-							{isSongNameOF && (
-								<div style={{ paddingLeft: "15%" }}> {song_name} </div>
-							)}
+						{/* Equalizer icon */}
+						<AudioLines className="absolute left-3 pr-2 text-primary_fg flex-shrink-0"/>
+
+						{/* Song Name and Artist Name section */}
+						<div ref={songCardRef} className="flex flex-col w-[65%] box-border overflow-hidden">
+
+							{/* Song Name */}
+							<div
+								className={`
+									${isSongNameOF ? '' : 'flex flex-col items-center justify-center'}
+								`}
+							>
+								<div
+									ref={songNameRef}
+									className={`
+										whitespace-nowrap font-semibold text-primary_fg
+										${isSongNameOF ? 'group-hover:animate-scroll-on-hover' : ''}
+									`}
+								>
+									{song_name}
+									{isSongNameOF && (
+										<div style={{ paddingLeft: "15%", display: 'inline-block' }}> {song_name} </div>
+									)}
+								</div>
+							</div>
+
+							{/* Artist Name */}
+							<div
+								className={`
+									${isArtistNameOF ? '' : 'flex flex-col items-center justify-center'}
+								`}
+							>
+								<div
+									ref={artistNameRef}
+									className={`
+										whitespace-nowrap text-xs text-secondary_fg
+										${isArtistNameOF ? 'group-hover:animate-scroll-on-hover' : ''}
+									`}
+								>
+									{artist_name}
+									{isArtistNameOF && (
+										<div style={{ paddingLeft: "15%", display: 'inline-block' }}> {artist_name} </div>
+									)}
+								</div>
+							</div>
 						</div>
-						<div className="lobby-card-artist-name">{artist_name}</div>
 					</div>
 				</div>
 			</>
@@ -109,57 +128,56 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 	return (
 		<>
 			<div
-				className={`lobby-card-canvas ${animate ? "animate" : ""}`}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
-				style={{ animationDelay: `${card_index * 0.1}s` }}
-				onClick={() => onClick(lobby_id)}
+				className="
+					relative
+					flex flex-col items-center justify-center
+					bg-primary hover:bg-secondary
+					rounded-[13px]
+					m-0
+					transition-all
+					group
+				"
 			>
-				{/* Blurry background */}
-				<div className="lobby-card-bg"></div>
 
-				{/* Body of the card */}
-				<div className="lobby-card-canvas">
-					{/* Lobby icon */}
-					<div className="lobby-card-icon-canvas">
+				{ /* Lobby Icon */ }
+				<div className="w-40 h-40 rounded-full overflow-hidden">
 						<img
+							className="w-full h-full"
 							src={lobby_icon}
-							className="lobby-card-icon"
 							onError={(e) => {
 								(e.target as HTMLImageElement).src = test_logo;
 							}}
+							alt="Image"
 						/>
-					</div>
+				</div>
 
-					{/* Lobby name */}
-					<div ref={cardRef} className="lobby-card-lobby-name">
-						<div
-							ref={lobbyNameRef}
-							style={{
-								display: "flex",
-								animationName:
-									isLobbyNameOF && isHovered ? "scroll-text" : "none",
-								animationDuration: "10s",
-								animationTimingFunction: "linear",
-								animationIterationCount: "infinite",
-								animationPlayState: "running",
-							}}
-						>
-							{lobby_name}
-							{isLobbyNameOF && (
-								<div style={{ paddingLeft: "15%" }}> {lobby_name} </div>
-							)}
-						</div>
-					</div>
-
-					{/* Listener count */}
-					<div className="lobby-card-listeners-cnt">
-						{listeners_cnt} listeners
+				{ /* Lobby Name */ }
+				<div
+					ref={cardRef}
+					className={`
+						${isLobbyNameOF ? '' : 'flex items-center justify-center'}
+						font-semibold text-xl text-primary_fg
+						mt-3 w-[90%]
+						box-border overflow-hidden
+					`}
+				>
+					<div
+						ref={lobbyNameRef}
+						className={`whitespace-nowrap ${isLobbyNameOF ? 'group-hover:animate-scroll-on-hover' : ''}`}
+					>
+						{lobby_name}
+						{isLobbyNameOF && (
+							<div style={{ paddingLeft: "15%", display: 'inline-block' }}> {lobby_name} </div>
+						)}
 					</div>
 				</div>
 
-				{/* Music info */}
-				{song_name.length > 0 && create_music_info()}
+				{/* Listener count */}
+				<div className="font-semibold text-sm text-secondary_fg">
+					{listeners_cnt} Lobblers
+				</div>
+
+				{song_name.length > 0 && <MusicInfo/>}
 			</div>
 		</>
 	);
@@ -170,39 +188,34 @@ export const LobbyCard: FC<LobbyCardProps> = ({
  */
 
 type CreateLobbyButtonProps = {
-	card_index: number;
 	onClick: () => void;
 };
 
 export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
-	card_index,
 	onClick,
 }) => {
-	const [isHovered, setIsHovered] = useState<boolean>(false);
-	const [animate, setAnimate] = useState<boolean>(false);
-
-	const handleMouseEnter = () => setIsHovered(true);
-	const handleMouseLeave = () => setIsHovered(false);
-
-	useEffect(() => {
-		const timer = setTimeout(() => setAnimate(true), 0);
-		return () => clearTimeout(timer);
-	}, []);
-
 	return (
 		<>
 			<div
-				className={`lobby-card-canvas ${animate ? "animate" : ""}`}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
-				style={{ animationDelay: `${card_index * 0.1}s` }}
 				onClick={onClick}
+				className="
+					flex flex-col items-center justify-center
+					bg-primary hover:bg-secondary
+					rounded-[13px]
+					m-0
+					transition-all
+				"
 			>
-				<div className="lobby-card-bg"></div>
-				<div className="lobby-card-icon-canvas">
-					<img src={PlusIcon} className="lobby-card-icon" />
+				<div className="
+					bg-secondary
+					w-20 h-20 rounded-full
+					flex items-center justify-center p-5
+				">
+					<Plus className="w-full h-full text-primary"/>
 				</div>
-				<div className="lobby-card-lobby-name">CREATE LOBBY</div>
+				<div className="font-bold text-2xl text-primary_fg mt-3">
+					Create Lobby
+				</div>
 			</div>
 		</>
 	);

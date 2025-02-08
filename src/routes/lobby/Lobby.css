@@ -19,8 +19,8 @@
 .grid-container {
 	display: grid;
 	height: 50rem;
-	grid-template-columns: repeat(auto-fit, minmax(260px, 260px));
-	grid-template-rows: repeat(auto-fit, 300px);
+	grid-template-columns: repeat(auto-fit, minmax(200px, 200px));
+	grid-template-rows: repeat(auto-fit, 250px);
 	gap: 1.5rem;
 	width: 100%;
 	padding-right: 5%;

@@ -12,7 +12,20 @@ export default {
 			},
 			fontFamily: {
 				DM_Sans: 'DM Sans'
-			}
+			},
+			animation: {
+				'scroll-on-hover': 'scroll-on-hover 5s linear infinite',
+			},
+			keyframes: {
+				'scroll-on-hover': {
+					'0%': {
+						transform: 'translateX(0%)',
+					},
+					'100%': {
+						transform: 'translateX(-100%)',
+					},
+				},
+			},
 		},
 	},
 	plugins: [require("tailwindcss-animate")],
