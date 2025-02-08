@@ -1,55 +1,56 @@
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import React, { useState, createContext, useContext, useEffect, PropsWithChildren } from 'react';
-import { Import, Play } from "lucide-react";
+
 import Home from '/sidebar/Home.svg';
 import Lobby from '/sidebar/Lobby.svg';
 import Playlist from '/sidebar/playlist.svg';
 import toggleMinimise from '/sidebar/toggleMinimize.svg';
 import toggleExtend from '/sidebar/toggleExtend.svg';
-import { constants } from "buffer";
+
 
 type SidebarContextType = {
     isExtended: boolean;
     toggleSidebar: () => void;
-  };
-  
-  const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
-  
-  export const SidebarProvider: React.FC<PropsWithChildren> = ({ children }) => {
+};
+
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+
+export const SidebarProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [isExtended, setIsExtended] = useState(() => {
-      const savedState = localStorage.getItem('isExtended');
-      return savedState !== null ? JSON.parse(savedState) : true;
+        const savedState = localStorage.getItem('isExtended');
+        return savedState !== null ? JSON.parse(savedState) : true;
     });
-  
+
     useEffect(() => {
-      localStorage.setItem('isExtended', JSON.stringify(isExtended));
+        localStorage.setItem('isExtended', JSON.stringify(isExtended));
     }, [isExtended]);
-  
+
     const toggleSidebar = () => {
-      setIsExtended((prev: any) => !prev);
+        setIsExtended((prev: any) => !prev);
     };
-  
+
     return (
-      <SidebarContext.Provider value={{ isExtended, toggleSidebar }}>
-        {children}
-      </SidebarContext.Provider>
+        <SidebarContext.Provider value={{ isExtended, toggleSidebar }}>
+            {children}
+        </SidebarContext.Provider>
     );
-  };
-  
-  export const useSidebarState = () => {
+};
+
+export const useSidebarState = () => {
     const context = useContext(SidebarContext);
     if (!context) {
-      throw new Error('useSidebarState must be used within a SidebarProvider');
+        throw new Error('useSidebarState must be used within a SidebarProvider');
     }
     return context;
-  };
-  
+};
+
 
 function SideBar() {
     const { isExtended, toggleSidebar } = useSidebarState();
 
     return (
-        <div className={`h-[80vh] transition-all bg-secondary absolute my-5 mx-2 overflow-hidden rounded-lg ${isExtended ? 'w-[12vw]' : 'w-[65px]'}`}>
+
+        <div className={` md:h-[73vh] 2xl:h-[80vh] transition-all bg-secondary absolute my-5 mx-2 overflow-hidden rounded-lg overflow ${isExtended ? 'w-[12vw]' : 'w-[65px]'}`}>
             <div className="flex flex-col px-2 py-5">
                 <Link
                     to="/home" className="no-underline text-primary_fg">
@@ -95,7 +96,7 @@ function SideBar() {
                     </div>
                 </Link>
             </div>
-            <div 
+            <div
                 onClick={() => {
                     toggleSidebar();
                 }}
@@ -104,6 +105,7 @@ function SideBar() {
                 <img src={isExtended ? toggleMinimise : toggleExtend} alt="Toggle sidebar" />
             </div>
         </div>
+        
     );
 }
 

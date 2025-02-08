@@ -2,12 +2,11 @@
 	font-family: 'DM Sans', serif;
 }
 
-/* Style for the music player */
 .music-player {
 	
-	height: 55px;
+	height:55px;
 	width: 100%;
-	position: fixed; /* Fixed position to stick to the viewport */
+	position: fixed;
 	bottom: 0;
 	left: 0;
 	right: 0;
@@ -15,7 +14,6 @@
 	display: flex;
 	gap: 2px;
 	color: white;
-	z-index: 1000; /* Ensure it stays on top of other content */
 }
 
 .song-info {
