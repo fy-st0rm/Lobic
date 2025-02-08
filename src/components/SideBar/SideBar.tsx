@@ -1,4 +1,3 @@
-import "./Sidebar.css";
 import { useNavigate, Link } from "react-router-dom";
 import React, { useState, createContext, useContext, useEffect, PropsWithChildren } from 'react';
 import { Import, Play } from "lucide-react";
