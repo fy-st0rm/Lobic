@@ -17,7 +17,6 @@ type LobbyCardProps = {
 	song_name: string;
 	artist_name: string;
 	lobby_icon: string;
-	card_index: number;
 	onClick: (lobby_id: string) => void;
 };
 
@@ -28,7 +27,6 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 	song_name,
 	artist_name,
 	lobby_icon,
-	card_index,
 	onClick,
 }) => {
 	const [isLobbyNameOF, setLobbyNameOF] = useState<boolean>(false);
@@ -70,7 +68,7 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 	const MusicInfo = () => {
 		return (
 			<>
-				<div className="absolute w-[80%] top-3 bg-secondary bg-opacity-85 rounded-full">
+				<div className="absolute w-[80%] top-1 bg-secondary bg-opacity-85 rounded-full">
 					<div className="py-2 px-4 flex items-center justify-center">
 
 						{/* Equalizer icon */}
@@ -128,19 +126,20 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 	return (
 		<>
 			<div
+				onClick={() => onClick(lobby_id)}
 				className="
 					relative
 					flex flex-col items-center justify-center
 					bg-primary hover:bg-secondary
 					rounded-[13px]
-					m-0
+					py-7
 					transition-all
 					group
 				"
 			>
 
 				{ /* Lobby Icon */ }
-				<div className="w-40 h-40 rounded-full overflow-hidden">
+				<div className="w-32 h-32 rounded-full overflow-hidden">
 						<img
 							className="w-full h-full"
 							src={lobby_icon}
@@ -199,6 +198,7 @@ export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
 			<div
 				onClick={onClick}
 				className="
+					relative
 					flex flex-col items-center justify-center
 					bg-primary hover:bg-secondary
 					rounded-[13px]
@@ -208,12 +208,13 @@ export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
 			>
 				<div className="
 					bg-secondary
-					w-20 h-20 rounded-full
-					flex items-center justify-center p-5
+					w-32 h-32 rounded-full
+					flex items-center justify-center
+					mb-5
 				">
-					<Plus className="w-full h-full text-primary"/>
+					<Plus className="w-full h-full text-primary p-5"/>
 				</div>
-				<div className="font-bold text-2xl text-primary_fg mt-3">
+				<div className="font-bold text-2xl text-primary_fg">
 					Create Lobby
 				</div>
 			</div>

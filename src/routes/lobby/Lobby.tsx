@@ -16,7 +16,7 @@ import { useSidebarState } from "@/components/SideBar/SideBar";
 
 // Assets
 import test_logo from "/covers/cover.jpg";
-import "./Lobby.css";
+import "commons/style.css";
 
 const Lobby = (): React.ReactElement => {
 	const navigate = useNavigate();
@@ -26,15 +26,7 @@ const Lobby = (): React.ReactElement => {
 	const { musicState, clearMusicState } = useMusicProvider();
 	const { isExtended } = useSidebarState();
 
-	const [showContent, setShowContent] = useState<boolean>(false);
 	const [lobbies, setLobbies] = useState<LobbyModel[]>([]);
-
-	// Delay to ensure content is rendered before animation
-	useEffect(() => {
-		setTimeout(() => {
-			setShowContent(true);
-		}, 100);
-	}, []);
 
 	// Get the online lobbies
 	useEffect(() => {
@@ -120,12 +112,23 @@ const Lobby = (): React.ReactElement => {
 
 	return (
 		<>
-			<div className={`lobby-body relative transition-all ${
-			  isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
-			}`}>
-				<h1 className="lobby-header"> Lobbies </h1>
+			<div className={`
+				flex flex-col overflow-hidden mt-[90px] h-[83vh]
+				relative transition-all
+				${
+			 		isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
+				}`
+				}>
+				<h1 className="font-bold text-4xl text-primary_fg pl-5"> Lobby </h1>
 				<div className="scrollable-area">
-					<div className={`grid-container ${showContent ? "show" : ""}`}>
+					<div className="
+						grid
+						grid-cols-[repeat(auto-fill,_minmax(170px,_1fr))]
+						grid-rows-[repeat(auto-fill,_minmax(250px,_1fr))]
+						w-[90%] 
+						gap-0
+						px-5
+					">
 						{lobbies.map((lobby, idx) => (
 							<LobbyCard
 								key={lobby.id}
@@ -135,7 +138,6 @@ const Lobby = (): React.ReactElement => {
 								song_name={lobby.song_name}
 								artist_name={lobby.artist_name}
 								lobby_icon={lobby.lobby_icon}
-								card_index={idx}
 								onClick={handleJoinLobby}
 							/>
 						))}
@@ -145,6 +147,7 @@ const Lobby = (): React.ReactElement => {
 			</div>
 		</>
 	);
+
 };
 
 export default Lobby;
