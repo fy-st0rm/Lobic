@@ -50,7 +50,7 @@ function SideBar() {
 
     return (
 
-        <div className={` md:h-[73vh] 2xl:h-[80vh] transition-all bg-secondary absolute my-5 mx-2 overflow-hidden rounded-lg overflow ${isExtended ? 'w-[12vw]' : 'w-[65px]'}`}>
+        <div className={` md:h-[74vh] 2xl:h-[80vh] transition-all bg-secondary absolute my-5 mx-2 overflow-hidden rounded-lg overflow ${isExtended ? 'w-[12vw]' : 'w-[65px]'}`}>
             <div className="flex flex-col px-2 py-5">
                 <Link
                     to="/home" className="no-underline text-primary_fg">
