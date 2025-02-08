@@ -12,6 +12,7 @@ import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
+import { useSidebarState } from "@/components/SideBar/SideBar";
 
 // Assets
 import test_logo from "/covers/cover.jpg";
@@ -23,6 +24,7 @@ const Lobby = (): React.ReactElement => {
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { getSocket, addMsgHandler } = useSocketProvider();
 	const { musicState, clearMusicState } = useMusicProvider();
+	const { isExtended } = useSidebarState();
 
 	const [showContent, setShowContent] = useState<boolean>(false);
 	const [lobbies, setLobbies] = useState<LobbyModel[]>([]);
@@ -118,7 +120,9 @@ const Lobby = (): React.ReactElement => {
 
 	return (
 		<>
-			<div className="lobby-body">
+			<div className={`lobby-body relative transition-all ${
+			  isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
+			}`}>
 				<h1 className="lobby-header"> Lobbies </h1>
 				<div className="scrollable-area">
 					<div className={`grid-container ${showContent ? "show" : ""}`}>
