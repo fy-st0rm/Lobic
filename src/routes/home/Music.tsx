@@ -104,7 +104,7 @@ const Music: React.FC<MusicProps> = ({
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger
-				className="music-container transition-all duration-300 h-[215px] w-44 p-4 m-1 rounded-md hover:bg-secondary hover:bg-opacity-80"
+				className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2 hover:bg-secondary hover:bg-opacity-80"
 			>
 				<div className="music-photo-container h-44 w-44" onClick={onClick}>
 					<img

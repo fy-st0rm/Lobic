@@ -3,12 +3,13 @@
 .home-container {
 	display: flex;
 	flex-direction: column;
-	height: 83vh;
+	height: 80vh;
 	width: 89vw;
 	overflow: hidden;
 	position: relative;
 	left: 30vw;
-	top:90px
+	top: 115px;	
+
 }
 
 .music-player {
