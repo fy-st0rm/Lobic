@@ -49,7 +49,6 @@ const AllSongsPage: React.FC = () => {
 	return (
 		<MusicListsProvider>
 			<div className="p-6 min-h-screen text-white">
-				<h1 className="text-3xl font-bold mb-6">{listTitle}</h1>
 				<MusicListVertical fetchSongs={fetchSongsForList} />
 			</div>
 		</MusicListsProvider>

@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { EllipsisVertical, Heart, Play, Plus } from "lucide-react";
-import {
-	MusicTrack as Song,
-	MPState,
-	ImageFromUrl,
-} from "@/api/music/musicApi";
-import {
-	fetchUserPlaylists,
-	addSongToPlaylist,
-	Playlist,
-	FetchUserPlaylistsResponse,
-} from "@/api/playlist/playlistApi";
-import { toggleSongLiked } from "@/api/music/likedSongsApi";
+import React, { useState, useEffect, useCallback } from "react";
+import { Play } from "lucide-react";
+import { MusicTrack as Song, MPState } from "@/api/music/musicApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
-import { useMusicLists } from "@/providers/MusicListContextProvider";
+import { toggleSongLiked } from "@/api/music/likedSongsApi";
+import {
+	addSongToPlaylist,
+	fetchUserPlaylists,
+} from "@/api/playlist/playlistApi";
+import SongItem from "./SongItem";
+import { useSidebarState } from "@/components/SideBar/SideBar";
 
+// Main MusicListVertical Component
 interface MusicListVerticalProps {
 	fetchSongs: (start_index: number, page_length: number) => Promise<Song[]>;
 	initialSongs?: Song[];
@@ -31,176 +27,122 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 	const [startIndex, setStartIndex] = useState(0);
 	const [hasMore, setHasMore] = useState(true);
 	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
-	const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 	const pageLength = 20;
 
 	const { appState } = useAppProvider();
 	const { enqueue, clearQueue } = useQueueProvider();
 	const { clearMusicState, updateMusicState } = useMusicProvider();
-	const { notifyMusicPlayed } = useMusicLists();
-	const userId = appState.user_id;
 
 	// Fetch initial songs on mount
-	useEffect(() => {
-		const loadInitialSongs = async () => {
-			setIsLoading(true);
-			try {
-				const fetchedSongs = await fetchSongs(0, pageLength);
-
-				const songsWithCoverImages = await Promise.all(
-					fetchedSongs.map(async (song) => {
-						return song;
-					}),
-				);
-
-				setSongs(songsWithCoverImages);
-				setStartIndex(pageLength);
-				setHasMore(fetchedSongs.length === pageLength);
-			} catch (error) {
-				console.error("Error fetching initial songs:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		loadInitialSongs();
-	}, [fetchSongs]);
-
-	// Infinite scroll handler for container
-	const handleScroll = async (e: React.UIEvent<HTMLDivElement>) => {
-		const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
-
-		if (
-			!isLoading &&
-			hasMore &&
-			scrollHeight - scrollTop <= clientHeight + 100
-		) {
-			setIsLoading(true);
-			try {
-				const newSongs = await fetchSongs(startIndex, pageLength);
-
-				if (newSongs.length > 0) {
-					const newSongsWithCovers = await Promise.all(
-						newSongs.map(async (song) => {
-							return song;
-						}),
-					);
-
-					setSongs((prev) => [...prev, ...newSongsWithCovers]);
-					setStartIndex((prev) => prev + pageLength);
-					setHasMore(newSongs.length === pageLength);
-				} else {
-					setHasMore(false);
-				}
-			} catch (error) {
-				console.error("Error fetching more songs:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-	};
-
-	// Play a single song
-	const handleSongPlay = async (song: Song) => {
+	const loadInitialSongs = async () => {
+		setIsLoading(true);
 		try {
-			setSelectedSongId(song.id);
-			setIsLoading(true);
-			clearMusicState();
-			clearQueue();
-			updateMusicState({
-				id: song.id,
-				title: song.title,
-				artist: song.artist,
-				image_url: song.image_url,
-				timestamp: 0,
-				state: MPState.CHANGE_MUSIC,
-			} as MusicState);
+			const fetchedSongs = await fetchSongs(0, pageLength);
+			const songsWithCoverImages = await Promise.all(
+				fetchedSongs.map(async (song) => {
+					return song;
+				}),
+			);
+			setSongs(songsWithCoverImages);
+			setStartIndex(pageLength);
+			setHasMore(fetchedSongs.length === pageLength);
 		} catch (error) {
-			console.error("Error playing song:", error);
+			console.error("Error fetching initial songs:", error);
 		} finally {
 			setIsLoading(false);
 		}
 	};
+	useEffect(() => {
+		loadInitialSongs();
+	}, []);
 
-	// Add to queue
-	const handleAddToQueue = (song: Song) => {
-		const track = {
+	const loadMoreSongs = useCallback(async () => {
+		if (isLoading || !hasMore) return;
+		setIsLoading(true);
+		try {
+			const newSongs = await fetchSongs(startIndex, pageLength);
+			if (newSongs.length > 0) {
+				setSongs((prev) => [...prev, ...newSongs]);
+				setStartIndex((prev) => prev + newSongs.length);
+				setHasMore(newSongs.length === pageLength);
+			} else {
+				setHasMore(false);
+			}
+		} catch (error) {
+			console.error("Error fetching more songs:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [fetchSongs, startIndex, isLoading, hasMore]);
+
+	// Infinite scroll with debounce
+	const handleScroll = useCallback(
+		(e: React.UIEvent<HTMLDivElement>) => {
+			const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+			const scrollThreshold = 80; // Load more when within 200px of bottom
+
+			if (scrollHeight - scrollTop <= clientHeight + scrollThreshold) {
+				loadMoreSongs();
+			}
+		},
+		[loadMoreSongs],
+	);
+
+	const handleSongPlay = async (song: Song) => {
+		setSelectedSongId(song.id);
+		clearMusicState();
+		clearQueue();
+		updateMusicState({
 			id: song.id,
 			title: song.title,
 			artist: song.artist,
-			album: song.album,
 			image_url: song.image_url,
-		};
-		enqueue(track);
+			timestamp: 0,
+			state: MPState.CHANGE_MUSIC,
+		} as MusicState);
 	};
 
-	// Add to playlist
-	const handleAddToPlaylist = async (song: Song): Promise<void> => {
-		try {
-			const response: FetchUserPlaylistsResponse =
-				await fetchUserPlaylists(userId);
-
-			if (response.playlists.length === 0) {
-				console.log("No playlists found for the user.");
-				return;
-			}
-
-			const playlistId = response.playlists[0].playlist_id;
-			const songData = {
-				playlist_id: playlistId,
-				music_id: song.id,
-			};
-
-			const result = await addSongToPlaylist(songData);
-		} catch (error) {
-			console.error("Error adding song to playlist:", error);
-		}
+	const handleAddToQueue = (song: Song) => {
+		enqueue(song);
 	};
 
-	// Toggle liked songs
-	const handleAddToLikedSongs = async (song: Song): Promise<void> => {
+	const handleAddToLikedSongs = async (song: Song) => {
 		try {
-			await toggleSongLiked(userId, song.id);
+			await toggleSongLiked(appState.user_id, song.id);
 		} catch (error) {
 			console.error("Error adding to liked songs:", error);
 		}
 	};
 
-	// Play all songs functionality
+	const handleAddToPlaylist = async (song: Song) => {
+		try {
+			const response = await fetchUserPlaylists(appState.user_id);
+			if (response.playlists.length === 0) return;
+
+			await addSongToPlaylist({
+				playlist_id: response.playlists[0].playlist_id,
+				music_id: song.id,
+			});
+		} catch (error) {
+			console.error("Error adding song to playlist:", error);
+		}
+	};
+
 	const playAllSongs = () => {
+		if (songs.length === 0) return;
 		clearMusicState();
 		clearQueue();
-
-		let firstSong = songs[0];
-
-		if (firstSong) {
-			updateMusicState({
-				id: firstSong.id,
-				title: firstSong.title,
-				artist: firstSong.artist,
-				image_url: firstSong.image_url,
-				timestamp: 0,
-				state: MPState.CHANGE_MUSIC,
-			} as MusicState);
-		}
-
-		songs.slice(1).forEach((track) => {
-			enqueue(track);
-		});
+		handleSongPlay(songs[0]);
+		songs.slice(1).forEach((song) => enqueue(song));
 	};
-
-	// Toggle dropdown
-	const toggleDropdown = (songId: string) => {
-		setOpenDropdownId(openDropdownId === songId ? null : songId);
-	};
-
+	const { isExtended } = useSidebarState();
 	return (
-		<div className="fixed right-[10%] top-[10%] w-[80%] h-[80%] bg-accent rounded-l-2xl shadow-lg overflow-hidden flex flex-col">
-			{/* Header with Play All Button */}
-			<div className="sticky top-0 z-10 bg-accent p-4 flex justify-between items-center border-b border-border">
-				<h2 className="flex items-center font-bold px-4 pb-3 text-xl text-white">
-					Playlist
-				</h2>
+		<div
+			className={`flex flex-col h-[80vh] relative top-[115px] transition-all ${
+				isExtended ? "w-[86vw] left-[13vw]" : "w-[93vw] left-[6vw]"
+			}`}
+		>
+			<div className="fixed top-[115px] w-full bg-white z-10">
 				<button
 					onClick={playAllSongs}
 					className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-colors"
@@ -210,69 +152,20 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				</button>
 			</div>
 
-			{/* Music List Scroll Area */}
 			<div
-				className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-muted scrollbar-thumb-primary"
+				className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-muted scrollbar-thumb-primary mt-[60px]"
 				onScroll={handleScroll}
 			>
 				{songs.map((song) => (
-					<div
+					<SongItem
 						key={song.id}
-						className={`flex items-center p-4 transition-colors group ${
-							selectedSongId === song.id
-								? "bg-accent/80"
-								: "bg-background hover:bg-accent/50"
-						}`}
-					>
-						{/* Song Cover Image */}
-						<img
-							src={ImageFromUrl(song.image_url)}
-							alt={song.title}
-							className="w-16 h-16 rounded-lg object-cover cursor-pointer"
-							onClick={() => handleSongPlay(song)}
-						/>
-
-						{/* Song Details */}
-						<div className="ml-4 flex-1">
-							<h3 className="text-lg font-semibold text-white truncate">
-								{song.title}
-							</h3>
-							<p className="text-sm text-white truncate">
-								{song.artist}
-							</p>
-						</div>
-
-						{/* More Actions */}
-						<div className="relative">
-							<div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-								<button
-									onClick={() => handleAddToQueue(song)}
-									className="hover:bg-accent rounded-full p-2"
-								>
-									<Plus className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
-								</button>
-								<button
-									onClick={() => handleAddToLikedSongs(song)}
-									className="hover:bg-accent rounded-full p-2"
-								>
-									<Heart className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
-								</button>
-								<button
-									onClick={() => toggleDropdown(song.id)}
-									className="hover:bg-accent rounded-full p-2"
-								>
-									<EllipsisVertical className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
-								</button>
-							</div>
-
-							{openDropdownId === song.id && (
-								<div className="absolute right-0 top-full mt-2 w-48 bg-popover text-popover-foreground rounded-lg shadow-lg z-50">
-									{/* Dropdown items with similar color updates */}
-									{/* ... */}
-								</div>	
-							)}
-						</div>
-					</div>
+						song={song}
+						isSelected={selectedSongId === song.id}
+						onPlay={handleSongPlay}
+						onAddToQueue={handleAddToQueue}
+						onAddToLikedSongs={handleAddToLikedSongs}
+						onAddToPlaylist={handleAddToPlaylist}
+					/>
 				))}
 			</div>
 		</div>
