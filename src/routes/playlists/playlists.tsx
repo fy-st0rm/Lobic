@@ -12,8 +12,10 @@ import {
 	fetchPlaylistCoverImg,
 	updatePlaylistCoverImg,
 } from "@/api/playlist/playlistApi";
+import {useSidebarState} from "@/components/SideBar/SideBar";
 
 import img from "/playlistimages/playlistimage.png";
+
 
 function Playlists() {
 	const { appState } = useAppProvider();
@@ -24,6 +26,7 @@ function Playlists() {
 	const [playlistName, setPlaylistName] = useState<string>("UnknownPlaylist");
 	const [playlistType, setPlaylistType] = useState<boolean>(false); // false for Solo Playlist, true for Combined Playlist
 	const [newPlaylistImage, setNewPlaylistImage] = useState<string>("");
+	const { isExtended } = useSidebarState();
 	const [playlistCovers, setPlaylistCovers] = useState<Record<string, string>>(
 		{},
 	);
@@ -106,7 +109,9 @@ function Playlists() {
 
 	return (
 		<>
-			<div className="absolute top-[80px] w-full m-6">
+			<div className={`home-container relative transition-all ${
+		  isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
+		}`}>
 				<div className="text-3xl font-bold text-white">Your Playlists</div>
 				<div className="mt-3 w-full h-[625px] flex flex-wrap overflow-y-scroll">
 					{playlists.length > 0 && (

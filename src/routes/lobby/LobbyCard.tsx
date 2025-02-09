@@ -194,7 +194,7 @@ export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
 	onClick,
 }) => {
 	return (
-		<>
+		<>	
 			<div
 				onClick={onClick}
 				className="
@@ -202,7 +202,7 @@ export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
 					flex flex-col items-center justify-center
 					bg-primary hover:bg-secondary hover:bg-opacity-50
 					rounded-[13px]
-					m-0
+					m-0 
 					transition-all
 				"
 			>

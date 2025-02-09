@@ -11,6 +11,9 @@ import { useSocketProvider } from "providers/SocketProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
 
 // Assets
+import Logo from "/navbar/LobicLogo.svg"
+import Notification from "/navbar/notification.svg"
+import Profile from "/navbar/profile.svg"
 import "./NavBar.css";
 
 function NavBar() {
@@ -100,103 +103,68 @@ function NavBar() {
 
 	return (
 		<>
-			<div className="navbar">
-				<div className="blur"></div>
+			<div className="navbar flex justify-between p-2">
 				<div className="logo-container">
-					<Link to="/home" className={isDisabled ? "disabled-link" : ""}>
-						<img src="./public/lobic_logo.png" className="logo" alt="Logo" />
+					<Link to="/home" className="no-underline text-primary_fg">
+						<div className="flex gap-2">
+							<img src={Logo} className="logo h-[45px] w-[45px]" alt="Logo" />
+							<div className="self-center mt-2 font-semibold text-lg">Lobic</div>
+						</div>
 					</Link>
 				</div>
 
-				<ul className="navbar-items">
-					<li>
-						<Link
-							to="/home"
-							className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
-						>
-							<img
-								className="navbar-home"
-								src="./public/home.png"
-								alt="Home Icon"
-							/>
-						</Link>
-					</li>
-					<li>
-						<Link
-							to="/lobby"
-							className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
-						>
-							<img
-								className="navbar-icons"
-								src="./public/people.png"
-								alt="Friends Icon"
-							/>
-						</Link>
-					</li>
-					<li>
-						<Link
-							to="/playlists"
-							className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
-						>
-							<img
-								className="navbar-icons"
-								src="./public/playlist.png"
-								alt="Playlist Icon"
-							/>
-						</Link>
-					</li>
-					<li>
+				<SearchBar isDisabled={isDisabled} onClearInput={handleClearButton} />
+
+				<div className="flex items-center gap-3">
+					<div className="">
 						<Link
 							to="/notifications"
 							className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
 						>
 							<img
-								className="navbar-bell"
-								src="./public/bell.png"
+								className="navbar-bell  h-8 w-8 m-2"
+								src={Notification}
 								alt="Notifications Icon"
 							/>
 						</Link>
-					</li>
-				</ul>
+					</div>
+					<div>
+						<div
+							onClick={() => navigateAndClose("/profile")}
+							className=""
+						>
+							<img src={Profile} className="profile-pic  h-8 w-8 " alt="Profile" />
+						</div>
+					</div>
 
-				<SearchBar isDisabled={isDisabled} onClearInput={handleClearButton} />
+					<div>
+						<button
+							className="logout-button"
+							onClick={handleLogoutClick}
+							disabled={isDisabled}
+							style={{ pointerEvents: isDisabled ? "none" : "auto" }}
+						>
+							<img
+								className="navbar-button h-7 w-7 "
+								src="./public/logout.png"
+								alt="Logout"
+							/>
+						</button>
+					</div>
 
-				<div className="user-icon">
-					<button
-						className="profile-button"
-						onClick={() => navigateAndClose("/profile")}
-					>
-						<img src={profilePic} className="profile-pic" alt="Profile" />
-					</button>
-				</div>
-
-				<div className="logout">
-					<button
-						className="logout-button"
-						onClick={handleLogoutClick}
-						disabled={isDisabled}
-						style={{ pointerEvents: isDisabled ? "none" : "auto" }}
-					>
-						<img
-							className="navbar-button"
-							src="./public/logout.png"
-							alt="Logout"
-						/>
-					</button>
-				</div>
-
-				<div className="hamburger">
-					<button
-						className="hamburger-button"
-						style={{ pointerEvents: isDisabled ? "none" : "auto" }}
-						onClick={toggleDashboard}
-					>
-						<img
-							src="./public/hamburger.png"
-							className="hamburger-icon"
-							alt="Hamburger"
-						/>
-					</button>
+					<div className="hamburger">
+						<button
+							className="hamburger-button"
+							style={{ pointerEvents: isDisabled ? "none" : "auto" }}
+							onClick={toggleDashboard}
+						>
+							<img
+								src="./public/hamburger.png"
+								className="hamburger-icon"
+								alt="Hamburger"
+							/>
+						</button>
+					</div>
 				</div>
 
 				{isDashboardOpen && (

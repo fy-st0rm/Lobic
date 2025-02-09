@@ -119,7 +119,7 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 	return (
 		<div className="music-list-container">
 			<div className="list-header">
-				<h2 className="list-title px-1 m-0 text-[28px] text-primary_fg">{list_title}</h2>
+				<h2 className="list-title px-1 my-0 text-[28px] text-primary_fg">{list_title}</h2>
 				<div className="button-container">
 					<div onClick={enqueueAllSongs} className="log-songs-button">Enqueue</div>
 					<div onClick={handleShowAll} className="show-all-button">Show All</div>

@@ -126,7 +126,7 @@ const Lobby = (): React.ReactElement => {
 						grid-cols-[repeat(auto-fill,_minmax(170px,_1fr))]
 						grid-rows-[repeat(auto-fill,_minmax(250px,_1fr))]
 						w-[90%] 
-						gap-0
+						gap-2
 						px-5
 					">
 						{lobbies.map((lobby, idx) => (
