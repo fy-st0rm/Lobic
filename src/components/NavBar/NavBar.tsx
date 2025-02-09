@@ -22,7 +22,7 @@ function NavBar() {
 	const [inputValue, setInput] = useState<string>("");
 	const [isDashboardOpen, setIsDashboardOpen] = useState<boolean>(false);
 	const [profilePic, setProfilePic] = useState<string>("/public/sadit.jpg");
-
+	const [profileDropdown, setProfileDropdown] = useState<boolean>(false);
 	const { appState } = useAppProvider();
 	const { getSocket } = useSocketProvider();
 	const { lobbyState } = useLobbyProvider();
@@ -101,6 +101,13 @@ function NavBar() {
 		navigate(url);
 	};
 
+	const handleProfileDropdown = () =>{
+		setProfileDropdown(!profileDropdown);
+	}
+	const closeProfileDropdown = ()=>{
+		setProfileDropdown(false);
+	}
+
 	return (
 		<>
 			<div className="flex justify-between p-2">
@@ -122,7 +129,7 @@ function NavBar() {
 							className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
 						>
 							<img
-								className="navbar-bell  h-8 w-8 m-2"
+								className="navbar-bell  h-8 w-8 m-2 opacity-70 hover:opacity-100 transition-all"
 								src={Notification}
 								alt="Notifications Icon"
 							/>
@@ -130,26 +137,11 @@ function NavBar() {
 					</div>
 					<div>
 						<div
-							onClick={() => navigateAndClose("/profile")}
-							className=""
+							onClick={() => 
+								 handleProfileDropdown()} 
 						>
-							<img src={Profile} className="profile-pic  h-8 w-8 " alt="Profile" />
+							<img src={Profile} className="profile-pic  h-8 w-8 opacity-70 hover:opacity-100 transition-all cursor-pointer " alt="Profile" />
 						</div>
-					</div>
-
-					<div>
-						<button
-							className="logout-button"
-							onClick={handleLogoutClick}
-							disabled={isDisabled}
-							style={{ pointerEvents: isDisabled ? "none" : "auto" }}
-						>
-							<img
-								className="navbar-button h-7 w-7 "
-								src="./public/logout.png"
-								alt="Logout"
-							/>
-						</button>
 					</div>
 
 					<div className="hamburger">
@@ -166,6 +158,23 @@ function NavBar() {
 						</button>
 					</div>
 				</div>
+				{profileDropdown && (
+
+					<div className="fixed top-16 right-5 w-32  h-24 bg-secondary z-50 rounded-md">
+						<div className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all " onClick={() =>{navigate('/profile') 
+							closeProfileDropdown()
+						}}>
+							Profile
+						</div>
+						<div className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all" onClick={() =>{handleLogoutClick()
+							closeProfileDropdown()
+						}}>
+							Logout
+						</div>
+
+					</div>
+				)}
+
 
 				{isDashboardOpen && (
 					<>
