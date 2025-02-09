@@ -15,7 +15,6 @@ import Logo from "/navbar/LobicLogo.svg"
 import Notification from "/navbar/notification.svg"
 import Profile from "/navbar/profile.svg"
 import "./NavBar.css";
-import { profile } from "console";
 
 function NavBar() {
 	const [showMessage, setShowMessage] = useState<boolean>(false);
