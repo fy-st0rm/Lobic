@@ -9,7 +9,7 @@ function Home() {
   return (
 	// @TODO: remove the top-[115px] 
 	  <MusicListsProvider> 
-      <div className={`flex flex-col h-[80vh] overflow-hidden relative top-[115px] transition-all ${
+      <div className={`h-[80vh] overflow-scroll relative top-[115px] transition-all ${
         isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
       }`}>
         <div className="scrollable-area">
