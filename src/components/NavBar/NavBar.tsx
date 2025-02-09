@@ -110,7 +110,7 @@ function NavBar() {
 
 	return (
 		<>
-			<div className="navbar flex justify-between p-2">
+			<div className="flex justify-between p-2">
 				<div className="logo-container">
 					<Link to="/home" className="no-underline text-primary_fg">
 						<div className="flex gap-2">

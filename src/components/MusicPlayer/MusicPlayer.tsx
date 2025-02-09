@@ -186,7 +186,7 @@ function MusicPlayer() {
 	};
 
 	return (
-		<div className="music-player bg-secondary">
+		<div className="music-player bg-secondary flex items-center justify-center">
 			<div>
 				<img
 					src={

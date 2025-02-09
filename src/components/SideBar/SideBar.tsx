@@ -50,7 +50,7 @@ function SideBar() {
 
     return (
 
-        <div className={`h-[80vh] md:h-[74vh] 2xl:h-[80vh] transition-all bg-secondary absolute top-[90px] my-5 mx-2 overflow-hidden rounded-lg overflow ${isExtended ? 'w-[12vw]' : 'w-[65px]'}`}>
+        <div className={`transition-all flex flex-col justify-between bg-secondary mx-2 overflow-hidden rounded-lg overflow flex-shrink-0 ${isExtended ? 'w-[160px]' : 'w-[65px]'}`}>
             <div className="flex flex-col px-2 py-5">
                 <Link
                     to="/home" className="no-underline text-primary_fg">
@@ -100,9 +100,9 @@ function SideBar() {
                 onClick={() => {
                     toggleSidebar();
                 }}
-                className="absolute bottom-0 right-3 py-4 px-3 transition-all"
+                className="flex py-4 px-3 transition-all"
             >
-                <img src={isExtended ? toggleMinimise : toggleExtend} alt="Toggle sidebar" />
+                <img src={isExtended ? toggleMinimise : toggleExtend} alt="Toggle sidebar" className="ml-auto"/>
             </div>
         </div>
         
