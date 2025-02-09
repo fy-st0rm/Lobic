@@ -135,12 +135,9 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 		handleSongPlay(songs[0]);
 		songs.slice(1).forEach((song) => enqueue(song));
 	};
-	const { isExtended } = useSidebarState();
 	return (
 		<div
-			className={`flex flex-col h-[80vh] relative top-[115px] transition-all ${
-				isExtended ? "w-[86vw] left-[13vw]" : "w-[93vw] left-[6vw]"
-			}`}
+			className={`flex flex-col h-[80vh] relative top-[115px] transition-all`}
 		>
 			<div className="fixed top-[115px] w-full bg-white z-10">
 				<button
