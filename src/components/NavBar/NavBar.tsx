@@ -23,7 +23,7 @@ function NavBar() {
 	const [inputValue, setInput] = useState<string>("");
 	const [isDashboardOpen, setIsDashboardOpen] = useState<boolean>(false);
 	const [profilePic, setProfilePic] = useState<string>("/public/sadit.jpg");
-	const [profileDropdown, setProfileDropdown] = useState<boolean>(true);
+	const [profileDropdown, setProfileDropdown] = useState<boolean>(false);
 	const { appState } = useAppProvider();
 	const { getSocket } = useSocketProvider();
 	const { lobbyState } = useLobbyProvider();
@@ -136,7 +136,7 @@ function NavBar() {
 							/>
 						</Link>
 					</div>
-					<div>
+					<div className="cursor-pointer">
 						<div
 							onClick={() => 
 								 handleProfileDropdown()} 
