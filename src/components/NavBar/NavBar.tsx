@@ -130,18 +130,18 @@ function NavBar() {
 							className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
 						>
 							<img
-								className="navbar-bell  h-8 w-8 m-2"
+								className="navbar-bell  h-8 w-8 m-2 opacity-70 hover:opacity-100 transition-all"
 								src={Notification}
 								alt="Notifications Icon"
 							/>
 						</Link>
 					</div>
-					<div className="cursor-pointer">
+					<div>
 						<div
 							onClick={() => 
 								 handleProfileDropdown()} 
 						>
-							<img src={Profile} className="profile-pic  h-8 w-8 " alt="Profile" />
+							<img src={Profile} className="profile-pic  h-8 w-8 opacity-70 hover:opacity-100 transition-all cursor-pointer " alt="Profile" />
 						</div>
 					</div>
 
