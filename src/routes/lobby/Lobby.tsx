@@ -113,7 +113,7 @@ const Lobby = (): React.ReactElement => {
 	return (
 		<>
 			<div className={`
-				flex flex-col overflow-hidden mt-[90px] h-[83vh]
+				flex flex-col overflow-hidden top-[90px] h-[83vh]
 				relative transition-all
 				${
 			 		isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'

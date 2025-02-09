@@ -1,3 +1,8 @@
+* {
+    font-family: 'DM Sans', serif;
+}
+
+
 .music-list-container {
     padding-left: 20px;
     color: white;
@@ -12,7 +17,6 @@
 
 .list-title {
     text-align: left;
-    font-family: Arial, sans-serif;
     margin-bottom: 10px;
 }
 
@@ -22,7 +26,8 @@
     gap: 10px;
 }
 
-.log-songs-button, .show-all-button {
+.log-songs-button,
+.show-all-button {
     cursor: pointer;
     font-weight: bold;
     font-size: 14px;
@@ -30,7 +35,8 @@
     transition: opacity 0.2s ease-in-out;
 }
 
-.log-songs-button:hover, .show-all-button:hover {
+.log-songs-button:hover,
+.show-all-button:hover {
     opacity: 1;
     text-decoration: underline;
 }

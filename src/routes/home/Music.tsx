@@ -16,7 +16,6 @@ import {
 	ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
-import "./Music.css";
 import { ImageFromUrl } from "@/api/music/musicApi";
 
 interface MusicProps {
@@ -105,25 +104,19 @@ const Music: React.FC<MusicProps> = ({
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger
-				className="music-container transition-all duration-300"
-				style={{
-					backgroundColor,
-					color: textColor,
-					borderRadius: "0.5rem",
-					padding: "0.5rem",
-				}}
+				className="music-container transition-all duration-300 h-[215px] w-44 p-4 m-1 rounded-md hover:bg-secondary hover:bg-opacity-80"
 			>
-				<div className="music-photo-container" onClick={onClick}>
+				<div className="music-photo-container h-44 w-44" onClick={onClick}>
 					<img
-						className="music-photo rounded-lg shadow-lg"
+						className="music-photo rounded-lg shadow-lg h-[100%] w-[100%]"
 						src={ImageFromUrl(image_url)}
 						alt={`${title} cover`}
 					/>
 				</div>
 				<div className="info-container">
-					<div className="music-info">
-						<h2 className="music-title font-semibold">{title}</h2>
-						<h3 className="artist-name opacity-75">{artist}</h3>
+					<div className="music-info flex flex-col gap-0">
+						<h2 className="music-title font-semibold m-0 text-[15px] self-start pt-1 px-1">{title}</h2>
+						<h3 className="artist-name opacity-75 m-0 px-1 self-start">{artist}</h3>
 					</div>
 				</div>
 			</ContextMenuTrigger>

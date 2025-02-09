@@ -200,7 +200,7 @@ export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
 				className="
 					relative
 					flex flex-col items-center justify-center
-					bg-primary hover:bg-secondary
+					bg-primary hover:bg-secondary hover:bg-opacity-50
 					rounded-[13px]
 					m-0
 					transition-all

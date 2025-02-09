@@ -6,9 +6,9 @@
 	height: 83vh;
 	width: 89vw;
 	overflow: hidden;
-	margin-top: 90px;
 	position: relative;
 	left: 30vw;
+	top:90px
 }
 
 .music-player {
