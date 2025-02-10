@@ -5,8 +5,9 @@ import { useSidebarState } from "@/components/SideBar/SideBar";
 
 function Home() {
 	return (
-		<MusicListsProvider>
-			<div className="overflow-auto no-scrollbar">
+
+		<MusicListsProvider> 
+			<div className="overflow-auto no-scrollbar my-5 mx-2">
 				<MusicList list_title="Liked Songs" />
 				<MusicList list_title="Featured Music" />
 				<MusicList list_title="Recently Played" />
