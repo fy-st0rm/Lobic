@@ -16,7 +16,7 @@ const Layout = () => {
 		<>
 			<div className="flex flex-col w-screen h-screen overflow-hidden">
 				<NavBar />
-				<div className="flex w-full overflow-hidden my-2">
+				<div className="flex flex-1 w-full overflow-hidden my-2">
 					<SideBar />
 					<div className="overflow-auto no-scrollbar mr-3">
 						<Outlet />

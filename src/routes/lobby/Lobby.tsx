@@ -112,11 +112,9 @@ const Lobby = (): React.ReactElement => {
 
 	return (
 		<>
-			<div className={`
-				h-[83vh] mx-2 my-0`
-				}>
+			<div>
 				<h1 className="font-bold text-3xl text-primary_fg pl-5"> Lobby </h1>
-				<div className="scrollable-area">
+				<div className="overflow-auto no-scrollbar">
 					<div className="
 						grid
 						grid-cols-[repeat(auto-fill,_minmax(170px,_1fr))]

@@ -109,9 +109,9 @@ function Playlists() {
 
 	return (
 		<>
-			<div className={`h-[83vh] m-5`}>
+			<div>
 				<div className="text-3xl font-bold text-white">Your Playlists</div>
-				<div className="mt-3 w-full h-[625px] flex flex-wrap overflow-y-scroll">
+				<div className="mt-3 w-full flex flex-wrap overflow-y-auto">
 					{playlists.length > 0 && (
 						<>
 							{playlists.map((playlist) => (
