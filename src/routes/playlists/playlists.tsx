@@ -109,7 +109,7 @@ function Playlists() {
 
 	return (
 		<>
-			<div>
+			<div className="m-5">
 				<div className="text-3xl font-bold text-white">Your Playlists</div>
 				<div className="mt-3 w-full flex flex-wrap overflow-y-auto">
 					{playlists.length > 0 && (
