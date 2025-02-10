@@ -10,7 +10,6 @@ import {
 	fetchUserPlaylists,
 } from "@/api/playlist/playlistApi";
 import SongItem from "./SongItem";
-import { useSidebarState } from "@/components/SideBar/SideBar";
 
 // Main MusicListVertical Component
 interface MusicListVerticalProps {
@@ -136,10 +135,9 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 		songs.slice(1).forEach((song) => enqueue(song));
 	};
 	return (
-		<div
-			className={`flex flex-col h-[80vh] relative top-[115px] transition-all`}
-		>
-			<div className="fixed top-[115px] w-full bg-white z-10">
+		<div className={`flex flex-col h-[80vh] transition-all`}>
+			{/* Fixed Play All Button */}
+			<div className="fixed top-[115px] w-full bg-primary z-10">
 				<button
 					onClick={playAllSongs}
 					className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-colors"
@@ -149,10 +147,15 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				</button>
 			</div>
 
+			{/* Scroll Area */}
 			<div
-				className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-muted scrollbar-thumb-primary mt-[60px]"
+				className="flex-1 overflow-x-auto overflow-y-auto w-screen mt-[115px] scrollbar-hidden scrollbar-thin touch-none"
 				onScroll={handleScroll}
+				style={{
+					overscrollBehavior: "contain", // Prevents scrolling past content
+				}}
 			>
+				{/* Loop through the songs and render each song item */}
 				{songs.map((song) => (
 					<SongItem
 						key={song.id}

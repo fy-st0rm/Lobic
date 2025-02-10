@@ -1,9 +1,7 @@
 import { ImageFromUrl, MusicTrack as Song } from "@/api/music/musicApi";
-import SongInfo from "@/components/SongInfo/SongInfo";
-import { EllipsisVertical, Heart, Plus } from "lucide-react";
+import { Plus, PlusCircle, Heart } from "lucide-react";
 import { useState } from "react";
 
-// SongItem Component
 interface SongItemProps {
 	song: Song;
 	isSelected: boolean;
@@ -23,57 +21,61 @@ const SongItem: React.FC<SongItemProps> = ({
 }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-	return (
-		<div
-			className={`flex items-center p-4 transition-colors group ${
-				isSelected ? "bg-accent/80" : "bg-background hover:bg-accent/50"
-			}`}
-		>
-			<img
-				src={ImageFromUrl(song.image_url)}
-				alt={song.title}
-				className="w-16 h-16 rounded-lg object-cover cursor-pointer"
-				onClick={() => onPlay(song)}
-			/>
+	const containerClasses = `flex items-center p-3 rounded-lg transition-all duration-200 
+    ${isSelected ? "bg-secondary/80" : "hover:bg-secondary/40"}`;
 
-			<div className="ml-4 flex-1">
-				<h3 className="text-lg font-semibold text-white truncate">
-					{song.title}
-				</h3>
-				<p className="text-sm text-white truncate">{song.artist}</p>
+	return (
+		<div className={containerClasses}>
+			<div className="w-[5%] flex-shrink-0">
+				<div className="relative aspect-square">
+					<img
+						src={ImageFromUrl(song.image_url)}
+						alt={song.title}
+						className="w-full h-full rounded-lg object-cover cursor-pointer shadow-md 
+              transition-transform duration-200 group-hover:shadow-lg"
+						onClick={() => onPlay(song)}
+					/>
+				</div>
 			</div>
 
-			<div className="relative">
-				<div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-					<button
-						onClick={() => onAddToQueue(song)}
-						className="hover:bg-accent rounded-full p-2"
-					>
-						<Plus className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
-					</button>
-					<button
-						onClick={() => onAddToLikedSongs(song)}
-						className="hover:bg-accent rounded-full p-2"
-					>
-						<Heart className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
-					</button>
-					<button
-						onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-						className="hover:bg-accent rounded-full p-2"
-					>
-						<EllipsisVertical className="h-5 w-5 text-white opacity-70 hover:opacity-100" />
-					</button>
-				</div>
+			<div className="w-[50%] px-4 min-w-0">
+				<h3 className="text-[15px] font-semibold text-primary_fg truncate">
+					{song.title}
+				</h3>
+				<p className="text-sm text-primary_fg/75 truncate">{song.artist}</p>
+			</div>
+
+			<div className="w-[30%] flex items-center justify-end space-x-1">
+				<ActionButton
+					onClick={() => onAddToQueue(song)}
+					icon={Plus}
+					label="Add to queue"
+				/>
+				<ActionButton
+					onClick={() => onAddToLikedSongs(song)}
+					icon={Heart}
+					label="Like song"
+				/>
+				<ActionButton
+					onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+					icon={PlusCircle}
+					label="Add to playlist"
+				/>
 
 				{isDropdownOpen && (
-					<div className="absolute right-0 top-full mt-2 w-48 bg-popover text-popover-foreground rounded-lg shadow-lg z-50">
+					<div
+						className="absolute right-0 mt-2 w-56 bg-[#072631] bg-opacity-80 
+            rounded-lg shadow-lg z-50 translate-y-full"
+					>
 						<button
 							onClick={() => {
 								onAddToPlaylist(song);
 								setIsDropdownOpen(false);
 							}}
-							className="w-full text-left px-4 py-2 hover:bg-accent/50 rounded-lg"
+							className="w-full text-left px-3 py-2 text-sm font-bold hover:bg-[#157697] 
+                hover:bg-opacity-50 hover:rounded-lg flex items-center"
 						>
+							<PlusCircle className="mr-2 h-4 w-4" />
 							Add to Playlist
 						</button>
 					</div>
@@ -82,4 +84,24 @@ const SongItem: React.FC<SongItemProps> = ({
 		</div>
 	);
 };
+
 export default SongItem;
+
+//helper component to load the button with a icon
+const ActionButton = ({
+	onClick,
+	icon: Icon,
+	label,
+}: {
+	onClick: () => void;
+	icon: typeof Plus | typeof PlusCircle | typeof Heart;
+	label: string;
+}) => (
+	<button
+		onClick={onClick}
+		className="flex items-center justify-center w-8 h-8 bg-white/10 rounded-full hover:bg-white/20"
+		aria-label={label}
+	>
+		<Icon className="h-4 w-4" />
+	</button>
+);
