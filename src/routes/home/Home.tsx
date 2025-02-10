@@ -1,14 +1,11 @@
 import React from "react";
 import MusicList from "@/routes/home/MusicList";
 import { MusicListsProvider } from "@/providers/MusicListContextProvider";
-import {useSidebarState} from "@/components/SideBar/SideBar";
+import { useSidebarState } from "@/components/SideBar/SideBar";
 
 function Home() {
-	const { isExtended } = useSidebarState();
-
 	return (
-	// @TODO: remove the top-[115px] 
-		<MusicListsProvider> 
+		<MusicListsProvider>
 			<div className="overflow-auto no-scrollbar">
 				<MusicList list_title="Liked Songs" />
 				<MusicList list_title="Featured Music" />

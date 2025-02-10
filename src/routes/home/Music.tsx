@@ -103,9 +103,7 @@ const Music: React.FC<MusicProps> = ({
 
 	return (
 		<ContextMenu>
-			<ContextMenuTrigger
-				className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2  hover:bg-secondary hover:bg-opacity-80"
-			>
+			<ContextMenuTrigger className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2  hover:bg-secondary hover:bg-opacity-80">
 				<div className="music-photo-container h-44 w-44" onClick={onClick}>
 					<img
 						className="music-photo rounded-lg shadow-lg h-[100%] w-[100%]"
@@ -115,8 +113,12 @@ const Music: React.FC<MusicProps> = ({
 				</div>
 				<div className="info-container ">
 					<div className="music-info flex flex-col gap-0">
-						<h2 className="music-title font-semibold m-0 text-[15px] self-start pt-1 px-1  text-primary_fg">{title}</h2>
-						<h3 className="artist-name opacity-75 m-0 px-1 self-start  text-primary_fg">{artist}</h3>
+						<h2 className="music-title font-semibold m-0 text-[15px] self-start pt-1 px-1  text-primary_fg">
+							{title}
+						</h2>
+						<h3 className="artist-name opacity-75 m-0 px-1 self-start  text-primary_fg">
+							{artist}
+						</h3>
 					</div>
 				</div>
 			</ContextMenuTrigger>
