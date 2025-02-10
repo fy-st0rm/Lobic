@@ -52,7 +52,7 @@ function SideBar() {
     };
 
     const getLinkStyles = (path: string) => {
-        const activeStyles = "h-1.5 w-1.5 bg-[#7B92C9] rounded-full ";
+        const activeStyles = `h-1.5 w-1.5 bg-[#9BB9FF] rounded-full ${isExtended? '':'absolute'}`;
         return ` ${isActive(path) ? activeStyles : ''}`;
     };
 
@@ -88,7 +88,7 @@ function SideBar() {
                             />
                         </div>
                         <div className={`font-bold text-sm overflow-hidden transition-all ${isExtended ? '' : 'w-0'}`}>Lobby</div>
-                        <div className={`relative ${getLinkStyles('/lobby')}`}></div>
+                        <div className={`border ${getLinkStyles('/lobby')}`}></div>
                     </div>
                 </Link>
                 <Link
