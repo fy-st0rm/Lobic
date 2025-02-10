@@ -112,23 +112,24 @@ const Lobby = (): React.ReactElement => {
 
 	return (
 		<>
-			<div className={`
+			<div
+				className={`
 				flex flex-col overflow-hidden top-[90px] h-[83vh]
 				relative transition-all
-				${
-			 		isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
-				}`
-				}>
+				${isExtended ? "w-[86vw] left-[13vw]" : "w-[93vw] left-[6vw]"}`}
+			>
 				<h1 className="font-bold text-4xl text-primary_fg pl-5"> Lobby </h1>
 				<div className="scrollable-area">
-					<div className="
+					<div
+						className="
 						grid
 						grid-cols-[repeat(auto-fill,_minmax(170px,_1fr))]
 						grid-rows-[repeat(auto-fill,_minmax(250px,_1fr))]
 						w-[90%] 
 						gap-2
 						px-5
-					">
+					"
+					>
 						{lobbies.map((lobby, idx) => (
 							<LobbyCard
 								key={lobby.id}
@@ -147,7 +148,6 @@ const Lobby = (): React.ReactElement => {
 			</div>
 		</>
 	);
-
 };
 
 export default Lobby;

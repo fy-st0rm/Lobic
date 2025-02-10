@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import SongContainer from "@/components/SongContainer/SongContainer";
+import SongContainer from "@/routes/playlists/SongContainer/SongContainer";
 import User2 from "/user_images/sameep.jpg"; // @TODO
 import { Dot, Edit, Play } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";

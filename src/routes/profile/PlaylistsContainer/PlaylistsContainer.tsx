@@ -1,5 +1,5 @@
 import React from "react";
-import Playlist from "../Playlist/Playlist";
+import Playlist from "./Playlist/Playlist";
 import "./PlaylistsContainer.css";
 
 interface PlaylistItem {
