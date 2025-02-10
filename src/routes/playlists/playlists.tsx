@@ -12,7 +12,7 @@ import {
 	fetchPlaylistCoverImg,
 	updatePlaylistCoverImg,
 } from "@/api/playlist/playlistApi";
-import {useSidebarState} from "@/components/SideBar/SideBar";
+import { useSidebarState } from "@/components/SideBar/SideBar";
 
 import img from "/playlistimages/playlistimage.png";
 
@@ -109,9 +109,7 @@ function Playlists() {
 
 	return (
 		<>
-			<div className={`home-container relative transition-all ${
-		  isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
-		}`}>
+			<div className={`h-[83vh] m-5`}>
 				<div className="text-3xl font-bold text-white">Your Playlists</div>
 				<div className="mt-3 w-full h-[625px] flex flex-wrap overflow-y-scroll">
 					{playlists.length > 0 && (

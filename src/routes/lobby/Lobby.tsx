@@ -113,13 +113,9 @@ const Lobby = (): React.ReactElement => {
 	return (
 		<>
 			<div className={`
-				flex flex-col overflow-hidden top-[90px] h-[83vh]
-				relative transition-all
-				${
-			 		isExtended ? 'w-[86vw] left-[13vw]' : 'w-[93vw] left-[6vw]'
-				}`
+				h-[83vh] mx-2 my-0`
 				}>
-				<h1 className="font-bold text-4xl text-primary_fg pl-5"> Lobby </h1>
+				<h1 className="font-bold text-3xl text-primary_fg pl-5"> Lobby </h1>
 				<div className="scrollable-area">
 					<div className="
 						grid
