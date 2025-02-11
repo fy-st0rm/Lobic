@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 // Local
 import App from "@/App";
 import AudioElement from "components/AudioElement/AudioElement";
-import NotificationSystem from "components/Notification/Notification";
+import { NotificationSystem } from "components/Notification/Notification";
 import { Providers } from "providers/Providers";
 
 // Assets
