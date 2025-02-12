@@ -1,5 +1,5 @@
 // Node modules
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 // Local
@@ -9,6 +9,7 @@ import { fetchUserProfilePicture, logoutUser } from "@/api/user/userApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
+import { NotificationDropDown } from "components/Notification/Notification";
 
 // Assets
 import Logo from "/navbar/LobicLogo.svg"
@@ -17,15 +18,18 @@ import Profile from "/navbar/profile.svg"
 import "./NavBar.css";
 
 function NavBar() {
+	const { appState } = useAppProvider();
+	const { getSocket } = useSocketProvider();
+	const { lobbyState } = useLobbyProvider();
+
 	const [showMessage, setShowMessage] = useState<boolean>(false);
 	const [isDisabled, setIsDisabled] = useState<boolean>(false);
 	const [inputValue, setInput] = useState<string>("");
 	const [isDashboardOpen, setIsDashboardOpen] = useState<boolean>(false);
 	const [profilePic, setProfilePic] = useState<string>("/public/sadit.jpg");
 	const [profileDropdown, setProfileDropdown] = useState<boolean>(false);
-	const { appState } = useAppProvider();
-	const { getSocket } = useSocketProvider();
-	const { lobbyState } = useLobbyProvider();
+	const [notifDropdown, setNotifDropdown] = useState<boolean>(false);
+	const notifButtonRef = useRef<HTMLDivElement | null>(null);
 
 	const user_id = appState.user_id;
 
@@ -108,6 +112,16 @@ function NavBar() {
 		setProfileDropdown(false);
 	}
 
+	const toggleNotifDropdown = () => {
+		setNotifDropdown(!notifDropdown);
+	}
+
+	const closeNotifDropdown = (event: MouseEvent) => {
+		if (!notifButtonRef.current) return;
+		if (notifButtonRef.current.contains(event.target as Node)) return;
+		setNotifDropdown(false);
+	}
+
 	return (
 		<>
 			<div className="flex justify-between p-2">
@@ -123,17 +137,15 @@ function NavBar() {
 				<SearchBar isDisabled={isDisabled} onClearInput={handleClearButton} />
 
 				<div className="flex items-center gap-3">
-					<div className="">
-						<Link
-							to="/notifications"
-							className={`navbar-link ${isDisabled ? "disabled-link" : ""}`}
-						>
-							<img
-								className="navbar-bell  h-8 w-8 m-2 opacity-70 hover:opacity-100 transition-all"
-								src={Notification}
-								alt="Notifications Icon"
-							/>
-						</Link>
+					<div
+						ref={notifButtonRef}
+						onClick={toggleNotifDropdown}
+					>
+						<img
+							className="navbar-bell  h-8 w-8 m-2 opacity-70 hover:opacity-100 transition-all"
+							src={Notification}
+							alt="Notifications Icon"
+						/>
 					</div>
 					<div>
 						<div
@@ -158,6 +170,9 @@ function NavBar() {
 						</button>
 					</div>
 				</div>
+
+				{ /* Dropdowns */ }
+
 				{profileDropdown && (
 
 					<div className="fixed top-16 right-5 w-32  h-24 bg-secondary z-50 rounded-md">
@@ -175,6 +190,7 @@ function NavBar() {
 					</div>
 				)}
 
+				<NotificationDropDown isOpen={notifDropdown} close={closeNotifDropdown}/>
 
 				{isDashboardOpen && (
 					<>
