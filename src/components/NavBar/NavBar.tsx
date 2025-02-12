@@ -190,7 +190,7 @@ function NavBar() {
 					</div>
 				)}
 
-				{notifDropdown && <NotificationDropDown close={closeNotifDropdown}/>}
+				<NotificationDropDown isOpen={notifDropdown} close={closeNotifDropdown}/>
 
 				{isDashboardOpen && (
 					<>
