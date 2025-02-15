@@ -244,7 +244,7 @@ function MusicPlayer() {
 						<img
 							src={previousButton}
 							alt="Previous"
-							className={`button-group ${controlsDisabled ? "disabled" : ""}`}
+							className={`button-group opacity-80 hover:opacity-100 transition-all${controlsDisabled ? "disabled" : ""}`}
 						/>
 					</button>
 					<button
@@ -255,7 +255,7 @@ function MusicPlayer() {
 						<img
 							src={musicState.state === MPState.PLAY ? pauseButton : playButton}
 							alt={musicState.state === MPState.PLAY ? "Pause" : "Play"}
-							className={`button-group ${controlsDisabled ? "disabled" : ""} h-9 w-9`}
+							className={`button-group opacity-80 hover:opacity-100 transition-all ${controlsDisabled ? "disabled" : ""} h-9 w-9`}
 						/>
 					</button>
 					<button
@@ -266,7 +266,7 @@ function MusicPlayer() {
 						<img
 							src={NextButton}
 							alt="Next"
-							className={`button-group ${controlsDisabled ? "disabled" : ""}`}
+							className={`button-group opacity-80 hover:opacity-100 transition-all ${controlsDisabled ? "disabled" : ""}`}
 						/>
 					</button>
 				</div>

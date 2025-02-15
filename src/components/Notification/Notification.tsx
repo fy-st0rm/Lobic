@@ -87,15 +87,15 @@ export const NotificationDropDown: FC<NotifProps> = ({ isOpen, close }): React.R
 					${isOpen ? "h-[79%] opacity-100" : "h-0 opacity-0"}
 				`}
 			>
-				<div className="
+				<div className={`
 					text-bold text-2xl text-primary_fg p-5
-				">
+				${isOpen ? "" : "hidden"}`}>
 					Notifications
 				</div>
 
 				{Object.keys(notifs).length === 0 ? (
 					// When notifications is empty
-					<div className="flex flex-1 items-center justify-center">
+				<div className={`flex flex-1 items-center justify-center ${isOpen ? "" : "hidden"}`}>
 						<div className="flex items-center justify-center">
 							<Bird className="w-10 h-10 text-primary" />
 							<div className="text-primary text-semibold text-xl p-3">
