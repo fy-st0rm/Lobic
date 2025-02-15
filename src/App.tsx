@@ -12,7 +12,7 @@ function App(): React.ReactElement {
 		<>
 			<Helmet>
 				<title> Lobic </title>
-				<link rel="icon" href="public/lobic_logo.png" />
+				<link rel="icon" href="lobic_logo.png" />
 			</Helmet>
 
 			{isAuthPage ? <AuthRoutes /> : <AppRoutes />}
