@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import logo from "/public/assets/lobic_logo.png";
+import logo from "/lobic_logo.png";
 
 function ForgotPassword() {
 	const navigate = useNavigate();

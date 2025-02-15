@@ -8,7 +8,7 @@ import { performLogin, initClientState } from "@/api/user/userApi";
 import { useAppProvider } from "providers/AppProvider";
 
 // Assets
-import logo from "/assets/lobic_logo.png";
+import logo from "/lobic_logo.png";
 
 function Login() {
 	const [email, setEmail] = useState<string>("");

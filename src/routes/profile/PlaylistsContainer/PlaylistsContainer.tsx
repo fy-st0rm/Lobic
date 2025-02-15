@@ -10,12 +10,12 @@ interface PlaylistItem {
 
 const PlaylistsContainer: React.FC = () => {
 	const playlists: PlaylistItem[] = [
-		{ id: 1, image: "/public/sadit.jpg", title: "Playlist 1" },
-		{ id: 2, image: "/public/sadit.jpg", title: "Playlist 2" },
-		{ id: 3, image: "/public/sadit.jpg", title: "Playlist 3" },
-		{ id: 4, image: "/public/sadit.jpg", title: "Playlist 4" },
-		{ id: 5, image: "/public/sadit.jpg", title: "Playlist 5" },
-		{ id: 6, image: "/public/sadit.jpg", title: "Playlist 6" },
+		{ id: 1, image: "/sadit.jpg", title: "Playlist 1" },
+		{ id: 2, image: "/sadit.jpg", title: "Playlist 2" },
+		{ id: 3, image: "/sadit.jpg", title: "Playlist 3" },
+		{ id: 4, image: "/sadit.jpg", title: "Playlist 4" },
+		{ id: 5, image: "/sadit.jpg", title: "Playlist 5" },
+		{ id: 6, image: "/sadit.jpg", title: "Playlist 6" },
 	];
 
 	return (

@@ -12,9 +12,9 @@ import { useLobbyProvider } from "providers/LobbyProvider";
 import { NotificationDropDown } from "components/Notification/Notification";
 
 // Assets
-import Logo from "/navbar/LobicLogo.svg"
-import Notification from "/navbar/notification.svg"
-import Profile from "/navbar/profile.svg"
+import Logo from "/navbar/LobicLogo.svg";
+import Notification from "/navbar/notification.svg";
+import Profile from "/navbar/profile.svg";
 import "./NavBar.css";
 
 function NavBar() {
@@ -26,7 +26,7 @@ function NavBar() {
 	const [isDisabled, setIsDisabled] = useState<boolean>(false);
 	const [inputValue, setInput] = useState<string>("");
 	const [isDashboardOpen, setIsDashboardOpen] = useState<boolean>(false);
-	const [profilePic, setProfilePic] = useState<string>("/public/sadit.jpg");
+	const [profilePic, setProfilePic] = useState<string>("/sadit.jpg");
 	const [profileDropdown, setProfileDropdown] = useState<boolean>(false);
 	const [notifDropdown, setNotifDropdown] = useState<boolean>(false);
 	const notifButtonRef = useRef<HTMLDivElement | null>(null);
@@ -105,25 +105,25 @@ function NavBar() {
 		navigate(url);
 	};
 
-	const handleProfileDropdown = () =>{
+	const handleProfileDropdown = () => {
 		setProfileDropdown(!profileDropdown);
-	}
-	const closeProfileDropdown = ()=>{
+	};
+	const closeProfileDropdown = () => {
 		setProfileDropdown(false);
-	}
+	};
 
 	const toggleNotifDropdown = () => {
 		setNotifDropdown(!notifDropdown);
-		if(profileDropdown){
+		if (profileDropdown) {
 			setProfileDropdown(false);
 		}
-	}
+	};
 
 	const closeNotifDropdown = (event: MouseEvent) => {
 		if (!notifButtonRef.current) return;
 		if (notifButtonRef.current.contains(event.target as Node)) return;
 		setNotifDropdown(false);
-	}
+	};
 
 	return (
 		<>
@@ -132,7 +132,9 @@ function NavBar() {
 					<Link to="/home" className="no-underline text-primary_fg">
 						<div className="flex gap-2">
 							<img src={Logo} className="logo h-[45px] w-[45px]" alt="Logo" />
-							<div className="self-center mt-2 font-semibold text-lg">Lobic</div>
+							<div className="self-center mt-2 font-semibold text-lg">
+								Lobic
+							</div>
 						</div>
 					</Link>
 				</div>
@@ -140,10 +142,7 @@ function NavBar() {
 				<SearchBar isDisabled={isDisabled} onClearInput={handleClearButton} />
 
 				<div className="flex items-center gap-3">
-					<div
-						ref={notifButtonRef}
-						onClick={toggleNotifDropdown}
-					>
+					<div ref={notifButtonRef} onClick={toggleNotifDropdown}>
 						<img
 							className="navbar-bell  h-8 w-8 m-2 opacity-70 hover:opacity-100 transition-all"
 							src={Notification}
@@ -151,11 +150,12 @@ function NavBar() {
 						/>
 					</div>
 					<div>
-						<div
-							onClick={() => 
-								 handleProfileDropdown()} 
-						>
-							<img src={Profile} className="profile-pic  h-8 w-8 opacity-70 hover:opacity-100 transition-all cursor-pointer " alt="Profile" />
+						<div onClick={() => handleProfileDropdown()}>
+							<img
+								src={Profile}
+								className="profile-pic  h-8 w-8 opacity-70 hover:opacity-100 transition-all cursor-pointer "
+								alt="Profile"
+							/>
 						</div>
 					</div>
 
@@ -166,7 +166,7 @@ function NavBar() {
 							onClick={toggleDashboard}
 						>
 							<img
-								src="./public/hamburger.png"
+								src="/hamburger.png"
 								className="hamburger-icon"
 								alt="Hamburger"
 							/>
@@ -174,26 +174,35 @@ function NavBar() {
 					</div>
 				</div>
 
-				{ /* Dropdowns */ }
+				{/* Dropdowns */}
 
 				{profileDropdown && (
-
 					<div className="fixed top-16 right-5 w-32  h-24 bg-secondary z-50 rounded-md">
-						<div className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all " onClick={() =>{navigate('/profile') 
-							closeProfileDropdown()
-						}}>
+						<div
+							className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all "
+							onClick={() => {
+								navigate("/profile");
+								closeProfileDropdown();
+							}}
+						>
 							Profile
 						</div>
-						<div className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all" onClick={() =>{handleLogoutClick()
-							closeProfileDropdown()
-						}}>
+						<div
+							className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all"
+							onClick={() => {
+								handleLogoutClick();
+								closeProfileDropdown();
+							}}
+						>
 							Logout
 						</div>
-
 					</div>
 				)}
 
-				<NotificationDropDown isOpen={notifDropdown} close={closeNotifDropdown}/>
+				<NotificationDropDown
+					isOpen={notifDropdown}
+					close={closeNotifDropdown}
+				/>
 
 				{isDashboardOpen && (
 					<>

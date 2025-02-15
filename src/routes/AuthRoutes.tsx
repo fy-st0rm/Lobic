@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "@/routes/auth/login/Login";
-import Signup from "@/routes/auth/signup/Signup";
-import ForgotPassword from "@/routes/auth/login/ForgotPassword";
+import ForgotPassword from "./auth/ForgotPassword";
+import Login from "./auth/Login";
+import Signup from "./auth/Signup";
 
 function AuthRoutes() {
 	return (

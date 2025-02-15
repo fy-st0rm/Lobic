@@ -31,7 +31,7 @@ function Playlist({}) {
 	const { queue, enqueue, dequeue, clearQueue } = useQueueProvider();
 	const { clearMusicState, updateMusicState } = useMusicProvider();
 
-	const [user1Pfp, setUser1Pfp] = useState<string>("/public/sadit.jpg");
+	const [user1Pfp, setUser1Pfp] = useState<string>("/sadit.jpg");
 
 	useEffect(() => {
 		const loadPlaylistData = async (): Promise<void> => {

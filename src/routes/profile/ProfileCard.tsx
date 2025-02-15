@@ -22,8 +22,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 	const [isUpdating, setIsUpdating] = useState<boolean>(false);
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
-	const [profilePicture, setProfilePicture] =
-		useState<string>("/public/sadit.jpg");
+	const [profilePicture, setProfilePicture] = useState<string>("/sadit.jpg");
 	const [showSearchList, setShowSearchList] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -33,7 +32,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 				setProfilePicture(imageUrl);
 			} catch (error) {
 				console.error("Failed to fetch profile picture:", error);
-				setProfilePicture("/public/sadit.jpg");
+				setProfilePicture("/sadit.jpg");
 			}
 		};
 
