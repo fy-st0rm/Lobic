@@ -117,10 +117,10 @@ export const fetchUserProfilePicture = async (
 		if (response.ok) {
 			return `${SERVER_IP}/user/get_pfp/${userId}.png`;
 		} else {
-			return "/public/sadit.jpg"; // Default image
+			return "/sadit.jpg"; // Default image
 		}
 	} catch {
-		return "/public/sadit.jpg"; // Default image on error
+		return "/sadit.jpg"; // Default image on error
 	}
 };
 

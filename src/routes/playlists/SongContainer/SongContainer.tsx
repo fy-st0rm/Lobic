@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SongInfo from "components/SongInfo/SongInfo";
+import SongInfo from "@/routes/playlists/SongContainer/SongInfo/SongInfo";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import { MPState } from "@/api/music/musicApi";
 

@@ -115,14 +115,16 @@ const Lobby = (): React.ReactElement => {
 			<div>
 				<h1 className="font-bold text-3xl text-primary_fg pl-5"> Lobby </h1>
 				<div className="overflow-auto no-scrollbar">
-					<div className="
+					<div
+						className="
 						grid
 						grid-cols-[repeat(auto-fill,_minmax(170px,_1fr))]
 						grid-rows-[repeat(auto-fill,_minmax(250px,_1fr))]
 						w-[90%] 
 						gap-2
 						px-5
-					">
+					"
+					>
 						{lobbies.map((lobby, idx) => (
 							<LobbyCard
 								key={lobby.id}
@@ -141,7 +143,6 @@ const Lobby = (): React.ReactElement => {
 			</div>
 		</>
 	);
-
 };
 
 export default Lobby;

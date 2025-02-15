@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from "react";
 import "./SearchList.css";
-import ClearButton from "/public/close.png";
+import ClearButton from "/close.png";
 interface SearchListState {
 	searchValue: string;
 }

@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
 import { Plus, PlusCircle, Heart } from "lucide-react";
-import { FastAverageColor } from "fast-average-color";
 import { addSongToPlaylist } from "@/api/playlist/playlistApi";
 import { toggleSongLiked } from "@/api/music/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
@@ -39,34 +37,6 @@ const Music: React.FC<MusicProps> = ({
 	const { enqueue } = useQueueProvider();
 	const { notifyMusicPlayed, playlists, refreshPlaylists } = useMusicLists();
 	const userId = appState.user_id;
-	const [backgroundColor, setBackgroundColor] = useState<string>("transparent");
-	const [textColor, setTextColor] = useState<string>("white");
-	const defaultBgColor = "#072631";
-
-	useEffect(() => {
-		const fac = new FastAverageColor();
-
-		const getAverageColor = async () => {
-			try {
-				const color = await fac.getColorAsync(ImageFromUrl(image_url));
-				const rgbaColor = `rgba(${color.value[0]}, ${color.value[1]}, ${color.value[2]}, 0.75)`;
-				setBackgroundColor(rgbaColor);
-				setTextColor(color.isDark ? "white" : "black");
-			} catch (error) {
-				console.error("Error getting average color:", error);
-				setBackgroundColor(defaultBgColor);
-				setTextColor("white");
-			}
-		};
-
-		if (image_url) {
-			getAverageColor();
-		}
-
-		return () => {
-			fac.destroy();
-		};
-	}, [image_url]);
 
 	const handleAddToQueue = () => {
 		const track = {

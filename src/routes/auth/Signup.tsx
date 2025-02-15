@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signupUser } from "@/api/user/userApi";
+import { initClientState, performLogin, signupUser } from "@/api/user/userApi";
 import logo from "/lobic_logo.png";
 import { CircleAlert } from "lucide-react";
+import { useAppProvider } from "@/providers/AppProvider";
 
 function Signup() {
 	const [email, setEmail] = useState<string>("");
@@ -12,13 +13,18 @@ function Signup() {
 	const [errorMsg, setErrorMsg] = useState<string>("");
 
 	const navigate = useNavigate();
+	const { updateAppState } = useAppProvider();
 
 	const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		try {
 			await signupUser(email, password, confirmPassword);
-			navigate("/");
+			await performLogin(email, password);
+			const userData = await initClientState();
+			updateAppState({ user_id: userData.user_id });
+			window.location.href = "/home";
+			// navigate("/");
 		} catch (error) {
 			setIsError(true);
 			setErrorMsg((error as Error).message); // Cast error to Error type

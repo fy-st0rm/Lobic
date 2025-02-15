@@ -53,7 +53,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ isDisabled, onClearInput }) => {
 
 	return (
 		<div className="searchbar-container">
-
 			<input
 				type="text"
 				placeholder="Search..."
@@ -74,11 +73,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isDisabled, onClearInput }) => {
 				}}
 				disabled={isDisabled}
 			>
-				<img
-					src="./public/close.png"
-					className="clear-png"
-					alt="Clear Button"
-				/>
+				<img src="./close.png" className="clear-png" alt="Clear Button" />
 			</button>
 			{showSuggestions && suggestions.length > 0 && (
 				<div className="suggestions-popup">

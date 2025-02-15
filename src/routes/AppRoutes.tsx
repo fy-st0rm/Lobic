@@ -10,6 +10,7 @@ import AllSongsPage from "@/routes/home/allSongsPage/AllSongsPage";
 import NavBar from "components/NavBar/NavBar";
 import MusicPlayer from "@/components/MusicPlayer/MusicPlayer";
 import SideBar, { SidebarProvider } from "@/components/SideBar/SideBar";
+import NotFound from "@/components/NotFound";
 
 const Layout = () => {
 	return (
@@ -35,7 +36,8 @@ function AppRoutes() {
 		<Auth>
 			<SidebarProvider>
 				<Routes>
-					<Route path="/"  element={<Layout/>}>
+					{/* Main app routes with layout */}
+					<Route element={<Layout />}>
 						<Route path="/show_all" element={<AllSongsPage />} />
 						<Route path="/playlist/:playlistId" element={<Playlist />} />
 						<Route path="/home" element={<Home />} />
@@ -44,6 +46,9 @@ function AppRoutes() {
 						<Route path="/playlists" element={<Playlists />} />
 						<Route path="/profile" element={<Profile />} />
 					</Route>
+
+					{/* NotFound route without layout */}
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</SidebarProvider>
 		</Auth>

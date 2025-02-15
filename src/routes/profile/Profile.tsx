@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 // Local
 import ProfileCard from "./ProfileCard";
 import SearchList from "components/SearchList/SearchList";
-import PlaylistsContainer from "components/PlaylistsContainer/PlaylistsContainer";
+import PlaylistsContainer from "@/routes/profile/PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData } from "@/api/user/userApi";
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import SongContainer from "@/components/SongContainer/SongContainer";
+import SongContainer from "@/routes/playlists/SongContainer/SongContainer";
 import User2 from "/user_images/sameep.jpg"; // @TODO
 import { Dot, Edit, Play } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
@@ -31,7 +31,7 @@ function Playlist({}) {
 	const { queue, enqueue, dequeue, clearQueue } = useQueueProvider();
 	const { clearMusicState, updateMusicState } = useMusicProvider();
 
-	const [user1Pfp, setUser1Pfp] = useState<string>("/public/sadit.jpg");
+	const [user1Pfp, setUser1Pfp] = useState<string>("/sadit.jpg");
 
 	useEffect(() => {
 		const loadPlaylistData = async (): Promise<void> => {
