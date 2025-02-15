@@ -239,3 +239,35 @@ export const deletePlaylist = async (playlist_id: string): Promise<string> => {
 		throw error;
 	}
 };
+
+interface PlaylistShare {
+	playlist_id: string;
+	contributor_user_id: string;
+	is_writable: boolean;
+}
+
+export const addContributor = async (
+	shareData: PlaylistShare,
+): Promise<{
+	message: string;
+}> => {
+	try {
+		const response = await fetch(`${SERVER_IP}/playlist/contributor`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(shareData),
+		});
+
+		const result = await response.json();
+
+		if (response.status !== 200) {
+			throw new Error(result.message || "Failed to add contributor");
+		}
+
+		return result;
+	} catch (error) {
+		throw error;
+	}
+};
