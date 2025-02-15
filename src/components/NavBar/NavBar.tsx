@@ -114,6 +114,9 @@ function NavBar() {
 
 	const toggleNotifDropdown = () => {
 		setNotifDropdown(!notifDropdown);
+		if(profileDropdown){
+			setProfileDropdown(false);
+		}
 	}
 
 	const closeNotifDropdown = (event: MouseEvent) => {
