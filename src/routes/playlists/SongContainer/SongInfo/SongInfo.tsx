@@ -1,4 +1,5 @@
 import { ImageFromUrl } from "@/api/music/musicApi";
+import { getUserData, User } from "@/api/user/userApi";
 
 interface SongInfoProps {
 	songName: string;

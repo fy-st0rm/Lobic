@@ -35,6 +35,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 	const pageLength = 20;
 
 	const { appState } = useAppProvider();
+	const userId = appState.user_id;
 	const { enqueue, clearQueue } = useQueueProvider();
 	const { clearMusicState, updateMusicState } = useMusicProvider();
 
@@ -133,6 +134,7 @@ const MusicListVertical: React.FC<MusicListVerticalProps> = ({
 				await addSongToPlaylist({
 					playlist_id: response.playlists[0].playlist_id,
 					music_id: song.id,
+					song_adder_id: userId,
 				});
 			} catch (error) {
 				console.error("Error adding song to playlist:", error);
