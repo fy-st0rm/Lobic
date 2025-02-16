@@ -28,6 +28,7 @@ export interface PlaylistResponse {
 export interface AddSongToPlaylistData {
 	playlist_id: string;
 	music_id: string;
+	song_adder_id: string;
 }
 
 export interface FetchUserPlaylistsResponse {
