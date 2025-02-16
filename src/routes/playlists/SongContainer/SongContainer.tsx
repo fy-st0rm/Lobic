@@ -1,33 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SongInfo from "@/routes/playlists/SongContainer/SongInfo/SongInfo";
 import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import { MPState } from "@/api/music/musicApi";
-
-interface Song {
-	music_id: string;
-	title: string;
-	artist: string;
-	album: string;
-	image_url: string;
-}
+import { Song } from "@/api/playlist/playlistApi";
+import { getUserData } from "@/api/user/userApi";
 
 interface SongContainerProps {
 	playlistId: string;
 	songs: Song[];
 }
 
+interface UserCache {
+	[key: string]: string;
+}
+
 const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
+	const [usernames, setUsernames] = useState<UserCache>({});
 	const { updateMusicState } = useMusicProvider();
+
+	useEffect(() => {
+		const fetchUsernames = async () => {
+			// Get unique user IDs
+			const uniqueUserIds = [
+				...new Set(songs.map((song) => song.song_adder_id)),
+			];
+
+			// Create a map to store usernames
+			const newUsernames: UserCache = {};
+
+			// Fetch usernames for all unique user IDs
+			await Promise.all(
+				uniqueUserIds.map(async (userId) => {
+					try {
+						const userData = await getUserData(userId);
+						newUsernames[userId] = userData.username;
+					} catch (error) {
+						console.error(
+							`Failed to fetch username for user ${userId}:`,
+							error,
+						);
+						newUsernames[userId] = "Unknown User";
+					}
+				}),
+			);
+
+			setUsernames(newUsernames);
+		};
+
+		fetchUsernames();
+	}, [songs]);
 
 	const handleMusicClick = async (item: Song): Promise<void> => {
 		try {
 			setIsLoading(true);
 			setSelectedSongId(item.music_id);
 
-			// Updating Music State globally
 			updateMusicState({
 				id: item.music_id,
 				title: item.title,
@@ -74,7 +104,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 							songName={item.title}
 							artistName={item.artist}
 							duration={item.album}
-							addedBy="Unknown"
+							addedBy={usernames[item.song_adder_id] || "Loading..."}
 							image_url={item.image_url}
 						/>
 					</div>

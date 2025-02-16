@@ -17,6 +17,7 @@ export interface Song {
 	album: string;
 	genre: string;
 	song_added_date_time: string;
+	song_adder_id: string;
 	image_url: string;
 }
 
