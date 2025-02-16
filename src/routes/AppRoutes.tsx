@@ -19,7 +19,7 @@ const Layout = () => {
 				<NavBar />
 				<div className="flex flex-1 w-full overflow-hidden my-2">
 					<SideBar />
-					<div className="overflow-auto no-scrollbar mr-3">
+					<div className="overflow-auto no-scrollbar mr-3 w-full h-full">
 						<Outlet />
 					</div>
 				</div>
