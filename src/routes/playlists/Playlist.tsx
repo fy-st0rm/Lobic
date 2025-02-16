@@ -28,7 +28,7 @@ function Playlist({}) {
 	);
 	const [timestamp, setTimestamp] = useState<number>(Date.now());
 	const [username, setUsername] = useState<string>("");
-	const { queue, enqueue, dequeue, clearQueue } = useQueueProvider();
+	const { queue, enqueue, dequeue, updateQueue } = useQueueProvider();
 	const { clearMusicState, updateMusicState } = useMusicProvider();
 
 	const [user1Pfp, setUser1Pfp] = useState<string>("/sadit.jpg");
@@ -71,32 +71,14 @@ function Playlist({}) {
 
 	const playlistPlayed = () => {
 		clearMusicState();
-		clearQueue();
-
-		let firstSong = playlistData?.songs[0];
-
-		if (firstSong) {
-			// const coverArt = getMusicImageUrl(firstSong.music_id);
-
-			updateMusicState({
-				id: firstSong.music_id,
-				title: firstSong.title,
-				artist: firstSong.artist,
-				image_url: firstSong.image_url,
-				timestamp: 0,
-				state: MPState.CHANGE_MUSIC,
-			} as MusicState);
-		}
-
-		playlistData?.songs.slice(1).forEach((item) => {
-			// const coverArt = getMusicImageUrl(item.music_id);
-			let track = {
+		if (playlistData) {
+			const newQueue = playlistData.songs.map((item) => ({
 				id: item.music_id,
 				...item,
 				image_url: item.image_url,
-			};
-			enqueue(track);
-		});
+			}));
+			updateQueue(newQueue);
+		}
 	};
 
 	const handleImageChange = async (

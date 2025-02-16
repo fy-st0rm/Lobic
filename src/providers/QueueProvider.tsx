@@ -70,7 +70,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 							id: item.id,
 							title: item.title,
 							artist: item.artist,
-							image_url: item.image_url,
+							cover_img: item.image_url,
 							timestamp: 0,
 							state: MPState.PAUSE,
 						};
@@ -81,33 +81,35 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		}
 	}, [queue]);
 
-	const updateQueue = (queue: MusicTrack[]) => {
-		const newState = {
-			queue: queue,
-		};
-		sessionStorage.setItem("QueueState", JSON.stringify(newState));
-		setQueue(queue);
+	useEffect(() => {
+		// Play the song if the current song is not set
+		if (queue.length > 0 && !musicState.id) {
+			let track = queue[0];
+			updateMusicState({
+				id: track.id,
+				title: track.title,
+				artist: track.artist,
+				image_url: track.image_url,
+				timestamp: 0,
+				state: MPState.CHANGE_MUSIC,
+			});
+			dequeue();
+		}
+	}, [queue]);
+
+	const updateQueue = (newQueue: MusicTrack[]) => {
+		setQueue((prevQueue) => {
+			const newState = {
+				queue: newQueue,
+			};
+			sessionStorage.setItem("QueueState", JSON.stringify(newState));
+			return newQueue;
+		});
 	};
 
 	const enqueue = (track: MusicTrack) => {
 		setQueue((prevQueue) => {
-			let newQueue: MusicTrack[] = [];
-
-			// Play the song if the current song is not set
-			if (queue.length === 0 && !musicState.id) {
-				updateMusicState({
-					id: track.id,
-					title: track.title,
-					artist: track.artist,
-					image_url: track.image_url,
-					timestamp: 0,
-					state: MPState.CHANGE_MUSIC,
-				});
-				newQueue = [];
-			} else {
-				newQueue = [...prevQueue, track];
-			}
-
+			let newQueue: MusicTrack[] = [...prevQueue, track];
 			const newState = {
 				queue: newQueue,
 			};
