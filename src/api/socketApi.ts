@@ -19,6 +19,7 @@ export enum OpCode {
 	ADD_FRIEND = "ADD_FRIEND",
 	REMOVE_FRIEND = "REMOVE_FRIEND",
 	NOTIFICATION = "NOTIFICATION",
+	REQUEST_MUSIC_PLAY = "REQUEST_MUSIC_PLAY",
 }
 
 export type SocketResponse = {

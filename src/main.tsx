@@ -24,7 +24,15 @@ createRoot(root).render(
 	<StrictMode>
 		<Providers>
 			<AudioElement />
-			<Toaster position="top-right" />
+			<Toaster
+				position="top-right"
+				richColors
+				expand={true}
+				toastOptions={{
+					className: "max-w-[350px] mx-2",
+					duration: 5000,
+				}}
+			/>
 			<NotificationSystem />
 			<Router>
 				<App />

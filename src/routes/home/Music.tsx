@@ -1,9 +1,13 @@
-import { Plus, PlusCircle, Heart } from "lucide-react";
-import { addSongToPlaylist } from "@/api/playlist/playlistApi";
-import { toggleSongLiked } from "@/api/music/likedSongsApi";
+import { Plus, PlusCircle, Heart, CircleArrowOutUpRight } from "lucide-react";
+import { addSongToPlaylist } from "api/playlist/playlistApi";
+import { toggleSongLiked } from "api/music/likedSongsApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useQueueProvider } from "providers/QueueProvider";
-import { useMusicLists } from "@/providers/MusicListContextProvider";
+import { useLobbyProvider } from "providers/LobbyProvider";
+import { useMusicLists } from "providers/MusicListContextProvider";
+import { useSocketProvider } from "providers/SocketProvider";
+import { MPState } from "api/music/musicApi";
+import { OpCode, wsSend } from "api/socketApi";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -35,7 +39,9 @@ const Music: React.FC<MusicProps> = ({
 }) => {
 	const { appState } = useAppProvider();
 	const { enqueue } = useQueueProvider();
+	const { lobbyState } = useLobbyProvider();
 	const { notifyMusicPlayed, playlists, refreshPlaylists } = useMusicLists();
+	const { getSocket } = useSocketProvider();
 	const userId = appState.user_id;
 
 	const handleAddToQueue = () => {
@@ -69,6 +75,27 @@ const Music: React.FC<MusicProps> = ({
 		} catch (error) {
 			console.error("Error adding to liked songs:", error);
 		}
+	};
+
+	const handleRequestMusic = () => {
+		const music = {
+			id: musicId,
+			title: title,
+			artist: artist,
+			cover_img: image_url,
+			timestamp: 0,
+			state: MPState.PAUSE,
+		};
+
+		const payload = {
+			op_code: OpCode.REQUEST_MUSIC_PLAY,
+			value: {
+				lobby_id: lobbyState.lobby_id,
+				music: music,
+			}
+		};
+
+		wsSend(getSocket(), payload);
 	};
 
 	return (
@@ -127,6 +154,19 @@ const Music: React.FC<MusicProps> = ({
 					<Heart className="mr-2 h-4 w-4" />
 					<span>Add to Liked Songs</span>
 				</ContextMenuItem>
+
+				{
+					/* Show request music option only if the client is in lobby and not a host */
+					(lobbyState.in_lobby && !lobbyState.is_host) &&
+					<ContextMenuItem
+						className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+						onSelect={handleRequestMusic}
+					>
+						<CircleArrowOutUpRight className="mr-2 h-4 w-4" />
+						<span>Request Music</span>
+					</ContextMenuItem>
+				}
+
 			</ContextMenuContent>
 		</ContextMenu>
 	);

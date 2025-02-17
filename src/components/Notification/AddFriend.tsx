@@ -1,6 +1,6 @@
 // Node modules
 import React, { FC, useState, useEffect, useRef } from "react";
-import { Check, X, Bird } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 // Local

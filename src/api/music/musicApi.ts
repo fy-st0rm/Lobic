@@ -22,6 +22,31 @@ export interface MusicTrack {
 	image_url: string;
 }
 
+/*
+ * Fetches the single using music id
+ * @param {string} musicId - Id of the music
+ * @returns {Promise<MusicTract | null} - Returns MusicTrack if succed else null
+ */
+
+export const getMusic = async (musicId: string): Promise<MusicTrack | null> => {
+	let url = `${SERVER_IP}/music/get_music?uuid=${musicId}`;
+
+	const response = await fetch(url, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		console.error("Failed to fetch music data");
+		return null;
+	}
+
+	const data: MusicTrack[] = await response.json();
+	return data[0];
+};
+
 /**
  * Fetches a list of music tracks.
  * @returns {Promise<MusicTrack[]>} - A list of music tracks.

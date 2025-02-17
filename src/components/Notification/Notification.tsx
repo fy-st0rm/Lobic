@@ -10,6 +10,7 @@ import {
 	useNotificationProvider,
 } from "providers/NotificationProvider";
 import AddFriend from "./AddFriend";
+import RequestedMusic from "./RequestedMusic";
 
 
 /*
@@ -26,6 +27,8 @@ export const NotificationSystem = (): React.ReactElement => {
 				okHandler(notif);
 			} else if (notif.op_code === OpCode.ADD_FRIEND) {
 				addFriendHandler(notif);
+			} else if (notif.op_code === OpCode.REQUEST_MUSIC_PLAY) {
+				requestedMusicHandler(notif);
 			}
 		});
 	}, [tempNotifs]);
@@ -38,8 +41,12 @@ export const NotificationSystem = (): React.ReactElement => {
 		});
 	};
 
-	const addFriendHandler = async (notif: Notification) => {
+	const addFriendHandler = (notif: Notification) => {
 		toast.custom((id) => <AddFriend notif={notif} toastId={id}/>);
+	};
+
+	const requestedMusicHandler = (notif: Notification) => {
+		toast.custom((id) => <RequestedMusic notif={notif} toastId={id}/>);
 	};
 
 	return <></>;
@@ -54,6 +61,26 @@ export type NotifProps = {
 	isOpen: boolean,
 	close: (event: MouseEvent) => void
 };
+
+const getNotifUI = (id: string, notif: Notification): React.ReactElement => {
+	if (notif.op_code === OpCode.ADD_FRIEND) {
+		return (
+			<div key={id} className="p-2 border-b border-gray-300">
+				<AddFriend notif={notif} toastId={""}/>
+			</div>
+		);
+	}
+	else if (notif.op_code === OpCode.REQUEST_MUSIC_PLAY) {
+		return (
+			<div key={id} className="p-2 border-b border-gray-300">
+				<RequestedMusic notif={notif} toastId={""}/>
+			</div>
+		);
+	}
+	else {
+		return (<></>);
+	}
+}
 
 export const NotificationDropDown: FC<NotifProps> = ({ isOpen, close }): React.ReactElement => {
 	const { notifs } = useNotificationProvider();
@@ -89,13 +116,14 @@ export const NotificationDropDown: FC<NotifProps> = ({ isOpen, close }): React.R
 			>
 				<div className={`
 					text-bold text-2xl text-primary_fg p-5
-				${isOpen ? "" : "hidden"}`}>
+					${isOpen ? "" : "hidden"}`}
+				>
 					Notifications
 				</div>
 
 				{Object.keys(notifs).length === 0 ? (
 					// When notifications is empty
-				<div className={`flex flex-1 items-center justify-center ${isOpen ? "" : "hidden"}`}>
+					<div className={`flex flex-1 items-center justify-center ${isOpen ? "" : "hidden"}`}>
 						<div className="flex items-center justify-center">
 							<Bird className="w-10 h-10 text-primary" />
 							<div className="text-primary text-semibold text-xl p-3">
@@ -105,11 +133,9 @@ export const NotificationDropDown: FC<NotifProps> = ({ isOpen, close }): React.R
 					</div>
 				) : (
 					// Notifications
-					<div className="px-5 overflow-y-auto whitespace-nowreap no-scrollbar">
+					<div className="overflow-y-auto whitespace-nowreap no-scrollbar">
 						{Object.entries(notifs).map(([id, notif]) => (
-							<div key={id} className="p-2 border-b border-gray-300">
-								<AddFriend notif={notif} toastId={""}/>
-							</div>
+							getNotifUI(id, notif)
 						))}
 					</div>
 				)}
