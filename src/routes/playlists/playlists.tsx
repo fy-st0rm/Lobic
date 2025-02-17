@@ -118,28 +118,28 @@ function Playlists() {
 								<div
 									key={playlist.playlist_id}
 									onClick={() => handlePlaylistClick(playlist)}
-									className="bg-gray-800 group transition-all duration-300 ease-in-out h-[240px] w-48 p-4 rounded-lg cursor-pointer bg-opacity-55 mx-3 relative hover:bg-opacity-75 hover:scale-105 my-2"
+									className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2  hover:bg-secondary hover:bg-opacity-80"
 								>
-									<div className=" h-44 w-[100%]">
+									<div className="h-44 w-44">
 										{playlistCovers[playlist.playlist_id] ? (
-											<img
-												src={playlistCovers[playlist.playlist_id]}
-												alt={playlist.playlist_name}
-												className="h-full w-full"
-											/>
-										) : (
-											<div className="flex justify-center items-center bg-gray-700 h-full w-full rounded-md">
-												<Music className="h-32 w-32 text-slate-500" />
+											<div className="h-44 w-44">
+												<img
+													src={playlistCovers[playlist.playlist_id]}
+													alt={playlist.playlist_name}
+													className="h-[100%] w-[100%]"
+												/>
 											</div>
-										)}
+										) : ''}
 									</div>
-									<div className="text-xl font-bold text-white mt-2">
-										{playlist.playlist_name}
-									</div>
-									<div className="text-sm text-white opacity-50">
-										{playlist.is_playlist_combined
-											? "Combined PLaylist"
-											: "Solo Playlist"}
+									<div className="music-info flex flex-col gap-0">
+										<div className="text-lg font-bold text-primary_fg">
+											{playlist.playlist_name}
+										</div>
+										<div className="text-xs text-primary_fg opacity-70">
+											{playlist.is_playlist_combined
+												? "Combined PLaylist"
+												: "Solo Playlist"}
+										</div>
 									</div>
 								</div>
 							))}
@@ -147,13 +147,31 @@ function Playlists() {
 					)}
 					<div
 						onClick={() => setShowPlaylistAdder(true)}
-						className="bg-gray-800 group transition-all duration-300 ease-in-out h-[240px] w-48 p-4 rounded-lg cursor-pointer bg-opacity-55 mx-2 relative hover:bg-opacity-75 my-2 hover:scale-105"
+
 					>
-						<div className="rounded-[10px]">
-							<Plus className="transition-all duration-300 ease-in-out h-36 w-36 text-white opacity-50 absolute left-[17%] top-[40px] group-hover:opacity-80 group-hover:rotate-90 group-hover:scale-110" />
-						</div>
-						<div className="absolute bottom-12 left-[50px] text-xl font-bold text-white transition-all duration-300 group-hover:text-opacity-90 group-hover:scale-105">
-							Create Playlist
+						<div
+							className="
+					relative
+					flex flex-col items-center justify-center
+					bg-primary hover:bg-secondary hover:bg-opacity-50
+					rounded-[13px]
+					m-0 
+					transition-all
+					p-5
+					h-[215px]
+				"
+						>
+							<div className="
+					bg-secondary
+					w-32 h-32 rounded-full
+					flex items-center justify-center
+					mb-5
+				">
+								<Plus className="w-full h-full text-primary p-5" />
+							</div>
+							<div className="font-bold text-2xl text-primary_fg">
+								Create Playlist
+							</div>
 						</div>
 					</div>
 				</div>

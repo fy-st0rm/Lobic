@@ -60,6 +60,8 @@ const Music: React.FC<MusicProps> = ({
 			const songData = {
 				playlist_id: playlistId,
 				music_id: musicId,
+				//song addeer id
+				song_adder_id: userId,
 			};
 			await addSongToPlaylist(songData);
 			await refreshPlaylists(); // Refresh playlists after adding song
