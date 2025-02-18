@@ -66,6 +66,7 @@ export interface CreatePlaylistData {
 	playlist_name: string;
 	user_id: string;
 	is_playlist_combined: boolean;
+	image_url: string;
 }
 
 export const createPlaylist = async (
@@ -75,23 +76,37 @@ export const createPlaylist = async (
 	message: string;
 }> => {
 	try {
-		const response = await fetch(`${SERVER_IP}/playlist/new`, {
+		// Fetch image URL if needed
+		const imageResponse = await fetch(playlistData.image_url);
+		if (!imageResponse.ok) {
+			throw new Error("Failed to fetch image data");
+		}
+		const imageBlob: Blob = await imageResponse.blob();
+
+		const url = new URL(`${SERVER_IP}/playlist/new`);
+		const params = new URLSearchParams({
+			playlist_name: playlistData.playlist_name,
+			user_id: playlistData.user_id,
+			is_playlist_combined: playlistData.is_playlist_combined.toString(),
+		});
+		url.search = params.toString();
+
+		const response = await fetch(url.toString(), {
 			method: "POST",
+			body: imageBlob,
 			headers: {
-				"Content-Type": "application/json",
+				"Content-Type": "image/png",
 			},
-			// body: JSON.stringify({ ...playlistData, user_id: userId }),
-			body: JSON.stringify(playlistData),
 		});
 
-		const result = await response.json();
-
-		if (response.status !== 201) {
-			throw new Error(result.message || "Failed to create playlist");
+		if (!response.ok) {
+			throw new Error(`Upload failed: ${response.statusText}`);
 		}
 
+		const result = await response.json();
 		return result;
 	} catch (error) {
+		console.error("Error creating a  playlist cover image:", error);
 		throw error;
 	}
 };

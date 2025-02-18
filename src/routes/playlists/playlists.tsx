@@ -16,7 +16,6 @@ import { useSidebarState } from "@/components/SideBar/SideBar";
 
 import img from "/playlistimages/playlistimage.png";
 
-
 function Playlists() {
 	const { appState } = useAppProvider();
 	const currentUserId = appState.user_id;
@@ -26,7 +25,6 @@ function Playlists() {
 	const [playlistName, setPlaylistName] = useState<string>("UnknownPlaylist");
 	const [playlistType, setPlaylistType] = useState<boolean>(false); // false for Solo Playlist, true for Combined Playlist
 	const [newPlaylistImage, setNewPlaylistImage] = useState<string>("");
-	const { isExtended } = useSidebarState();
 	const [playlistCovers, setPlaylistCovers] = useState<Record<string, string>>(
 		{},
 	);
@@ -84,15 +82,14 @@ function Playlists() {
 			playlist_name: playlistName,
 			user_id: currentUserId,
 			is_playlist_combined: playlistType, // Pass boolean for combined playlist type
+			image_url: newPlaylistImage,
 		};
 
 		try {
 			const newPlaylist = await createPlaylist(playlistData);
-
 			if (newPlaylistImage && newPlaylist.playlist_id) {
 				await updatePlaylistCoverImg(newPlaylist.playlist_id, newPlaylistImage);
 			}
-
 			setShowPlaylistAdder(false);
 			setNewPlaylistImage("");
 			fetchPlaylists();
@@ -129,7 +126,9 @@ function Playlists() {
 													className="h-[100%] w-[100%]"
 												/>
 											</div>
-										) : ''}
+										) : (
+											""
+										)}
 									</div>
 									<div className="music-info flex flex-col gap-0">
 										<div className="text-lg font-bold text-primary_fg">
@@ -145,10 +144,7 @@ function Playlists() {
 							))}
 						</>
 					)}
-					<div
-						onClick={() => setShowPlaylistAdder(true)}
-
-					>
+					<div onClick={() => setShowPlaylistAdder(true)}>
 						<div
 							className="
 					relative
@@ -161,12 +157,14 @@ function Playlists() {
 					h-[215px]
 				"
 						>
-							<div className="
+							<div
+								className="
 					bg-secondary
 					w-32 h-32 rounded-full
 					flex items-center justify-center
 					mb-5
-				">
+				"
+							>
 								<Plus className="w-full h-full text-primary p-5" />
 							</div>
 							<div className="font-bold text-2xl text-primary_fg">
