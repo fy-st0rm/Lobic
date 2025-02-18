@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, Outlet } from "react-router-dom";
-import Auth from "routes/auth/Auth";
+import { Auth, Verify } from "routes/auth/Auth";
 import Home from "routes/home/Home";
 import Lobby from "routes/lobby/Lobby";
 import Chats from "@/routes/lobby/chats/Chats";
@@ -34,23 +34,25 @@ function AppRoutes() {
 
 	return (
 		<Auth>
-			<SidebarProvider>
-				<Routes>
-					{/* Main app routes with layout */}
-					<Route element={<Layout />}>
-						<Route path="/show_all" element={<AllSongsPage />} />
-						<Route path="/playlist/:playlistId" element={<Playlist />} />
-						<Route path="/home" element={<Home />} />
-						<Route path="/lobby" element={<Lobby />} />
-						<Route path="/chats" element={<Chats />} />
-						<Route path="/playlists" element={<Playlists />} />
-						<Route path="/profile" element={<Profile />} />
-					</Route>
+			<Verify>
+				<SidebarProvider>
+					<Routes>
+						{/* Main app routes with layout */}
+						<Route element={<Layout />}>
+							<Route path="/show_all" element={<AllSongsPage />} />
+							<Route path="/playlist/:playlistId" element={<Playlist />} />
+							<Route path="/home" element={<Home />} />
+							<Route path="/lobby" element={<Lobby />} />
+							<Route path="/chats" element={<Chats />} />
+							<Route path="/playlists" element={<Playlists />} />
+							<Route path="/profile" element={<Profile />} />
+						</Route>
 
-					{/* NotFound route without layout */}
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</SidebarProvider>
+						{/* NotFound route without layout */}
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+				</SidebarProvider>
+			</Verify>
 		</Auth>
 	);
 }

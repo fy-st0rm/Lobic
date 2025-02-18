@@ -3,9 +3,10 @@ import React, { FC, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Local
-import { SERVER_IP } from "@/const.ts";
+import { SERVER_IP } from "@/const";
+import { useAppProvider } from "providers/AppProvider";
 
-const Auth: FC<{ children: React.ReactNode }> = ({
+export const Auth: FC<{ children: React.ReactNode }> = ({
 	children,
 }): React.ReactElement => {
 	const [auth, setAuth] = useState<boolean>(false);
@@ -28,4 +29,30 @@ const Auth: FC<{ children: React.ReactNode }> = ({
 	return auth ? <div>{children}</div> : <div></div>;
 };
 
-export default Auth;
+
+export const Verify: FC<{ children: React.ReactNode }> = ({
+	children,
+}): React.ReactElement => {
+	const navigate = useNavigate();
+	const { appState } = useAppProvider();
+
+	const [verify, setVerify] = useState<boolean>(false);
+
+	useEffect(() => {
+		fetch(`${SERVER_IP}/email/verify/${appState.user_id}`, {
+			method: "GET",
+			credentials: "include",
+		}).then((res) => {
+			if (res.ok) {
+				setVerify(true);
+			} else {
+				setVerify(false);
+				navigate("/otp_page");
+			}
+			return res.text();
+		})
+	}, []);
+
+	return verify ? <div>{children}</div> : <div></div>;
+};
+
