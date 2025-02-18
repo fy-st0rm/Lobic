@@ -5,7 +5,7 @@ import AuthRoutes from "./routes/AuthRoutes";
 
 function App(): React.ReactElement {
 	const location = useLocation();
-	const authRoutes = ["/login", "/signup", "/forgotpassword", "/"];
+	const authRoutes = ["/login", "/signup", "/forgotpassword", "/otp_page", "/"];
 	const isAuthPage = authRoutes.includes(location.pathname);
 
 	return (
