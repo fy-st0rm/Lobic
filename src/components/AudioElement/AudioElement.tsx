@@ -125,36 +125,36 @@ const AudioElement = () => {
 	}, [musicState]);
 
 	// Event listeners for audio element
-useEffect(() => {
-	const audioElement = getAudioElement();
-	if (!audioElement) return;
+	useEffect(() => {
+		const audioElement = getAudioElement();
+		if (!audioElement) return;
 
-	// Only update if audio is actually playing
-	const timeUpdateHandler = () => {
-		if (audioElement.paused || audioElement.ended) return;
-		updateMusicState({ timestamp: audioElement.currentTime });
-	};
+		// Only update if audio is actually playing
+		const timeUpdateHandler = () => {
+			if (audioElement.paused || audioElement.ended) return;
+			updateMusicState({ timestamp: audioElement.currentTime });
+		};
 
-	const loadedMetadataHandler = () => {
-		if (!audioElement.duration) return;
-		updateMusicState({ duration: audioElement.duration });
-	};
+		const loadedMetadataHandler = () => {
+			if (!audioElement.duration) return;
+			updateMusicState({ duration: audioElement.duration });
+		};
 
-	const volumeChangeHandler = () => {
-		updateMusicState({ volume: audioElement.volume * 100 });
-	};
+		const volumeChangeHandler = () => {
+			updateMusicState({ volume: audioElement.volume * 100 });
+		};
 
-	audioElement.addEventListener("timeupdate", timeUpdateHandler);
-	audioElement.addEventListener("loadedmetadata", loadedMetadataHandler);
-	audioElement.addEventListener("volumechange", volumeChangeHandler);
+		audioElement.addEventListener("timeupdate", timeUpdateHandler);
+		audioElement.addEventListener("loadedmetadata", loadedMetadataHandler);
+		audioElement.addEventListener("volumechange", volumeChangeHandler);
 
-	// Cleanup event listeners on component unmount
-	return () => {
-		audioElement.removeEventListener("timeupdate", timeUpdateHandler);
-		audioElement.removeEventListener("loadedmetadata", loadedMetadataHandler);
-		audioElement.removeEventListener("volumechange", volumeChangeHandler);
-	};
-}, []);
+		// Cleanup event listeners on component unmount
+		return () => {
+			audioElement.removeEventListener("timeupdate", timeUpdateHandler);
+			audioElement.removeEventListener("loadedmetadata", loadedMetadataHandler);
+			audioElement.removeEventListener("volumechange", volumeChangeHandler);
+		};
+	}, []);
 
 	// Called when a music is ended
 	const handleOnEnded = () => {
@@ -167,6 +167,7 @@ useEffect(() => {
 				id: nextTrack.id,
 				title: nextTrack.title,
 				artist: nextTrack.artist,
+				album: nextTrack.album,
 				image_url: nextTrack.image_url,
 				state: MPState.CHANGE_MUSIC,
 				state_data: 0,
@@ -180,6 +181,7 @@ useEffect(() => {
 			id: null,
 			title: null,
 			artist: null,
+			album: null,
 			image_url: null,
 			state: MPState.EMPTY,
 			state_data: 0,
