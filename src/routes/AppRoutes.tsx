@@ -11,6 +11,7 @@ import NavBar from "components/NavBar/NavBar";
 import MusicPlayer from "@/components/MusicPlayer/MusicPlayer";
 import SideBar, { SidebarProvider } from "@/components/SideBar/SideBar";
 import NotFound from "@/components/NotFound";
+import ResultsPage from "@/components/Search/ResultsPage";
 
 const Layout = () => {
 	return (
@@ -46,6 +47,7 @@ function AppRoutes() {
 							<Route path="/chats" element={<Chats />} />
 							<Route path="/playlists" element={<Playlists />} />
 							<Route path="/profile" element={<Profile />} />
+							<Route path="/results" element={<ResultsPage />} />
 						</Route>
 
 						{/* NotFound route without layout */}

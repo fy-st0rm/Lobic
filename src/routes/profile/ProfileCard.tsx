@@ -4,7 +4,7 @@ import {
 	updateProfilePicture,
 	fetchUserProfilePicture,
 } from "../../api/user/userApi";
-import SearchList from "components/SearchList/SearchList";
+import SearchList from "@/components/Search/SearchList/SearchList";
 
 interface ProfileCardProps {
 	usertag: string;

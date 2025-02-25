@@ -12,7 +12,6 @@ import {
 	fetchPlaylistCoverImg,
 	updatePlaylistCoverImg,
 } from "@/api/playlist/playlistApi";
-import { useSidebarState } from "@/components/SideBar/SideBar";
 
 import img from "/playlistimages/playlistimage.png";
 
