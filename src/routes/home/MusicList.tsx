@@ -12,7 +12,7 @@ import { useMusicLists } from "@/providers/MusicListContextProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useNavigate } from "react-router-dom";
 
-import "./MusicList.css";
+// import "./MusicList.css";
 
 // Define ListType as a union of specific strings
 type ListType =
@@ -117,17 +117,32 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 		return null;
 	}
 	return (
-		<div className="music-list-container">
-			<div className="list-header">
-				<h2 className="list-title px-1 my-0 text-3xl text-primary_fg">{list_title}</h2>
-				<div className="button-container">
-					<div onClick={enqueueAllSongs} className="log-songs-button">Enqueue</div>
-					<div onClick={handleShowAll} className="show-all-button">Show All</div>
+		<div className="pl-4 text-white text-center pb-2">
+			<div className="flex justify-between items-center">
+				<h2 className="px-1 my-0 text-3xl text-primary_fg text-left mb-2">
+					{list_title}
+				</h2>
+				<div className="flex items-center gap-2">
+					<div
+						onClick={enqueueAllSongs}
+						className="cursor-pointer font-bold text-sm opacity-70 hover:opacity-100 hover:underline transition-opacity duration-200"
+					>
+						Enqueue
+					</div>
+					<div
+						onClick={handleShowAll}
+						className="cursor-pointer font-bold text-sm opacity-70 hover:opacity-100 hover:underline transition-opacity duration-200"
+					>
+						Show All
+					</div>
 				</div>
 			</div>
-			<div className="music-list">
+			<div className="flex flex-nowrap justify-start gap-0 overflow-x-auto pb-2 no-scrollbar">
 				{musicItems.map((song) => (
-					<div key={song.id} className={`music-item-wrapper ${selectedSongId === song.id ? "selected" : ""}`}>
+					<div
+						key={song.id}
+						className={`flex flex-col items-center ${selectedSongId === song.id ? "selected" : ""}`}
+					>
 						<Music
 							musicId={song.id}
 							title={song.title}
@@ -141,7 +156,6 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 			</div>
 		</div>
 	);
-	
 });
 
 export default MusicList;

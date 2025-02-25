@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 // Local
-import SearchBar from "@/components/Search/SearchBar/SearchBar";
+import SearchBar from "@/components/Search/SearchBar";
 import { OpCode, wsSend } from "api/socketApi.ts";
 import { fetchUserProfilePicture, logoutUser } from "@/api/user/userApi";
 import { useAppProvider } from "providers/AppProvider";

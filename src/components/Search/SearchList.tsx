@@ -1,9 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import "./SearchList.css";
 import ClearButton from "/close.png";
-interface SearchListState {
-	searchValue: string;
-}
 
 const SearchList: React.FC = () => {
 	const [searchValue, setSearchValue] = useState<string>("");
@@ -17,18 +13,21 @@ const SearchList: React.FC = () => {
 	};
 
 	return (
-		<div className="search-list-card">
-			<div className="search-bar-container">
+		<div className="bg-gradient-to-t from-blue-600 to-gray-200 h-screen max-h-96 w-full max-w-lg rounded-2xl flex justify-center items-start pt-5">
+			<div className="w-full relative flex justify-center">
 				<input
 					type="text"
 					placeholder="Search for People"
-					className="profile-searchbar"
+					className="rounded-full border-none w-4/5 py-2 pl-4 pr-10 relative"
 					value={searchValue}
 					onChange={handleSearchChange}
 				/>
-				<button className="profile-clear-button" onClick={handleClearSearch}>
+				<button
+					className="bg-transparent border-none cursor-pointer absolute top-1/2 transform -translate-y-1/2 right-12"
+					onClick={handleClearSearch}
+				>
 					<img
-						className="profile-clear-png"
+						className="w-3 h-3 cursor-pointer bg-transparent"
 						src={ClearButton}
 						alt="Clear search"
 					/>
