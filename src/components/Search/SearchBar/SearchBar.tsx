@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
-import { searchMusic } from "../../api/music/musicSearchApi"; // Replace with your actual API
+import { useNavigate } from "react-router-dom";
+import { searchMusic } from "../../../api/music/musicSearchApi";
 import "./SearchBar.css";
 
 interface SearchBarProps {
@@ -11,6 +12,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isDisabled, onClearInput }) => {
 	const [inputValue, setInputValue] = useState<string>(""); // State for input value
 	const [suggestions, setSuggestions] = useState<string[]>([]); // State for suggestions
 	const [showSuggestions, setShowSuggestions] = useState<boolean>(false); // State to control popup visibility
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchAndSetSuggestions = async () => {
@@ -40,7 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isDisabled, onClearInput }) => {
 
 	const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter" && inputValue.trim()) {
-			console.log("Search submitted:", inputValue); // Trigger search action
+			navigate(`/results?query=${encodeURIComponent(inputValue)}`); //
 			setShowSuggestions(false); // Hide popup
 		}
 	};
@@ -48,7 +50,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isDisabled, onClearInput }) => {
 	const handleSuggestionClick = (suggestion: string) => {
 		setInputValue(suggestion); // Update input value with selected suggestion
 		setShowSuggestions(false); // Hide popup
-		console.log("Search submitted:", suggestion); // Trigger search with selected suggestion
+		navigate(`/results?query=${encodeURIComponent(suggestion)}`);
 	};
 
 	return (
@@ -58,7 +60,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isDisabled, onClearInput }) => {
 				placeholder="Search..."
 				value={inputValue}
 				onChange={handleInputChange}
-				onKeyPress={handleKeyPress}
+				onKeyDown={handleKeyPress}
 				className="search-bar"
 				disabled={isDisabled}
 				onFocus={() => setShowSuggestions(suggestions.length > 0)}

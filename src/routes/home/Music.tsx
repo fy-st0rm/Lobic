@@ -94,32 +94,29 @@ const Music: React.FC<MusicProps> = ({
 			value: {
 				lobby_id: lobbyState.lobby_id,
 				music: music,
-			}
+			},
 		};
 
 		wsSend(getSocket(), payload);
 	};
 
+	//this definatly needs rework
 	return (
 		<ContextMenu>
-			<ContextMenuTrigger className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2  hover:bg-secondary hover:bg-opacity-80">
-				<div className="music-photo-container h-44 w-44" onClick={onClick}>
+			<ContextMenuTrigger className="flex flex-col h-auto w-auto p-2 m-1 rounded-md transition-all  hover:bg-secondary hover:bg-opacity-80 overflow-hidden">
+				<div className="h-44 w-44 flex-shrink-0" onClick={onClick}>
 					<img
-						className="music-photo rounded-lg shadow-lg h-[100%] w-[100%]"
+						className="rounded-lg shadow-lg h-full w-full object-cover"
 						src={ImageFromUrl(image_url)}
 						alt={`${title} cover`}
 					/>
 				</div>
-				<div className="info-container ">
-					<div className="music-info flex flex-col gap-0">
-						<h2 className="music-title font-semibold m-0 text-[15px] self-start pt-1 px-1  text-primary_fg">
-							{title}
-						</h2>
-						<h3 className="artist-name opacity-75 m-0 px-1 self-start  text-primary_fg">
-							{artist}
-						</h3>
-					</div>
-				</div>
+				<h2 className="font-semibold m-0 text-[15px] self-start pt-1 px-1 text-primary_fg truncate w-full">
+					{title}
+				</h2>
+				<h3 className="opacity-75 m-0 px-1 self-start text-primary_fg truncate w-full">
+					{artist}
+				</h3>
 			</ContextMenuTrigger>
 
 			<ContextMenuContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg w-56">
@@ -159,16 +156,16 @@ const Music: React.FC<MusicProps> = ({
 
 				{
 					/* Show request music option only if the client is in lobby and not a host */
-					(lobbyState.in_lobby && !lobbyState.is_host) &&
-					<ContextMenuItem
-						className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
-						onSelect={handleRequestMusic}
-					>
-						<CircleArrowOutUpRight className="mr-2 h-4 w-4" />
-						<span>Request Music</span>
-					</ContextMenuItem>
+					lobbyState.in_lobby && !lobbyState.is_host && (
+						<ContextMenuItem
+							className="flex items-center px-3 py-2 text-sm font-bold text-white hover:bg-[#157697] hover:bg-opacity-50 hover:rounded-lg"
+							onSelect={handleRequestMusic}
+						>
+							<CircleArrowOutUpRight className="mr-2 h-4 w-4" />
+							<span>Request Music</span>
+						</ContextMenuItem>
+					)
 				}
-
 			</ContextMenuContent>
 		</ContextMenu>
 	);

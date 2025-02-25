@@ -12,11 +12,14 @@ function AuthRoutes() {
 			<Route path="/login" element={<Login />} />
 			<Route path="/signup" element={<Signup />} />
 			<Route path="/forgotpassword" element={<ForgotPassword />} />
-			<Route path="/otp_page" element={
-				<Auth>
-					<OTP_Page/>
-				</Auth>
-			} />
+			<Route
+				path="/otp_page"
+				element={
+					<Auth>
+						<OTP_Page />
+					</Auth>
+				}
+			/>
 		</Routes>
 	);
 }

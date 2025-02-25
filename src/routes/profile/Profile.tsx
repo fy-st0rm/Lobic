@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 // Local
 import ProfileCard from "./ProfileCard";
-import SearchList from "components/SearchList/SearchList";
 import PlaylistsContainer from "@/routes/profile/PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData } from "@/api/user/userApi";
@@ -57,6 +56,7 @@ function Profile() {
 						</div>
 					</div>
 				</div>
+				<div className="bg-red-50 col-span-1 w-10 h-10">hello world</div>
 			</div>
 		</>
 	);
