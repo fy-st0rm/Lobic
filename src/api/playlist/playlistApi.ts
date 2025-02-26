@@ -76,13 +76,6 @@ export const createPlaylist = async (
 	message: string;
 }> => {
 	try {
-		// Fetch image URL if needed
-		const imageResponse = await fetch(playlistData.image_url);
-		if (!imageResponse.ok) {
-			throw new Error("Failed to fetch image data");
-		}
-		const imageBlob: Blob = await imageResponse.blob();
-
 		const url = new URL(`${SERVER_IP}/playlist/new`);
 		const params = new URLSearchParams({
 			playlist_name: playlistData.playlist_name,
@@ -91,14 +84,31 @@ export const createPlaylist = async (
 		});
 		url.search = params.toString();
 
-		const response = await fetch(url.toString(), {
-			method: "POST",
-			body: imageBlob,
-			headers: {
-				"Content-Type": "image/png",
-			},
-		});
+		let imageBlob: Blob | null = null;
 
+		// Only fetch image if a URL is provided and is not empty
+		if (playlistData.image_url && playlistData.image_url.trim() !== "") {
+			const imageResponse = await fetch(playlistData.image_url);
+			if (imageResponse.ok) {
+				imageBlob = await imageResponse.blob();
+			}
+		}
+		// Configure request options based on whether we have an image
+		const requestOptions: RequestInit = {
+			method: "POST",
+		};
+
+		if (imageBlob && imageBlob.size > 0) {
+			requestOptions.body = imageBlob;
+			requestOptions.headers = {
+				"Content-Type": "image/png",
+			};
+		} else {
+			// If no image or empty image, send an empty body
+			requestOptions.body = new Blob([], { type: "application/octet-stream" });
+		}
+
+		const response = await fetch(url.toString(), requestOptions);
 		if (!response.ok) {
 			throw new Error(`Upload failed: ${response.statusText}`);
 		}
@@ -106,7 +116,7 @@ export const createPlaylist = async (
 		const result = await response.json();
 		return result;
 	} catch (error) {
-		console.error("Error creating a  playlist cover image:", error);
+		console.error("Error creating a playlist:", error);
 		throw error;
 	}
 };
@@ -167,10 +177,10 @@ export const fetchPlaylistCoverImg = async (
 		if (response.ok) {
 			return `${SERVER_IP}/playlist/cover_img/${encodeURIComponent(playlistId)}`;
 		} else {
-			return "/playlistimages/playlistimage.png"; // Default image
+			return "/playlistimages/playlistimage.png";
 		}
 	} catch {
-		return "/playlistimages/playlistimage.png"; // Default image on error
+		return "/playlistimages/playlistimage.png";
 	}
 };
 
@@ -209,6 +219,7 @@ export const updatePlaylistCoverImg = async (
 		throw error;
 	}
 };
+
 export const removeSongFromPlaylist = async (
 	playlist_id: string,
 	music_id: string,
