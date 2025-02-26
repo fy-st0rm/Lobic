@@ -44,7 +44,7 @@ const AlbumCover = ({
 			<img
 				src={imageUrl ? ImageFromUrl(imageUrl) : placeholder}
 				alt="Album cover"
-				className="cover-image"
+				className="rounded-[5px] pt-0 h-[55px] w-[55px]"
 			/>
 		</div>
 	);
@@ -58,9 +58,13 @@ const SongInfo = ({
 	artist: string | null;
 }) => {
 	return (
-		<div className="song-info overflow-hidden p-2 flex flex-col">
-			<div className="song-name p-0">{title || "No Song Selected"}</div>
-			<div className="artist-name p-0">{artist || ""}</div>
+		<div className="self-center mask-none overflow-hidden p-2 flex flex-col">
+			<div className="text-[15px] overflow-hidden whitespace-nowrap font-bold p-0">
+				{title || "No Song Selected"}
+			</div>
+			<div className="text-[10px] font-bold opacity-70 overflow-hidden whitespace-nowrap p-0">
+				{artist || ""}
+			</div>
 		</div>
 	);
 };
@@ -448,6 +452,7 @@ function MusicPlayer() {
 				imageUrl={musicState.image_url}
 				placeholder={placeholder_logo}
 			/>
+
 			<div className="flex w-[20%]">
 				<SongInfo title={musicState.title} artist={musicState.artist} />
 				<LikeButton
@@ -456,13 +461,15 @@ function MusicPlayer() {
 					onClick={handleSongLikedToggle}
 				/>
 			</div>
-			<div className="control-container">
+
+			<div className="flex-grow-0 w-[60%] self-center">
 				<ControlBar
 					isPlaying={musicState.state === MPState.PLAY}
 					isLoading={isLoading}
 					controlsDisabled={controlsDisabled}
 					onPlayPause={handlePlayMusic}
 					onNext={nextMusic}
+					// [] @TODO :add onPrev as well
 				/>
 				<ProgressBar
 					timestamp={musicState.timestamp}

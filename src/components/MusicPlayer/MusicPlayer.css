@@ -13,42 +13,6 @@
 	color: white;
 	z-index: 1000;
 }
-
-.song-info {
-	padding: 5px;
-	align-self: center;
-	mask-image: none;
-}
-
-.cover-image {
-	border-radius: 5px;
-	padding-top: 0px;
-	height: 55px;
-	width: 55px;
-}
-
-.song-name {
-	font-size: 15px;
-	overflow: hidden;
-	white-space: nowrap;
-	font-weight: bold;
-}
-
-.artist-name {
-	font-size: 10px;
-	font-weight: bold;
-	opacity: 70%;
-	overflow: hidden;
-	white-space: nowrap;
-	font-size: auto;
-}
-
-.control-container {
-	flex-grow: 0;
-	width: 60%;
-	align-self: center;
-}
-
 .volume-status {
 	margin-right: 20px;
 	align-self: center;

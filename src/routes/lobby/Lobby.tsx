@@ -15,7 +15,6 @@ import { useMusicProvider } from "providers/MusicProvider";
 import { useSidebarState } from "@/components/SideBar/SideBar";
 
 // Assets
-import test_logo from "/covers/cover.jpg";
 import "commons/style.css";
 
 const Lobby = (): React.ReactElement => {
