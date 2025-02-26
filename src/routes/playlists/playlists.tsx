@@ -44,7 +44,7 @@ const PlaylistAdder: React.FC<PlaylistAdderProps> = ({
 
 	return (
 		<div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-			<div className="flex flex-col bg-[#072631] h-[300px] w-[500px] rounded-lg">
+			<div className="top-[30%] left-[30%] flex flex-col bg-[#072631] bg-opacity-100 h-[300px] w-[500px] rounded-lg">
 				<div className="text-xl font-bold text-white p-5">
 					Create a Playlist
 				</div>
@@ -80,14 +80,14 @@ const PlaylistAdder: React.FC<PlaylistAdderProps> = ({
 							onChange={(e) => setPlaylistName(e.target.value)}
 							value={playlistName}
 							placeholder="Add a Name"
-							className="border-none w-[90%] py-2 rounded-sm px-2 my-2 focus:outline-none"
+							className="border-none w-[90%] py-2 rounded-sm px-2 my-2 focus:outline-none focus:border-1 focus:border-black"
 						/>
 						<select
 							value={playlistType ? "true" : "false"}
 							onChange={(e) => setPlaylistType(e.target.value === "true")}
-							className="block py-1 px-1 w-full text-sm text-white opacity-25 bg-transparent border-0 border-b-[1px] border-gray-200 focus:outline-none"
+							className="block py-1 px-1 w-full text-sm text-white opacity-25 bg-transparent border-0 border-b-[1px] border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200"
 						>
-							<option value="" disabled>
+							<option value="" disabled selected>
 								Select Playlist Type
 							</option>
 							<option className="bg-[#1d586d] hover:bg-[#157697]" value="false">
@@ -110,13 +110,13 @@ const PlaylistAdder: React.FC<PlaylistAdderProps> = ({
 										newPlaylistImage,
 									)
 								}
-								className="hover:bg-[#157697] bg-[#1d586d] text-white font-bold py-2 px-4 rounded-full transition-all cursor-pointer"
+								className="hover:bg-[#157697] bg-[#1d586d] border-none text-white font-bold py-2 px-4 rounded-full transition-all ml-20 cursor-pointer"
 							>
 								Create
 							</button>
 							<button
 								onClick={onClose}
-								className="bg-slate-200 hover:bg-slate-300 text-black font-bold py-2 px-4 rounded-full mx-1 cursor-pointer"
+								className="cursor-pointer bg-slate-200 hover:bg-slate-300 border-none text-black font-bold py-2 px-4 rounded-full mx-1"
 							>
 								Cancel
 							</button>
@@ -142,10 +142,10 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({
 }) => (
 	<div
 		onClick={() => onClick(playlist)}
-		className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2 hover:bg-secondary hover:bg-opacity-80"
+		className="h-55 w-55 p-4 m-1 rounded-md transition-all my-2 hover:bg-secondary hover:bg-opacity-80"
 	>
-		<div className="h-44 w-44">
-			<img src={coverImage} className="h-[100%] w-[100%]" />
+		<div className="h-44 w-44 ">
+			<img src={coverImage} className="h-[100%] w-[100%] " />
 		</div>
 		<div className="music-info flex flex-col gap-0">
 			<div className="text-lg font-bold text-primary_fg">
@@ -205,12 +205,8 @@ function Playlists() {
 			const coverUrls: Record<string, string> = {};
 			await Promise.all(
 				playlistsData.playlists.map(async (playlist) => {
-					try {
-						const coverUrl = await fetchPlaylistCoverImg(playlist.playlist_id);
-						coverUrls[playlist.playlist_id] = coverUrl;
-					} catch (error) {
-						coverUrls[playlist.playlist_id] = img; // Default image on error
-					}
+					const coverUrl = await fetchPlaylistCoverImg(playlist.playlist_id);
+					coverUrls[playlist.playlist_id] = coverUrl;
 				}),
 			);
 			setPlaylistCovers(coverUrls);
@@ -265,24 +261,22 @@ function Playlists() {
 
 	return (
 		<>
-			<div className="m-5">
-				<div className="text-3xl font-bold text-white">Your Playlists</div>
-				<div className="mt-3 w-full flex flex-wrap overflow-y-auto">
-					{playlists.length > 0 && (
-						<>
-							{playlists.map((playlist) => (
-								<PlaylistCard
-									key={playlist.playlist_id}
-									playlist={playlist}
-									coverImage={playlistCovers[playlist.playlist_id]}
-									onClick={handlePlaylistClick}
-								/>
-							))}
-						</>
-					)}
+			<div className="text-3xl font-bold text-white">Your Playlists</div>
+			<div className="mt-3 w-full flex flex-wrap ">
+				{playlists.length > 0 && (
+					<>
+						{playlists.map((playlist) => (
+							<PlaylistCard
+								key={playlist.playlist_id}
+								playlist={playlist}
+								coverImage={playlistCovers[playlist.playlist_id]}
+								onClick={handlePlaylistClick}
+							/>
+						))}
+					</>
+				)}
 
-					<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
-				</div>
+				<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
 			</div>
 
 			{showPlaylistAdder && (
