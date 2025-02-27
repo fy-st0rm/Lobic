@@ -119,7 +119,7 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 	return (
 		<div className="pl-4 text-white text-center pb-2">
 			<div className="flex justify-between items-center">
-				<h2 className="px-1 my-0 text-2xl text-primary_fg text-left mb-2">
+				<h2 className="px-1 my-0 text-2xl font-semibold text-primary_fg text-left mb-1">
 					{list_title}
 				</h2>
 				<div className="flex items-center gap-2">

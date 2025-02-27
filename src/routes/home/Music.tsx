@@ -111,10 +111,10 @@ const Music: React.FC<MusicProps> = ({
 						alt={`${title} cover`}
 					/>
 				</div>
-				<div className="font-semibold m-0 self-start pt-1 px-1 text-primary_fg truncate">
+				<div className="text-sm font-semibold m-0 self-start pt-1 px-1 text-primary_fg truncate">
 					{title}
 				</div>
-				<div className="opacity-75 m-0 px-1 self-start text-primary_fg truncate">
+				<div className="text-sm opacity-75 m-0 px-1 self-start text-primary_fg truncate">
 					{artist}
 				</div>
 			</ContextMenuTrigger>
