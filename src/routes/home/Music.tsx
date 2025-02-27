@@ -103,7 +103,7 @@ const Music: React.FC<MusicProps> = ({
 	//this definatly needs rework
 	return (
 		<ContextMenu>
-			<ContextMenuTrigger className="flex flex-col h-auto w-auto p-2 m-1 rounded-md transition-all  hover:bg-secondary hover:bg-opacity-80 overflow-hidden">
+			<ContextMenuTrigger className="flex flex-col p-3 m-1 rounded-md transition-all  hover:bg-secondary hover:bg-opacity-80 overflow-hidden">
 				<div className="h-44 w-44 flex-shrink-0" onClick={onClick}>
 					<img
 						className="rounded-lg shadow-lg h-full w-full object-cover"
@@ -111,12 +111,12 @@ const Music: React.FC<MusicProps> = ({
 						alt={`${title} cover`}
 					/>
 				</div>
-				<h2 className="font-semibold m-0 text-[15px] self-start pt-1 px-1 text-primary_fg truncate w-full">
+				<div className="font-semibold m-0 self-start pt-1 px-1 text-primary_fg truncate">
 					{title}
-				</h2>
-				<h3 className="opacity-75 m-0 px-1 self-start text-primary_fg truncate w-full">
+				</div>
+				<div className="opacity-75 m-0 px-1 self-start text-primary_fg truncate">
 					{artist}
-				</h3>
+				</div>
 			</ContextMenuTrigger>
 
 			<ContextMenuContent className="bg-[#072631] bg-opacity-80 rounded-lg shadow-lg w-56">

@@ -177,9 +177,9 @@ function NavBar() {
 				{/* Dropdowns */}
 
 				{profileDropdown && (
-					<div className="fixed top-16 right-5 w-32  h-24 bg-secondary z-50 rounded-md">
+					<div className="fixed top-16 right-5 w-32 h-24 bg-secondary z-50 rounded-md shadow-md shadow-gray-900" >
 						<div
-							className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all "
+							className="p-2 px-4 pt-3 m-1 text-primary_fg rounded-sm hover:bg-hoverEffect hover:bg-opacity-10 transition-all"
 							onClick={() => {
 								navigate("/profile");
 								closeProfileDropdown();
@@ -198,7 +198,6 @@ function NavBar() {
 						</div>
 					</div>
 				)}
-
 				<NotificationDropDown
 					isOpen={notifDropdown}
 					close={closeNotifDropdown}

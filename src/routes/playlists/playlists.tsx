@@ -261,23 +261,51 @@ function Playlists() {
 
 	return (
 		<>
-			<div className="text-3xl font-bold text-white">Your Playlists</div>
-			<div className="mt-3 w-full flex flex-wrap ">
-				{playlists.length > 0 && (
-					<>
-						{playlists.map((playlist) => (
-							<PlaylistCard
-								key={playlist.playlist_id}
-								playlist={playlist}
-								coverImage={playlistCovers[playlist.playlist_id]}
-								onClick={handlePlaylistClick}
-							/>
-						))}
-					</>
-				)}
+			<div className="m-5">
+				<div className="text-3xl font-bold text-white">Your Playlists</div>
+				<div className="mt-3 w-full flex flex-wrap overflow-y-auto px-2">
+					{playlists.length > 0 && (
+						<>
+							{playlists.map((playlist) => (
+								<div
+									key={playlist.playlist_id}
+									onClick={() => handlePlaylistClick(playlist)}
+									className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2  hover:bg-secondary hover:bg-opacity-80"
+								>
+									<div className="h-44 w-44 ">
+										{playlistCovers[playlist.playlist_id] ? (
+											<div className="h-44 w-44">
+												<img
+													src={playlistCovers[playlist.playlist_id]}
+													alt={playlist.playlist_name}
+													className="h-[100%] w-[100%] rounded-md "
+												/>
+											</div>
+										) : (
+											""
+										)}
+									</div>
+								<div className="music-info flex flex-col gap-0 p-1">
+										<div className="text-lg font-bold text-primary_fg">
+											{playlist.playlist_name}
+										</div>
+										<div className="text-xs text-primary_fg opacity-70">
+											{playlist.is_playlist_combined
+												? "Combined PLaylist"
+												: "Solo Playlist"}
+										</div>
+									</div>
+								</div>
+							))}
+							
+						</>
+					)}
+			
+	
+				
 
 				<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
-			</div>
+		
 
 			{showPlaylistAdder && (
 				<PlaylistAdder
@@ -291,6 +319,8 @@ function Playlists() {
 					setNewPlaylistImage={setNewPlaylistImage}
 				/>
 			)}
+			</div>
+		</div>
 		</>
 	);
 }

@@ -65,7 +65,7 @@ const NavItem = ({ to, icon, alt, label, isExtended }: NavItemProps) => {
 	return (
 		<Link to={to} className="no-underline text-primary_fg">
 			<div
-				className={`p-2 py-1 hover:bg-[#D9D9D9] hover:bg-opacity-10 rounded-md ${
+				className={`p-2 hover:bg-[#D9D9D9] hover:bg-opacity-10 rounded-md ${
 					isExtended ? "flex gap-3 items-center" : "flex gap-0"
 				}`}
 			>
