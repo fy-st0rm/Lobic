@@ -1,5 +1,5 @@
 // Node modules
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback, useContext } from "react";
 
 // Local
 import { ImageFromUrl, MPState, MusicTrack } from "@/api/music/musicApi";
@@ -25,6 +25,8 @@ import likedSongFilled from "/controlbar/favouriteFilled.svg";
 import Queue from "/controlbar/queue.svg";
 
 import "./MusicPlayer.css";
+import { useQueueState } from "../Queue/queue";
+import { DivideCircle } from "lucide-react";
 
 const formatTime = (time: number) => {
 	const minutes = Math.floor(time / 60);
@@ -190,79 +192,8 @@ const ProgressBar = ({
 		</div>
 	);
 };
-const QueueDisplay = ({
-	queue,
-	showQueue,
-	onToggleQueue,
-	currentSong,
-}: {
-	queue: MusicTrack[];
-	showQueue: boolean;
-	onToggleQueue: () => void;
-	currentSong: MusicTrack | null;
-}) => {
-	return (
-		<div className="queue self-center transition-all">
-			<img
-				src={Queue}
-				onClick={onToggleQueue}
-				className="cursor-pointer h-6 w-6 m-2"
-			/>
-			{showQueue && (
-				<div className="fixed rounded-md bg-[#072631] bg-opacity-90 h-[400px] w-[400px] bottom-[90px] right-[5%] overflow-scroll no-scrollbar">
-					<div className=" m-2 mt-4 mx-4 font-sans text-[100%] text-white text-xl font-semibold">
-						Current Song
-					</div>
-					<div className="">
-						<div className="flex items-center font-bold px-4 pb-2">
-							<div className="h-[66px] w-[66px] py-1 self-start rounded-sm">
-								<img
-									src={
-										currentSong?.image_url
-											? ImageFromUrl(currentSong.image_url)
-											: placeholder_logo
-									}
-									alt="Album cover"
-									className="h-[100%] w-[100%] rounded-sm"
-								/>
-							</div>
-							<div className="mx-2">
-								<div className="font-sans text-[100%] text-white overflow-hidden">
-									{currentSong?.title || "No Song Selected"}
-								</div>
-								<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
-									{currentSong?.artist || ""}
-								</div>
-							</div>
-						</div>
-						<div className=" mx-4 mb-2 font-sans text-[100%] text-white text-xl font-semibold">
-							Queue
-						</div>
-					</div>
-					{queue.map((item) => (
-						<div className="flex items-center font-bold px-4 pb-3">
-							<div className="h-[66px] w-[66px] py-1 self-start rounded-sm">
-								<img
-									src={ImageFromUrl(item.image_url)}
-									alt="Album cover"
-									className="h-[100%] w-[100%] rounded-sm"
-								/>
-							</div>
-							<div className="mx-2">
-								<div className="font-sans text-[100%] text-white overflow-hidden">
-									{item.title}
-								</div>
-								<div className="font-sans text-[70%] text-white opacity-65 text-nowrap overflow-hidden">
-									{item.artist}
-								</div>
-							</div>
-						</div>
-					))}
-				</div>
-			)}
-		</div>
-	);
-};
+
+
 const VolumeControl = ({
 	volume,
 	isLoading,
@@ -305,16 +236,13 @@ function MusicPlayer() {
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { getSocket } = useSocketProvider();
 	const { musicState, controlsDisabled, updateMusicState } = useMusicProvider();
-
+	const {isVisible,toggleQueue} = useQueueState();
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
 	const [showQueue, setShowQueue] = useState(false);
 	const { queue, enqueue, dequeue } = useQueueProvider();
 
-	const queueToggle = () => {
-		setShowQueue(!showQueue);
-	};
 
 	useEffect(() => {
 		if (appState.user_id && musicState.id) {
@@ -481,22 +409,16 @@ function MusicPlayer() {
 				/>
 			</div>
 
-			<QueueDisplay
-				queue={queue}
-				showQueue={showQueue}
-				onToggleQueue={queueToggle}
-				currentSong={
-					musicState.id
-						? {
-								id: musicState.id,
-								title: musicState.title || "No Title",
-								artist: musicState.artist || "No Artist",
-								album: musicState.album || "No Album",
-								image_url: musicState.image_url || "",
-							}
-						: null
-				}
+			<div onClick={toggleQueue} className="queue self-center transition-all" >
+			<img
+				src={Queue}
+				className="cursor-pointer h-6 w-6 mx-2 my-[2px]"
 			/>
+			{isVisible && (<div className="h-1.5 w-1.5 bg-[#9BB9FF] rounded-full fixed right-[246px]"></div>)
+			
+			}
+			
+		</div>
 
 			<VolumeControl
 				volume={musicState.volume}

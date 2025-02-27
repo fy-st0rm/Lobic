@@ -2,24 +2,66 @@
 import React, {
     useState,
     createContext,
-    useRef,
+    useContext,
     useEffect,
     PropsWithChildren,
 } from "react";
 
 import { useQueueProvider } from "providers/QueueProvider";
-import { ImageFromUrl, MPState, MusicTrack } from "@/api/music/musicApi";
-import { useMusicProvider, MusicState } from "@/providers/MusicProvider";
-import { AudioVisualizer } from 'react-audio-visualize';
+import { ImageFromUrl, MPState} from "@/api/music/musicApi";
+import { useMusicProvider} from "@/providers/MusicProvider";
+import { X } from 'lucide-react';
+
+type QueueContextType = {
+    isVisible: boolean,
+    toggleQueue: () => void
+}
+
+const QueueContext = createContext<QueueContextType | undefined>(undefined);
+
+export const QueueStateProvider :  React.FC<PropsWithChildren>= ({children})=>{
+
+    const [isVisible, setIsVisible] = useState(()=>{
+        const savedState = localStorage.getItem("isVisible");
+		return savedState !== null ? JSON.parse(savedState) : true;
+    }
+    )
+
+        useEffect(() => {
+            localStorage.setItem("isVisible", JSON.stringify(isVisible));
+        }, [isVisible]);
+
+
+       
+	const toggleQueue = () => {
+		setIsVisible((prev: any) => !prev);
+	};
+
+    return(
+        <QueueContext.Provider value = {{isVisible , toggleQueue}}>
+            {children}
+        </QueueContext.Provider>
+    )
+
+
+}
+export const useQueueState = () => {
+    const context = useContext(QueueContext);
+    if (!context) {
+        throw new Error("useSidebarState must be used within a SidebarProvider");
+    }
+    return context;
+};
+
 
 
 
 function Queue() {
 
-    const [isVisible, setIsVisible] = useState<boolean>(true);
+    const { isVisible, toggleQueue} = useQueueState();
     const { queue } = useQueueProvider();
     const { musicState } = useMusicProvider();
-    const visualizerRef = useRef<HTMLCanvasElement>(null);
+   
     const [heights, setHeights] = useState([5, 4, 2]);
 
     useEffect(() => {
@@ -32,13 +74,13 @@ function Queue() {
 
     return (
         <>
-
+            
             <div
-                className={`transition-all justify-between bg-secondary mx-2 overflow-hidden rounded-lg flex-shrink-0 w-[400px] ${isVisible ? "" : "h-0 hidden"
+                className={`transition-all justify-between bg-secondary mx-2 overflow-scroll rounded-lg flex-shrink-0 h-full ${isVisible ? "w-[400px]" : "h-0 w-0"
                     }`}
             >
                 <div>
-                    <div className="p-2 mx-3 my-2 mt-4 text-lg text-primary_fg font-bold"> Currently Playing</div>
+                    <div className="p-2 mx-3 my-2 mt-4 text-lg text-primary_fg font-bold flex justify-between "> <div>Currently Playing</div> <div> <X className = {` right-7 cursor-pointer text-primary_fg opacity-50 hover:opacity-100 transition-all ${isVisible? 'fixed':'hidden'} `}onClick={toggleQueue} /></div></div>
                     <div className="">
                         <div className="flex items-center justify-between font-bold px-6 pb-2 transition-all">
                             <div className="h-[50px] w-[50px] self-start rounded-sm">
@@ -81,6 +123,7 @@ function Queue() {
                     <div className="p-2 mx-3 text-lg text-primary_fg font-bold "> Queue
                         <div className="w-10 h-1 rounded-lg relative bg-vivid left-2"></div>
                     </div>
+                 
                     {queue.map((item) => (
                         <div className="flex items-center font-bold px-6 pb-2 my-2 transition-all">
                             <div className="h-[50px] w-[50px] self-start rounded-sm">
@@ -99,6 +142,7 @@ function Queue() {
                                 </div>
                             </div>
                         </div>
+                        
                     ))}
                 </div>
 
