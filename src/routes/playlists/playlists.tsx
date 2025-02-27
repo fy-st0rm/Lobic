@@ -13,8 +13,6 @@ import {
 	updatePlaylistCoverImg,
 } from "@/api/playlist/playlistApi";
 
-import img from "/playlistimages/playlistimage.png";
-
 // PlaylistAdder component
 interface PlaylistAdderProps {
 	onClose: () => void;
@@ -131,7 +129,7 @@ const PlaylistAdder: React.FC<PlaylistAdderProps> = ({
 // PlaylistCard component
 interface PlaylistCardProps {
 	playlist: Playlist;
-	coverImage: string;
+	coverImage?: string;
 	onClick: (playlist: Playlist) => void;
 }
 
@@ -142,12 +140,20 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({
 }) => (
 	<div
 		onClick={() => onClick(playlist)}
-		className="h-55 w-55 p-4 m-1 rounded-md transition-all my-2 hover:bg-secondary hover:bg-opacity-80"
+		className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2 hover:bg-secondary hover:bg-opacity-80"
 	>
-		<div className="h-44 w-44 ">
-			<img src={coverImage} className="h-[100%] w-[100%] " />
+		<div className="h-44 w-44">
+			{coverImage ? (
+				<img
+					src={coverImage}
+					alt={playlist.playlist_name}
+					className="h-[100%] w-[100%] rounded-md"
+				/>
+			) : (
+				""
+			)}
 		</div>
-		<div className="music-info flex flex-col gap-0">
+		<div className="music-info flex flex-col gap-0 p-1">
 			<div className="text-lg font-bold text-primary_fg">
 				{playlist.playlist_name}
 			</div>
@@ -267,60 +273,32 @@ function Playlists() {
 					{playlists.length > 0 && (
 						<>
 							{playlists.map((playlist) => (
-								<div
+								<PlaylistCard
 									key={playlist.playlist_id}
-									onClick={() => handlePlaylistClick(playlist)}
-									className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2  hover:bg-secondary hover:bg-opacity-80"
-								>
-									<div className="h-44 w-44 ">
-										{playlistCovers[playlist.playlist_id] ? (
-											<div className="h-44 w-44">
-												<img
-													src={playlistCovers[playlist.playlist_id]}
-													alt={playlist.playlist_name}
-													className="h-[100%] w-[100%] rounded-md "
-												/>
-											</div>
-										) : (
-											""
-										)}
-									</div>
-								<div className="music-info flex flex-col gap-0 p-1">
-										<div className="text-lg font-bold text-primary_fg">
-											{playlist.playlist_name}
-										</div>
-										<div className="text-xs text-primary_fg opacity-70">
-											{playlist.is_playlist_combined
-												? "Combined PLaylist"
-												: "Solo Playlist"}
-										</div>
-									</div>
-								</div>
+									playlist={playlist}
+									coverImage={playlistCovers[playlist.playlist_id]}
+									onClick={handlePlaylistClick}
+								/>
 							))}
-							
 						</>
 					)}
-			
-	
-				
 
-				<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
-		
+					<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
 
-			{showPlaylistAdder && (
-				<PlaylistAdder
-					onClose={closePlaylistAdder}
-					onCreate={handleCreatePlaylist}
-					playlistName={playlistName}
-					setPlaylistName={setPlaylistName}
-					playlistType={playlistType}
-					setPlaylistType={setPlaylistType}
-					newPlaylistImage={newPlaylistImage}
-					setNewPlaylistImage={setNewPlaylistImage}
-				/>
-			)}
+					{showPlaylistAdder && (
+						<PlaylistAdder
+							onClose={closePlaylistAdder}
+							onCreate={handleCreatePlaylist}
+							playlistName={playlistName}
+							setPlaylistName={setPlaylistName}
+							playlistType={playlistType}
+							setPlaylistType={setPlaylistType}
+							newPlaylistImage={newPlaylistImage}
+							setNewPlaylistImage={setNewPlaylistImage}
+						/>
+					)}
+				</div>
 			</div>
-		</div>
 		</>
 	);
 }

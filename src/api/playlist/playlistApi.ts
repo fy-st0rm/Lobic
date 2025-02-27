@@ -247,20 +247,20 @@ export const removeSongFromPlaylist = async (
 
 export const deletePlaylist = async (playlist_id: string): Promise<string> => {
 	try {
-		const response = await fetch(`${SERVER_IP}/playlist/delete`, {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
+		const response = await fetch(
+			`${SERVER_IP}/playlist/delete/${encodeURIComponent(playlist_id)}`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
 			},
-			body: JSON.stringify({ playlist_id }),
-		});
+		);
 
-		const result = await response.json();
-
+		const result = await response.text();
 		if (response.status !== 200) {
-			throw new Error(result.message || "Failed to delete playlist");
+			throw new Error(result.toString() || "Failed to delete playlist");
 		}
-
 		return result;
 	} catch (error) {
 		console.error(error);
