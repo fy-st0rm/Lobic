@@ -1,12 +1,10 @@
 import React from "react";
 import MusicList from "@/routes/home/MusicList";
 import { MusicListsProvider } from "@/providers/MusicListContextProvider";
-import { useSidebarState } from "@/components/SideBar/SideBar";
 
 function Home() {
 	return (
-
-		<MusicListsProvider> 
+		<MusicListsProvider>
 			<div className="overflow-auto no-scrollbar my-5 mx-2">
 				<MusicList list_title="Liked Songs" />
 				<MusicList list_title="Featured Music" />

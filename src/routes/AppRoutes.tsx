@@ -4,7 +4,7 @@ import Home from "routes/home/Home";
 import Lobby from "routes/lobby/Lobby";
 import Chats from "@/routes/lobby/chats/Chats";
 import Playlist from "routes/playlists/Playlist";
-import Playlists from "routes/playlists/playlists";
+import Playlists from "@/routes/playlists/AllPlaylists";
 import Profile from "routes/profile/Profile.tsx";
 import AllSongsPage from "@/routes/home/allSongsPage/AllSongsPage";
 import NavBar from "components/NavBar/NavBar";
@@ -14,7 +14,6 @@ import NotFound from "@/components/NotFound";
 import ResultsPage from "@/components/Search/ResultsPage";
 import Queue from "@/components/Queue/queue";
 import { QueueStateProvider } from "@/components/Queue/queue";
-
 
 const Layout = () => {
 	return (
@@ -37,7 +36,6 @@ const Layout = () => {
 };
 
 function AppRoutes() {
-
 	return (
 		<Auth>
 			<Verify>

@@ -183,7 +183,7 @@ const CreatePlaylistButton: React.FC<CreatePlaylistButtonProps> = ({
 );
 
 // Main Playlists component
-function Playlists() {
+function AllPlaylists() {
 	const { appState } = useAppProvider();
 	const currentUserId = appState.user_id;
 	const navigate = useNavigate();
@@ -303,4 +303,4 @@ function Playlists() {
 	);
 }
 
-export default Playlists;
+export default AllPlaylists;

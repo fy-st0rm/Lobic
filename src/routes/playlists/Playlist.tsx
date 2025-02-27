@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
-import SongContainer from "@/routes/playlists/SongContainer/SongContainer";
+import SongContainer from "@/routes/playlists/SongContainer";
 import User2 from "/user_images/sameep.jpg";
 import { Dot, Edit, Play, Trash2 } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
@@ -109,23 +109,21 @@ interface ControlButtonsProps {
 	onPlayClick: () => void;
 	onDeleteClick: () => Promise<void>;
 }
-
 const ControlButtons: React.FC<ControlButtonsProps> = ({
 	onPlayClick,
 	onDeleteClick,
 }) => (
 	<div className="controlbuttons flex gap-4">
-		{" "}
-		{/* Added flex and gap */}
-		<div className="playbutton cursor-pointer" onClick={onPlayClick}>
+		<div className="playbutton cursor-pointer size-2" onClick={onPlayClick}>
 			<Play className="bg-[black] text-slate-300 rounded-full p-2 text-lg hover:bg-opacity-80" />
 		</div>
-		<div className="deletebutton cursor-pointer" onClick={onDeleteClick}>
+		<div className="deletebutton cursor-pointer size-2" onClick={onDeleteClick}>
 			<Trash2 className="bg-[black] text-slate-300 rounded-full p-2 text-lg hover:bg-opacity-80" />
 		</div>
 	</div>
 );
 
+//Main Playlist Page Component
 const Playlist: React.FC = () => {
 	const { appState } = useAppProvider();
 	const currentUserId: string = appState.user_id;
@@ -133,7 +131,6 @@ const Playlist: React.FC = () => {
 	const [playlistData, setPlaylistData] = useState<PlaylistResponse | null>(
 		null,
 	);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [playlistCover, setPlaylistCover] = useState<string>(
 		"/playlistimages/playlistimage.png",
 	);
@@ -155,8 +152,6 @@ const Playlist: React.FC = () => {
 				}
 			} catch (error) {
 				console.error("Error:", error);
-			} finally {
-				setIsLoading(false);
 			}
 		};
 		loadPlaylistData();
@@ -223,13 +218,13 @@ const Playlist: React.FC = () => {
 
 	return (
 		<>
-			<div className="absolute flex gap-6 top-[20%] left-[10%] playlistinfo h-[50%] w-[50%]">
-				<PlaylistCover
-					coverUrl={playlistCover}
-					timestamp={timestamp}
-					onImageChange={handleImageChange}
-				/>
-				<div>
+			<div className="flex  top-[20%] left-[10%]  h-[50%] w-[50%]">
+				<div className="flex flex-col flex-1">
+					<PlaylistCover
+						coverUrl={playlistCover}
+						timestamp={timestamp}
+						onImageChange={handleImageChange}
+					/>
 					<PlaylistInfo playlistData={playlistData} />
 					<CreatorsInfo
 						username={username}
@@ -241,11 +236,13 @@ const Playlist: React.FC = () => {
 						onDeleteClick={handleDeletePlaylist}
 					/>
 				</div>
+				<div className="flex flex-col flex-1">
+					<SongContainer
+						playlistId={playlistId || ""}
+						songs={playlistData?.songs || []}
+					/>
+				</div>
 			</div>
-			<SongContainer
-				playlistId={playlistId || ""}
-				songs={playlistData?.songs || []}
-			/>
 		</>
 	);
 };
