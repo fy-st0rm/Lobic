@@ -1,3 +1,4 @@
+//MessageArea.tsx
 // Node modules
 import React, { FC, RefObject } from "react";
 
@@ -28,8 +29,7 @@ export const MessageArea: FC<MessageAreaProps> = ({
 	chatContainerRef,
 }): React.ReactElement => {
 	return (
-		<div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
-			{" "}
+		<div className="flex-1 overflow-y-auto p-4 bg-secondary" ref={chatContainerRef}>
 			{messages?.map((msg, idx) => (
 				<div
 					key={idx}
@@ -48,15 +48,15 @@ export const MessageArea: FC<MessageAreaProps> = ({
 						<div
 							className={`px-4 py-2 rounded-2xl ${
 								msg.user_id === currentUserId
-									? "bg-green-100 rounded-br-none"
-									: "bg-blue-50 rounded-bl-none"
+									? "bg-[#2C6377] text-white rounded-br-none"
+									: "bg-blue-100 text-black rounded-bl-none"
 							}`}
 							style={{
 								wordBreak: "break-word",
 							}}
 						>
 							<p className="mb-1 mt-1">{msg.message}</p>
-							<div className="text-xs text-gray-500">{msg.timestamp}</div>
+							<div className="text-xs text-gray-400">{msg.timestamp}</div>
 						</div>
 
 						{/* For outgoing messages, show image on the right*/}
