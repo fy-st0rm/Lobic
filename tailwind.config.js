@@ -9,8 +9,12 @@ export default {
 				primary_fg: "#E7E7E7",
 				secondary_fg: "#E0E1DD",
 				hoverEffect: "#D9D9D9",
+<<<<<<< HEAD
 				darker:"#13171E",
 				outgoing:"2C6377",
+=======
+				vivid: '#9BB9FF',
+>>>>>>> d27c4f029681e1ad958c87c961f743fa923a55a6
 
 				// for shadcn/ui
 				border: "hsl(var(--border))",

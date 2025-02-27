@@ -12,6 +12,7 @@ import MusicPlayer from "@/components/MusicPlayer/MusicPlayer";
 import SideBar, { SidebarProvider } from "@/components/SideBar/SideBar";
 import NotFound from "@/components/NotFound";
 import ResultsPage from "@/components/Search/ResultsPage";
+import Queue from "@/components/Queue/queue";
 
 const Layout = () => {
 	return (
@@ -23,6 +24,7 @@ const Layout = () => {
 					<div className="overflow-auto no-scrollbar mr-3 w-full h-full">
 						<Outlet />
 					</div>
+					<Queue/>
 				</div>
 				<MusicPlayer />
 			</div>
