@@ -1,3 +1,4 @@
+//InputArea.tsx
 // Node modules
 import React, { useState } from "react";
 import EmojiPicker from "emoji-picker-react";
@@ -24,7 +25,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
 	};
 
 	return (
-		<div className="p-4 border-t border-gray-200 bg-white/80">
+		<div className="px-4 py-3 bg-darker">
 			<div className="relative flex items-center">
 				<button
 					onClick={toggleEmojiPicker}
@@ -40,7 +41,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
 				<input
 					type="text"
 					placeholder="Type your message..."
-					className="w-full pl-12 pr-12 py-2 rounded-full border border-black-300 focus:border-black-400"
+					className="w-full pl-12 pr-12 py-2 rounded-full border border-black-300 focus:border-black-400 bg-secondary"
 					value={inputValue}
 					onChange={handleInputValue}
 					onKeyDown={(e) => e.key === "Enter" && handleSendMsg()}

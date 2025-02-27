@@ -89,24 +89,9 @@ function SideBar() {
 
 	// Navigation items configuration
 	const navItems = [
-		{
-			to: "/home",
-			icon: Home,
-			alt: "Home Icon",
-			label: "Home",
-		},
-		{
-			to: "/lobby",
-			icon: Lobby,
-			alt: "Friends Icon",
-			label: "Lobby",
-		},
-		{
-			to: "/playlists",
-			icon: Playlist,
-			alt: "Playlist Icon",
-			label: "Playlists",
-		},
+		{ to: "/home", icon: Home, alt: "Home Icon", label: "Home" },
+		{ to: "/lobby", icon: Lobby, alt: "Friends Icon", label: "Lobby" },
+		{ to: "/playlists", icon: Playlist, alt: "Playlist Icon", label: "Playlists" },
 	];
 
 	return (
@@ -114,6 +99,7 @@ function SideBar() {
 			className={`transition-all flex flex-col justify-between bg-secondary mx-2 overflow-hidden rounded-lg flex-shrink-0 ${
 				isExtended ? "w-[250px]" : "w-[65px]"
 			}`}
+			style={{ minWidth: isExtended ? "250px" : "65px" }}
 		>
 			<div className="flex flex-col px-2 py-5 gap-2">
 				{navItems.map((item) => (
@@ -129,7 +115,7 @@ function SideBar() {
 			</div>
 			<div
 				onClick={toggleSidebar}
-				className="flex py-4 px-3 transition-all mx-2"
+				className="flex py-4 px-3 transition-all mx-2 cursor-pointer"
 			>
 				<img
 					src={isExtended ? toggleMinimise : toggleExtend}
@@ -140,4 +126,5 @@ function SideBar() {
 		</div>
 	);
 }
+
 export default SideBar;

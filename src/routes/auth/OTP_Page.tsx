@@ -1,5 +1,5 @@
 // Node modules
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 //shadcn
@@ -18,25 +18,39 @@ import { useAppProvider } from "providers/AppProvider";
 const OTP_Page = (): React.ReactElement => {
 	const { appState } = useAppProvider();
 	const navigate = useNavigate();
-	const [value, setValue] = React.useState("");
+	const [value, setValue] = useState<string>("");
+	const [resMsg, setMsg] = useState<string>("");
+	const [color, setColor] = useState<string>("");
 
-	const verify_otp = () => {
-		console.log(value);
-		fetch(`${SERVER_IP}/otp/verify?user_id=${appState.user_id}&otp=${value}`, {
+	const verify_otp = async () => {
+		let response = await fetch(`${SERVER_IP}/otp/verify?user_id=${appState.user_id}&otp=${value}`, {
 			method: "GET",
 			credentials: "include",
-		})
-			.then((res) => {
-				if (res.ok) {
-					navigate("/home");
-				} else {
-					throw res.text();
-				}
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+		});
+		
+		if (response.ok) {
+			navigate("/home");
+		} else {
+			let msg = await response.text();
+			setMsg(msg);
+			setColor("text-red-500");
+		};
 	};
+
+	const resend_otp = async () => {
+		let response = await fetch(`${SERVER_IP}/otp/resend/${appState.user_id}`, {
+			method: "GET",
+			credentials: "include",
+		});
+
+		let msg = await response.text();
+		setMsg(msg);
+		if (response.ok) {
+			setColor("text-green-500");
+		} else {
+			setColor("text-red-500");
+		}
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-primary p-4">
@@ -70,6 +84,20 @@ const OTP_Page = (): React.ReactElement => {
 				>
 					Verify Code
 				</Button>
+
+				<div className="flex flex-row space-x-2">
+					<p> Didn't receive code? </p>
+					<a onClick={resend_otp} className="text-blue-500 underline hover:text-blue-700">
+						Request again
+					</a>
+				</div>
+
+				{
+					resMsg &&
+					<div className={`text-sm ${color}`}>
+						{ resMsg }
+					</div>
+				}
 			</div>
 		</div>
 	);
