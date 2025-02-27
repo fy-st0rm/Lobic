@@ -1,5 +1,5 @@
 // Node modules
-import React, { useRef, useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect } from "react";
 
 // Local
 import { ImageFromUrl, MPState, MusicTrack } from "@/api/music/musicApi";
@@ -10,6 +10,7 @@ import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "@/api/music/likedSongsApi";
 import { useQueueProvider } from "providers/QueueProvider";
 import { updatePlayLog } from "@/api/music/musicApi";
+import { useQueueState } from "../Queue/queue";
 
 // Assets
 import previousButton from "/controlbar/PreviousButton.svg";
@@ -23,10 +24,9 @@ import placeholder_logo from "/covers/cover.jpg";
 import likedSong from "/controlbar/favourite.svg";
 import likedSongFilled from "/controlbar/favouriteFilled.svg";
 import Queue from "/controlbar/queue.svg";
-
 import "./MusicPlayer.css";
-import { useQueueState } from "../Queue/queue";
-import { DivideCircle } from "lucide-react";
+
+
 
 const formatTime = (time: number) => {
 	const minutes = Math.floor(time / 60);
@@ -82,11 +82,10 @@ const LikeButton = ({
 }) => {
 	return (
 		<div
-			className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${
-				disabled
+			className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${disabled
 					? "opacity-50 cursor-not-allowed"
 					: "cursor-pointer hover:scale-110"
-			}`}
+				}`}
 			onClick={!disabled ? onClick : undefined}
 			role="button"
 			aria-pressed={isLiked}
@@ -236,11 +235,10 @@ function MusicPlayer() {
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { getSocket } = useSocketProvider();
 	const { musicState, controlsDisabled, updateMusicState } = useMusicProvider();
-	const {isVisible,toggleQueue} = useQueueState();
+	const { isVisible, toggleQueue } = useQueueState();
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
-	const [showQueue, setShowQueue] = useState(false);
 	const { queue, enqueue, dequeue } = useQueueProvider();
 
 
@@ -397,7 +395,7 @@ function MusicPlayer() {
 					controlsDisabled={controlsDisabled}
 					onPlayPause={handlePlayMusic}
 					onNext={nextMusic}
-					// [] @TODO :add onPrev as well
+				// [] @TODO :add onPrev as well
 				/>
 				<ProgressBar
 					timestamp={musicState.timestamp}
@@ -410,15 +408,12 @@ function MusicPlayer() {
 			</div>
 
 			<div onClick={toggleQueue} className="queue self-center transition-all" >
-			<img
-				src={Queue}
-				className="cursor-pointer h-6 w-6 mx-2 my-[2px]"
-			/>
-			{isVisible && (<div className="h-1.5 w-1.5 bg-[#9BB9FF] rounded-full fixed right-[246px]"></div>)
-			
-			}
-			
-		</div>
+				<img
+					src={Queue}
+					className="cursor-pointer h-6 w-6 mx-2 my-[2px]"
+				/>
+				{isVisible && (<div className="h-1.5 w-1.5 bg-[#9BB9FF] rounded-full fixed right-[246px]"></div>)}
+			</div>
 
 			<VolumeControl
 				volume={musicState.volume}
