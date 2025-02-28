@@ -18,45 +18,12 @@ import { fetchTopTracks } from "@/api/music/topTracksApi";
 import { fetchTrendingSongs } from "@/api/music/trendingApi";
 
 // PlayAllButton Component
-const PlayAllButton: React.FC<{ onPlayAll: () => void }> = ({ onPlayAll }) => (
+const ActionPanel: React.FC<{ onPlayAll: () => void }> = ({ onPlayAll }) => (
 	<div className=" w-full bg-primary">
 		<button onClick={onPlayAll} className="flex items-center rounded-full">
 			<Play className="h-5 w-5" />
 			Play All
 		</button>
-	</div>
-);
-
-// ScrollableSongList Component
-const ScrollableSongList: React.FC<{
-	songs: Song[];
-	selectedSongId: string | null;
-	onScroll: (e: React.UIEvent<HTMLDivElement>) => void;
-	onPlay: (song: Song) => void;
-	onAddToQueue: (song: Song) => void;
-	onAddToLikedSongs: (song: Song) => void;
-	onAddToPlaylist: (song: Song) => void;
-}> = ({
-	songs,
-	selectedSongId,
-	onScroll,
-	onPlay,
-	onAddToQueue,
-	onAddToLikedSongs,
-	onAddToPlaylist,
-}) => (
-	<div onScroll={onScroll}>
-		{songs.map((song) => (
-			<SongItem
-				key={song.id}
-				song={song}
-				isSelected={selectedSongId === song.id}
-				onPlay={onPlay}
-				onAddToQueue={onAddToQueue}
-				onAddToLikedSongs={onAddToLikedSongs}
-				onAddToPlaylist={onAddToPlaylist}
-			/>
-		))}
 	</div>
 );
 
@@ -212,18 +179,24 @@ const AllSongsPage: React.FC = () => {
 		<MusicListsProvider>
 			<div className="flex  h-[80vh]">
 				<div className="w-1/5 flex items-center justify-center">
-					<PlayAllButton onPlayAll={playAllSongs} />
+					<ActionPanel onPlayAll={playAllSongs} />
 				</div>
-				<div className="w-4/5 flex-1 overflow-auto no-scrollbar">
-					<ScrollableSongList
-						songs={songs}
-						selectedSongId={selectedSongId}
-						onScroll={handleScroll}
-						onPlay={handleSongPlay}
-						onAddToQueue={handleAddToQueue}
-						onAddToLikedSongs={handleAddToLikedSongs}
-						onAddToPlaylist={handleAddToPlaylist}
-					/>
+
+				<div className="w-4/5 flex-1 overflow-auto no-scrollbar ">
+					{/* scrollable musci list */}
+					<div onScroll={handleScroll}>
+						{songs.map((song) => (
+							<SongItem
+								key={song.id}
+								song={song}
+								isSelected={selectedSongId === song.id}
+								onPlay={handleSongPlay}
+								onAddToQueue={handleAddToQueue}
+								onAddToLikedSongs={handleAddToLikedSongs}
+								onAddToPlaylist={handleAddToPlaylist}
+							/>
+						))}
+					</div>
 				</div>
 			</div>
 		</MusicListsProvider>
