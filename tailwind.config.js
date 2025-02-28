@@ -12,6 +12,8 @@ export default {
 				darker:"#13171E",
 				outgoing:"2C6377",
 				vivid: '#9BB9FF',
+				button: '#2C6377',
+				button_hover: '#214A58',
 
 				// for shadcn/ui
 				border: "hsl(var(--border))",

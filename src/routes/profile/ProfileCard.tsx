@@ -65,50 +65,42 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   };
 
   return (
-    <div className="flex flex-row items-center gap-7 w-fit">
-      <div>
+    <div className="flex items-center gap-6 w-full height-8 bg-secondary p-6 rounded-lg">
+      <div className="relative">
         <img
           src={
             selectedImage ? URL.createObjectURL(selectedImage) : profilePicture
           }
           alt="User Profile"
-          className="w-[200px] h-[200px] rounded-full"
+          className="w-[100px] h-[100px] rounded-full object-cover"
+          onClick={() => setShowModal(true)}
         />
       </div>
-      <div className="flex flex-col m-0 p-0 text-white">
-        <h4 className="m-0 ml-2.5 font-normal">{usertag}</h4>
-        <h2 className="m-0 font-bold text-[20pt] ml-2.5">{username}</h2>
-        <h3 className="m-0 text-[12pt] font-normal ml-2.5">{friendcount}</h3>
+      
+      <div className="flex flex-col text-white">
+        <div className="text-sm text-gray-400">Profile</div>
+        <h2 className="text-4xl font-bold">{username}</h2>
+        <div className="flex text-sm text-gray-400 mt-2">
+          <span>{usertag.split('@')[0]} Playlist</span>
+          <span className="mx-1">•</span>
+          <span>{friendcount} Friends</span>
+        </div>
       </div>
-      <button
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-        onClick={() => setShowModal(true)}
-        disabled={isUpdating}
-      >
-        {isUpdating ? "Updating..." : "Update Profile Picture"}
-      </button>
-
-      <button
-        className="ml-[400px] bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
-        onClick={() => setShowSearchList(!showSearchList)}
-      >
-        {showSearchList ? "Close Friend" : "Add Friend"}
-      </button>
 
       {showModal && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
-          <div className="bg-white p-5 rounded-lg shadow-md w-[300px] text-center">
-            <h2 className="text-xl font-bold mb-4">Upload Profile Picture</h2>
-            <input type="file" accept="image/*" onChange={handleFileChange} className="mb-4" />
+          <div className="bg-[#282828] p-5 rounded-lg shadow-md w-[300px] text-center">
+            <h2 className="text-xl font-bold mb-4 text-white">Upload Profile Picture</h2>
+            <input type="file" accept="image/*" onChange={handleFileChange} className="mb-4 text-white" />
             <div className="flex justify-between mt-5">
               <button 
-                className="bg-gray-300 hover:bg-gray-400 py-2.5 px-5 rounded border-none cursor-pointer"
+                className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded border-none cursor-pointer"
                 onClick={() => setShowModal(false)}
               >
                 Cancel
               </button>
               <button 
-                className="bg-blue-500 hover:bg-blue-600 text-white py-2.5 px-5 rounded border-none cursor-pointer disabled:opacity-50"
+                className="bg-[#1DB954] hover:bg-[#1ed760] text-white py-2 px-4 rounded border-none cursor-pointer disabled:opacity-50"
                 onClick={handleUpload} 
                 disabled={isUpdating}
               >
@@ -121,7 +113,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
       {showSearchList && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
-          <div className="relative bg-white p-6 rounded-lg w-[80%] max-w-[600px] max-h-[80vh] overflow-auto">
+          <div className="relative bg-[#282828] p-6 rounded-lg w-[80%] max-w-[600px] max-h-[80vh] overflow-auto">
             <button
               className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full"
               onClick={() => setShowSearchList(false)}

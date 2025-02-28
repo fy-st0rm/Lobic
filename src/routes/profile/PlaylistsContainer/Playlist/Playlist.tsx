@@ -1,17 +1,46 @@
 import React from "react";
+import { Heart, MoreHorizontal, Play } from "lucide-react";
 
 interface PlaylistProps {
-  image: string;
+  playlistId: string;
   title: string;
+  artist: string;
+  imageUrl: string;
+  onClick: () => void;
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ image, title }) => {
+const Playlist: React.FC<PlaylistProps> = ({
+  playlistId,
+  title,
+  artist,
+  imageUrl,
+  onClick,
+}) => {
   return (
-    <div className="relative w-[223px] h-[240px] bg-black/50 flex rounded-[15px] flex-col justify-start items-center overflow-visible text-white transition-all duration-300 ease-in-out mt-5 ml-5 mb-5 hover:scale-110 hover:shadow-[0_0_0_2px_rgba(255,255,255,0.8)] active:scale-95">
-      <div className="w-[80%] h-[90%] mt-[10px] overflow-hidden">
-        <img className="w-full h-full object-cover rounded-[5px]" src={image} alt={title} />
+    <div 
+      className="group relative flex flex-col p-3 m-1 rounded-md transition-all hover:bg-secondary hover:bg-opacity-80 overflow-hidden"
+    >
+      <div className="relative h-45 w-45 flex-shrink-0" onClick={onClick}>
+        <img
+          className="rounded-lg shadow-lg h-44 w-44 object-cover"
+          src={imageUrl}
+          alt={`${title} cover`}
+        />
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="absolute right-2 top-2 flex space-x-2">
+          </div>
+        </div>
       </div>
-      <h4 className="m-[10px] text-[10pt]">{title}</h4>
+      <div className="flex-col justify-start items-start w-44">
+        <div
+          className="text-sm font-semibold m-0 justify-self-start pt-1 px-1 text-primary_fg truncate"
+        >
+          {title}
+        </div>
+        <div className="text-sm opacity-75 m-0 px-1 justify-self-start text-gray-300 truncate">
+          {artist}
+        </div>
+      </div>
     </div>
   );
 };

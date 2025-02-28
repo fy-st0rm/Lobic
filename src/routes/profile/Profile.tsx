@@ -1,16 +1,18 @@
-// Node modules
 import React, { useEffect, useState } from "react";
-
-// Local
 import ProfileCard from "./ProfileCard";
 import PlaylistsContainer from "@/routes/profile/PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData } from "@/api/user/userApi";
 
+interface Friend {
+  id: string;
+  name: string;
+}
+
 function Profile() {
   const { appState } = useAppProvider();
 
-  // State with type annotations
+  // State for user data
   const [userData, setUserData] = useState<User>({
     id: "",
     username: "",
@@ -18,8 +20,16 @@ function Profile() {
     pfp: "",
   });
 
+  // State for friends list
+  const [friends, setFriends] = useState<Friend[]>([
+    { id: "1", name: "Bijan" },
+    { id: "2", name: "Bijan" },
+    { id: "3", name: "Bijan" },
+  ]);
+
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Fetch user data on mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -34,29 +44,60 @@ function Profile() {
 
     fetchUserData();
   }, [appState]);
-  
-  return (
-    <>
-      <div className="home-container">
-        <div className="grid grid-cols-[3fr_1fr] gap-x-[50px] justify-start w-full flex-1 overflow-y-auto overflow-x-hidden scrollbar-none z-[1] mr-[5px] pr-[10px] h-[90vh]">
-          <div className="flex flex-col p-0">
-            <div className="mt-[90px] mr-0 ml-[200px] w-full">
-              <ProfileCard
-                usertag={userData.email}
-                username={userData.username}
-                friendcount={10}
-                user_uuid={userData.id}
-              />
-            </div>
 
-            <div className="mt-[60px] w-full">
-              <PlaylistsContainer />
-            </div>
+  // Add friend handler
+  const handleAddFriend = () => {
+    const newFriendName = prompt("Enter the friend's name:");
+    if (!newFriendName) return;
+
+    // Simulate adding a new friend (API integration can be added here)
+    const newFriend: Friend = {
+      id: Date.now().toString(), // Generate a unique ID
+      name: newFriendName,
+    };
+
+    setFriends((prevFriends) => [...prevFriends, newFriend]);
+  };
+
+  return (
+    <div className="flex flex-col w-full bg-primary min-h-screen">
+      <div className="grid grid-cols-[3fr_1fr] gap-4 w-full">
+        <div className="flex flex-col">
+          <div className="mb-8">
+            <ProfileCard
+              usertag={userData.email || "3 Playlist"}
+              username={userData.username || "Sadit Rasaili"}
+              friendcount={friends.length}
+              user_uuid={userData.id}
+            />
+          </div>
+
+          <div className="px-6">
+            <PlaylistsContainer />
           </div>
         </div>
-        <div className="bg-red-50 col-span-1 w-10 h-10">hello world</div>
+
+        {/* Friends Section */}
+        <div className="p-6 bg-secondary rounded-lg">
+          <button
+            className="w-full bg-button hover:bg-button_hover text-white text-sm py-2 px-4 rounded-full mb-6"
+            onClick={handleAddFriend}
+          >
+            Add Friend
+          </button>
+
+          <h3 className="text-white text-lg font-bold mb-4">Friends</h3>
+          <div className="flex flex-col gap-3">
+            {friends.map((friend) => (
+              <div key={friend.id} className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+                <span className="text-white text-sm">{friend.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
