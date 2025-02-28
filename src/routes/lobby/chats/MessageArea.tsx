@@ -42,7 +42,7 @@ export const MessageArea: FC<MessageAreaProps> = ({
 					<img
 						src={users[msg.user_id]?.pfp ? users[msg.user_id].pfp : sadit}
 						alt="User"
-						className="w-9 h-9 rounded-full object-cover mr-3"
+						className="w-9 h-9 rounded-full object-cover "
 					/>
 				)}
 

@@ -412,7 +412,7 @@ function MusicPlayer() {
 					src={Queue}
 					className="cursor-pointer h-6 w-6 mx-2 my-[2px]"
 				/>
-				{isVisible && (<div className="h-1.5 w-1.5 bg-[#9BB9FF] rounded-full fixed right-[237px]"></div>)}
+				<div className="flex justify-center items-center m-1"><div className={`transition-all bg-[#9BB9FF] rounded-full fixed ${isVisible? 'h-1.5 w-1.5':'h-0 w-0'}`}></div></div>
 			</div>
 
 			<VolumeControl

@@ -208,11 +208,10 @@ function Chats(): React.ReactElement {
 
   return (
     <div
-  className="fixed inset-0 flex items-center justify-center pr-4 pb-4 pl-4 pt-0 transition-all"
+  className=" inset-0 flex items-center justify-center transition-all h-full"
   style={{
-    top: "70px", // Ensure no gap at the top
-    bottom: "calc(67px + 1px)", // Adjust bottom as needed
-    marginLeft: isExtended ? "250px" : "65px", // Adjust for sidebar
+// Ensure no gap at the top
+    bottom: "calc(67px + 1px)", // Adjust bottom as needed// Adjust for sidebar
     marginTop: "0", // Remove any unintended top margin
     paddingTop: "1px", // Prevent collapsing margins
     boxSizing: "border-box", // Ensure consistent box model
