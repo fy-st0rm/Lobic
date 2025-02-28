@@ -112,12 +112,14 @@ const Music: React.FC<MusicProps> = ({
 					/>
 				</div>
 				<div className="flex-col justify-start items-start w-44">
-				<div className={`text-sm font-semibold m-0 justify-self-start pt-1 px-1 text-primary_fg truncate ${title.length>24?'w-44': ''}`}>
-					{title}
-				</div>
-				<div className="text-sm opacity-75 m-0 px-1 justify-self-start text-primary_fg truncate">
-					{artist}
-				</div>
+					<div
+						className={`text-sm font-semibold m-0 justify-self-start pt-1 px-1 text-primary_fg truncate ${title.length > 24 ? "w-44" : ""}`}
+					>
+						{title}
+					</div>
+					<div className="text-sm opacity-75 m-0 px-1 justify-self-start text-primary_fg truncate">
+						{artist}
+					</div>
 				</div>
 			</ContextMenuTrigger>
 

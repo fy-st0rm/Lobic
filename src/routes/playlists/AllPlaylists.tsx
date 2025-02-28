@@ -140,26 +140,20 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({
 }) => (
 	<div
 		onClick={() => onClick(playlist)}
-		className="music-container h-[215px] w-44 p-4 m-1 rounded-md transition-all my-2 hover:bg-secondary hover:bg-opacity-80"
+		className="flex flex-col p-3 m-1 rounded-md transition-all  hover:bg-secondary hover:bg-opacity-80 overflow-hidden"
 	>
-		<div className="h-44 w-44">
-			{coverImage ? (
-				<img
-					src={coverImage}
-					alt={playlist.playlist_name}
-					className="h-[100%] w-[100%] rounded-md"
-				/>
-			) : (
-				""
-			)}
+		<div className="h-44 w-44 flex-shrink-0">
+			<img
+				className="rounded-lg shadow-lg h-full w-full object-cover"
+				src={coverImage}
+				alt={playlist.playlist_name}
+			/>
 		</div>
-		<div className="music-info flex flex-col gap-0 p-1">
-			<div className="text-lg font-bold text-primary_fg">
-				{playlist.playlist_name}
-			</div>
-			<div className="text-xs text-primary_fg opacity-70">
-				{playlist.is_playlist_combined ? "Combined Playlist" : "Solo Playlist"}
-			</div>
+		<div className="text-sm font-semibold m-0 self-start pt-1 px-1 text-primary_fg truncate">
+			{playlist.playlist_name}
+		</div>
+		<div className="text-sm opacity-75 m-0 px-1 self-start text-primary_fg truncate">
+			{playlist.is_playlist_combined ? "Combined Playlist" : "Solo Playlist"}
 		</div>
 	</div>
 );
@@ -191,7 +185,7 @@ function AllPlaylists() {
 	// State management
 	const [playlists, setPlaylists] = useState<Playlist[]>([]);
 	const [showPlaylistAdder, setShowPlaylistAdder] = useState<boolean>(false);
-	const [playlistName, setPlaylistName] = useState<string>("UnknownPlaylist");
+	const [playlistName, setPlaylistName] = useState<string>("");
 	const [playlistType, setPlaylistType] = useState<boolean>(false);
 	const [newPlaylistImage, setNewPlaylistImage] = useState<string>("");
 	const [playlistCovers, setPlaylistCovers] = useState<Record<string, string>>(
@@ -238,7 +232,6 @@ function AllPlaylists() {
 				...data,
 				user_id: currentUserId,
 			};
-
 			const newPlaylist = await createPlaylist(playlistData);
 
 			if (imageUrl && newPlaylist.playlist_id) {
@@ -266,40 +259,36 @@ function AllPlaylists() {
 	};
 
 	return (
-		<>
-			<div className="m-5">
-				<div className="text-3xl font-bold text-white">Your Playlists</div>
-				<div className="mt-3 w-full flex flex-wrap overflow-y-auto px-2">
-					{playlists.length > 0 && (
-						<>
-							{playlists.map((playlist) => (
-								<PlaylistCard
-									key={playlist.playlist_id}
-									playlist={playlist}
-									coverImage={playlistCovers[playlist.playlist_id]}
-									onClick={handlePlaylistClick}
-								/>
-							))}
-						</>
-					)}
+		<div className="m-5">
+			<div className="text-3xl font-bold text-white">Your Playlists</div>
 
-					<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
-
-					{showPlaylistAdder && (
-						<PlaylistAdder
-							onClose={closePlaylistAdder}
-							onCreate={handleCreatePlaylist}
-							playlistName={playlistName}
-							setPlaylistName={setPlaylistName}
-							playlistType={playlistType}
-							setPlaylistType={setPlaylistType}
-							newPlaylistImage={newPlaylistImage}
-							setNewPlaylistImage={setNewPlaylistImage}
+			<div className="mt-3 w-full flex flex-wrap overflow-y-auto px-2">
+				{playlists.length > 0 &&
+					playlists.map((playlist) => (
+						<PlaylistCard
+							key={playlist.playlist_id}
+							playlist={playlist}
+							coverImage={playlistCovers[playlist.playlist_id]}
+							onClick={handlePlaylistClick}
 						/>
-					)}
-				</div>
+					))}
+
+				<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
+
+				{showPlaylistAdder && (
+					<PlaylistAdder
+						onClose={closePlaylistAdder}
+						onCreate={handleCreatePlaylist}
+						playlistName={playlistName}
+						setPlaylistName={setPlaylistName}
+						playlistType={playlistType}
+						setPlaylistType={setPlaylistType}
+						newPlaylistImage={newPlaylistImage}
+						setNewPlaylistImage={setNewPlaylistImage}
+					/>
+				)}
 			</div>
-		</>
+		</div>
 	);
 }
 
