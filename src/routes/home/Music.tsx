@@ -104,18 +104,20 @@ const Music: React.FC<MusicProps> = ({
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger className="flex flex-col p-3 m-1 rounded-md transition-all  hover:bg-secondary hover:bg-opacity-80 overflow-hidden">
-				<div className="h-44 w-44 flex-shrink-0" onClick={onClick}>
+				<div className="h-45 w-45 flex-shrink-0" onClick={onClick}>
 					<img
 						className="rounded-lg shadow-lg h-full w-full object-cover"
 						src={ImageFromUrl(image_url)}
 						alt={`${title} cover`}
 					/>
 				</div>
-				<div className="text-sm font-semibold m-0 self-start pt-1 px-1 text-primary_fg truncate">
+				<div className="flex-col justify-start items-start w-44">
+				<div className={`text-sm font-semibold m-0 justify-self-start pt-1 px-1 text-primary_fg truncate ${title.length>24?'w-44': ''}`}>
 					{title}
 				</div>
-				<div className="text-sm opacity-75 m-0 px-1 self-start text-primary_fg truncate">
+				<div className="text-sm opacity-75 m-0 px-1 justify-self-start text-primary_fg truncate">
 					{artist}
+				</div>
 				</div>
 			</ContextMenuTrigger>
 
