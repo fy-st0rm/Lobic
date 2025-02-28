@@ -1,8 +1,10 @@
     import React, { useState, createContext,  useContext,  useEffect, PropsWithChildren } from "react";
     import { useQueueProvider } from "providers/QueueProvider";
-    import { ImageFromUrl, MPState} from "@/api/music/musicApi";
-    import { useMusicProvider} from "@/providers/MusicProvider";
+    import { ImageFromUrl, MPState, MusicTrack as Song} from "@/api/music/musicApi";
+    import { useMusicProvider, MusicState} from "@/providers/MusicProvider";
     import { X } from 'lucide-react';
+
+
 
     type QueueContextType = {
         isVisible: boolean,
@@ -41,13 +43,29 @@
         }
         return context;
     };
-
     function Queue() {
 
         const { isVisible, toggleQueue} = useQueueState();
-        const { queue } = useQueueProvider();
-        const { musicState } = useMusicProvider();
+        const { queue,dequeue } = useQueueProvider();
+        const { musicState,updateMusicState } = useMusicProvider();
         const [heights, setHeights] = useState([5, 4, 2]);
+        
+        const handleMusicClick = async (song: Song): Promise<void> => {
+            try {
+                
+                updateMusicState({
+                    id: song.id,
+                    title: song.title,
+                    artist: song.artist,
+                    image_url: song.image_url,
+                    timestamp: 0,
+                    state: MPState.CHANGE_MUSIC,
+                } as MusicState);
+            } catch (err) {
+                console.error("Failed to handle music click:", err);
+            }
+        };
+    
 
         useEffect(() => {
             const interval = setInterval(() => {
@@ -110,7 +128,8 @@
                         </div>
                     
                         {queue.map((item) => (
-                            <div className="flex items-center font-bold px-6 pb-2 my-2 transition-all">
+                        <div className="flex items-center font-bold p-2 rounded-sm mx-4 my-2 transition-all hover:bg-primary_fg hover:bg-opacity-20 cursor-pointer" onClick={()=>handleMusicClick(item)
+                        }>
                                 <div className="h-[50px] w-[50px] self-start rounded-sm">
                                     <img
                                         src={ImageFromUrl(item.image_url)}
