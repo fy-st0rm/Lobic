@@ -79,28 +79,26 @@
             <>
                 
                 <div
-                    className={`transition-all justify-between bg-secondary mx-2 overflow-scroll rounded-lg flex-shrink-0 h-full ${isVisible ? "w-[400px]" : "h-0 w-0"
+                    className={`transition-all justify-between bg-secondary mx-0 overflow-scroll rounded-lg flex-shrink-0 no-scrollbar ${isVisible ? "w-[400px]" : "h-0 w-0"
                         }`}
                 >
                     <div>
                         <div className="p-2 mx-3 my-2 mt-4 text-lg text-primary_fg font-bold flex justify-between "> <div>Currently Playing</div> <div> <X className = {` right-7 cursor-pointer text-primary_fg opacity-50 hover:opacity-100 transition-all ${isVisible? 'fixed':'hidden'} `}onClick={toggleQueue} /></div></div>
                         <div className="">
-                            <div className="flex items-center justify-between font-bold px-6 pb-2 transition-all">
-                                <div className="h-[50px] w-[50px] self-start rounded-sm">
+                            <div className={`flex items-center justify-between font-bold px-6 pb-2 transition-all`}>
+                                <div className={`h-[50px] w-[50px] self-start rounded-sm ${musicState?.image_url ? 'h-[100%] w-[100%]': 'h-0 w-0 hidden'}`}>
                                     <img
                                         src={
                                             musicState?.image_url
                                                 ? ImageFromUrl(musicState.image_url) : ''
-
                                         }
-                                        alt="Album cover"
-                                        className="h-[100%] w-[100%] rounded-sm"
+                                        className={` rounded-sm `}
                                     />
                                 </div>
 
                                 <div className="mx-2 grow">
                                     <div className=" text-sm font-bold text-vivid  overflow-hidden">
-                                        {musicState?.title || "No Song Selected"}
+                                        {musicState?.title}
                                     </div>
                                     <div className=" text-sm font-semibold  text-white opacity-40 text-nowrap overflow-hidden">
                                         {musicState?.artist || ""}
