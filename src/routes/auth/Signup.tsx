@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { initClientState, performLogin, signupUser } from "@/api/user/userApi";
-import logo from "/lobic_logo.png";
+import logo from "/navbar/LobicLogo.svg";
 import { CircleAlert } from "lucide-react";
 import { useAppProvider } from "@/providers/AppProvider";
 
@@ -38,7 +38,7 @@ function Signup() {
 	return (
 		<div className="relative flex h-screen items-center justify-center">
 			<div className="absolute left-0 top-0 p-4">
-				<img src={logo} alt="lobic_logo" className="h-auto w-[70px]" />
+				<img src={logo} alt="lobic_logo" className="h-auto w-[50px]" />
 			</div>
 
 			<div className="absolute h-[550px] w-[475px] rounded-xl bg-black/70" />

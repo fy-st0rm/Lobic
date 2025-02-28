@@ -1,51 +1,86 @@
-import React from "react";
+// ForgotPassword.tsx
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import logo from "/lobic_logo.png";
+// Assets
+import logo from "/navbar/LobicLogo.svg";
 
 function ForgotPassword() {
-	const navigate = useNavigate();
+const [email, setEmail] = useState<string>("");
+const navigate = useNavigate();
 
-	const handleGoBack = () => {
-		navigate(-1); // Go back to the previous page
-	};
+const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
+event.preventDefault();
+// Implement your password reset logic here
+console.log("Reset link will be sent to: ", email);
+};
 
-	return (
-		<div className="container">
-			<div className="logo">
-				<img
-					src={logo}
-					alt="lobic_logo"
-					style={{ width: "70px", height: "auto" }}
-				/>
-			</div>
+const handleBackToLogin = () => {
+navigate("/login");
+};
 
-			<div className="outercircle"></div>
-			<div className="innercircle"></div>
+return (
+<div className="relative flex h-screen items-center justify-center">
+{/* Logo Section */}
+<div className="absolute left-0 top-0 p-4">
+<img src={logo} alt="lobic_logo" className="h-auto w-[50px]" />
+</div>
+{/* Background Card */}
+<div className="absolute h-[550px] w-[475px] rounded-xl bg-black/70" />
 
-			<div className="loginContainer">
-				<div>
-					<p className="loginText">Forgot Password</p>
-					<br />
-					<div
-						style={{
-							textAlign: "center",
-							padding: "20px",
-							fontSize: "18px",
-						}}
-					>
-						This feature is not implemented yet.
-					</div>
+{/* Forgot Password Form Container */}
+<div className="flex flex-col absolute w-[400px] rounded-lg p-4 text-center">
+  <div>
+	<p className="mb-4 font-mono text-2xl font-extrabold text-white">
+	  Forgot Password?
+	</p>
+	<p className="mb-8 font-mono text-sm text-white">
+	  Enter your email address to receive a link to reset your password.
+	</p>
 
-					<div style={{ textAlign: "center" }}>
-						<button className="loginButton" onClick={handleGoBack}>
-							Go Back
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+	<form onSubmit={handleResetPassword}>
+	  {/* Email Field */}
+	  <div>
+		<p className="mb-1 ml-8 text-left font-mono text-white font-semibold">
+		  Email
+		</p>
+		<input
+		  type="email"
+		  placeholder="Enter your email"
+		  value={email}
+		  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+			setEmail(e.target.value)
+		  }
+		  required
+		  className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+		/>
+	  </div>
+
+	  {/* Submit Button */}
+	  <div className="mt-6">
+		<button
+		  type="submit"
+		  className="mt-5 mb-4 h-10 w-[100px] rounded-full bg-[#3a95b4] border-none font-mono text-sm text-white"
+		>
+		  Submit
+		</button>
+	  </div>
+	</form>
+
+	{/* Link to navigate back to Login */}
+	<div>
+	  <p
+		className="mt-2 cursor-pointer font-mono text-white font-semibold"
+		onClick={handleBackToLogin}
+	  >
+		Back to Login
+	  </p>
+	</div>
+  </div>
+</div>
+</div>
+);
 }
 
 export default ForgotPassword;

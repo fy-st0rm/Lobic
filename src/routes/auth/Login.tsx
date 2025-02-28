@@ -8,7 +8,7 @@ import { performLogin, initClientState } from "@/api/user/userApi";
 import { useAppProvider } from "providers/AppProvider";
 
 // Assets
-import logo from "/lobic_logo.png";
+import logo from "/navbar/LobicLogo.svg";
 
 function Login() {
 	const [email, setEmail] = useState<string>("");
@@ -44,7 +44,7 @@ function Login() {
 	return (
 		<div className="relative flex h-screen items-center justify-center">
 			<div className="absolute left-0 top-0 p-4">
-				<img src={logo} alt="lobic_logo" className="h-auto w-[70px]" />
+				<img src={logo} alt="lobic_logo" className="h-auto w-[50px]" />
 			</div>
 
 			<div className="absolute h-[550px] w-[475px] rounded-xl bg-black/70" />
