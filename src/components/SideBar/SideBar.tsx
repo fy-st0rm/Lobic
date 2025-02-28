@@ -12,6 +12,7 @@ import Lobby from "/sidebar/Lobby.svg";
 import Playlist from "/sidebar/playlist.svg";
 import toggleMinimise from "/sidebar/toggleMinimize.svg";
 import toggleExtend from "/sidebar/toggleExtend.svg";
+import { useLobbyProvider } from "@/providers/LobbyProvider";
 
 type SidebarContextType = {
 	isExtended: boolean;
@@ -57,6 +58,7 @@ interface NavItemProps {
 	isExtended: boolean;
 }
 const NavItem = ({ to, icon, alt, label, isExtended }: NavItemProps) => {
+	const {lobbyState} = useLobbyProvider();
 	const location = useLocation();
 	const isActive = location.pathname === to;
 
@@ -78,6 +80,9 @@ const NavItem = ({ to, icon, alt, label, isExtended }: NavItemProps) => {
 					{label}
 				</div>
 				{isActive && <div className={activeIndicatorClass}></div>}
+				{lobbyState.in_lobby && label === 'Lobby' && <div className={`h-1.5 w-1.5 bg-[#26f726] rounded-full ${isExtended ? "" : "absolute"}`}></div> }
+				
+				
 			</div>
 		</Link>
 	);
