@@ -106,7 +106,7 @@ const Music: React.FC<MusicProps> = ({
 			<ContextMenuTrigger className="flex flex-col p-3 m-1 rounded-md transition-all  hover:bg-secondary hover:bg-opacity-80 overflow-hidden">
 				<div className="h-45 w-45 flex-shrink-0" onClick={onClick}>
 					<img
-						className="rounded-lg shadow-lg h-full w-full object-cover"
+						className="rounded-lg shadow-lg h-44 w-44 object-cover"
 						src={ImageFromUrl(image_url)}
 						alt={`${title} cover`}
 					/>
