@@ -2,7 +2,7 @@ import React, { useEffect, useState, ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
 import SongContainer from "@/routes/playlists/SongContainer";
 import User2 from "/user_images/sameep.jpg";
-import { Dot, Edit, Play, Trash2 } from "lucide-react";
+import { Dot, Edit } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
 import { getUserData, fetchUserProfilePicture } from "@/api/user/userApi";
 import { useQueueProvider } from "providers/QueueProvider";
@@ -15,6 +15,8 @@ import {
 	fetchPlaylistCoverImg,
 	deletePlaylist,
 } from "../../api/playlist/playlistApi";
+import Play from '/playlistcontrols/Pause.svg'
+import Trash from '/playlistcontrols/Trash.svg'
 
 // Component for playlist cover image and edit functionality
 interface PlaylistCoverProps {
@@ -27,25 +29,25 @@ const PlaylistCover: React.FC<PlaylistCoverProps> = ({
 	timestamp,
 	onImageChange,
 }) => (
-	<div className="playlistcover relative self-center rounded-[10px] h-[50%] w-[28.125] overflow-hidden">
+	<div className="h-60 w-60">
 		<img
 			src={`${coverUrl}?t=${timestamp}`}
-			className="w-full h-full object-cover"
+			className="w-full h-full rounded-md"
 			alt="Playlist Cover"
 		/>
-		<label
+		{/* <label
 			htmlFor="edit-cover"
-			className="absolute top-2 right-2 cursor-pointer"
+			className="top-2 right-2 cursor-pointer"
 		>
-			<Edit className="h-4 w-4 text-white bg-black rounded-full p-1" />
-		</label>
-		<input
+			<Edit className=" text-white bg-black rounded-full p-1" />
+		</label> */}
+		{/* <input
 			id="edit-cover"
 			type="file"
 			accept="image/*"
 			className="hidden"
 			onChange={onImageChange}
-		/>
+		/> */}
 	</div>
 );
 
@@ -54,14 +56,14 @@ interface PlaylistInfoProps {
 	playlistData: PlaylistResponse | null;
 }
 const PlaylistInfo: React.FC<PlaylistInfoProps> = ({ playlistData }) => (
-	<div className="playlistinfo self-center">
-		<div className="playlistname text-white text-[50px] font-bold text-nowrap w-50">
-			{playlistData?.playlist?.playlist_name || "Untitled Playlist"}
-		</div>
-		<div className="typeofplaylist text-white text-[15px] relative text-lg pl-1 top-[-9px] font-thin">
+	<div className="playlistinfo text-primary_fg">
+		<div className="">
 			{playlistData?.playlist?.is_playlist_combined
 				? "Combined Playlist"
 				: "Solo Playlist"}
+		</div>
+		<div className="font-DM_Sans text-8xl font-bold py-2">
+			{playlistData?.playlist?.playlist_name || "Untitled Playlist"}
 		</div>
 	</div>
 );
@@ -78,27 +80,22 @@ const CreatorsInfo: React.FC<CreatorsInfoProps> = ({
 	songCount,
 }) => (
 	<div className="infobar flex relative top-[-9px]">
-		<div className="playlistcreators flex gap-2">
-			<div className="self-center p-1">
+		<div className="playlistcreators flex gap-1">
+			<div className="">
 				<img
-					className="absolute h-[20px] w-[20px] rounded-full"
+					className="h-7 w-7 rounded-full m-1"
 					src={user1Pfp}
 					alt="Creator 1"
 				/>
-				<img
-					className="relative left-2 h-[20px] w-[20px] rounded-full"
-					src={User2}
-					alt="Creator 2"
-				/>
 			</div>
-			<div className="creatorname text-white opacity-50 pb-0.5 text-[10px] font-semibold self-center">
-				{username || "Unknown User"} and 1 other
+			<div className="creatorname text-primary_fg pb-0.5 text-sm font-semibold self-center">
+				{username || "Unknown User"}
 			</div>
 		</div>
 		<div className="text-white opacity-50 text-[7px] font-bold self-center">
 			<Dot className="p-0 h-5 w-5" />
 		</div>
-		<div className="songcount text-white opacity-50 text-[8px] font-bold self-center pb-0.5">
+		<div className="songcount text-white opacity-50 text-sm font-bold self-center pb-0.5">
 			{songCount || 0} songs
 		</div>
 	</div>
@@ -113,12 +110,12 @@ const ControlButtons: React.FC<ControlButtonsProps> = ({
 	onPlayClick,
 	onDeleteClick,
 }) => (
-	<div className="controlbuttons flex gap-4">
-		<div className="playbutton cursor-pointer size-2" onClick={onPlayClick}>
-			<Play className="bg-[black] text-slate-300 rounded-full p-2 text-lg hover:bg-opacity-80" />
+	<div className="flex gap-2 mx-10 px-1">
+		<div className="playbutton cursor-pointer " onClick={onPlayClick}>
+			<img className='h-16 w-16 transition-all hover:scale-110' src={Play} />
 		</div>
-		<div className="deletebutton cursor-pointer size-2" onClick={onDeleteClick}>
-			<Trash2 className="bg-[black] text-slate-300 rounded-full p-2 text-lg hover:bg-opacity-80" />
+		<div className="deletebutton cursor-pointer self-center " onClick={onDeleteClick}>
+			<img className='h-10 w-10 transition-all hover:scale-110' src={Trash} />
 		</div>
 	</div>
 );
@@ -218,25 +215,29 @@ const Playlist: React.FC = () => {
 
 	return (
 		<>
-			<div className="flex  top-[20%] left-[10%]  h-[50%] w-[50%]">
-				<div className="flex flex-col flex-1">
+			<div className="">
+				<div className=" flex gap-5 mt-10 mx-10 mb-5 items-end">
 					<PlaylistCover
 						coverUrl={playlistCover}
 						timestamp={timestamp}
 						onImageChange={handleImageChange}
 					/>
-					<PlaylistInfo playlistData={playlistData} />
-					<CreatorsInfo
-						username={username}
-						user1Pfp={user1Pfp}
-						songCount={playlistData?.songs?.length}
-					/>
+					<div>
+						<PlaylistInfo playlistData={playlistData} />
+						<CreatorsInfo
+							username={username}
+							user1Pfp={user1Pfp}
+							songCount={playlistData?.songs?.length}
+						/>
+					</div>
+				</div>
+				<div>
 					<ControlButtons
 						onPlayClick={playAllSongs}
 						onDeleteClick={handleDeletePlaylist}
 					/>
 				</div>
-				<div className="flex flex-col flex-1">
+				<div className="">
 					<SongContainer
 						playlistId={playlistId || ""}
 						songs={playlistData?.songs || []}
