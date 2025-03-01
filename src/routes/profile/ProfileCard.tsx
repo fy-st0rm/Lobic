@@ -4,6 +4,7 @@ import {
   fetchUserProfilePicture,
 } from "../../api/user/userApi";
 import SearchList from "@/components/Search/SearchList";
+import Pencil from "/profile/pencil.svg";
 
 interface ProfileCardProps {
   usertag: string;
@@ -65,43 +66,59 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-6 w-full height-8 bg-secondary p-6 rounded-lg">
+    <div className="flex items-center gap-6 w-full bg-secondary p-6 rounded-lg">
       <div className="relative">
+        {/* Profile Picture */}
         <img
           src={
             selectedImage ? URL.createObjectURL(selectedImage) : profilePicture
           }
           alt="User Profile"
           className="w-[100px] h-[100px] rounded-full object-cover"
-          onClick={() => setShowModal(true)}
         />
+        {/* Pencil Icon */}
+        <button
+  className="absolute bottom-0 -right-2 bg-primary p-2 rounded-full hover:bg-darker h-7 w-7 flex items-center justify-center cursor-pointer"
+  onClick={() => setShowModal(true)}
+>
+  <img src={Pencil} alt="Edit Profile" />
+</button>
+
       </div>
-      
+
       <div className="flex flex-col text-white">
         <div className="text-sm text-gray-400">Profile</div>
         <h2 className="text-4xl font-bold">{username}</h2>
         <div className="flex text-sm text-gray-400 mt-2">
-          <span>{usertag.split('@')[0]} Playlist</span>
+          <span>{usertag.split("@")[0]} Playlist</span>
           <span className="mx-1">•</span>
           <span>{friendcount} Friends</span>
         </div>
       </div>
 
+      {/* Modal for Uploading Profile Picture */}
       {showModal && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
           <div className="bg-[#282828] p-5 rounded-lg shadow-md w-[300px] text-center">
-            <h2 className="text-xl font-bold mb-4 text-white">Upload Profile Picture</h2>
-            <input type="file" accept="image/*" onChange={handleFileChange} className="mb-4 text-white" />
+            <h2 className="text-xl font-bold mb-4 text-white">
+              Upload Profile Picture
+            </h2>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="mb-4 text-white"
+            />
             <div className="flex justify-between mt-5">
-              <button 
+              <button
                 className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded border-none cursor-pointer"
                 onClick={() => setShowModal(false)}
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="bg-[#1DB954] hover:bg-[#1ed760] text-white py-2 px-4 rounded border-none cursor-pointer disabled:opacity-50"
-                onClick={handleUpload} 
+                onClick={handleUpload}
                 disabled={isUpdating}
               >
                 {isUpdating ? "Uploading..." : "Upload"}
@@ -111,6 +128,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         </div>
       )}
 
+      {/* Search List Modal */}
       {showSearchList && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
           <div className="relative bg-[#282828] p-6 rounded-lg w-[80%] max-w-[600px] max-h-[80vh] overflow-auto">
