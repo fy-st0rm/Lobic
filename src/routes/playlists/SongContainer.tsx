@@ -6,10 +6,11 @@ import { getUserData } from "@/api/user/userApi";
 
 // SongInfo Component
 interface SongInfoProps {
-	index:  number;
+	index: number;
 	songName: string;
 	artistName: string;
-	duration: string;
+	albumName: string;
+	duration: number;
 	addedBy: string;
 	image_url: string;
 }
@@ -18,12 +19,13 @@ const SongInfo: React.FC<SongInfoProps> = ({
 	songName,
 	artistName,
 	duration,
+	albumName,
 	addedBy,
 	image_url,
 }) => (
 	<div className="flex justify-evenly items-center mt-0 rounded-md hover:bg-primary_fg hover:bg-opacity-10 mx-2">
-		<div className="flex gap-5 w-[40%] px-4 py-[2px]">
-			<div className="self-center font-medium ">{index+1}</div>
+		<div className="flex gap-5 w-[30%] px-4 py-[2px]">
+			<div className="self-center font-medium ">{index + 1}</div>
 			<div className="cover h-[50px] w-[50px] py-1 self-start cursor-pointer">
 				<img
 					src={ImageFromUrl(image_url)}
@@ -40,11 +42,14 @@ const SongInfo: React.FC<SongInfoProps> = ({
 				</div>
 			</div>
 		</div>
-		<div className="font-DM_Sans text-sm text-white font-normal w-[40%] px-4 py-2 opacity-40">
-			{duration}
+		<div className="font-DM_Sans text-sm text-white font-normal w-[30%] px-4 py-2 opacity-40">
+			{albumName}
 		</div>
-		<div className="font-DM_Sans text-sm text-white font-normal w-[20%] px-4 py-2 overflow-hidden text-ellipsis whitespace-nowrap opacity-40 ">
+		<div className="font-DM_Sans text-sm text-white font-normal w-[30%] px-4 py-2 overflow-hidden text-ellipsis whitespace-nowrap opacity-40 ">
 			{addedBy}
+		</div>
+		<div className="font-DM_Sans text-sm text-white font-normal w-[10%] px-4 py-2 opacity-40">
+			{Math.floor(duration / 60)} : {String(duration % 60).padStart(2, "0")}
 		</div>
 	</div>
 );
@@ -53,14 +58,17 @@ const SongInfo: React.FC<SongInfoProps> = ({
 const SongHeader = () => (
 	<div className="sticky top-0 bg-primary rounded-[18px] z-10">
 		<div className="flex justify-evenly mt-2 mx-2">
-			<div className="font-DM_Sans font-semibold text-xs text-white opacity-50 w-[40%] px-4 py-2">
+			<div className="font-DM_Sans font-semibold text-xs text-white opacity-50 w-[30%] px-4 py-2">
 				TITLE
 			</div>
-			<div className="font-DM_Sans text-xs  text-white opacity-50 font-semibold w-[40%] px-4 py-2">
+			<div className="font-DM_Sans text-xs  text-white opacity-50 font-semibold w-[30%] px-4 py-2">
 				ALBUM
 			</div>
-			<div className="font-DM_Sans  text-xs text-white opacity-50 font-semibold  w-[20%] px-4 py-2">
+			<div className="font-DM_Sans  text-xs text-white opacity-50 font-semibold  w-[30%] px-4 py-2">
 				ADDED BY
+			</div>
+			<div className="font-DM_Sans  text-xs text-white opacity-50 font-semibold  w-[10%] px-4 py-2">
+				DURATION
 			</div>
 		</div>
 		<div className="mx-5 h-[1px] bg-primary_fg opacity-50 rounded-full my-1" />
@@ -92,10 +100,11 @@ const SongList: React.FC<SongListProps> = ({
 				} ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
 			>
 				<SongInfo
-					index = {songs.indexOf(item)}
+					index={songs.indexOf(item)}
 					songName={item.title}
 					artistName={item.artist}
-					duration={item.album} // Assuming album is used as duration
+					albumName={item.album}
+					duration={item.duration}
 					addedBy={usernames[item.song_adder_id] || "Loading..."}
 					image_url={item.image_url}
 				/>
