@@ -21,49 +21,55 @@ const ActionButton = ({
 );
 
 interface SongItemProps {
+	index: number;
 	song: Song;
-	isSelected: boolean;
-	onPlay: (song: Song) => void;
 	onAddToQueue: (song: Song) => void;
 	onAddToLikedSongs: (song: Song) => void;
 	onAddToPlaylist: (song: Song) => void;
 }
 
 const SongItem: React.FC<SongItemProps> = ({
+	index,
 	song,
-	isSelected,
-	onPlay,
 	onAddToQueue,
 	onAddToLikedSongs,
 	onAddToPlaylist,
 }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-	const containerClasses = `flex items-center p-3 rounded-lg transition-all duration-200 
-    ${isSelected ? "bg-secondary/80" : "hover:bg-secondary/40 w-full"} `;
-
 	return (
-		<div className={containerClasses}>
-			<div className="w-[5%] flex-shrink-0 relative">
-				<img
-					src={ImageFromUrl(song.image_url)}
-					alt={song.title}
-					className="w-full h-full rounded-lg object-cover cursor-pointer shadow-md 
-              transition-transform duration-200 group-hover:shadow-lg"
-					onClick={() => onPlay(song)}
-				/>
+		<div className="flex justify-evenly items-center mt-4 rounded-md hover:bg-primary_fg hover:bg-opacity-10 mx-2">
+			<div className="flex w-[85%] items-center">
+				<div className="self-center font-medium pr-4 pl-4">{index + 1}</div>
+				<div className="items-center w-[7%] flex-shrink-0 self-start">
+					<img
+						src={ImageFromUrl(song.image_url)}
+						alt={song.title}
+						className="w-full h-full rounded-lg object-cover cursor-pointer shadow-md 
+			  transition-transform duration-200 group-hover:shadow-lg"
+					/>
+				</div>
+				<div className="w-[40%] px-4 min-w-0">
+					<h3 className="font-DM_Sans font-bold text-white text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+						{song.title}
+					</h3>
+					<p className="font-DM_Sans font-normal text-sm text-white opacity-40 text-nowrap overflow-hidden text-ellipsis">
+						{song.artist}
+					</p>
+				</div>
+
+				<div className="font-DM_Sans text-sm text-white font-normal w-[40%] px-4 opacity-40 overflow-hidden text-ellipsis whitespace-nowrap">
+					{song.album}
+				</div>
+
+				<div className="font-DM_Sans text-sm text-white font-normal w-[10%] px-4 opacity-40">
+					{song.duration !== undefined
+						? `${Math.floor(song.duration / 60)} : ${String(song.duration % 60).padStart(2, "0")}`
+						: "0:00"}
+				</div>
 			</div>
 
-			<div className="w-[60%] px-4 min-w-0">
-				<h3 className="text-[15px] font-semibold text-primary_fg truncate">
-					{song.title}
-				</h3>
-				<p className="text-sm text-primary_fg/75 truncate">
-					{song.artist} . {song.album}
-				</p>
-			</div>
-
-			<div className="w-[25%] flex justify-end space-x-2">
+			<div className="w-[15%] flex justify-center space-x-2">
 				<ActionButton
 					onClick={() => onAddToQueue(song)}
 					icon={Plus}
@@ -83,7 +89,7 @@ const SongItem: React.FC<SongItemProps> = ({
 				{isDropdownOpen && (
 					<div
 						className="absolute right-0 mt-2 w-56 bg-[#072631] bg-opacity-80 
-            rounded-lg shadow-lg z-50 translate-y-full"
+			rounded-lg shadow-lg z-50 translate-y-full"
 					>
 						<button
 							onClick={() => {
@@ -91,7 +97,7 @@ const SongItem: React.FC<SongItemProps> = ({
 								setIsDropdownOpen(false);
 							}}
 							className="w-full text-left px-3 py-2 text-sm font-bold hover:bg-[#157697] 
-                hover:bg-opacity-50 hover:rounded-lg flex items-center"
+				hover:bg-opacity-50 hover:rounded-lg flex items-center"
 						>
 							<PlusCircle className="h-4 w-4 mr-2" />
 							Add to Playlist

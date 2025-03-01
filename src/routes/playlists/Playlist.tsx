@@ -1,7 +1,6 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
 import SongContainer from "@/routes/playlists/SongContainer";
-import User2 from "/user_images/sameep.jpg";
 import { Dot, Edit } from "lucide-react";
 import { useAppProvider } from "providers/AppProvider";
 import { getUserData, fetchUserProfilePicture } from "@/api/user/userApi";
@@ -15,8 +14,8 @@ import {
 	fetchPlaylistCoverImg,
 	deletePlaylist,
 } from "../../api/playlist/playlistApi";
-import Play from '/playlistcontrols/Pause.svg'
-import Trash from '/playlistcontrols/Trash.svg'
+import Play from "/playlistcontrols/Pause.svg";
+import Trash from "/playlistcontrols/Trash.svg";
 
 // Component for playlist cover image and edit functionality
 interface PlaylistCoverProps {
@@ -112,10 +111,13 @@ const ControlButtons: React.FC<ControlButtonsProps> = ({
 }) => (
 	<div className="flex gap-2 mx-10 px-1">
 		<div className="playbutton cursor-pointer " onClick={onPlayClick}>
-			<img className='h-16 w-16 transition-all hover:scale-110' src={Play} />
+			<img className="h-16 w-16 transition-all hover:scale-110" src={Play} />
 		</div>
-		<div className="deletebutton cursor-pointer self-center " onClick={onDeleteClick}>
-			<img className='h-10 w-10 transition-all hover:scale-110' src={Trash} />
+		<div
+			className="deletebutton cursor-pointer self-center "
+			onClick={onDeleteClick}
+		>
+			<img className="h-10 w-10 transition-all hover:scale-110" src={Trash} />
 		</div>
 	</div>
 );

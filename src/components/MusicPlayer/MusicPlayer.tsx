@@ -24,9 +24,6 @@ import placeholder_logo from "/covers/cover.jpg";
 import likedSong from "/controlbar/favourite.svg";
 import likedSongFilled from "/controlbar/favouriteFilled.svg";
 import Queue from "/controlbar/queue.svg";
-import "./MusicPlayer.css";
-
-
 
 const formatTime = (time: number) => {
 	const minutes = Math.floor(time / 60);
@@ -42,11 +39,11 @@ const AlbumCover = ({
 	placeholder: string;
 }) => {
 	return (
-		<div>
+		<div className="h-[55px] w-[55px] flex-shrink-0">
 			<img
 				src={imageUrl ? ImageFromUrl(imageUrl) : placeholder}
 				alt="Album cover"
-				className="rounded-[5px] pt-0 h-[55px] w-[55px]"
+				className="rounded-[5px] pt-0 h-full w-full object-cover"
 			/>
 		</div>
 	);
@@ -82,10 +79,11 @@ const LikeButton = ({
 }) => {
 	return (
 		<div
-			className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${disabled
+			className={`mt-1 w-8 h-8 self-center transition-transform duration-200 ${
+				disabled
 					? "opacity-50 cursor-not-allowed"
 					: "cursor-pointer hover:scale-110"
-				}`}
+			}`}
 			onClick={!disabled ? onClick : undefined}
 			role="button"
 			aria-pressed={isLiked}
@@ -121,15 +119,12 @@ const ControlBar = ({
 	onNext: () => void;
 }) => {
 	return (
-		<div className="control-bar">
-			<button
-				className="control-button"
-				disabled={isLoading || controlsDisabled}
-			>
+		<div className="mt-[5px] flex h-full w-full justify-center">
+			<button className="control-button" disabled={controlsDisabled}>
 				<img
 					src={previousButton}
 					alt="Previous"
-					className={`button-group opacity-80 hover:opacity-100 transition-all${controlsDisabled ? "disabled" : ""}`}
+					className={`h-[22px] w-[22px] cursor-pointer opacity-80 hover:opacity-100 transition-all ${controlsDisabled ? "disabled:cursor-not-allowed" : ""}`}
 				/>
 			</button>
 			<button
@@ -140,7 +135,7 @@ const ControlBar = ({
 				<img
 					src={isPlaying ? pauseButton : playButton}
 					alt={isPlaying ? "Pause" : "Play"}
-					className={`button-group opacity-80 hover:opacity-100 transition-all ${controlsDisabled ? "disabled" : ""} h-9 w-9`}
+					className={`h-9 w-9 cursor-pointer opacity-80 hover:opacity-100 transition-all ${controlsDisabled ? "disabled:cursor-not-allowed" : ""}`}
 				/>
 			</button>
 			<button
@@ -151,7 +146,7 @@ const ControlBar = ({
 				<img
 					src={NextButton}
 					alt="Next"
-					className={`button-group opacity-80 hover:opacity-100 transition-all ${controlsDisabled ? "disabled" : ""}`}
+					className={`h-[22px] w-[22px] cursor-pointer opacity-80 hover:opacity-100 transition-all ${controlsDisabled ? "disabled:cursor-not-allowed" : ""}`}
 				/>
 			</button>
 		</div>
@@ -175,8 +170,10 @@ const ProgressBar = ({
 	) => void;
 }) => {
 	return (
-		<div className="status">
-			<div className="music-status">{formatTime(timestamp)}</div>
+		<div className="mb-[10px] h-[80%] w-full flex justify-center items-center">
+			<div className="text-[90%] pr-[5px] block ml-auto w-[40px] text-right">
+				{formatTime(timestamp)}
+			</div>
 			<input
 				type="range"
 				min="0"
@@ -185,13 +182,24 @@ const ProgressBar = ({
 				onChange={onSeekMove}
 				onMouseUp={onSeekEnd}
 				onTouchEnd={onSeekEnd}
-				className="status-bar"
+				className="self-center block w-1/2 appearance-none h-[2px] bg-white
+					[&::-webkit-slider-thumb]:appearance-none 
+					[&::-webkit-slider-thumb]:h-[10px] 
+					[&::-webkit-slider-thumb]:w-[10px] 
+					[&::-webkit-slider-thumb]:bg-white 
+					[&::-webkit-slider-thumb]:rounded-full 
+					disabled:opacity-50 
+					disabled:pointer-events-none 
+					disabled:[&::-webkit-slider-thumb]:bg-white 
+					disabled:[&::-webkit-slider-thumb]:cursor-not-allowed"
 				disabled={isLoading || controlsDisabled}
 			/>
+			<div className="text-[90%] pl-[5px] block mr-auto w-[40px] text-left">
+				{formatTime(duration - timestamp)}
+			</div>
 		</div>
 	);
 };
-
 
 const VolumeControl = ({
 	volume,
@@ -205,14 +213,14 @@ const VolumeControl = ({
 	onVolumeToggle: () => void;
 }) => {
 	return (
-		<div className="volume-status">
+		<div className="mr-5 self-center flex items-center flex-shrink-0">
 			<button
-				className="volume-button"
+				className="cursor-pointer bg-transparent border-none p-2 pr-[5px]"
 				onClick={onVolumeToggle}
 				disabled={isLoading}
 			>
 				<img
-					className="volume-image"
+					className="h-[25px] w-[25px] pb-1"
 					src={volume == 0 ? Mute : volume > 40 ? VolumeHigh : VolumeLow}
 					alt="Volume"
 				/>
@@ -223,7 +231,12 @@ const VolumeControl = ({
 				max="100"
 				value={volume}
 				onChange={onVolumeChange}
-				className="volume-control-bar"
+				className="cursor-pointer opacity-80 w-1/2 self-center mb-[6px] mr-[10px] appearance-none h-[2px]
+					[&::-webkit-slider-thumb]:appearance-none 
+					[&::-webkit-slider-thumb]:h-[10px] 
+					[&::-webkit-slider-thumb]:w-[10px] 
+					[&::-webkit-slider-thumb]:bg-white 
+					[&::-webkit-slider-thumb]:rounded-full"
 				disabled={isLoading}
 			/>
 		</div>
@@ -240,7 +253,6 @@ function MusicPlayer() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
 	const { queue, enqueue, dequeue } = useQueueProvider();
-
 
 	useEffect(() => {
 		if (appState.user_id && musicState.id) {
@@ -373,13 +385,18 @@ function MusicPlayer() {
 	};
 
 	return (
-		<div className="music-player bg-secondary flex items-center justify-center">
-			<AlbumCover
-				imageUrl={musicState.image_url}
-				placeholder={placeholder_logo}
-			/>
+		<div
+			className="music-player w-full bottom-0 left-0 right-0 p-0 px-3  gap-[2px] 
+			text-white z-[1000] bg-secondary flex items-center justify-center"
+		>
+			<div className="h-[55px] w-[55px] ">
+				<AlbumCover
+					imageUrl={musicState.image_url}
+					placeholder={placeholder_logo}
+				/>
+			</div>
 
-			<div className="flex w-[20%]">
+			<div className="flex w-[20%] flex-shrink-0">
 				<SongInfo title={musicState.title} artist={musicState.artist} />
 				<LikeButton
 					isLiked={isSongLiked}
@@ -388,14 +405,14 @@ function MusicPlayer() {
 				/>
 			</div>
 
-			<div className="flex-grow-0 w-[60%] self-center">
+			<div className="flex-grow-0 w-[60%] self-center flex-shrink-0">
 				<ControlBar
 					isPlaying={musicState.state === MPState.PLAY}
 					isLoading={isLoading}
 					controlsDisabled={controlsDisabled}
 					onPlayPause={handlePlayMusic}
 					onNext={nextMusic}
-				// [] @TODO :add onPrev as well
+					// [] @TODO :add onPrev as well
 				/>
 				<ProgressBar
 					timestamp={musicState.timestamp}
@@ -407,12 +424,16 @@ function MusicPlayer() {
 				/>
 			</div>
 
-			<div onClick={toggleQueue} className="queue self-center transition-all" >
-				<img
-					src={Queue}
-					className="cursor-pointer h-6 w-6 mx-2 my-[2px]"
-				/>
-				<div className="flex justify-center items-center m-1"><div className={`transition-all bg-[#9BB9FF] rounded-full fixed ${isVisible? 'h-1.5 w-1.5':'h-0 w-0'}`}></div></div>
+			<div
+				onClick={toggleQueue}
+				className="queue self-center transition-all flex-shrink-0"
+			>
+				<img src={Queue} className="cursor-pointer h-6 w-6 mx-2 my-[2px]" />
+				<div className="flex justify-center items-center m-1">
+					<div
+						className={`transition-all bg-[#9BB9FF] rounded-full fixed ${isVisible ? "h-1.5 w-1.5" : "h-0 w-0"}`}
+					></div>
+				</div>
 			</div>
 
 			<VolumeControl

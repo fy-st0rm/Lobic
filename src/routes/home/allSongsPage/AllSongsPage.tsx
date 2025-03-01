@@ -177,24 +177,30 @@ const AllSongsPage: React.FC = () => {
 
 	return (
 		<MusicListsProvider>
-			<div className="flex  h-[80vh]">
-				<div className="w-1/5 flex items-center justify-center">
+			<div className="flex  h-full">
+				<div className="w-[20%]  ">
 					<ActionPanel onPlayAll={playAllSongs} />
 				</div>
 
-				<div className="w-4/5 flex-1 overflow-auto no-scrollbar ">
+				<div className="w-[80%] flex-1 overflow-auto no-scrollbar ">
 					{/* scrollable musci list */}
 					<div onScroll={handleScroll}>
 						{songs.map((song) => (
-							<SongItem
+							<div
 								key={song.id}
-								song={song}
-								isSelected={selectedSongId === song.id}
-								onPlay={handleSongPlay}
-								onAddToQueue={handleAddToQueue}
-								onAddToLikedSongs={handleAddToLikedSongs}
-								onAddToPlaylist={handleAddToPlaylist}
-							/>
+								onClick={() => !isLoading && handleSongPlay(song)}
+								className={`cursor-pointer hover:bg-primary-100 transition-colors rounded-sm m-2 ${
+									selectedSongId === song.id ? "bg-primary-200" : ""
+								} ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+							>
+								<SongItem
+									index={songs.indexOf(song)}
+									song={song}
+									onAddToQueue={handleAddToQueue}
+									onAddToLikedSongs={handleAddToLikedSongs}
+									onAddToPlaylist={handleAddToPlaylist}
+								/>
+							</div>
 						))}
 					</div>
 				</div>
