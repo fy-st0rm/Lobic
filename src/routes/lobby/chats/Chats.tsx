@@ -232,21 +232,21 @@ function Chats(): React.ReactElement {
         <div className="flex-1 bg-white/60 rounded-lg overflow-hidden flex flex-col">
           {/* Chat Header */}
           <div className="bg-darker px-4 pt-3 pb-4 flex items-center justify-between">
-		  {lobbyState.lobby_id ? (
-    		<div className="flex items-center gap-3">
-      			<span className="text-white font-bold">
-        			{`${lobbyState.lobby_id}`}
-      			</span>
-   			 </div>
-  			) : (
+		        {lobbyState.lobby_id ? (
+    		    <div className="flex items-center gap-3">
+      			  <span className="text-white font-bold">
+                {`${lobbyState.lobby_id}`}
+      			  </span>
+   			    </div>
+  			    ) : (
     				<span className="text-white">Lobby</span>
- 				 )}
-  			<button
-   			 	onClick={handleLeaveClick}
-    			className="text-white hover:opacity-80 bg-transparent border-none"
-  				>
-    			<img src="/chats/leave.svg" alt="Leave" className="w-6 h-6" />
-  			</button>
+ 				    )}
+  			    <button
+   			    	onClick={handleLeaveClick}
+    			    className="text-white hover:opacity-80 bg-transparent border-none"
+  			      >
+    			  <img src="/chats/leave.svg" alt="Leave" className="w-6 h-6" />
+  			    </button>
           </div>
 
           {/* Messages Area */}
