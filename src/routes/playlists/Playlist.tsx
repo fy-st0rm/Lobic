@@ -62,7 +62,7 @@ const PlaylistInfo: React.FC<PlaylistInfoProps> = ({ playlistData }) => (
 				? "Combined Playlist"
 				: "Solo Playlist"}
 		</div>
-		<div className="font-DM_Sans text-8xl font-bold py-2">
+		<div className="font-DM_Sans text-7xl font-bold py-2">
 			{playlistData?.playlist?.playlist_name || "Untitled Playlist"}
 		</div>
 	</div>
@@ -237,7 +237,7 @@ const Playlist: React.FC = () => {
 						onDeleteClick={handleDeletePlaylist}
 					/>
 				</div>
-				<div className="">
+				<div className="ml-5 my-5">
 					<SongContainer
 						playlistId={playlistId || ""}
 						songs={playlistData?.songs || []}

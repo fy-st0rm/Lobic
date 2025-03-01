@@ -79,7 +79,7 @@
             <>
                 
                 <div
-                    className={`transition-all justify-between bg-secondary mx-0 overflow-scroll rounded-lg flex-shrink-0 no-scrollbar ${isVisible ? "w-[400px]" : "h-0 w-0"
+                    className={`transition-all justify-between bg-secondary mr-2 overflow-scroll rounded-lg flex-shrink-0 no-scrollbar ${isVisible ? "w-[400px]" : "h-0 w-0"
                         }`}
                 >
                     <div>
