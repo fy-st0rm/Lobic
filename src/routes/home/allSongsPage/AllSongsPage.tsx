@@ -178,11 +178,11 @@ const AllSongsPage: React.FC = () => {
 	return (
 		<MusicListsProvider>
 			<div className="flex  h-full">
-				<div className="w-1/5 flex items-center justify-center">
+				<div className="w-[20%]  ">
 					<ActionPanel onPlayAll={playAllSongs} />
 				</div>
 
-				<div className="w-4/5 flex-1 overflow-auto no-scrollbar ">
+				<div className="w-[80%] flex-1 overflow-auto no-scrollbar ">
 					{/* scrollable musci list */}
 					<div onScroll={handleScroll}>
 						{songs.map((song) => (

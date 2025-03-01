@@ -39,11 +39,11 @@ const AlbumCover = ({
 	placeholder: string;
 }) => {
 	return (
-		<div className="h-[55px] w-[55px]">
+		<div className="h-[55px] w-[55px] flex-shrink-0">
 			<img
 				src={imageUrl ? ImageFromUrl(imageUrl) : placeholder}
 				alt="Album cover"
-				className="rounded-[5px] pt-0 h-full w-full"
+				className="rounded-[5px] pt-0 h-full w-full object-cover"
 			/>
 		</div>
 	);
@@ -213,7 +213,7 @@ const VolumeControl = ({
 	onVolumeToggle: () => void;
 }) => {
 	return (
-		<div className="mr-5 self-center flex items-center">
+		<div className="mr-5 self-center flex items-center flex-shrink-0">
 			<button
 				className="cursor-pointer bg-transparent border-none p-2 pr-[5px]"
 				onClick={onVolumeToggle}
@@ -389,12 +389,14 @@ function MusicPlayer() {
 			className="music-player w-full bottom-0 left-0 right-0 p-0 px-3  gap-[2px] 
 			text-white z-[1000] bg-secondary flex items-center justify-center"
 		>
-			<AlbumCover
-				imageUrl={musicState.image_url}
-				placeholder={placeholder_logo}
-			/>
+			<div className="h-[55px] w-[55px] ">
+				<AlbumCover
+					imageUrl={musicState.image_url}
+					placeholder={placeholder_logo}
+				/>
+			</div>
 
-			<div className="flex w-[20%]">
+			<div className="flex w-[20%] flex-shrink-0">
 				<SongInfo title={musicState.title} artist={musicState.artist} />
 				<LikeButton
 					isLiked={isSongLiked}
@@ -403,7 +405,7 @@ function MusicPlayer() {
 				/>
 			</div>
 
-			<div className="flex-grow-0 w-[60%] self-center">
+			<div className="flex-grow-0 w-[60%] self-center flex-shrink-0">
 				<ControlBar
 					isPlaying={musicState.state === MPState.PLAY}
 					isLoading={isLoading}
@@ -422,7 +424,10 @@ function MusicPlayer() {
 				/>
 			</div>
 
-			<div onClick={toggleQueue} className="queue self-center transition-all">
+			<div
+				onClick={toggleQueue}
+				className="queue self-center transition-all flex-shrink-0"
+			>
 				<img src={Queue} className="cursor-pointer h-6 w-6 mx-2 my-[2px]" />
 				<div className="flex justify-center items-center m-1">
 					<div

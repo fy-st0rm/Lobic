@@ -38,7 +38,7 @@ const SongItem: React.FC<SongItemProps> = ({
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 	return (
-		<div className="flex justify-evenly items-center mt-0 rounded-md hover:bg-primary_fg hover:bg-opacity-10 mx-2">
+		<div className="flex justify-evenly items-center mt-4 rounded-md hover:bg-primary_fg hover:bg-opacity-10 mx-2">
 			<div className="flex w-[85%] items-center">
 				<div className="self-center font-medium pr-4 pl-4">{index + 1}</div>
 				<div className="items-center w-[7%] flex-shrink-0 self-start">
