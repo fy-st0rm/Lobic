@@ -77,12 +77,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           className="w-[100px] h-[100px] rounded-full object-cover"
         />
         {/* Pencil Icon */}
-        <button
-  className="absolute bottom-0 -right-2 bg-primary p-2 rounded-full hover:bg-darker h-7 w-7 flex items-center justify-center cursor-pointer"
-  onClick={() => setShowModal(true)}
->
-  <img src={Pencil} alt="Edit Profile" />
-</button>
+            <button
+              className="absolute bottom-0 -right-2 bg-primary p-2 rounded-full hover:bg-darker h-7 w-7 flex items-center justify-center cursor-pointer"
+              onClick={() => setShowModal(true)}
+              >
+              <img src={Pencil} alt="Edit Profile" />
+            </button>
 
       </div>
 
@@ -96,37 +96,46 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         </div>
       </div>
 
-      {/* Modal for Uploading Profile Picture */}
       {showModal && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
-          <div className="bg-[#282828] p-5 rounded-lg shadow-md w-[300px] text-center">
-            <h2 className="text-xl font-bold mb-4 text-white">
-              Upload Profile Picture
-            </h2>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="mb-4 text-white"
-            />
-            <div className="flex justify-between mt-5">
-              <button
-                className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded border-none cursor-pointer"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-[#1DB954] hover:bg-[#1ed760] text-white py-2 px-4 rounded border-none cursor-pointer disabled:opacity-50"
-                onClick={handleUpload}
-                disabled={isUpdating}
-              >
-                {isUpdating ? "Uploading..." : "Upload"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="fixed top-0 left-0 w-full h-full bg-primary bg-opacity-80 flex justify-center items-center z-50">
+    <div className="bg-secondary bg-opacity-98 p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+      {/* Modal Title */}
+      <h2 className="text-2xl font-semibold text-white mb-6">
+        Upload Profile Picture
+      </h2>
+
+      {/* File Input */}
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="mb-6 text-gray-300"
+      />
+
+      {/* Buttons */}
+      <div className="flex justify-center space-x-4">
+        {/* Upload Button */}
+        <button
+          className="bg-button hover:bg-button_hover text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105"
+          onClick={handleUpload}
+          disabled={isUpdating}
+        >
+          {isUpdating ? "Uploading..." : "Upload"}
+        </button>
+
+        {/* Cancel Button */}
+        <button
+          className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105"
+          onClick={() => setShowModal(false)}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
 
       {/* Search List Modal */}
       {showSearchList && (
