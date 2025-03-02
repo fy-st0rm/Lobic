@@ -46,7 +46,7 @@
     function Queue() {
 
         const { isVisible, toggleQueue} = useQueueState();
-        const { queue,dequeue } = useQueueProvider();
+        const { queue,dequeue, dequeueUntil } = useQueueProvider();
         const { musicState,updateMusicState } = useMusicProvider();
         const [heights, setHeights] = useState([5, 4, 2]);
         
@@ -60,6 +60,7 @@
                     image_url: song.image_url,
                     state: MPState.CHANGE_MUSIC,
                 } as MusicState);
+								dequeueUntil(song.id);
             } catch (err) {
                 console.error("Failed to handle music click:", err);
             }

@@ -26,6 +26,7 @@ export type QueueContextType = {
 	updateQueue: (queue: MusicTrack[]) => void;
 	enqueue: (track: MusicTrack) => void;
 	dequeue: () => MusicTrack | null;
+	dequeueUntil: (trackId: string) => void,
 	clearQueue: () => void;
 };
 
@@ -35,6 +36,7 @@ const defaultContext: QueueContextType = {
 	updateQueue: () => {},
 	enqueue: () => {},
 	dequeue: () => null,
+	dequeueUntil: () => {},
 	clearQueue: () => {},
 };
 
@@ -128,6 +130,23 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		return first;
 	};
 
+	const dequeueUntil = (trackId: string) => {
+		setQueue((prevQueue) => {
+			let newQueue = prevQueue;
+
+			let idx = prevQueue.findIndex(track => track.id === trackId);
+			if (idx !== -1) {
+				newQueue = prevQueue.slice(idx+1)
+			}
+
+			const newState = {
+				queue: newQueue,
+			};
+			sessionStorage.setItem("QueueState", JSON.stringify(newState));
+			return newQueue;
+		});
+	};
+
 	const clearQueue = () => {
 		updateQueue([]);
 	};
@@ -139,6 +158,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 				updateQueue,
 				enqueue,
 				dequeue,
+				dequeueUntil,
 				clearQueue,
 			}}
 		>
