@@ -187,6 +187,7 @@ export const updateHostMusicState = (
 			state: musicState.state,
 		},
 	};
+	console.log(payload);
 	wsSend(socket, payload);
 };
 

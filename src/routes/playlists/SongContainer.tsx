@@ -165,7 +165,6 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 				title: item.title,
 				artist: item.artist,
 				image_url: item.image_url,
-				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
 		} catch (err) {

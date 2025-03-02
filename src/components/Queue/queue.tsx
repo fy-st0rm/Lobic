@@ -58,7 +58,6 @@
                     title: song.title,
                     artist: song.artist,
                     image_url: song.image_url,
-                    timestamp: 0,
                     state: MPState.CHANGE_MUSIC,
                 } as MusicState);
             } catch (err) {

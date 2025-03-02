@@ -402,8 +402,6 @@ function MusicPlayer() {
 				album: nextTrack.album,
 				image_url: nextTrack.image_url,
 				state: MPState.CHANGE_MUSIC,
-				state_data: 0,
-				timestamp: 0,
 			});
 			return;
 		}
