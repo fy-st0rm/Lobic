@@ -49,6 +49,14 @@
         const { queue,dequeue } = useQueueProvider();
         const { musicState,updateMusicState } = useMusicProvider();
         const [heights, setHeights] = useState([5, 4, 2]);
+        const [isPlaying, setIsPlaying] = useState<boolean>(false);
+            useEffect(() => {
+                if (musicState.state === MPState.PLAY) {
+                    setIsPlaying(true);
+                } else if (musicState.state === MPState.PAUSE) {
+                    setIsPlaying(false);
+                }
+            }, [musicState.state]);
         
         const handleMusicClick = async (song: Song): Promise<void> => {
             try {
@@ -105,7 +113,7 @@
                                     </div>
                                 </div>
                             
-                                <div className={musicState.state == MPState.PAUSE ? "hidden":'items-center flex gap-1 h-7 justify-cente p-2 rounded-md'}>
+                                <div className={isPlaying ? "items-center flex gap-1 h-7 p-2 rounded-md":'hidden'}>
                                         {heights.map((height, index) => (
                                             <div
                                                 key={index}
