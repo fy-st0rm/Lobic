@@ -99,7 +99,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 			dequeue();
 		}
 	}, [queue]);
-
+	
 	const updateQueue = (newQueue: MusicTrack[]) => {
 		setQueue((prevQueue) => {
 			const newState = {

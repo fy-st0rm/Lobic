@@ -3,7 +3,8 @@ import { useMusicProvider, MusicState } from "providers/MusicProvider";
 import { MPState, ImageFromUrl } from "@/api/music/musicApi";
 import { Song } from "@/api/playlist/playlistApi";
 import { getUserData } from "@/api/user/userApi";
-
+import { useQueueProvider } from "@/providers/QueueProvider";
+import { RemoveFormattingIcon } from "lucide-react";
 // SongInfo Component
 interface SongInfoProps {
 	index: number;
@@ -81,7 +82,7 @@ interface SongListProps {
 	usernames: UserCache;
 	isLoading: boolean;
 	selectedSongId: string | null;
-	onSongClick: (item: Song) => Promise<void>;
+	onSongClick: (item: Song, index: number) => Promise<void>;
 }
 const SongList: React.FC<SongListProps> = ({
 	songs,
@@ -94,7 +95,7 @@ const SongList: React.FC<SongListProps> = ({
 		{songs.map((item) => (
 			<div
 				key={item.music_id}
-				onClick={() => !isLoading && onSongClick(item)}
+				onClick={() => !isLoading && onSongClick(item, songs.indexOf(item)+1)}
 				className={`cursor-pointer hover:bg-primary-100 transition-colors rounded-sm m-2 ${
 					selectedSongId === item.music_id ? "bg-primary-200" : ""
 				} ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -127,7 +128,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
 	const [usernames, setUsernames] = useState<UserCache>({});
 	const { updateMusicState } = useMusicProvider();
-
+	const {queue, clearQueue, dequeue, updateQueue} = useQueueProvider();
 	useEffect(() => {
 		const fetchUsernames = async () => {
 			const uniqueUserIds = [
@@ -155,8 +156,9 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 		fetchUsernames();
 	}, [songs]);
 
-	const handleSongClick = async (item: Song): Promise<void> => {
+	const handleSongClick = async (item: Song, index: number): Promise<void> => {
 		try {
+			const remainingSongs = songs.slice(index,songs.length)
 			setIsLoading(true);
 			setSelectedSongId(item.music_id);
 
@@ -167,6 +169,17 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 				image_url: item.image_url,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
+
+			clearQueue();
+
+				const newQueue = remainingSongs.map((item) => ({
+					id: item.music_id,
+					...item,
+					image_url: item.image_url,
+				}));
+				updateQueue(newQueue);
+			
+
 		} catch (err) {
 			const error = err as Error;
 			console.error("Failed to update music state:", error);
