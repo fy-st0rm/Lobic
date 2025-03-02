@@ -247,10 +247,11 @@ function MusicPlayer() {
 	const { appState } = useAppProvider();
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { getSocket } = useSocketProvider();
-	const { musicState, controlsDisabled, updateMusicState } = useMusicProvider();
+	const { audioRef, musicState, controlsDisabled, updateMusicState } = useMusicProvider();
 	const { queue, enqueue, dequeue } = useQueueProvider();
 	const { isVisible, toggleQueue } = useQueueState();
 
+	const [isPlaying, setIsPlaying] = useState<boolean>(false);
 	const [timestamp, setTimestamp] = useState<number>(0);
 	const [volume, setVolume] = useState<number>(musicState.volume);
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
@@ -308,8 +309,18 @@ function MusicPlayer() {
 	};
 
 	// :music controls
+
+	// Properly managing play pause control to avoid blinks of play pause while changing the timestamp
 	useEffect(() => {
-		// Sync UI timestamp with the music state time
+		if (musicState.state === MPState.PLAY) {
+			setIsPlaying(true);
+		} else if (musicState.state === MPState.PAUSE) {
+			setIsPlaying(false);
+		}
+	}, [musicState.state]);
+
+	// Sync UI timestamp with the music state time
+	useEffect(() => {
 		setTimestamp(musicState.timestamp);
 	}, [musicState.timestamp]);
 
@@ -421,7 +432,7 @@ function MusicPlayer() {
 
 			<div className="flex-grow-0 w-[60%] self-center flex-shrink-0">
 				<ControlBar
-					isPlaying={musicState.state === MPState.PLAY}
+					isPlaying={isPlaying}
 					isLoading={isLoading}
 					controlsDisabled={controlsDisabled}
 					onPlayPause={handlePlayMusic}
