@@ -85,7 +85,6 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 				title: song.title,
 				artist: song.artist,
 				image_url: song.image_url,
-				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			} as MusicState);
 

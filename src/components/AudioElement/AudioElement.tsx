@@ -88,20 +88,20 @@ const AudioElement = () => {
 				try {
 					audioElement.src = await fetchMusicUrl(musicState.id);
 					audioElement.volume = musicState.volume / 100;
-					audioElement.currentTime = musicState.state_data;
+					audioElement.currentTime = 0;
 					audioElement.load();
 				} catch (err) {
 					console.error("Failed to play music:", err);
 				} finally {
-					updateMusicState({ state: MPState.PLAY });
+					updateMusicState({ state: MPState.PLAY, timestamp: 0 });
 				}
 			} else if (musicState.state === MPState.CHANGE_TIME) {
 				let time = musicState.state_data;
 				audioElement.currentTime = time;
 				if (audioElement.paused) {
-					updateMusicState({ state: MPState.PAUSE, state_data: 0, timestamp: time});
+					updateMusicState({ state: MPState.PAUSE, state_data: 0, timestamp: time });
 				} else {
-					updateMusicState({ state: MPState.PLAY, state_data: 0, timestamp: time});
+					updateMusicState({ state: MPState.PLAY, state_data: 0, timestamp: time });
 				}
 			} else if (musicState.state === MPState.CHANGE_VOLUME) {
 				let vol = musicState.state_data;
@@ -142,19 +142,13 @@ const AudioElement = () => {
 			updateMusicState({ duration: audioElement.duration });
 		};
 
-		const volumeChangeHandler = () => {
-			updateMusicState({ volume: audioElement.volume * 100 });
-		};
-
 		audioElement.addEventListener("timeupdate", timeUpdateHandler);
 		audioElement.addEventListener("loadedmetadata", loadedMetadataHandler);
-		//audioElement.addEventListener("volumechange", volumeChangeHandler);
 
 		// Cleanup event listeners on component unmount
 		return () => {
 			audioElement.removeEventListener("timeupdate", timeUpdateHandler);
 			audioElement.removeEventListener("loadedmetadata", loadedMetadataHandler);
-			audioElement.removeEventListener("volumechange", volumeChangeHandler);
 		};
 	}, []);
 

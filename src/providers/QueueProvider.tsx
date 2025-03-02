@@ -92,7 +92,6 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 				artist: track.artist,
 				album: track.album,
 				image_url: track.image_url,
-				timestamp: 0,
 				state: MPState.CHANGE_MUSIC,
 			});
 			dequeue();
