@@ -248,11 +248,14 @@ function MusicPlayer() {
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { getSocket } = useSocketProvider();
 	const { musicState, controlsDisabled, updateMusicState } = useMusicProvider();
+	const { queue, enqueue, dequeue } = useQueueProvider();
 	const { isVisible, toggleQueue } = useQueueState();
+
+	const [timestamp, setTimestamp] = useState<number>(0);
+	const [volume, setVolume] = useState<number>(musicState.volume);
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
-	const { queue, enqueue, dequeue } = useQueueProvider();
 
 	useEffect(() => {
 		if (appState.user_id && musicState.id) {
@@ -304,6 +307,12 @@ function MusicPlayer() {
 		}
 	};
 
+	// :music controls
+	useEffect(() => {
+		// Sync UI timestamp with the music state time
+		setTimestamp(musicState.timestamp);
+	}, [musicState.timestamp]);
+
 	const handlePlayMusic = async () => {
 		try {
 			if (!musicState.id) {
@@ -325,6 +334,7 @@ function MusicPlayer() {
 	};
 
 	const onVolumeChange = (e: { target: { value: any } }) => {
+		setVolume(e.target.value);
 		updateMusicState({
 			state: MPState.CHANGE_VOLUME,
 			state_data: e.target.value,
@@ -332,13 +342,15 @@ function MusicPlayer() {
 	};
 
 	const volumeToggle = () => {
-		if (musicState.volume > 0) {
-			setInitialVolume(musicState.volume);
+		if (volume > 0) {
+			setInitialVolume(volume);
+			setVolume(0);
 			updateMusicState({
 				state: MPState.CHANGE_VOLUME,
 				state_data: 0,
 			});
 		} else {
+			setVolume(initialVolume);
 			updateMusicState({
 				state: MPState.CHANGE_VOLUME,
 				state_data: initialVolume,
@@ -351,6 +363,7 @@ function MusicPlayer() {
 	) => {
 		const input = e.target as HTMLInputElement;
 		const seekTime = (Number(input.value) / 100) * musicState.duration;
+		setTimestamp(seekTime);
 		updateMusicState({
 			state: MPState.CHANGE_TIME,
 			state_data: seekTime,
@@ -359,6 +372,7 @@ function MusicPlayer() {
 
 	const handleSeekMove = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const seekTime = (Number(e.target.value) / 100) * musicState.duration;
+		setTimestamp(seekTime);
 		updateMusicState({
 			state: MPState.CHANGE_TIME,
 			state_data: seekTime,
@@ -415,7 +429,7 @@ function MusicPlayer() {
 					// [] @TODO :add onPrev as well
 				/>
 				<ProgressBar
-					timestamp={musicState.timestamp}
+					timestamp={timestamp}
 					duration={musicState.duration}
 					isLoading={isLoading}
 					controlsDisabled={controlsDisabled}
@@ -437,7 +451,7 @@ function MusicPlayer() {
 			</div>
 
 			<VolumeControl
-				volume={musicState.volume}
+				volume={volume}
 				isLoading={isLoading}
 				onVolumeChange={onVolumeChange}
 				onVolumeToggle={volumeToggle}
