@@ -24,7 +24,7 @@ const SongInfo: React.FC<SongInfoProps> = ({
 	addedBy,
 	image_url,
 }) => (
-	<div className="flex justify-evenly items-center mt-0 rounded-md hover:bg-primary_fg hover:bg-opacity-10 mx-2">
+	<div className="flex justify-evenly items-center mt-0 rounded-md hover:bg-primary_fg hover:bg-opacity-10 mx-2 ">
 		<div className="flex gap-5 w-[30%] px-4 py-[2px]">
 			<div className="self-center font-medium ">{index + 1}</div>
 			<div className="cover h-[50px] w-[50px] py-1 self-start cursor-pointer">
@@ -72,7 +72,7 @@ const SongHeader = () => (
 				DURATION
 			</div>
 		</div>
-		<div className="mx-5 h-[1px] bg-primary_fg opacity-50 rounded-full my-1" />
+		<div className="mx-5 h-[1px] bg-primary_fg opacity-10 rounded-full my-1" />
 	</div>
 );
 

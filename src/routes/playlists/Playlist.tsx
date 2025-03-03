@@ -117,7 +117,7 @@ const ControlButtons: React.FC<ControlButtonsProps> = ({
 			className="deletebutton cursor-pointer self-center "
 			onClick={onDeleteClick}
 		>
-			<img className="h-10 w-10 transition-all hover:scale-110" src={Trash} />
+			<img className="h-8 w-8 transition-all opacity-80 hover:opacity-100" src={Trash} />
 		</div>
 	</div>
 );
