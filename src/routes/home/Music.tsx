@@ -84,7 +84,7 @@ const Music: React.FC<MusicProps> = ({
 			id: musicId,
 			title: title,
 			artist: artist,
-			cover_img: image_url,
+			image_url: image_url,
 			timestamp: 0,
 			state: MPState.PAUSE,
 		};

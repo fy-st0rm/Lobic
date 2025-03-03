@@ -44,7 +44,7 @@ const RequestedMusic: FC<RequestedMusicProps> = ({ notif, toastId }): React.Reac
 				">
 				<div className="flex items-center">
 					<img
-						src={ImageFromUrl(music.cover_img)}
+						src={ImageFromUrl(music.image_url)}
 						className="w-[40px] h-[40px] rounded-[10px]"
 					/>
 					<div className="

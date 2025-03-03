@@ -9,7 +9,7 @@ import { MPState } from "@/api/music/musicApi";
  * @member {string | null} id - Holds the unique identifier of the current track, or null if no track is selected.
  * @member {string | null} title - The title of the current track, or null if no track is selected.
  * @member {string | null} artist - The artist of the current track, or null if no track is selected.
- * @member {string | null} cover_img - The URL or path to the cover image of the current track, or null if no track is selected.
+ * @member {string | null} image_url - The ID of the cover image of the current track, or null if no track is selected.
  * @member {number} timestamp - The current playback position of the track in seconds.
  * @member {number} duration - The total duration of the current track in seconds.
  * @member {number} volume - The current volume level of the music player (range: 0-100).

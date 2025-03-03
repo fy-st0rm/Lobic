@@ -88,6 +88,7 @@ function Chats(): React.ReactElement {
   // Responsible to sync queue in lobby
   useEffect(() => {
     addMsgHandler(OpCode.SYNC_QUEUE, (res: SocketResponse) => {
+			console.log(res.value);
       updateQueue(res.value);
     });
 
