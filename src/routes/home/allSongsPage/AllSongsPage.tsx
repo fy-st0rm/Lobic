@@ -275,7 +275,6 @@ const AllSongsPage: React.FC = () => {
 		if (songs.length === 0) return;
 		clearMusicState();
 		const newQueue = songs.map(song => ({
-			id: song.id,
 			...song,
 			image_url: song.image_url,
 		}));

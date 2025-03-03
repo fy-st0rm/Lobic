@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 // Local
 import { ImageFromUrl, MPState, MusicTrack } from "@/api/music/musicApi";
 import { useAppProvider } from "providers/AppProvider";
-import { useLobbyProvider } from "providers/LobbyProvider";
 import { useSocketProvider } from "providers/SocketProvider";
 import { useMusicProvider } from "providers/MusicProvider";
 import { fetchIsSongLiked, toggleSongLiked } from "@/api/music/likedSongsApi";
@@ -245,7 +244,6 @@ const VolumeControl = ({
 
 function MusicPlayer() {
 	const { appState } = useAppProvider();
-	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { getSocket } = useSocketProvider();
 	const { audioRef, musicState, controlsDisabled, updateMusicState } = useMusicProvider();
 	const { queue, enqueue, dequeue } = useQueueProvider();

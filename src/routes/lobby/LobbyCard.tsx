@@ -2,9 +2,13 @@
 import { FC, useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 
+// Local
+import { ImageFromUrl } from "api/music/musicApi";
+
 // Assets
 import { Plus, AudioLines } from "lucide-react";
-import test_logo from "/covers/cover.jpg";
+import placeholder_logo from "/covers/cover.jpg";
+import LobbyIcon from "/sidebar/Lobby.svg";
 
 /*
  * React component for lobby card
@@ -13,20 +17,20 @@ import test_logo from "/covers/cover.jpg";
 type LobbyCardProps = {
 	lobby_id: string;
 	lobby_name: string;
+	lobby_icon: string;
 	listeners_cnt: number;
 	song_name: string;
 	artist_name: string;
-	lobby_icon: string;
 	onClick: (lobby_id: string) => void;
 };
 
 export const LobbyCard: FC<LobbyCardProps> = ({
 	lobby_id,
 	lobby_name,
+	lobby_icon,
 	listeners_cnt,
 	song_name,
 	artist_name,
-	lobby_icon,
 	onClick,
 }) => {
 	const [isLobbyNameOF, setLobbyNameOF] = useState<boolean>(false);
@@ -141,11 +145,8 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 				{ /* Lobby Icon */ }
 				<div className="w-32 h-32 rounded-full overflow-hidden">
 						<img
-							className="w-full h-full"
-							src={lobby_icon}
-							onError={(e) => {
-								(e.target as HTMLImageElement).src = test_logo;
-							}}
+							className={`w-full h-full ${lobby_icon ? "" : "p-1" }`}
+							src={lobby_icon ? ImageFromUrl(lobby_icon) : LobbyIcon}
 							alt="Image"
 						/>
 				</div>

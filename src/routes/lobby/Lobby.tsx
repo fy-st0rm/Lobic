@@ -129,10 +129,10 @@ const Lobby = (): React.ReactElement => {
 								key={lobby.id}
 								lobby_id={lobby.id}
 								lobby_name={lobby.lobby_name}
+								lobby_icon={lobby.lobby_icon}
 								listeners_cnt={lobby.listeners}
 								song_name={lobby.song_name}
 								artist_name={lobby.artist_name}
-								lobby_icon={lobby.lobby_icon}
 								onClick={handleJoinLobby}
 							/>
 						))}
