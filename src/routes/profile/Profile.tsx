@@ -7,6 +7,7 @@ import ProfileCard from "./ProfileCard";
 import PlaylistsContainer from "./PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData, searchUser, fetchUserPfp } from "api/user/userApi";
+import { fetchFriends } from "api/friendApi";
 
 interface Friend {
 	id: string;
@@ -29,12 +30,7 @@ function Profile() {
 	});
 
 	// State for friends list
-	const [friends, setFriends] = useState<Friend[]>([
-		{ id: "1", name: "Bijan" },
-		{ id: "2", name: "Bijan" },
-		{ id: "3", name: "Bijan" },
-	]);
-
+	const [friends, setFriends] = useState<Friend[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 
 	// Fetch user data on mount
@@ -52,6 +48,26 @@ function Profile() {
 
 		fetchUserData();
 	}, [appState]);
+
+	// Fetch friends on mount
+	useEffect(() => {
+		const initFriends = async () => {
+			try {
+				let friend_ids = await fetchFriends(userData.id);
+				const friend_list = await Promise.all(friend_ids.map(async (id: string) => {
+					let user = await getUserData(id);
+					return {
+						id: user.id,
+						name: user.username,
+					} as Friend;
+				}));
+				setFriends(friend_list);
+			} catch (err) {
+				console.error(err);
+			}
+		};
+		initFriends();
+	}, [userData]);
 
 	// Add friend handler
 	const handleAddFriend = () => {
@@ -179,7 +195,10 @@ function Profile() {
 					<div className="flex flex-col gap-3">
 						{friends.map((friend) => (
 							<div key={friend.id} className="flex items-center gap-2">
-								<div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+								<img
+									className="w-8 h-8 bg-gray-600 rounded-full"
+									src={fetchUserPfp(friend.id)}
+								/>
 								<span className="text-white text-sm">{friend.name}</span>
 							</div>
 						))}
