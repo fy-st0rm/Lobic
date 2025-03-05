@@ -11,7 +11,7 @@ export type User = {
 	id: string;
 	username: string;
 	email: string;
-	pfp?: string;
+	pfp: string;
 };
 
 /**
@@ -124,6 +124,9 @@ export const fetchUserProfilePicture = async (
 	}
 };
 
+export const fetchUserPfp = (pfp_id: string): string =>
+	`${SERVER_IP}/user/get_pfp/${pfp_id}.png`
+
 /**
  * Logs out the user.
  * @param {string} userId - The user's ID.
@@ -235,7 +238,7 @@ export const addFriend = async (
 		user_id: userId,
 		friend_id: friendId,
 	};
-	const response = await fetch(`${SERVER_IP}/add_friend`, {
+	const response = await fetch(`${SERVER_IP}/friend/add`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -243,5 +246,15 @@ export const addFriend = async (
 		},
 		body: JSON.stringify(payload),
 	});
+	return response;
+};
+
+
+export const searchUser = async (searchString: string, maxResults: number): Promise<Response> => {
+	const response = await fetch(`${SERVER_IP}/user/search?search_string=${searchString}&max_results=${maxResults}`, {
+		method: "GET",
+		credentials: "include",
+	});
+
 	return response;
 };
