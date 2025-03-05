@@ -1,6 +1,12 @@
 import { SERVER_IP } from "@/const";
+import { User, getUserData } from "api/user/userApi";
 
-export const fetchFriends = async (user_id: string): Promise<string[]> => {
+export interface Friend {
+	id: string;
+	name: string;
+}
+
+export const fetchFriends = async (user_id: string): Promise<Friend[]> => {
 	let response = await fetch(`${SERVER_IP}/friend/get/${user_id}`, {
 		method: "GET",
 		credentials: "include",
@@ -12,6 +18,14 @@ export const fetchFriends = async (user_id: string): Promise<string[]> => {
 	}
 
 	let data = await response.json();
-	let friends = data["friends"];
+	let friend_ids = data["friends"];
+
+	const friends = await Promise.all(friend_ids.map(async (id: string) => {
+		let user = await getUserData(id);
+		return {
+			id: user.id,
+			name: user.username,
+		} as Friend;
+	}));
 	return friends;
 };

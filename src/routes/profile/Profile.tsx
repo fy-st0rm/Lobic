@@ -7,12 +7,7 @@ import ProfileCard from "./ProfileCard";
 import PlaylistsContainer from "./PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData, searchUser, fetchUserPfp } from "api/user/userApi";
-import { fetchFriends } from "api/friendApi";
-
-interface Friend {
-	id: string;
-	name: string;
-}
+import { Friend, fetchFriends } from "api/friendApi";
 
 function Profile() {
 	const { appState } = useAppProvider();
@@ -53,14 +48,7 @@ function Profile() {
 	useEffect(() => {
 		const initFriends = async () => {
 			try {
-				let friend_ids = await fetchFriends(userData.id);
-				const friend_list = await Promise.all(friend_ids.map(async (id: string) => {
-					let user = await getUserData(id);
-					return {
-						id: user.id,
-						name: user.username,
-					} as Friend;
-				}));
+				let friend_list = await fetchFriends(userData.id);
 				setFriends(friend_list);
 			} catch (err) {
 				console.error(err);
