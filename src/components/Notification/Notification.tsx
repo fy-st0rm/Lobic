@@ -1,6 +1,5 @@
 // Node modules
 import React, { FC, useState, useEffect, useRef } from "react";
-import { toast } from "sonner";
 import { Bird } from "lucide-react";
 
 // Local
@@ -11,47 +10,6 @@ import {
 } from "providers/NotificationProvider";
 import AddFriend from "./AddFriend";
 import RequestedMusic from "./RequestedMusic";
-
-
-/*
- * System that manages the notifications
- */
-
-export const NotificationSystem = (): React.ReactElement => {
-	const { tempNotifs } = useNotificationProvider();
-
-	// Notification handlers according to there opcodes
-	useEffect(() => {
-		Object.entries(tempNotifs).map(([id, notif]) => {
-			if (notif.op_code === OpCode.OK) {
-				okHandler(notif);
-			} else if (notif.op_code === OpCode.ADD_FRIEND) {
-				addFriendHandler(notif);
-			} else if (notif.op_code === OpCode.REQUEST_MUSIC_PLAY) {
-				requestedMusicHandler(notif);
-			}
-		});
-	}, [tempNotifs]);
-
-	// Handlers
-	const okHandler = async (notif: Notification) => {
-		let msg = notif.value;
-		toast(<div>{msg}</div>, {
-			duration: 5000,
-		});
-	};
-
-	const addFriendHandler = (notif: Notification) => {
-		toast.custom((id) => <AddFriend notif={notif} toastId={id}/>);
-	};
-
-	const requestedMusicHandler = (notif: Notification) => {
-		toast.custom((id) => <RequestedMusic notif={notif} toastId={id}/>);
-	};
-
-	return <></>;
-};
-
 
 /*
  * Notification Dropdown Component

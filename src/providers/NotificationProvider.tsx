@@ -6,12 +6,15 @@ import React, {
 	useState,
 	useEffect,
 } from "react";
+import { toast } from "sonner";
 
 // Local
 import { SERVER_IP } from "@/const";
 import { OpCode, SocketResponse } from "api/socketApi";
 import { useAppProvider } from "providers/AppProvider";
 import { useSocketProvider } from "providers/SocketProvider";
+import AddFriend from "components/Notification/AddFriend";
+import RequestedMusic from "components/Notification/RequestedMusic";
 
 /*
  * Notification Type
@@ -104,18 +107,29 @@ export const NotificationProvider: FC<{ children: React.ReactNode }> = ({
 	}, []);
 
 	const addTempNotif = (notif: Notification) => {
-		setTempNotifs((prevNotifs) => ({
-			...prevNotifs,
-			[notif.id]: notif,
-		}));
-
-		// Removing after certain duration
-		setTimeout(() => {
-			setTempNotifs((prevNotifs) => {
-				const { [notif.id]: _, ...rest } = prevNotifs;
-				return rest;
+		// Handlers
+		const okHandler = async (notif: Notification) => {
+			let msg = notif.value;
+			toast(<div>{msg}</div>, {
+				duration: 5000,
 			});
-		}, 5000);
+		};
+
+		const addFriendHandler = (notif: Notification) => {
+			toast.custom((id) => <AddFriend notif={notif} toastId={id}/>);
+		};
+
+		const requestedMusicHandler = (notif: Notification) => {
+			toast.custom((id) => <RequestedMusic notif={notif} toastId={id}/>);
+		};
+
+		if (notif.op_code === OpCode.OK) {
+			okHandler(notif);
+		} else if (notif.op_code === OpCode.ADD_FRIEND) {
+			addFriendHandler(notif);
+		} else if (notif.op_code === OpCode.REQUEST_MUSIC_PLAY) {
+			requestedMusicHandler(notif);
+		}
 	};
 
 	const addNotif = (notif: Notification) => {
