@@ -6,8 +6,8 @@ export interface Friend {
 	name: string;
 }
 
-export const fetchFriends = async (user_id: string): Promise<Friend[]> => {
-	let response = await fetch(`${SERVER_IP}/friend/get/${user_id}`, {
+export const fetchFriends = async (userId: string): Promise<Friend[]> => {
+	let response = await fetch(`${SERVER_IP}/friend/get/${userId}`, {
 		method: "GET",
 		credentials: "include",
 	});
@@ -29,3 +29,45 @@ export const fetchFriends = async (user_id: string): Promise<Friend[]> => {
 	}));
 	return friends;
 };
+
+export const addFriend = async (userId: string, friendId: string) => {
+	const payload = {
+		user_id: userId,
+		friend_id: friendId
+	};
+
+	let response = await fetch(`${SERVER_IP}/friend/add`, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(payload),
+	})
+
+	if (!response.ok) {
+		let msg = await response.text();
+		throw new Error(`Add Friend Failed: ${msg}`);
+	}
+}
+
+export const removeFriend = async (userId: string, friendId: string) => {
+	const payload = {
+		user_id: userId,
+		friend_id: friendId
+	};
+
+	let response = await fetch(`${SERVER_IP}/friend/remove`, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(payload),
+	})
+
+	if (!response.ok) {
+		let msg = await response.text();
+		throw new Error(`Remove Friend Failed: ${msg}`);
+	}
+}
