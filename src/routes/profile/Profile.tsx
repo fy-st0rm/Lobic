@@ -11,6 +11,9 @@ import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData, searchUser, fetchUserPfp } from "api/user/userApi";
 import { Friend, fetchFriends, addFriend, removeFriend } from "api/friendApi";
 import { OpCode } from "api/socketApi";
+import MusicList from "@/routes/home/MusicList";
+import { useMusicProvider } from "@/providers/MusicProvider";
+import { MusicListsProvider } from "@/providers/MusicListContextProvider";
 
 function Profile() {
 	const { appState } = useAppProvider();
@@ -135,8 +138,8 @@ function Profile() {
 	}, [inputValue]);
 
 	return (
-		<div className="flex flex-col w-full bg-primary min-h-screen">
-			<div className="grid grid-cols-[3fr_1fr] gap-4 w-full">
+		<div className="flex flex-col w-full bg-primary">
+			<div className="grid grid-cols-[4fr_1fr] gap-4 w-full">
 				<div className="flex flex-col">
 					<div className="mb-8">
 						<ProfileCard
@@ -147,8 +150,10 @@ function Profile() {
 						/>
 					</div>
 
-					<div className="px-6">
+					<div className=" h-[658px] overflow-scroll no-scrollbar" >
+						<MusicListsProvider>
 						<PlaylistsContainer />
+						</MusicListsProvider>
 					</div>
 				</div>
 

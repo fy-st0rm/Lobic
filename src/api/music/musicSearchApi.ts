@@ -7,7 +7,7 @@ export const searchMusic = async (
 	page_length = 20,
 ): Promise<MusicTrack[]> => {
 	try {
-		let url = `${SERVER_IP}/search`;
+		let url = `${SERVER_IP}/search_music`;
 		const params = new URLSearchParams({
 			search_string: searchString,
 		});
