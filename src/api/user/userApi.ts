@@ -224,32 +224,6 @@ export const getUserData = async (userId: string): Promise<User> => {
 	}
 };
 
-/*
- * Sends friend request to the designated user.
- * @param {string} userId - Id of the user who's sending the friend request.
- * @param {string} friendId - Id of the user to whom the friend request is sent.
- * @returns {Promise<Response>} - The response from the server.
- */
-export const addFriend = async (
-	userId: string,
-	friendId: string,
-): Promise<Response> => {
-	const payload = {
-		user_id: userId,
-		friend_id: friendId,
-	};
-	const response = await fetch(`${SERVER_IP}/friend/add`, {
-		method: "POST",
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(payload),
-	});
-	return response;
-};
-
-
 export const searchUser = async (searchString: string, maxResults: number): Promise<Response> => {
 	const response = await fetch(`${SERVER_IP}/user/search?search_string=${searchString}&max_results=${maxResults}`, {
 		method: "GET",

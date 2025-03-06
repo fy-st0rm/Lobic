@@ -2,6 +2,7 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 
 // Local
 import { OpCode, wsSend, SocketResponse } from "api/socketApi";
@@ -14,8 +15,8 @@ import {
 	User,
 	fetchUserProfilePicture,
 	getUserData,
-	addFriend,
 } from "api/user/userApi";
+import { addFriend } from "api/friendApi";
 
 
 type AddFriendProps = {
@@ -44,11 +45,12 @@ const AddFriend: FC<AddFriendProps> = ({ notif, toastId }): React.ReactElement =
 
 	const onAccept = async () => {
 		// Add friend
-		let response = await addFriend(appState.user_id, userId);
-		if (!response.ok) {
-			let log = await response.text();
-			console.error(log);
+		try { 
+			addFriend(appState.user_id, userId);
+		} catch (err) {
+			console.error(err);
 		}
+
 		toast.dismiss(toastId);
 
 		// Remove the notification
@@ -56,7 +58,7 @@ const AddFriend: FC<AddFriendProps> = ({ notif, toastId }): React.ReactElement =
 
 		// Add a new temporary notification for sucess message
 		addTempNotif({
-			id: "some-random-id",
+			id: uuidv4(),
 			op_code: OpCode.OK,
 			value: `Yeppy! @${userData?.username} is now your friend!`,
 		});

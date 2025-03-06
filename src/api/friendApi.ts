@@ -30,6 +30,12 @@ export const fetchFriends = async (userId: string): Promise<Friend[]> => {
 	return friends;
 };
 
+/*
+ * Sends friend request to the designated user.
+ * @param {string} userId - Id of the user who's sending the friend request.
+ * @param {string} friendId - Id of the user to whom the friend request is sent.
+ * @returns {Promise<Response>} - The response from the server.
+ */
 export const addFriend = async (userId: string, friendId: string) => {
 	const payload = {
 		user_id: userId,
