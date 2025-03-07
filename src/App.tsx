@@ -10,7 +10,7 @@ import {
 import { Helmet } from "react-helmet";
 
 // Local
-import { Auth, Verify } from "routes/auth/Auth";
+import { Auth, Verify, OTPVerify } from "routes/auth/Auth";
 import SideBar from "@/components/SideBar/SideBar";
 import MusicPlayer from "@/components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";
@@ -23,6 +23,7 @@ import Login from "routes/auth/Login";
 import Signup from "routes/auth/Signup";
 import OTP_Page from "routes/auth/OTP_Page";
 import ForgotPassword from "routes/auth/ForgotPassword";
+import ChangePassword from "routes/auth/ChangePassword";
 
 // App Pages
 import Home from "routes/home/Home";
@@ -65,8 +66,14 @@ function App(): React.ReactElement {
 				<Route path="/" element={<Navigate to="/login" replace />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<Signup />} />
+				<Route path="/otp_page/:route/:userId" element={<OTP_Page />} />
 				<Route path="/forgotpassword" element={<ForgotPassword />} />
-				<Route path="/otp_page/:route" element={<OTP_Page />} />
+
+				<Route path="/changepassword" element={
+					<OTPVerify>
+						<ChangePassword />
+					</OTPVerify>
+				} />
 
 				<Route element={
 					<Auth>

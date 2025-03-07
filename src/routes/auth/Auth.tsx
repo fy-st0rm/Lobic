@@ -47,7 +47,34 @@ export const Verify: FC<{ children: React.ReactNode }> = ({
 				setVerify(true);
 			} else {
 				setVerify(false);
-				navigate("/otp_page/home");
+				navigate(`/otp_page/home/${appState.user_id}`);
+			}
+			return res.text();
+		})
+	}, []);
+
+	return verify ? <div>{children}</div> : <div></div>;
+};
+
+
+export const OTPVerify: FC<{ children: React.ReactNode }> = ({
+	children,
+}): React.ReactElement => {
+	const navigate = useNavigate();
+	const { appState } = useAppProvider();
+
+	const [verify, setVerify] = useState<boolean>(false);
+
+	useEffect(() => {
+		fetch(`${SERVER_IP}/otp/verify/${appState.user_id}`, {
+			method: "GET",
+			credentials: "include",
+		}).then((res) => {
+			if (res.ok) {
+				setVerify(true);
+			} else {
+				setVerify(false);
+				navigate("/login");
 			}
 			return res.text();
 		})
