@@ -34,19 +34,6 @@ const PlaylistCover: React.FC<PlaylistCoverProps> = ({
 			className="w-full h-full rounded-md"
 			alt="Playlist Cover"
 		/>
-		{/* <label
-			htmlFor="edit-cover"
-			className="top-2 right-2 cursor-pointer"
-		>
-			<Edit className=" text-white bg-black rounded-full p-1" />
-		</label> */}
-		{/* <input
-			id="edit-cover"
-			type="file"
-			accept="image/*"
-			className="hidden"
-			onChange={onImageChange}
-		/> */}
 	</div>
 );
 
@@ -117,7 +104,10 @@ const ControlButtons: React.FC<ControlButtonsProps> = ({
 			className="deletebutton cursor-pointer self-center "
 			onClick={onDeleteClick}
 		>
-			<img className="h-8 w-8 transition-all opacity-80 hover:opacity-100" src={Trash} />
+			<img
+				className="h-8 w-8 transition-all opacity-80 hover:opacity-100"
+				src={Trash}
+			/>
 		</div>
 	</div>
 );
@@ -217,34 +207,32 @@ const Playlist: React.FC = () => {
 
 	return (
 		<>
-			<div className="">
-				<div className=" flex gap-5 mt-10 mx-10 mb-5 items-end">
-					<PlaylistCover
-						coverUrl={playlistCover}
-						timestamp={timestamp}
-						onImageChange={handleImageChange}
-					/>
-					<div>
-						<PlaylistInfo playlistData={playlistData} />
-						<CreatorsInfo
-							username={username}
-							user1Pfp={user1Pfp}
-							songCount={playlistData?.songs?.length}
-						/>
-					</div>
-				</div>
+			<div className=" flex gap-5 mt-10 mx-10 mb-5 items-end">
+				<PlaylistCover
+					coverUrl={playlistCover}
+					timestamp={timestamp}
+					onImageChange={handleImageChange}
+				/>
 				<div>
-					<ControlButtons
-						onPlayClick={playAllSongs}
-						onDeleteClick={handleDeletePlaylist}
+					<PlaylistInfo playlistData={playlistData} />
+					<CreatorsInfo
+						username={username}
+						user1Pfp={user1Pfp}
+						songCount={playlistData?.songs?.length}
 					/>
 				</div>
-				<div className="ml-5 my-5">
-					<SongContainer
-						playlistId={playlistId || ""}
-						songs={playlistData?.songs || []}
-					/>
-				</div>
+			</div>
+			<div>
+				<ControlButtons
+					onPlayClick={playAllSongs}
+					onDeleteClick={handleDeletePlaylist}
+				/>
+			</div>
+			<div className="ml-5 my-5">
+				<SongContainer
+					playlistId={playlistId || ""}
+					songs={playlistData?.songs || []}
+				/>
 			</div>
 		</>
 	);

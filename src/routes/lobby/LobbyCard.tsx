@@ -1,13 +1,11 @@
 // Node modules
 import { FC, useState, useEffect, useRef } from "react";
-import Cookies from "js-cookie";
 
 // Local
 import { ImageFromUrl } from "api/music/musicApi";
 
 // Assets
 import { Plus, AudioLines } from "lucide-react";
-import placeholder_logo from "/covers/cover.jpg";
 import LobbyIcon from "/sidebar/Lobby.svg";
 
 /*
@@ -74,29 +72,35 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 			<>
 				<div className="absolute w-[80%] top-1 bg-secondary bg-opacity-85 rounded-full">
 					<div className="py-2 px-4 flex items-center justify-center">
-
 						{/* Equalizer icon */}
-						<AudioLines className="absolute left-3 pr-2 text-primary_fg flex-shrink-0"/>
+						<AudioLines className="absolute left-3 pr-2 text-primary_fg flex-shrink-0" />
 
 						{/* Song Name and Artist Name section */}
-						<div ref={songCardRef} className="flex flex-col w-[65%] box-border overflow-hidden">
-
+						<div
+							ref={songCardRef}
+							className="flex flex-col w-[65%] box-border overflow-hidden"
+						>
 							{/* Song Name */}
 							<div
 								className={`
-									${isSongNameOF ? '' : 'flex flex-col items-center justify-center'}
+									${isSongNameOF ? "" : "flex flex-col items-center justify-center"}
 								`}
 							>
 								<div
 									ref={songNameRef}
 									className={`
 										whitespace-nowrap font-semibold text-primary_fg
-										${isSongNameOF ? 'group-hover:animate-scroll-on-hover' : ''}
+										${isSongNameOF ? "group-hover:animate-scroll-on-hover" : ""}
 									`}
 								>
 									{song_name}
 									{isSongNameOF && (
-										<div style={{ paddingLeft: "15%", display: 'inline-block' }}> {song_name} </div>
+										<div
+											style={{ paddingLeft: "15%", display: "inline-block" }}
+										>
+											{" "}
+											{song_name}{" "}
+										</div>
 									)}
 								</div>
 							</div>
@@ -104,19 +108,24 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 							{/* Artist Name */}
 							<div
 								className={`
-									${isArtistNameOF ? '' : 'flex flex-col items-center justify-center'}
+									${isArtistNameOF ? "" : "flex flex-col items-center justify-center"}
 								`}
 							>
 								<div
 									ref={artistNameRef}
 									className={`
 										whitespace-nowrap text-xs text-secondary_fg
-										${isArtistNameOF ? 'group-hover:animate-scroll-on-hover' : ''}
+										${isArtistNameOF ? "group-hover:animate-scroll-on-hover" : ""}
 									`}
 								>
 									{artist_name}
 									{isArtistNameOF && (
-										<div style={{ paddingLeft: "15%", display: 'inline-block' }}> {artist_name} </div>
+										<div
+											style={{ paddingLeft: "15%", display: "inline-block" }}
+										>
+											{" "}
+											{artist_name}{" "}
+										</div>
 									)}
 								</div>
 							</div>
@@ -141,21 +150,20 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 					group
 				"
 			>
-
-				{ /* Lobby Icon */ }
+				{/* Lobby Icon */}
 				<div className="w-32 h-32 rounded-full overflow-hidden">
-						<img
-							className={`w-full h-full ${lobby_icon ? "" : "p-1" }`}
-							src={lobby_icon ? ImageFromUrl(lobby_icon) : LobbyIcon}
-							alt="Image"
-						/>
+					<img
+						className={`w-full h-full ${lobby_icon ? "" : "p-1"}`}
+						src={lobby_icon ? ImageFromUrl(lobby_icon) : LobbyIcon}
+						alt="Image"
+					/>
 				</div>
 
-				{ /* Lobby Name */ }
+				{/* Lobby Name */}
 				<div
 					ref={cardRef}
 					className={`
-						${isLobbyNameOF ? '' : 'flex items-center justify-center'}
+						${isLobbyNameOF ? "" : "flex items-center justify-center"}
 						font-semibold text-xl text-primary_fg
 						mt-3 w-[90%]
 						box-border overflow-hidden
@@ -163,11 +171,14 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 				>
 					<div
 						ref={lobbyNameRef}
-						className={`whitespace-nowrap ${isLobbyNameOF ? 'group-hover:animate-scroll-on-hover' : ''}`}
+						className={`whitespace-nowrap ${isLobbyNameOF ? "group-hover:animate-scroll-on-hover" : ""}`}
 					>
 						{lobby_name}
 						{isLobbyNameOF && (
-							<div style={{ paddingLeft: "15%", display: 'inline-block' }}> {lobby_name} </div>
+							<div style={{ paddingLeft: "15%", display: "inline-block" }}>
+								{" "}
+								{lobby_name}{" "}
+							</div>
 						)}
 					</div>
 				</div>
@@ -177,7 +188,7 @@ export const LobbyCard: FC<LobbyCardProps> = ({
 					{listeners_cnt} Lobblers
 				</div>
 
-				{song_name.length > 0 && <MusicInfo/>}
+				{song_name.length > 0 && <MusicInfo />}
 			</div>
 		</>
 	);
@@ -191,11 +202,9 @@ type CreateLobbyButtonProps = {
 	onClick: () => void;
 };
 
-export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
-	onClick,
-}) => {
+export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({ onClick }) => {
 	return (
-		<>	
+		<>
 			<div
 				onClick={onClick}
 				className="
@@ -207,17 +216,17 @@ export const CreateLobbyButton: FC<CreateLobbyButtonProps> = ({
 					transition-all
 				"
 			>
-				<div className="
+				<div
+					className="
 					bg-secondary
 					w-32 h-32 rounded-full
 					flex items-center justify-center
 					mb-5
-				">
-					<Plus className="w-full h-full text-primary p-5"/>
+				"
+				>
+					<Plus className="w-full h-full text-primary p-5" />
 				</div>
-				<div className="font-bold text-2xl text-primary_fg">
-					Create Lobby
-				</div>
+				<div className="font-bold text-2xl text-primary_fg">Create Lobby</div>
 			</div>
 		</>
 	);

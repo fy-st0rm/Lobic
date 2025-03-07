@@ -4,16 +4,17 @@ import { UserRoundPlus, UserRoundX, X } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
 // Local
-import { Notification, useNotificationProvider } from "providers/NotificationProvider";
+import {
+	Notification,
+	useNotificationProvider,
+} from "providers/NotificationProvider";
 import ProfileCard from "./ProfileCard";
-import PlaylistsContainer from "./PlaylistsContainer/PlaylistsContainer";
 import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData, searchUser, fetchUserPfp } from "api/user/userApi";
 import { Friend, fetchFriends, addFriend, removeFriend } from "api/friendApi";
 import { OpCode } from "api/socketApi";
-import MusicList from "@/routes/home/MusicList";
-import { useMusicProvider } from "@/providers/MusicProvider";
 import { MusicListsProvider } from "@/providers/MusicListContextProvider";
+import PlaylistsContainer from "./PlaylistsContainer";
 
 function Profile() {
 	const { appState } = useAppProvider();
@@ -67,7 +68,7 @@ function Profile() {
 	// Add friend handler
 	const handleAddFriend = (friend: User) => {
 		try {
-			addFriend(appState.user_id, friend.id)
+			addFriend(appState.user_id, friend.id);
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -94,7 +95,7 @@ function Profile() {
 	// Remove friend handler
 	const handleRemoveFriend = (friend: User) => {
 		try {
-			removeFriend(appState.user_id, friend.id)
+			removeFriend(appState.user_id, friend.id);
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -106,8 +107,8 @@ function Profile() {
 			addTempNotif(notif);
 
 			// Removing from the friends list
-			setFriends(prevFriends =>
-				prevFriends.filter(f => f.id !== friend.id)
+			setFriends((prevFriends) =>
+				prevFriends.filter((f) => f.id !== friend.id),
 			);
 		}
 	};
@@ -150,16 +151,15 @@ function Profile() {
 						/>
 					</div>
 
-					<div className=" h-[658px] overflow-scroll no-scrollbar" >
+					<div className=" h-[658px] overflow-scroll no-scrollbar">
 						<MusicListsProvider>
-						<PlaylistsContainer />
+							<PlaylistsContainer />
 						</MusicListsProvider>
 					</div>
 				</div>
 
 				{/* Friends Section */}
 				<div className="p-6 bg-secondary rounded-lg">
-
 					<div className="relative">
 						{/* User search bar */}
 						<div className="relative">
@@ -176,24 +176,26 @@ function Profile() {
 							/>
 
 							{/* Clear search button */}
-							{inputValue &&
-								<div className="
+							{inputValue && (
+								<div
+									className="
 									absolute w-full h-full px-2 top-0
 									flex items-center justify-center
 									pointer-events-none
-								">
+								"
+								>
 									<button
 										className="ml-auto pointer-events-auto"
 										onClick={() => setInputValue("")}
 									>
-										<X className="text-primary"/>
+										<X className="text-primary" />
 									</button>
 								</div>
-							}
+							)}
 						</div>
 
 						{/* User search result */}
-						{showSuggestions &&
+						{showSuggestions && (
 							<div
 								className="
 									absolute w-full mt-2 max-h-[490px]
@@ -211,32 +213,41 @@ function Profile() {
 										"
 									>
 										<div className="flex items-center space-x-2">
-											<img src={fetchUserPfp(user.pfp)} className="w-10 h-10 rounded-full" />
-											<div className="overflow-x-auto no-scrollbar">{user.username}</div>
+											<img
+												src={fetchUserPfp(user.pfp)}
+												className="w-10 h-10 rounded-full"
+											/>
+											<div className="overflow-x-auto no-scrollbar">
+												{user.username}
+											</div>
 										</div>
 
-										{user.id !== appState.user_id &&
+										{user.id !== appState.user_id && (
 											<button
 												className="
 													rounded-full p-2
 													hover:bg-secondary hover:bg-opacity-[20%]
 												"
 												onClick={
-													friends.some(friend => friend.id === user.id) ?
-													() => handleRemoveFriend(user) :
-													() => handleAddFriend(user)
+													friends.some((friend) => friend.id === user.id)
+														? () => handleRemoveFriend(user)
+														: () => handleAddFriend(user)
 												}
 											>
-												{ // Display add friend or remove friend icon
-													friends.some(friend => friend.id === user.id) ?
-													<UserRoundX /> : <UserRoundPlus/>
+												{
+													// Display add friend or remove friend icon
+													friends.some((friend) => friend.id === user.id) ? (
+														<UserRoundX />
+													) : (
+														<UserRoundPlus />
+													)
 												}
 											</button>
-										}
+										)}
 									</div>
 								))}
 							</div>
-						}
+						)}
 					</div>
 
 					<h3 className="text-white text-lg font-bold mt-6 mb-4">Friends</h3>
