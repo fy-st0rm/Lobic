@@ -12,8 +12,6 @@ import { useMusicLists } from "@/providers/MusicListContextProvider";
 import { useQueueProvider } from "providers/QueueProvider";
 import { useNavigate } from "react-router-dom";
 
-// import "./MusicList.css";
-
 // Define ListType as a union of specific strings
 type ListType =
 	| "Trending Now"

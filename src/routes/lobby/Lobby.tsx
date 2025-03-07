@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 // Locals
 import { OpCode, wsSend, SocketResponse, SocketPayload } from "api/socketApi";
 import { LobbyModel, fetchLobbies } from "api/lobbyApi";
-import { MPState } from "@/api/music/musicApi";
-import { SERVER_IP } from "@/const";
 import { LobbyCard, CreateLobbyButton } from "./LobbyCard";
 import { useAppProvider } from "providers/AppProvider";
 import { useLobbyProvider } from "providers/LobbyProvider";
@@ -116,12 +114,12 @@ const Lobby = (): React.ReactElement => {
 				<div className="overflow-auto no-scrollbar">
 					<div
 						className="
-						grid
-						grid-cols-[repeat(auto-fill,_minmax(170px,_1fr))]
-						grid-rows-[repeat(auto-fill,_minmax(250px,_1fr))]
-						w-[90%] 
-						gap-2
-						px-5
+							grid
+							grid-cols-[repeat(auto-fill,_minmax(170px,_1fr))]
+							grid-rows-[repeat(auto-fill,_minmax(250px,_1fr))]
+							w-[90%] 
+							gap-2
+							px-5
 					"
 					>
 						{lobbies.map((lobby, idx) => (

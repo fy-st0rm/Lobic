@@ -3,7 +3,7 @@ import { SERVER_IP } from "@/const";
 export interface SearchResponse{
 	songs: MusicResponse[];
 	people: UserDataResponse[];
-	playlists: Playlist[];
+	playlist: Playlist[];
   }
   
   interface UserDataResponse {

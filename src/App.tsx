@@ -5,7 +5,7 @@ import {
 	Outlet,
 	Routes,
 	Route,
-	Navigate
+	Navigate,
 } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
@@ -33,7 +33,6 @@ import Playlist from "routes/playlists/Playlist";
 import Playlists from "@/routes/playlists/AllPlaylists";
 import Profile from "routes/profile/Profile.tsx";
 import AllSongsPage from "@/routes/home/allSongsPage/AllSongsPage";
-
 
 // Layout of the app
 const Layout = () => {
@@ -75,13 +74,15 @@ function App(): React.ReactElement {
 					</OTPVerify>
 				} />
 
-				<Route element={
-					<Auth>
-						<Verify>
-							<Layout />
-						</Verify>
-					</Auth>
-				}>
+				<Route
+					element={
+						<Auth>
+							<Verify>
+								<Layout />
+							</Verify>
+						</Auth>
+					}
+				>
 					<Route path="/show_all" element={<AllSongsPage />} />
 					<Route path="/playlist/:playlistId" element={<Playlist />} />
 					<Route path="/home" element={<Home />} />
