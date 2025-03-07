@@ -138,7 +138,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 	};
 
 	return (
-		<div className="flex items-center gap-6 bg-secondary p-6 rounded-lg">
+		<div className="flex items-center gap-6 bg-secondary p-6 rounded-lg mb-8">
 			<ProfilePicture
 				imageUrl={profilePicture}
 				onEditClick={() => setShowModal(true)}
@@ -159,4 +159,5 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 		</div>
 	);
 };
+
 export default ProfileCard;

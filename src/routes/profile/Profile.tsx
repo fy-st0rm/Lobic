@@ -29,80 +29,111 @@ const RecentlyPlayedMusicContainer: React.FC = () => {
 	}, [appState.user_id]);
 
 	return (
-		<div>
-			<h2 className="text-white text-3xl font-bold mb-4 px-3">
-				Recently Played
-			</h2>
-			<div className="flex flex-wrap overflow-hidden w-full">
-				{musicItems.map((song) => (
-					<Music
-						musicId={song.id}
-						title={song.title}
-						artist={song.artist}
-						album={song.album}
-						image_url={song.image_url}
-						onClick={() => {}}
-					/>
-				))}
+		<MusicListsProvider>
+			<div className="h-[658px] overflow-scroll no-scrollbar">
+				<h2 className="text-white text-3xl font-bold mb-4 px-3">
+					Recently Played
+				</h2>
+				<div className="flex flex-wrap overflow-hidden w-full">
+					{musicItems.map((song) => (
+						<Music
+							musicId={song.id}
+							title={song.title}
+							artist={song.artist}
+							album={song.album}
+							image_url={song.image_url}
+							onClick={() => {}}
+						/>
+					))}
+				</div>
 			</div>
-		</div>
+		</MusicListsProvider>
 	);
 };
 
-// Friend Item Component
-interface FriendItemProps {
-	friend: Friend;
-}
-const FriendItem: React.FC<FriendItemProps> = ({ friend }) => (
-	<div className="flex items-center gap-2">
-		<img
-			className="w-8 h-8 bg-gray-600 rounded-full"
-			src={fetchUserPfp(friend.id)}
-			alt={friend.name}
-		/>
-		<span className="text-white text-sm">{friend.name}</span>
-	</div>
-);
+// Friend List Component
+const FriendList: React.FC<{ friends: Friend[] }> = ({ friends }) => {
+	return (
+		<>
+			<h3 className="text-white text-lg font-medium mb-3">Friends</h3>
+			<div className="flex flex-col gap-3">
+				{friends.length > 0 ? (
+					friends.map((friend) => (
+						<div key={friend.id} className="flex items-center gap-2">
+							<img
+								className="w-8 h-8 bg-gray-600 rounded-full"
+								src={fetchUserPfp(friend.id)}
+								alt={friend.name}
+							/>
+							<span className="text-white text-sm">{friend.name}</span>
+						</div>
+					))
+				) : (
+					<p className="text-gray-400 text-sm">No friends to display</p>
+				)}
+			</div>
+		</>
+	);
+};
 
-// Search Result Item Component
-interface SearchResultItemProps {
-	user: User;
-	isFriend: boolean;
+//Search List Component
+interface SearchResultListProps {
+	searchResult: User[];
+	currentUserId: string;
+	friends: Friend[];
 	onAddFriend: (user: User) => void;
 	onRemoveFriend: (user: User) => void;
+	showSuggestions: boolean;
 }
-const SearchResultItem: React.FC<SearchResultItemProps> = ({
-	user,
-	isFriend,
+const SearchResultList: React.FC<SearchResultListProps> = ({
+	searchResult,
+	currentUserId,
+	friends,
 	onAddFriend,
 	onRemoveFriend,
-}) => (
-	<div className="p-3 rounded-[5px] cursor-pointer flex items-center justify-between bg-hoverEffect hover:bg-opacity-[10%] hover:bg-secondary">
-		<div className="flex items-center space-x-2">
-			<img
-				src={fetchUserPfp(user.pfp)}
-				className="w-10 h-10 rounded-full"
-				alt={user.username}
-			/>
-			<div className="overflow-x-auto no-scrollbar">{user.username}</div>
+	showSuggestions,
+}) => {
+	if (!showSuggestions) return;
+
+	return (
+		<div className="absolute w-full mt-2 max-h-[490px] rounded-[5px] bg-hoverEffect text-black overflow-y-auto no-scrollbar">
+			{searchResult.map((user) =>
+				user.id !== currentUserId ? (
+					<div
+						key={user.id}
+						className="p-3 rounded-[5px] cursor-pointer flex items-center justify-between bg-hoverEffect hover:bg-opacity-[10%] hover:bg-secondary"
+					>
+						<div className="flex items-center space-x-2">
+							<img
+								src={fetchUserPfp(user.pfp)}
+								className="w-10 h-10 rounded-full"
+								alt={user.username}
+							/>
+							<div className="overflow-x-auto no-scrollbar">
+								{user.username}
+							</div>
+						</div>
+						{friends.some((f) => f.id === user.id) ? (
+							<button
+								className="rounded-full p-2 hover:bg-secondary hover:bg-opacity-[20%]"
+								onClick={() => onRemoveFriend(user)}
+							>
+								<UserRoundX />
+							</button>
+						) : (
+							<button
+								className="rounded-full p-2 hover:bg-secondary hover:bg-opacity-[20%]"
+								onClick={() => onAddFriend(user)}
+							>
+								<UserRoundPlus />
+							</button>
+						)}
+					</div>
+				) : null,
+			)}
 		</div>
-		{isFriend ? (
-			<button
-				className="rounded-full p-2 hover:bg-secondary hover:bg-opacity-[20%]"
-				onClick={() => onRemoveFriend(user)}
-			>
-				<UserRoundX />
-			</button>
-		) : (
-			<button
-				className="rounded-full p-2 hover:bg-secondary hover:bg-opacity-[20%]"
-				onClick={() => onAddFriend(user)}
-			>
-				<UserRoundPlus />
-			</button>
-		)}
-	</div>
-);
+	);
+};
 
 // Main Profile Component
 const Profile: React.FC = () => {
@@ -118,7 +149,6 @@ const Profile: React.FC = () => {
 	const [inputValue, setInputValue] = useState<string>("");
 	const [searchResult, setSearchResult] = useState<User[]>([]);
 	const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(true);
 
 	// Fetch user data
 	useEffect(() => {
@@ -128,8 +158,6 @@ const Profile: React.FC = () => {
 				setUserData(data);
 			} catch (err) {
 				console.error("Failed to fetch user data:", err);
-			} finally {
-				setLoading(false);
 			}
 		};
 		fetchUser();
@@ -201,19 +229,13 @@ const Profile: React.FC = () => {
 		<div className="flex flex-col w-full bg-primary">
 			<div className="grid grid-cols-[4fr_1fr] gap-4 w-full">
 				<div className="flex flex-col">
-					<div className="mb-8">
-						<ProfileCard
-							usertag={userData.email || "0 Playlist"}
-							username={userData.username || "Unknown User"}
-							friendcount={friends.length}
-							user_uuid={userData.id}
-						/>
-					</div>
-					<div className="h-[658px] overflow-scroll no-scrollbar">
-						<MusicListsProvider>
-							<RecentlyPlayedMusicContainer />
-						</MusicListsProvider>
-					</div>
+					<ProfileCard
+						usertag={userData.email || "0 Playlist"}
+						username={userData.username || "Unknown User"}
+						friendcount={friends.length}
+						user_uuid={userData.id}
+					/>
+					<RecentlyPlayedMusicContainer />
 				</div>
 
 				<div className="p-6 bg-secondary rounded-lg">
@@ -237,30 +259,16 @@ const Profile: React.FC = () => {
 								</button>
 							)}
 						</div>
-
-						{showSuggestions && (
-							<div className="absolute w-full mt-2 max-h-[490px] rounded-[5px] bg-hoverEffect text-black overflow-y-auto no-scrollbar">
-								{searchResult.map((user) =>
-									user.id !== appState.user_id ? (
-										<SearchResultItem
-											key={user.id}
-											user={user}
-											isFriend={friends.some((f) => f.id === user.id)}
-											onAddFriend={handleAddFriend}
-											onRemoveFriend={handleRemoveFriend}
-										/>
-									) : null,
-								)}
-							</div>
-						)}
+						<SearchResultList
+							searchResult={searchResult}
+							currentUserId={appState.user_id}
+							friends={friends}
+							onAddFriend={handleAddFriend}
+							onRemoveFriend={handleRemoveFriend}
+							showSuggestions={showSuggestions}
+						/>
 					</div>
-
-					<h3 className="text-white text-lg font-bold mt-6 mb-4">Friends</h3>
-					<div className="flex flex-col gap-3">
-						{friends.map((friend) => (
-							<FriendItem key={friend.id} friend={friend} />
-						))}
-					</div>
+					<FriendList friends={friends} />
 				</div>
 			</div>
 		</div>
