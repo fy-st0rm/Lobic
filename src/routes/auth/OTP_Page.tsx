@@ -1,6 +1,6 @@
 // Node modules
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 //shadcn
 import {
@@ -16,6 +16,8 @@ import { SERVER_IP } from "@/const";
 import { useAppProvider } from "providers/AppProvider";
 
 const OTP_Page = (): React.ReactElement => {
+	const { route } = useParams<{ route: string }>();
+
 	const { appState } = useAppProvider();
 	const navigate = useNavigate();
 	const [value, setValue] = useState<string>("");
@@ -29,7 +31,7 @@ const OTP_Page = (): React.ReactElement => {
 		});
 		
 		if (response.ok) {
-			navigate("/home");
+			navigate(`/${route}`);
 		} else {
 			let msg = await response.text();
 			setMsg(msg);

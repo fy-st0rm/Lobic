@@ -47,7 +47,7 @@ export const Verify: FC<{ children: React.ReactNode }> = ({
 				setVerify(true);
 			} else {
 				setVerify(false);
-				navigate("/otp_page");
+				navigate("/otp_page/home");
 			}
 			return res.text();
 		})
