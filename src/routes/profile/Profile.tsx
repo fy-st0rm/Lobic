@@ -1,46 +1,130 @@
-// Node modules
 import React, { useEffect, useState } from "react";
 import { UserRoundPlus, UserRoundX, X } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
-
-// Local
 import {
 	Notification,
 	useNotificationProvider,
 } from "providers/NotificationProvider";
-import ProfileCard from "./ProfileCard";
 import { useAppProvider } from "providers/AppProvider";
 import { User, getUserData, searchUser, fetchUserPfp } from "api/user/userApi";
 import { Friend, fetchFriends, addFriend, removeFriend } from "api/friendApi";
 import { OpCode } from "api/socketApi";
 import { MusicListsProvider } from "@/providers/MusicListContextProvider";
-import PlaylistsContainer from "./PlaylistsContainer";
+import { MusicTrack } from "@/api/music/musicApi";
+import { fetchRecentlyPlayed } from "@/api/music/recentlyPlayedApi";
+import Music from "../home/Music";
+import ProfileCard from "./ProfileCard";
 
-function Profile() {
+// Recently Played Music Container
+const RecentlyPlayedMusicContainer: React.FC = () => {
+	const { appState } = useAppProvider();
+	const [musicItems, setMusicItems] = useState<MusicTrack[]>([]);
+
+	useEffect(() => {
+		const loadMusic = async () => {
+			const data: MusicTrack[] = await fetchRecentlyPlayed(appState.user_id);
+			setMusicItems(data);
+		};
+		loadMusic();
+	}, [appState.user_id]);
+
+	return (
+		<div>
+			<h2 className="text-white text-3xl font-bold mb-4 px-3">
+				Recently Played
+			</h2>
+			<div className="flex flex-wrap overflow-hidden w-full">
+				{musicItems.map((song) => (
+					<Music
+						musicId={song.id}
+						title={song.title}
+						artist={song.artist}
+						album={song.album}
+						image_url={song.image_url}
+						onClick={() => {}}
+					/>
+				))}
+			</div>
+		</div>
+	);
+};
+
+// Friend Item Component
+interface FriendItemProps {
+	friend: Friend;
+}
+const FriendItem: React.FC<FriendItemProps> = ({ friend }) => (
+	<div className="flex items-center gap-2">
+		<img
+			className="w-8 h-8 bg-gray-600 rounded-full"
+			src={fetchUserPfp(friend.id)}
+			alt={friend.name}
+		/>
+		<span className="text-white text-sm">{friend.name}</span>
+	</div>
+);
+
+// Search Result Item Component
+interface SearchResultItemProps {
+	user: User;
+	isFriend: boolean;
+	onAddFriend: (user: User) => void;
+	onRemoveFriend: (user: User) => void;
+}
+const SearchResultItem: React.FC<SearchResultItemProps> = ({
+	user,
+	isFriend,
+	onAddFriend,
+	onRemoveFriend,
+}) => (
+	<div className="p-3 rounded-[5px] cursor-pointer flex items-center justify-between bg-hoverEffect hover:bg-opacity-[10%] hover:bg-secondary">
+		<div className="flex items-center space-x-2">
+			<img
+				src={fetchUserPfp(user.pfp)}
+				className="w-10 h-10 rounded-full"
+				alt={user.username}
+			/>
+			<div className="overflow-x-auto no-scrollbar">{user.username}</div>
+		</div>
+		{isFriend ? (
+			<button
+				className="rounded-full p-2 hover:bg-secondary hover:bg-opacity-[20%]"
+				onClick={() => onRemoveFriend(user)}
+			>
+				<UserRoundX />
+			</button>
+		) : (
+			<button
+				className="rounded-full p-2 hover:bg-secondary hover:bg-opacity-[20%]"
+				onClick={() => onAddFriend(user)}
+			>
+				<UserRoundPlus />
+			</button>
+		)}
+	</div>
+);
+
+// Main Profile Component
+const Profile: React.FC = () => {
 	const { appState } = useAppProvider();
 	const { addTempNotif } = useNotificationProvider();
-
-	const [inputValue, setInputValue] = useState<string>("");
-	const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-	const [searchResult, setSearchResult] = useState<User[]>([]);
-
-	// State for user data
 	const [userData, setUserData] = useState<User>({
 		id: "",
 		username: "",
 		email: "",
 		pfp: "",
 	});
-
-	// State for friends list
 	const [friends, setFriends] = useState<Friend[]>([]);
+	const [inputValue, setInputValue] = useState<string>("");
+	const [searchResult, setSearchResult] = useState<User[]>([]);
+	const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 
-	// Fetch user data on mount
+	// Fetch user data
 	useEffect(() => {
-		const fetchUserData = async () => {
+		const fetchUser = async () => {
 			try {
-				const data = await getUserData(appState.user_id);
+				const data: User = await getUserData(appState.user_id);
 				setUserData(data);
 			} catch (err) {
 				console.error("Failed to fetch user data:", err);
@@ -48,95 +132,70 @@ function Profile() {
 				setLoading(false);
 			}
 		};
+		fetchUser();
+	}, [appState.user_id]);
 
-		fetchUserData();
-	}, [appState]);
-
-	// Fetch friends on mount
+	// Fetch friends
 	useEffect(() => {
-		const initFriends = async () => {
+		const loadFriends = async () => {
 			try {
-				let friend_list = await fetchFriends(userData.id);
-				setFriends(friend_list);
+				const friendList: Friend[] = await fetchFriends(userData.id);
+				setFriends(friendList);
 			} catch (err) {
-				console.error(err);
+				console.error("Failed to fetch friends:", err);
 			}
 		};
-		initFriends();
-	}, [userData]);
+		loadFriends();
+	}, [userData.id]);
 
-	// Add friend handler
-	const handleAddFriend = (friend: User) => {
-		try {
-			addFriend(appState.user_id, friend.id);
-		} catch (err) {
-			console.error(err);
-		} finally {
-			let notif: Notification = {
-				id: uuidv4(),
-				op_code: OpCode.OK,
-				value: `${friend.username} is now your friend.`,
-			};
-			addTempNotif(notif);
-
-			// Adding to the friends list
-			setFriends((prevFriends) => {
-				let newFriend = {
-					id: friend.id,
-					name: friend.username,
-				};
-
-				let newFriends = [newFriend, ...prevFriends];
-				return newFriends;
-			});
-		}
-	};
-
-	// Remove friend handler
-	const handleRemoveFriend = (friend: User) => {
-		try {
-			removeFriend(appState.user_id, friend.id);
-		} catch (err) {
-			console.error(err);
-		} finally {
-			let notif: Notification = {
-				id: uuidv4(),
-				op_code: OpCode.OK,
-				value: `${friend.username} is not a friend anymore.`,
-			};
-			addTempNotif(notif);
-
-			// Removing from the friends list
-			setFriends((prevFriends) =>
-				prevFriends.filter((f) => f.id !== friend.id),
-			);
-		}
-	};
-
-	// Update user search
+	// Search users
 	useEffect(() => {
-		const fetchUsers = async () => {
-			if (inputValue.length <= 0) {
+		const searchUsers = async () => {
+			if (!inputValue) {
 				setSearchResult([]);
 				setShowSuggestions(false);
 				return;
 			}
-
-			let response = await searchUser(inputValue.trim(), 5);
+			const response = await searchUser(inputValue.trim(), 5);
 			if (!response.ok) {
-				let msg = await response.text();
-				console.error(`Search User failed: ${msg}`);
+				console.error(`Search failed: ${await response.text()}`);
 				return;
 			}
-
-			let data = await response.json();
-			let results: User[] = data["results"];
-			setSearchResult(results);
+			const data: { results: User[] } = await response.json();
+			setSearchResult(data.results);
 			setShowSuggestions(true);
 		};
-
-		fetchUsers();
+		searchUsers();
 	}, [inputValue]);
+
+	const handleAddFriend = (friend: User) => {
+		addFriend(appState.user_id, friend.id)
+			.then(() => {
+				setFriends((prev) => [
+					{ id: friend.id, name: friend.username },
+					...prev,
+				]);
+				addTempNotif({
+					id: uuidv4(),
+					op_code: OpCode.OK,
+					value: `${friend.username} is now your friend.`,
+				});
+			})
+			.catch((err) => console.error("Failed to add friend:", err));
+	};
+
+	const handleRemoveFriend = (friend: User) => {
+		removeFriend(appState.user_id, friend.id)
+			.then(() => {
+				setFriends((prev) => prev.filter((f) => f.id !== friend.id));
+				addTempNotif({
+					id: uuidv4(),
+					op_code: OpCode.OK,
+					value: `${friend.username} is not a friend anymore.`,
+				});
+			})
+			.catch((err) => console.error("Failed to remove friend:", err));
+	};
 
 	return (
 		<div className="flex flex-col w-full bg-primary">
@@ -144,108 +203,54 @@ function Profile() {
 				<div className="flex flex-col">
 					<div className="mb-8">
 						<ProfileCard
-							usertag={userData.email || "3 Playlist"}
-							username={userData.username || "Sadit Rasaili"}
+							usertag={userData.email || "0 Playlist"}
+							username={userData.username || "Unknown User"}
 							friendcount={friends.length}
 							user_uuid={userData.id}
 						/>
 					</div>
-
-					<div className=" h-[658px] overflow-scroll no-scrollbar">
+					<div className="h-[658px] overflow-scroll no-scrollbar">
 						<MusicListsProvider>
-							<PlaylistsContainer />
+							<RecentlyPlayedMusicContainer />
 						</MusicListsProvider>
 					</div>
 				</div>
 
-				{/* Friends Section */}
 				<div className="p-6 bg-secondary rounded-lg">
 					<div className="relative">
-						{/* User search bar */}
 						<div className="relative">
 							<input
 								type="text"
-								className="
-									w-full py-2 px-4 rounded-full
-									border-none focus:border-none focus:outline-none
-									bg-hoverEffect focus:bg-primary_fg
-									text-primary text-sm"
+								className="w-full py-2 px-4 rounded-full border-none focus:outline-none bg-hoverEffect focus:bg-primary_fg text-primary text-sm"
 								placeholder="Add Friend"
 								value={inputValue}
-								onChange={(e) => setInputValue(e.target.value)}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									setInputValue(e.target.value)
+								}
 							/>
-
-							{/* Clear search button */}
 							{inputValue && (
-								<div
-									className="
-									absolute w-full h-full px-2 top-0
-									flex items-center justify-center
-									pointer-events-none
-								"
+								<button
+									className="absolute right-2 top-1/2 -translate-y-1/2"
+									onClick={() => setInputValue("")}
 								>
-									<button
-										className="ml-auto pointer-events-auto"
-										onClick={() => setInputValue("")}
-									>
-										<X className="text-primary" />
-									</button>
-								</div>
+									<X className="text-primary" />
+								</button>
 							)}
 						</div>
 
-						{/* User search result */}
 						{showSuggestions && (
-							<div
-								className="
-									absolute w-full mt-2 max-h-[490px]
-									rounded-[5px]
-									bg-hoverEffect text-black
-									overflow-y-auto no-scrollbar
-								"
-							>
-								{searchResult.map((user, idx) => (
-									<div
-										className="
-											p-3 rounded-[5px] cursor-pointer
-											flex items-center justify-between
-											bg-hoverEffect hover:bg-opacity-[10%] hover:bg-secondary
-										"
-									>
-										<div className="flex items-center space-x-2">
-											<img
-												src={fetchUserPfp(user.pfp)}
-												className="w-10 h-10 rounded-full"
-											/>
-											<div className="overflow-x-auto no-scrollbar">
-												{user.username}
-											</div>
-										</div>
-
-										{user.id !== appState.user_id && (
-											<button
-												className="
-													rounded-full p-2
-													hover:bg-secondary hover:bg-opacity-[20%]
-												"
-												onClick={
-													friends.some((friend) => friend.id === user.id)
-														? () => handleRemoveFriend(user)
-														: () => handleAddFriend(user)
-												}
-											>
-												{
-													// Display add friend or remove friend icon
-													friends.some((friend) => friend.id === user.id) ? (
-														<UserRoundX />
-													) : (
-														<UserRoundPlus />
-													)
-												}
-											</button>
-										)}
-									</div>
-								))}
+							<div className="absolute w-full mt-2 max-h-[490px] rounded-[5px] bg-hoverEffect text-black overflow-y-auto no-scrollbar">
+								{searchResult.map((user) =>
+									user.id !== appState.user_id ? (
+										<SearchResultItem
+											key={user.id}
+											user={user}
+											isFriend={friends.some((f) => f.id === user.id)}
+											onAddFriend={handleAddFriend}
+											onRemoveFriend={handleRemoveFriend}
+										/>
+									) : null,
+								)}
 							</div>
 						)}
 					</div>
@@ -253,19 +258,13 @@ function Profile() {
 					<h3 className="text-white text-lg font-bold mt-6 mb-4">Friends</h3>
 					<div className="flex flex-col gap-3">
 						{friends.map((friend) => (
-							<div key={friend.id} className="flex items-center gap-2">
-								<img
-									className="w-8 h-8 bg-gray-600 rounded-full"
-									src={fetchUserPfp(friend.id)}
-								/>
-								<span className="text-white text-sm">{friend.name}</span>
-							</div>
+							<FriendItem key={friend.id} friend={friend} />
 						))}
 					</div>
 				</div>
 			</div>
 		</div>
 	);
-}
+};
 
 export default Profile;

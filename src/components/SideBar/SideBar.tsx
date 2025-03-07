@@ -31,9 +31,7 @@ export const SidebarProvider: React.FC<PropsWithChildren> = ({ children }) => {
 		localStorage.setItem("isExtended", JSON.stringify(isExtended));
 	}, [isExtended]);
 
-	const toggleSidebar = () => {
-		setIsExtended((prev: any) => !prev);
-	};
+	const toggleSidebar = () => setIsExtended((prev: any) => !prev);
 
 	return (
 		<SidebarContext.Provider value={{ isExtended, toggleSidebar }}>
@@ -58,7 +56,7 @@ interface NavItemProps {
 	isExtended: boolean;
 }
 const NavItem = ({ to, icon, alt, label, isExtended }: NavItemProps) => {
-	const {lobbyState} = useLobbyProvider();
+	const { lobbyState } = useLobbyProvider();
 	const location = useLocation();
 	const isActive = location.pathname === to;
 
@@ -80,9 +78,11 @@ const NavItem = ({ to, icon, alt, label, isExtended }: NavItemProps) => {
 					{label}
 				</div>
 				{isActive && <div className={activeIndicatorClass}></div>}
-				{lobbyState.in_lobby && label === 'Lobby' && <div className={`h-1.5 w-1.5 bg-[#26f726] rounded-full ${isExtended ? "" : "absolute"}`}></div> }
-				
-				
+				{lobbyState.in_lobby && label === "Lobby" && (
+					<div
+						className={`h-1.5 w-1.5 bg-[#26f726] rounded-full ${isExtended ? "" : "absolute"}`}
+					></div>
+				)}
 			</div>
 		</Link>
 	);
@@ -96,7 +96,12 @@ function SideBar() {
 	const navItems = [
 		{ to: "/home", icon: Home, alt: "Home Icon", label: "Home" },
 		{ to: "/lobby", icon: Lobby, alt: "Friends Icon", label: "Lobby" },
-		{ to: "/playlists", icon: Playlist, alt: "Playlist Icon", label: "Playlists" },
+		{
+			to: "/playlists",
+			icon: Playlist,
+			alt: "Playlist Icon",
+			label: "Playlists",
+		},
 	];
 
 	return (
