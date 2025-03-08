@@ -1,34 +1,62 @@
-// ForgotPassword.tsx
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { SERVER_IP } from "@/const";
 
 // Assets
 import logo from "/navbar/LobicLogo.svg";
 
 function ForgotPassword() {
-	const [email, setEmail] = useState<string>("");
 	const navigate = useNavigate();
 
-	const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
+	const [email, setEmail] = useState<string>("");
+	const [error, setError] = useState<string>("");
+	
+	const handleResetPassword = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// Implement your password reset logic here
-		console.log("Reset link will be sent to: ", email);
-	};
 
+		let response = await fetch(`${SERVER_IP}/otp/resend/${email}`, {
+			method: "GET",
+			credentials: "include",
+		});
+
+		if (!response.ok) {
+			let msg = await response.text();
+			setError(msg);
+			return;
+		}
+
+		// Getting user through email
+		response = await fetch(`${SERVER_IP}/user/get_user_data?email=${email}`, {
+			method: "GET",
+			credentials: "include",
+		})
+
+		if (!response.ok) {
+			let msg = await response.text();
+			setError(msg);
+			return;
+		}
+
+		let user = await response.json();
+
+		// Go to otp page
+		navigate(`/otp_page/changepassword/${user.id}`);
+	};
+	
 	const handleBackToLogin = () => {
 		navigate("/login");
 	};
-
+	
 	return (
 		<div className="relative flex h-screen items-center justify-center">
 			{/* Logo Section */}
 			<div className="absolute left-0 top-0 p-4">
 				<img src={logo} alt="lobic_logo" className="h-auto w-[50px]" />
 			</div>
+
 			{/* Background Card */}
 			<div className="absolute h-[550px] w-[475px] rounded-xl bg-black/70" />
-
+			
 			{/* Forgot Password Form Container */}
 			<div className="flex flex-col absolute w-[400px] rounded-lg p-4 text-center">
 				<div>
@@ -36,7 +64,7 @@ function ForgotPassword() {
 						Forgot Password?
 					</p>
 					<p className="mb-8 font-mono text-sm text-white">
-						Enter your email address to receive a link to reset your password.
+						Enter your email address to receive an otp to reset your password.
 					</p>
 
 					<form onSubmit={handleResetPassword}>
@@ -55,7 +83,7 @@ function ForgotPassword() {
 								required
 								className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
 							/>
-						</div>
+					  </div>
 
 						{/* Submit Button */}
 						<div className="mt-6">
@@ -77,7 +105,14 @@ function ForgotPassword() {
 							Back to Login
 						</p>
 					</div>
-				</div>
+
+					{/* Error */}
+					{error &&
+						<div className="text-sl text-red-500">
+							{error}
+						</div>
+					}
+			  </div>
 			</div>
 		</div>
 	);

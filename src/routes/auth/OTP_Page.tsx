@@ -16,21 +16,41 @@ import { SERVER_IP } from "@/const";
 import { useAppProvider } from "providers/AppProvider";
 
 const OTP_Page = (): React.ReactElement => {
-	const { route } = useParams<{ route: string }>();
+	const { route, userId } = useParams<{ route: string, userId: string }>();
 
-	const { appState } = useAppProvider();
+	const { updateAppState } = useAppProvider();
 	const navigate = useNavigate();
 	const [value, setValue] = useState<string>("");
 	const [resMsg, setMsg] = useState<string>("");
 	const [color, setColor] = useState<string>("");
 
 	const verify_otp = async () => {
-		let response = await fetch(`${SERVER_IP}/otp/verify?user_id=${appState.user_id}&otp=${value}`, {
-			method: "GET",
+		let payload = {
+			user_id: userId,
+			otp: value,
+			for: "otp",
+		};
+
+		if (route === "home") {
+			payload.for = "email";
+		} else if (route === "changepassword") {
+			payload.for = "otp";
+		} else {
+			console.log(`Invalid route: ${route}`);
+		}
+
+		let response = await fetch(`${SERVER_IP}/otp/verify`, {
+			method: "POST",
 			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(payload),
 		});
 		
 		if (response.ok) {
+			// NOTE: Keeping the user id in app state even if the user is not logged in and i dont give a shit
+			updateAppState({ user_id: userId });
 			navigate(`/${route}`);
 		} else {
 			let msg = await response.text();
@@ -40,7 +60,7 @@ const OTP_Page = (): React.ReactElement => {
 	};
 
 	const resend_otp = async () => {
-		let response = await fetch(`${SERVER_IP}/otp/resend/${appState.user_id}`, {
+		let response = await fetch(`${SERVER_IP}/otp/resend/${userId}`, {
 			method: "GET",
 			credentials: "include",
 		});

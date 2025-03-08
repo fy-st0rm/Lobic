@@ -205,11 +205,9 @@ export const updateProfilePicture = async (
 export const getUserData = async (userId: string): Promise<User> => {
 	try {
 		// Make a GET request to fetch user data
-		const response = await fetch(`${SERVER_IP}/user/get_user_data/${userId}`, {
+		const response = await fetch(`${SERVER_IP}/user/get_user_data?user_id=${userId}`, {
 			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
+			credentials: "include",
 		});
 		// Check if the response is successful
 		if (!response.ok) {
