@@ -10,6 +10,7 @@ import { QueueProvider } from "providers/QueueProvider";
 import { NotificationProvider } from "providers/NotificationProvider";
 import { QueueStateProvider } from "@/components/Queue/queue";
 import { SidebarProvider } from "@/components/SideBar/SideBar";
+import { MusicListsProvider } from "./MusicListContextProvider";
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({
 	children,
@@ -23,7 +24,9 @@ export const Providers: React.FC<{ children: React.ReactNode }> = ({
 							<NotificationProvider>
 								<QueueStateProvider>
 									<SidebarProvider>
-										{children}
+										<MusicListsProvider>
+											{children}
+										</MusicListsProvider>
 									</SidebarProvider>
 								</QueueStateProvider>
 							</NotificationProvider>

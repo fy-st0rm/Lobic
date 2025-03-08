@@ -3,7 +3,7 @@ import { SERVER_IP } from "@/const";
 export interface SearchResponse{
 	songs: MusicResponse[];
 	people: UserDataResponse[];
-	playlist: Playlist[];
+	playlists: Playlist[];
   }
   
   interface UserDataResponse {
@@ -24,6 +24,7 @@ export interface SearchResponse{
   }
   
   interface Playlist {
+  [x: string]: any;
 	playlist_id: string;
 	playlist_name: string;
 	user_id: string;
