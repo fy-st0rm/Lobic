@@ -126,7 +126,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedSongId, setSelectedSongId] = useState<string | null>(null);
 	const [usernames, setUsernames] = useState<UserCache>({});
-	const { updateMusicState } = useMusicProvider();
+	const { updateMusicState, controlsDisabled } = useMusicProvider();
 	const { queue, clearQueue, dequeue, updateQueue } = useQueueProvider();
 	useEffect(() => {
 		const fetchUsernames = async () => {
@@ -157,6 +157,8 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 
 	const handleSongClick = async (item: Song, index: number): Promise<void> => {
 		try {
+			if (controlsDisabled) return;
+
 			const remainingSongs = songs.slice(index, songs.length);
 			setIsLoading(true);
 			setSelectedSongId(item.music_id);

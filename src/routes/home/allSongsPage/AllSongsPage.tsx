@@ -128,7 +128,7 @@ const AllSongsPage: React.FC = () => {
 	
 	const { appState } = useAppProvider();
 	const { enqueue, clearQueue, updateQueue } = useQueueProvider();
-	const { clearMusicState, updateMusicState } = useMusicProvider();
+	const { clearMusicState, updateMusicState, controlsDisabled } = useMusicProvider();
 
 	// Fetch songs based on list type
 	const fetchSongs = async (start_index: number, page_length: number) => {
@@ -219,6 +219,8 @@ const AllSongsPage: React.FC = () => {
 	// Play a song
 	const handleSongPlay = useCallback(
 		(song: Song) => {
+			if (controlsDisabled) return;
+
 			setSelectedSongId(song.id);
 			clearMusicState();
 			clearQueue();
@@ -235,7 +237,10 @@ const AllSongsPage: React.FC = () => {
 
 	// Add to queue
 	const handleAddToQueue = useCallback(
-		(song: Song) => enqueue(song),
+		(song: Song) => {
+			if (controlsDisabled) return;
+			enqueue(song);
+		},
 		[enqueue],
 	);
 
@@ -272,6 +277,8 @@ const AllSongsPage: React.FC = () => {
 
 	// Play all songs
 	const playAllSongs = useCallback(() => {
+		if (controlsDisabled) return;
+
 		clearQueue();
 		if (songs.length === 0) return;
 		clearMusicState();

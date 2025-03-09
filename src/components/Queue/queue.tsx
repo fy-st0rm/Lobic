@@ -44,7 +44,7 @@ export const useQueueState = () => {
 function Queue() {
 	const { isVisible, toggleQueue} = useQueueState();
 	const { queue,dequeue, dequeueUntil } = useQueueProvider();
-	const { musicState,updateMusicState } = useMusicProvider();
+	const { musicState,updateMusicState, controlsDisabled } = useMusicProvider();
 	const [heights, setHeights] = useState([5, 4, 2]);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
 	useEffect(() => {
@@ -52,11 +52,15 @@ function Queue() {
 			setIsPlaying(true);
 		} else if (musicState.state === MPState.PAUSE) {
 			setIsPlaying(false);
+		} else if (musicState.state === MPState.EMPTY) {
+			setIsPlaying(false);
 		}
 	}, [musicState.state]);
 	
 	const handleMusicClick = async (song: Song): Promise<void> => {
 		try {
+			if (controlsDisabled) return;
+
 			updateMusicState({
 				id: song.id,
 				title: song.title,

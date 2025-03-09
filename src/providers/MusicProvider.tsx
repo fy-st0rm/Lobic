@@ -101,7 +101,7 @@ export const MusicProvider: FC<{ children: React.ReactNode }> = ({
 	children,
 }): React.ReactElement => {
 	const [musicState, setMusicState] = useState<MusicState>(loadMusicState);
-	const [controlsDisabled, setControlsDisabled] = useState<boolean>(true);
+	const [controlsDisabled, setControlsDisabled] = useState<boolean>(false);
 	const audioRef = useRef<HTMLAudioElement>(null);
 
 	const updateMusicState = (state: Partial<MusicState>) => {

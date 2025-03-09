@@ -165,8 +165,8 @@ const Playlist: React.FC = () => {
 	const [isUpdating, setIsUpdating] = useState<boolean>(false); // Upload status
 
 	const [timestamp, setTimestamp] = useState<number>(Date.now());
+	const { clearMusicState, controlsDisabled } = useMusicProvider();
 	const { updateQueue, clearQueue } = useQueueProvider();
-	const { clearMusicState } = useMusicProvider();
 	const navigate = useNavigate();
 
 	const [userData, setUserData] = useState<User>({
@@ -220,6 +220,8 @@ const Playlist: React.FC = () => {
 	}, [playlistId]);
 
 	const playAllSongs = (): void => {
+		if (controlsDisabled) return;
+
 		clearMusicState();
 		clearQueue();
 		if (playlistData) {
