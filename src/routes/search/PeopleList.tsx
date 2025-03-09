@@ -9,7 +9,7 @@ const ProfilePicture: React.FC<{
 		<img
 			src={imageUrl}
 			alt="User Profile"
-			className="w-[100px] h-[100px] rounded-full object-cover"
+			className="w-36 h-36 rounded-full object-cover"
 		/>
 	</div>
 );
@@ -48,16 +48,17 @@ const PeopleList: React.FC<{ people: UserDataResponse[] }> = ({ people }) => {
 	}, [people]);
 
 	return (
-		<div className="people-list">
+		<div className="people-list flex gap-2 mx-7 my-3">
 			{people.map((person: UserDataResponse) => (
 				<div
 					key={person.user_id}
-					className="person-item flex items-center gap-4 mb-4"
+					className="person-item flex flex-col gap-1 mb-4 p-3 hover:bg-opacity-50 hover:bg-secondary rounded-md"
 				>
 					<ProfilePicture
 						imageUrl={profilePictures[person.user_id] || "/sadit.jpg"}
 					/>
-					{person.username && <span>{person.username}</span>}
+					<div className="text-center font-normal">{person.username && <span>{person.username}</span>}</div>
+					
 				</div>
 			))}
 		</div>

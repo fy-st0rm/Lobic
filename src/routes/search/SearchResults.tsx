@@ -32,6 +32,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ category, query }) => {
 		fetchData();
 	}, [param, query]);
 
+
 	const handleMusicClick = async (song: Song): Promise<void> => {
 		try {
 			updateMusicState({
@@ -81,7 +82,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ category, query }) => {
 					<div className="text-xl text-primary_fg font-semibold mx-7 mt-2">
 						Playlists
 					</div>
-					<div className="flex flex-wrap">
+					<div className="flex flex-wrap mx-3">
 						{searchResults?.playlists.map((playlist: Playlist) => (
 							<PlaylistCard key={playlist.playlist_id} playlist={playlist} />
 						))}
@@ -127,7 +128,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ category, query }) => {
 				</div>
 			)}
 			{category === "Playlists" && (
-				<div className="flex flex-wrap">
+				<div className="flex flex-wrap ">
 					{searchResults?.playlists.map((playlist: Playlist) => (
 						<PlaylistCard key={playlist.playlist_id} playlist={playlist} />
 					))}
