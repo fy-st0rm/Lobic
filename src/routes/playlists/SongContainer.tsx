@@ -187,7 +187,7 @@ const SongContainer: React.FC<SongContainerProps> = ({ playlistId, songs }) => {
 	};
 
 	return (
-		<div className="">
+		<div className="ml-5 my-5">
 			<SongHeader />
 			<SongList
 				songs={songs}
