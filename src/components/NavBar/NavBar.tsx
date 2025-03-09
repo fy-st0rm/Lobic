@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import SearchBar from "@/components/Search/SearchBar";
+import SearchBar from "@/routes/search/SearchBar";
 import { OpCode, wsSend } from "api/socketApi.ts";
 import { fetchUserProfilePicture, logoutUser } from "@/api/user/userApi";
 import { AppState, useAppProvider } from "providers/AppProvider";

@@ -15,7 +15,7 @@ import SideBar from "@/components/SideBar/SideBar";
 import MusicPlayer from "@/components/MusicPlayer/MusicPlayer";
 import NavBar from "components/NavBar/NavBar";
 import NotFound from "@/components/NotFound";
-import ResultsPage from "@/components/Search/ResultsPage";
+import ResultsPage from "@/routes/search/ResultsPage";
 import Queue from "@/components/Queue/queue";
 
 // Auth Pages
@@ -68,11 +68,14 @@ function App(): React.ReactElement {
 				<Route path="/otp_page/:route/:userId" element={<OTP_Page />} />
 				<Route path="/forgotpassword" element={<ForgotPassword />} />
 
-				<Route path="/changepassword" element={
-					<OTPVerify>
-						<ChangePassword />
-					</OTPVerify>
-				} />
+				<Route
+					path="/changepassword"
+					element={
+						<OTPVerify>
+							<ChangePassword />
+						</OTPVerify>
+					}
+				/>
 
 				<Route
 					element={

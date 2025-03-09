@@ -14,26 +14,35 @@ import {
 	fetchPlaylistCoverImg,
 	deletePlaylist,
 } from "../../api/playlist/playlistApi";
+
+import Pencil from "/profile/pencil.svg";
 import Play from "/playlistcontrols/Pause.svg";
 import Trash from "/playlistcontrols/Trash.svg";
+import UploadModal from "@/components/UploadModal";
 
 // Component for playlist cover image and edit functionality
 interface PlaylistCoverProps {
 	coverUrl: string;
 	timestamp: number;
-	onImageChange: (event: ChangeEvent<HTMLInputElement>) => void;
+	onEditClick: () => void;
 }
 const PlaylistCover: React.FC<PlaylistCoverProps> = ({
 	coverUrl,
 	timestamp,
-	onImageChange,
+	onEditClick,
 }) => (
-	<div className="h-60 w-60">
+	<div className="h-60 w-60 relative">
 		<img
 			src={`${coverUrl}?t=${timestamp}`}
-			className="w-full h-full rounded-md"
+			className="w-full h-full rounded-md object-cover"
 			alt="Playlist Cover"
 		/>
+		<button
+			className="absolute bottom-2 right-2 bg-primary p-2 rounded-full hover:bg-darker h-10 w-10 flex items-center justify-center cursor-pointer"
+			onClick={onEditClick}
+		>
+			<img src={Pencil} alt="Edit Cover" />
+		</button>
 	</div>
 );
 
@@ -123,6 +132,12 @@ const Playlist: React.FC = () => {
 	const [playlistCover, setPlaylistCover] = useState<string>(
 		"/playlistimages/playlistimage.png",
 	);
+
+	//states for updating the cover_image
+	const [showModal, setShowModal] = useState<boolean>(false); // Modal state
+	const [selectedImage, setSelectedImage] = useState<File | null>(null); // Selected image
+	const [isUpdating, setIsUpdating] = useState<boolean>(false); // Upload status
+
 	const [timestamp, setTimestamp] = useState<number>(Date.now());
 	const [username, setUsername] = useState<string>("");
 	const [user1Pfp, setUser1Pfp] = useState<string>("/sadit.jpg");
@@ -185,23 +200,31 @@ const Playlist: React.FC = () => {
 		}
 	};
 
-	const handleImageChange = async (
-		event: ChangeEvent<HTMLInputElement>,
-	): Promise<void> => {
+	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
-		if (!file || !playlistId) return;
+		if (file) setSelectedImage(file);
+	};
+	const handleUpload = async () => {
+		if (!selectedImage || !playlistId) {
+			alert("Please select an image first.");
+			return;
+		}
 
 		try {
-			const tempImageUrl: string = URL.createObjectURL(file);
-			setPlaylistCover(tempImageUrl);
+			setIsUpdating(true);
+			const tempImageUrl: string = URL.createObjectURL(selectedImage);
+			setPlaylistCover(tempImageUrl); // Preview immediately
 			await updatePlaylistCoverImg(playlistId, tempImageUrl);
-			setTimestamp(Date.now());
 			const newImageUrl: string = `${await fetchPlaylistCoverImg(playlistId)}?t=${Date.now()}`;
 			setPlaylistCover(newImageUrl);
+			setTimestamp(Date.now());
 			URL.revokeObjectURL(tempImageUrl);
+			setShowModal(false);
 		} catch (error) {
 			console.error("Error updating playlist cover image:", error);
 			setPlaylistCover("/playlistimages/playlistimage.png");
+		} finally {
+			setIsUpdating(false);
 		}
 	};
 
@@ -211,7 +234,7 @@ const Playlist: React.FC = () => {
 				<PlaylistCover
 					coverUrl={playlistCover}
 					timestamp={timestamp}
-					onImageChange={handleImageChange}
+					onEditClick={() => setShowModal(true)}
 				/>
 				<div>
 					<PlaylistInfo playlistData={playlistData} />
@@ -234,6 +257,15 @@ const Playlist: React.FC = () => {
 					songs={playlistData?.songs || []}
 				/>
 			</div>
+
+			<UploadModal
+				showModal={showModal}
+				onClose={() => setShowModal(false)}
+				onFileChange={handleFileChange}
+				onUpload={handleUpload}
+				isUpdating={isUpdating}
+				title="Upload Playlist Cover" // Custom title for playlist
+			/>
 		</>
 	);
 };

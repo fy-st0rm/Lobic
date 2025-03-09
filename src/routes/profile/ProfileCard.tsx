@@ -4,14 +4,16 @@ import {
 	fetchUserProfilePicture,
 } from "@/api/user/userApi";
 import Pencil from "/profile/pencil.svg";
+import UploadModal from "@/components/UploadModal";
 
-// Profile Picture Component
+// ProfilePicture and UserInfo components remain unchanged
 interface ProfileCardProps {
 	usertag: string;
 	username: string;
 	friendcount: number;
 	user_uuid: string;
 }
+
 const ProfilePicture: React.FC<{
 	imageUrl: string;
 	onEditClick: () => void;
@@ -32,7 +34,6 @@ const ProfilePicture: React.FC<{
 	</div>
 );
 
-// User Info Component
 const UserInfo: React.FC<{
 	usertag: string;
 	username: string;
@@ -49,46 +50,6 @@ const UserInfo: React.FC<{
 	</div>
 );
 
-// Upload Modal Component
-const UploadModal: React.FC<{
-	showModal: boolean;
-	onClose: () => void;
-	onFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
-	onUpload: () => void;
-	isUpdating: boolean;
-}> = ({ showModal, onClose, onFileChange, onUpload, isUpdating }) =>
-	showModal && (
-		<div className="fixed top-0 left-0 w-full h-full bg-primary bg-opacity-80 flex justify-center items-center z-50">
-			<div className="bg-secondary bg-opacity-98 p-8 rounded-xl shadow-lg max-w-md w-full text-center">
-				<h2 className="text-2xl font-semibold text-white mb-6">
-					Upload Profile Picture
-				</h2>
-				<input
-					type="file"
-					accept="image/*"
-					onChange={onFileChange}
-					className="mb-6 text-gray-300"
-				/>
-				<div className="flex justify-center space-x-4">
-					<button
-						className="bg-button hover:bg-button_hover text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105"
-						onClick={onUpload}
-						disabled={isUpdating}
-					>
-						{isUpdating ? "Uploading..." : "Upload"}
-					</button>
-					<button
-						className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105"
-						onClick={onClose}
-					>
-						Cancel
-					</button>
-				</div>
-			</div>
-		</div>
-	);
-
-// Main ProfileCard Component
 const ProfileCard: React.FC<ProfileCardProps> = ({
 	usertag,
 	username,
