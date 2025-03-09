@@ -23,21 +23,29 @@ import { useSocketProvider } from "providers/SocketProvider";
 
 export type QueueContextType = {
 	queue: MusicTrack[];
+	reverseQueue: MusicTrack[];
 	updateQueue: (queue: MusicTrack[]) => void;
 	enqueue: (track: MusicTrack) => void;
 	dequeue: () => MusicTrack | null;
 	dequeueUntil: (trackId: string) => void,
 	clearQueue: () => void;
+	dequeueReverse: () => MusicTrack | null;
+	enqueueReverse: (track: MusicTrack) => void;
+	enqueueWhenReversed: (track: MusicTrack) => void
 };
 
 // Creating context width default values will be assigned later in providers
 const defaultContext: QueueContextType = {
 	queue: [],
+	reverseQueue: [],
 	updateQueue: () => {},
 	enqueue: () => {},
 	dequeue: () => null,
 	dequeueUntil: () => {},
 	clearQueue: () => {},
+	dequeueReverse: () => null,
+	enqueueReverse: () => {},
+	enqueueWhenReversed: ()=>{}
 };
 
 const QueueContext = createContext<QueueContextType>(defaultContext);
@@ -60,6 +68,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 	const { getSocket } = useSocketProvider();
 
 	const [queue, setQueue] = useState<MusicTrack[]>(loadQueueState);
+	const [reverseQueue, setReverseQueue] = useState<MusicTrack[]>([]);
 
 	useEffect(() => {
 		if (lobbyState.in_lobby && lobbyState.is_host) {
@@ -96,6 +105,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 				image_url: track.image_url,
 				state: MPState.CHANGE_MUSIC,
 			});
+			enqueueReverse(track);
 			dequeue();
 		}
 	}, [queue]);
@@ -110,6 +120,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		});
 	};
 
+
 	const enqueue = (track: MusicTrack) => {
 		setQueue((prevQueue) => {
 			let newQueue: MusicTrack[] = [...prevQueue, track];
@@ -120,12 +131,36 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 			return newQueue;
 		});
 	};
+	
+	const enqueueReverse = (track: MusicTrack) => {
+		setReverseQueue((prevQueue) => {
+			let newQueue: MusicTrack[] = [track, ...prevQueue];
+			return newQueue;
+		});
+
+		return track;
+	};
+	const dequeueReverse = () => {
+		if (reverseQueue.length === 0) return null;
+		const [first, ...rest] =  reverseQueue;
+		enqueue(first);
+		setReverseQueue(rest);
+		return first;
+	}
+	const enqueueWhenReversed = (track: MusicTrack) => {
+		setQueue((prevQueue) => {
+			let newQueue: MusicTrack[] = [track, ...prevQueue];
+			const newState = {
+				queue: newQueue,
+			};
+			sessionStorage.setItem("QueueState", JSON.stringify(newState));
+			return newQueue;
+		});
+	};
 
 	const dequeue = (): MusicTrack | null => {
 		if (queue.length === 0) return null;
-
 		const [first, ...rest] = queue;
-
 		updateQueue(rest);
 		return first;
 	};
@@ -135,8 +170,18 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 			let newQueue = prevQueue;
 
 			let idx = prevQueue.findIndex(track => track.id === trackId);
+			prevQueue.map((track, index) => {
+				if (index < idx) {
+					enqueueReverse(track);
+				}
+			});
+			console.log(reverseQueue);
+
+		
 			if (idx !== -1) {
+				
 				newQueue = prevQueue.slice(idx+1)
+				
 			}
 
 			const newState = {
@@ -155,11 +200,17 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 		<QueueContext.Provider
 			value={{
 				queue,
+				reverseQueue,
 				updateQueue,
 				enqueue,
 				dequeue,
 				dequeueUntil,
 				clearQueue,
+				dequeueReverse,
+				enqueueReverse,
+				enqueueWhenReversed
+				
+				
 			}}
 		>
 			{children}
