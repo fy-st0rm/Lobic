@@ -49,30 +49,35 @@ const SearchResults: React.FC<SearchResultsProps> = ({ category, query }) => {
 		<>
 			{category === "All" && (
 				<>
-					<div className="text-xl text-primary_fg font-semibold mx-7 mt-2">
-						Songs
-					</div>
-					<div className="flex flex-wrap mx-3">
-						{searchResults?.songs.map((song) => (
-							<div className="flex">
-								<Music
-									musicId={song.id}
-									title={song.title}
-									artist={song.artist}
-									album={song.album}
-									image_url={song.image_url}
-									onClick={() =>
-										handleMusicClick({
-											...song,
-											music_id: song.id,
-											song_added_date_time: new Date().toISOString(),
-											song_adder_id: "default_adder_id",
-										})
-									}
-								/>
+					{searchResults && searchResults.songs.length > 0 && (
+						<>
+							<div className="text-xl text-primary_fg font-semibold mx-7 mt-2">
+								Songs
 							</div>
-						))}
-					</div>
+							<div className="flex flex-wrap mx-3">
+								{searchResults?.songs.map((song) => (
+									<div className="flex">
+										<Music
+											musicId={song.id}
+											title={song.title}
+											artist={song.artist}
+											album={song.album}
+											image_url={song.image_url}
+											onClick={() =>
+												handleMusicClick({
+													...song,
+													music_id: song.id,
+													song_added_date_time: new Date().toISOString(),
+													song_adder_id: "default_adder_id",
+												})
+											}
+										/>
+									</div>
+								))}
+							</div>
+						</>
+					)}
+
 					<div className="text-xl text-primary_fg font-semibold mx-7 mt-2">
 						Playlists
 					</div>
