@@ -39,7 +39,9 @@ const Lobby = (): React.ReactElement => {
 		// Requesting the lobby ids
 		const payload: SocketPayload = {
 			op_code: OpCode.GET_LOBBY_IDS,
-			value: "empty",
+			value: {
+				user_id: appState.user_id
+			},
 		};
 		wsSend(getSocket(), payload);
 	}, []);
