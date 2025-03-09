@@ -2,7 +2,6 @@ import { SERVER_IP } from "@/const";
 
 // Define and export types
 export interface Playlist {
-	cover_image: any;
 	playlist_id: string;
 	playlist_name: string;
 	is_playlist_combined: boolean;

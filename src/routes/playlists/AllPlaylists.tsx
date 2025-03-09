@@ -129,34 +129,57 @@ const PlaylistAdder: React.FC<PlaylistAdderProps> = ({
 // PlaylistCard component
 interface PlaylistCardProps {
 	playlist: Playlist;
-	coverImage?: string;
-	onClick: (playlist: Playlist) => void;
 }
 
-const PlaylistCard: React.FC<PlaylistCardProps> = ({
-	playlist,
-	coverImage,
-	onClick,
-}) => (
-	<div
-		onClick={() => onClick(playlist)}
-		className="flex flex-col p-3 m-1 rounded-md transition-all  hover:bg-secondary hover:bg-opacity-80 overflow-hidden"
-	>
-		<div className="h-44 w-44 flex-shrink-0">
-			<img
-				className="rounded-lg shadow-lg h-full w-full object-cover"
-				src={coverImage}
-				alt={playlist.playlist_name}
-			/>
+export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
+	const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
+	const navigate = useNavigate();
+
+	const handlePlaylistClick = (playlist: Playlist) => {
+		navigate(`/playlist/${playlist.playlist_id}`, {
+			state: { playlistData: playlist },
+		});
+	};
+
+	// Fetch the cover image when the component mounts or playlist changes
+	useEffect(() => {
+		const loadCoverImage = async () => {
+			try {
+				const coverUrl = await fetchPlaylistCoverImg(playlist.playlist_id);
+				setCoverImage(coverUrl);
+			} catch (error) {
+				console.error(
+					`Error fetching cover image for playlist ${playlist.playlist_id}:`,
+					error,
+				);
+				setCoverImage(undefined); // Fallback to undefined if fetch fails
+			}
+		};
+
+		loadCoverImage();
+	}, [playlist.playlist_id]);
+
+	return (
+		<div
+			onClick={() => handlePlaylistClick(playlist)}
+			className="flex flex-col p-3 m-1 rounded-md transition-all hover:bg-secondary hover:bg-opacity-80 overflow-hidden"
+		>
+			<div className="h-44 w-44 flex-shrink-0">
+				<img
+					className="rounded-lg shadow-lg h-full w-full object-cover"
+					src={coverImage || "/playlistimages/playlistimage.png"}
+					alt={playlist.playlist_name}
+				/>
+			</div>
+			<div className="text-sm font-semibold m-0 self-start pt-1 px-1 text-primary_fg truncate">
+				{playlist.playlist_name}
+			</div>
+			<div className="text-sm opacity-75 m-0 px-1 self-start text-primary_fg truncate">
+				{playlist.is_playlist_combined ? "Combined Playlist" : "Solo Playlist"}
+			</div>
 		</div>
-		<div className="text-sm font-semibold m-0 self-start pt-1 px-1 text-primary_fg truncate">
-			{playlist.playlist_name}
-		</div>
-		<div className="text-sm opacity-75 m-0 px-1 self-start text-primary_fg truncate">
-			{playlist.is_playlist_combined ? "Combined Playlist" : "Solo Playlist"}
-		</div>
-	</div>
-);
+	);
+};
 
 // CreatePlaylistButton component
 interface CreatePlaylistButtonProps {
@@ -180,7 +203,6 @@ const CreatePlaylistButton: React.FC<CreatePlaylistButtonProps> = ({
 function AllPlaylists() {
 	const { appState } = useAppProvider();
 	const currentUserId = appState.user_id;
-	const navigate = useNavigate();
 
 	// State management
 	const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -246,12 +268,6 @@ function AllPlaylists() {
 		}
 	};
 
-	const handlePlaylistClick = (playlist: Playlist) => {
-		navigate(`/playlist/${playlist.playlist_id}`, {
-			state: { playlistData: playlist },
-		});
-	};
-
 	// Reset modal state
 	const closePlaylistAdder = () => {
 		setShowPlaylistAdder(false);
@@ -265,12 +281,7 @@ function AllPlaylists() {
 			<div className="mt-3 w-full flex flex-wrap overflow-y-auto px-2">
 				{playlists.length > 0 &&
 					playlists.map((playlist) => (
-						<PlaylistCard
-							key={playlist.playlist_id}
-							playlist={playlist}
-							coverImage={playlistCovers[playlist.playlist_id]}
-							onClick={handlePlaylistClick}
-						/>
+						<PlaylistCard key={playlist.playlist_id} playlist={playlist} />
 					))}
 
 				<CreatePlaylistButton onClick={() => setShowPlaylistAdder(true)} />
