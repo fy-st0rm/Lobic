@@ -5,8 +5,8 @@ import Music from "@/routes/home/Music";
 import { useMusicProvider, MusicState } from "@/providers/MusicProvider";
 import { MPState } from "@/api/music/musicApi";
 import { Playlist, Song } from "@/api/playlist/playlistApi";
-import { useNavigate } from "react-router-dom";
 import { PlaylistCard } from "@/routes/playlists/AllPlaylists";
+import PeopleList from "./PeopleList";
 interface SearchResultsProps {
 	category: string;
 	query: string;
@@ -18,7 +18,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({ category, query }) => {
 	);
 	const param = category.toLowerCase();
 	const { updateMusicState } = useMusicProvider();
-	const navigate = useNavigate();
 	useEffect(() => {
 		const fetchData = async () => {
 			let data;
@@ -85,11 +84,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({ category, query }) => {
 					<div className="text-xl text-primary_fg font-semibold mx-7 mt-2">
 						People
 					</div>
-					{searchResults?.people.map((user) => (
-						<div>
-							<h1>{user.username}</h1>
-						</div>
-					))}
+					<div className="flex flex-wrap">
+						{searchResults && searchResults.people.length > 0 && (
+							<PeopleList people={searchResults?.people} />
+						)}
+					</div>
 				</>
 			)}
 			{category === "Songs" && (
@@ -116,13 +115,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({ category, query }) => {
 				</div>
 			)}
 			{category === "People" && (
-				<>
-					{searchResults?.people.map((user) => (
-						<div>
-							<h1>{user.username}</h1>
-						</div>
-					))}
-				</>
+				<div className="flex flex-wrap">
+					{searchResults && searchResults.people.length > 0 && (
+						<PeopleList people={searchResults?.people} />
+					)}
+				</div>
 			)}
 			{category === "Playlists" && (
 				<div className="flex flex-wrap">

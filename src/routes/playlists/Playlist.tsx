@@ -257,7 +257,6 @@ const Playlist: React.FC = () => {
 					songs={playlistData?.songs || []}
 				/>
 			</div>
-
 			<UploadModal
 				showModal={showModal}
 				onClose={() => setShowModal(false)}
