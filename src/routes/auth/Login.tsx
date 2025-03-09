@@ -1,7 +1,7 @@
 // Node modules
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Eye, EyeOff } from "lucide-react";
 
 // Local
 import { performLogin, initClientState } from "@/api/user/userApi";
@@ -13,6 +13,7 @@ import logo from "/navbar/LobicLogo.svg";
 function Login() {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [showPassword, setShowPassword] = useState(false);
 	const [isError, setIsError] = useState<boolean>(false);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 
@@ -40,6 +41,10 @@ function Login() {
 	const handleForgotPassword = () => {
 		navigate("/forgotpassword");
 	};
+	const togglePasswordVisibility = () => {
+		setShowPassword(!showPassword);
+	};
+
 
 	return (
 		<div className="relative flex h-screen items-center justify-center">
@@ -75,16 +80,28 @@ function Login() {
 							<p className="mb-1 ml-8 text-left font-mono text-white font-semibold">
 								Password
 							</p>
-							<input
-								type="password"
-								className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-								placeholder="Enter your password"
-								value={password}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setPassword(e.target.value)
-								}
-								required
-							/>
+							<div className="relative mx-auto w-5/6">
+								<input
+									type={showPassword ? "text" : "password"}
+									className="w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+									placeholder="Enter your password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									required
+								/>
+								<button
+									type="button"
+									onClick={togglePasswordVisibility}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+									aria-label={showPassword ? "Hide password" : "Show password"}
+								>
+									{showPassword ? (
+										<EyeOff className="h-4 w-4" />
+									) : (
+										<Eye className="h-4 w-4" />
+									)}
+								</button>
+							</div>
 						</div>
 
 						{isError && (

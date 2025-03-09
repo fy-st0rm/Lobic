@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { initClientState, performLogin, signupUser } from "@/api/user/userApi";
 import logo from "/navbar/LobicLogo.svg";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import { useAppProvider } from "@/providers/AppProvider";
 
 function Signup() {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [showPassword, setShowPassword] = useState(false);
 	const [confirmPassword, setConfirmPassword] = useState<string>("");
 	const [isError, setIsError] = useState<boolean>(false);
 	const [errorMsg, setErrorMsg] = useState<string>("");
@@ -33,6 +34,9 @@ function Signup() {
 
 	const handleLoginRedirect = () => {
 		navigate("/login");
+	};
+	const togglePasswordVisibility = () => {
+		setShowPassword(!showPassword);
 	};
 
 	return (
@@ -68,8 +72,9 @@ function Signup() {
 							<p className="mb-1 ml-8 text-left font-mono text-sm text-white font-semibold">
 								Password
 							</p>
+							<div className="">
 							<input
-								type="password"
+								type={showPassword ? "text" : "password"}
 								className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
 								placeholder="Enter your password"
 								value={password}
@@ -78,12 +83,25 @@ function Signup() {
 								}
 								required
 							/>
+							<button
+									type="button"
+									onClick={togglePasswordVisibility}
+									className="absolute top-[183px] right-14 text-gray-500 hover:text-gray-700 focus:outline-none"
+									aria-label={showPassword ? "Hide password" : "Show password"}
+								>
+									{showPassword ? (
+										<EyeOff className="h-4 w-4" />
+									) : (
+										<Eye className="h-4 w-4" />
+									)}
+								</button>
+							</div>
 
 							<p className="mb-1 ml-8 text-left font-mono text-sm text-white font-semibold">
 								Confirm Password
 							</p>
 							<input
-								type="password"
+								type={showPassword ? "text" : "password"}
 								className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
 								placeholder="Confirm your password"
 								value={confirmPassword}
