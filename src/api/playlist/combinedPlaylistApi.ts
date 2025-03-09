@@ -27,6 +27,7 @@ export const addContributor = async (
 		}
 		return result;
 	} catch (error) {
+		console.log(error);
 		throw error;
 	}
 };
@@ -35,18 +36,18 @@ interface FetchContributorsResponse {
 	playlist_owner: string;
 	contributors: { contributor_user_id: string }[];
 }
+
 export const fetchAllContributors = async (
 	playlist_id: string,
 ): Promise<FetchContributorsResponse> => {
 	try {
 		const response = await fetch(
-			`${SERVER_IP}/playlist/combined/fetch_all_contributors`,
+			`${SERVER_IP}/playlist/combined/fetch_all_contributors?playlist_id=${encodeURIComponent(playlist_id)}`,
 			{
-				method: "POST",
+				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(`playlist_id:${playlist_id}`),
 			},
 		);
 		if (!response.ok) {
@@ -56,6 +57,7 @@ export const fetchAllContributors = async (
 		const result = await response.json();
 		return result as FetchContributorsResponse;
 	} catch (error) {
+		console.log(error);
 		throw error;
 	}
 };
@@ -85,6 +87,7 @@ export const removeContributor = async (
 		}
 		return result;
 	} catch (error) {
+		console.log(error);
 		throw error;
 	}
 };

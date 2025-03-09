@@ -139,18 +139,17 @@ const SearchResultList: React.FC<SearchResultListProps> = ({
 const Profile: React.FC = () => {
 	const { appState } = useAppProvider();
 	const { addTempNotif } = useNotificationProvider();
+	const [inputValue, setInputValue] = useState<string>("");
+	const [searchResult, setSearchResult] = useState<User[]>([]);
+	const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+
+	// Fetch user data
 	const [userData, setUserData] = useState<User>({
 		id: "",
 		username: "",
 		email: "",
 		pfp: "",
 	});
-	const [friends, setFriends] = useState<Friend[]>([]);
-	const [inputValue, setInputValue] = useState<string>("");
-	const [searchResult, setSearchResult] = useState<User[]>([]);
-	const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-
-	// Fetch user data
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
@@ -164,6 +163,7 @@ const Profile: React.FC = () => {
 	}, [appState.user_id]);
 
 	// Fetch friends
+	const [friends, setFriends] = useState<Friend[]>([]);
 	useEffect(() => {
 		const loadFriends = async () => {
 			try {
