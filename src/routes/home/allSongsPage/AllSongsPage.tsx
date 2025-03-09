@@ -279,6 +279,7 @@ const AllSongsPage: React.FC = () => {
 	const playAllSongs = useCallback(() => {
 		if (controlsDisabled) return;
 
+		clearQueue();
 		if (songs.length === 0) return;
 		clearMusicState();
 		const newQueue = songs.map(song => ({
@@ -286,7 +287,8 @@ const AllSongsPage: React.FC = () => {
 			image_url: song.image_url,
 		}));
 		updateQueue(newQueue);
-	}, [songs, clearMusicState, updateQueue]);
+		
+	}, [songs, clearMusicState, updateQueue,clearQueue]);
 
 	return (
 		<MusicListsProvider>

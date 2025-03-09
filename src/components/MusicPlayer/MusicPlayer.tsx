@@ -23,6 +23,7 @@ import placeholder_logo from "/covers/cover.jpg";
 import likedSong from "/controlbar/favourite.svg";
 import likedSongFilled from "/controlbar/favouriteFilled.svg";
 import Queue from "/controlbar/queue.svg";
+import { Music } from "lucide-react";
 
 const formatTime = (time: number) => {
 	const minutes = Math.floor(time / 60);
@@ -110,16 +111,18 @@ const ControlBar = ({
 	controlsDisabled,
 	onPlayPause,
 	onNext,
+	onPrev,
 }: {
 	isPlaying: boolean;
 	isLoading: boolean;
 	controlsDisabled: boolean;
 	onPlayPause: () => void;
 	onNext: () => void;
+	onPrev: () =>void;
 }) => {
 	return (
 		<div className="mt-[5px] flex h-full w-full justify-center">
-			<button className="control-button" disabled={controlsDisabled}>
+			<button className="control-button" disabled={controlsDisabled} onClick={onPrev}>
 				<img
 					src={previousButton}
 					alt="Previous"
@@ -246,7 +249,7 @@ function MusicPlayer() {
 	const { appState } = useAppProvider();
 	const { getSocket } = useSocketProvider();
 	const { audioRef, musicState, controlsDisabled, updateMusicState } = useMusicProvider();
-	const { queue, enqueue, dequeue } = useQueueProvider();
+	const { queue, enqueue, dequeue, dequeueReverse, reverseQueue, enqueueReverse, enqueueWhenReversed} = useQueueProvider();
 	const { isVisible, toggleQueue } = useQueueState();
 
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -255,6 +258,23 @@ function MusicPlayer() {
 	const [initialVolume, setInitialVolume] = useState(musicState.volume);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSongLiked, setIsSongLiked] = useState(false);
+
+	const [currentTrack, setCurrentTrack] = useState<MusicTrack>();
+
+	useEffect(() => {
+		// Update currentTrack whenever the musicState changes
+		if (musicState.id) {
+			setCurrentTrack({
+				id: musicState.id,
+				title: musicState.title || "",
+				artist: musicState.artist || "",
+				album: musicState.album || "",
+				image_url: musicState.image_url || '',
+				duration: musicState.duration || 0
+			});
+		} else {
+		}
+	}, [musicState.id, musicState.title, musicState.artist, musicState.album, musicState.image_url, musicState.duration]);
 
 	useEffect(() => {
 		if (appState.user_id && musicState.id) {
@@ -315,6 +335,7 @@ function MusicPlayer() {
 		} else if (musicState.state === MPState.PAUSE) {
 			setIsPlaying(false);
 		}
+	
 	}, [musicState.state]);
 
 	// Sync UI timestamp with the music state time
@@ -401,10 +422,27 @@ function MusicPlayer() {
 				image_url: nextTrack.image_url,
 				state: MPState.CHANGE_MUSIC,
 			});
+			enqueueReverse(currentTrack!);
 			return;
 		}
 	};
 
+	const previousMusic = () => {
+		let nextTrack: MusicTrack | null = dequeueReverse();
+		if (nextTrack) {
+			updateMusicState({
+				id: nextTrack.id,
+				title: nextTrack.title,
+				artist: nextTrack.artist,
+				album: nextTrack.album,
+				image_url: nextTrack.image_url,
+				state: MPState.CHANGE_MUSIC,
+			});
+			enqueueWhenReversed(currentTrack!);
+			return;
+		}
+		
+	}
 	return (
 		<div
 			className="music-player w-full bottom-0 left-0 right-0 p-0 px-3  gap-[2px] 
@@ -433,6 +471,8 @@ function MusicPlayer() {
 					controlsDisabled={controlsDisabled}
 					onPlayPause={handlePlayMusic}
 					onNext={nextMusic}
+					onPrev={previousMusic}
+				
 					// [] @TODO :add onPrev as well
 				/>
 				<ProgressBar
