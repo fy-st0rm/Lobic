@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Music, Plus } from "lucide-react";
+import { Music, Upload, X, Plus} from 'lucide-react';
 
 import { useAppProvider } from "providers/AppProvider";
 import {
@@ -41,88 +41,104 @@ const PlaylistAdder: React.FC<PlaylistAdderProps> = ({
 	};
 
 	return (
-		<div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-			<div className="top-[30%] left-[30%] flex flex-col bg-[#072631] bg-opacity-100 h-[300px] w-[500px] rounded-lg">
-				<div className="text-xl font-bold text-white p-5">
-					Create a Playlist
-				</div>
-				<div className="flex">
-					<input
-						type="file"
-						id="playlist-image-input"
-						className="hidden"
-						accept="image/*"
-						onChange={handleImageChange}
-					/>
-					<div
-						onClick={() =>
-							document.getElementById("playlist-image-input")?.click()
-						}
-						className="flex flex-col justify-center items-center h-52 w-52 bg-gray-700 cursor-pointer mx-5 rounded-md -translate-y-10 text-slate-500 hover:text-slate-400 transition-all overflow-hidden"
-					>
-						{newPlaylistImage ? (
-							<img
-								src={newPlaylistImage}
-								alt="New Playlist"
-								className="h-full w-full object-contain"
-							/>
-						) : (
-							<>
-								<Music className="h-40 w-40" />
-								<div className="addImage font-medium">Add Image</div>
-							</>
-						)}
-					</div>
-					<div className="flex flex-col justify-between h-[75%] w-full pr-5 text-black">
-						<input
-							onChange={(e) => setPlaylistName(e.target.value)}
-							value={playlistName}
-							placeholder="Add a Name"
-							className="border-none w-[90%] py-2 rounded-sm px-2 my-2 focus:outline-none focus:border-1 focus:border-black"
-						/>
-						<select
-							value={playlistType ? "true" : "false"}
-							onChange={(e) => setPlaylistType(e.target.value === "true")}
-							className="block py-1 px-1 w-full text-sm text-white opacity-25 bg-transparent border-0 border-b-[1px] border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200"
-						>
-							<option value="" disabled selected>
-								Select Playlist Type
-							</option>
-							<option className="bg-[#1d586d] hover:bg-[#157697]" value="false">
-								Solo Playlist
-							</option>
-							<option className="bg-[#1d586d] hover:bg-[#157697]" value="true">
-								Combined Playlist
-							</option>
-						</select>
-						<div className="flex justify-end">
-							<button
-								onClick={() =>
-									onCreate(
-										{
-											playlist_name: playlistName,
-											user_id: "",
-											is_playlist_combined: playlistType,
-											image_url: newPlaylistImage,
-										},
-										newPlaylistImage,
-									)
-								}
-								className="hover:bg-[#157697] bg-[#1d586d] border-none text-white font-bold py-2 px-4 rounded-full transition-all ml-20 cursor-pointer"
-							>
-								Create
-							</button>
-							<button
-								onClick={onClose}
-								className="cursor-pointer bg-slate-200 hover:bg-slate-300 border-none text-black font-bold py-2 px-4 rounded-full mx-1"
-							>
-								Cancel
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		<div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">
+      <div className="bg-secondary rounded-xl shadow-xl max-w-3xl w-full mx-4 overflow-hidden">
+        <div className="flex justify-between items-center p-3 border-b border-slate-700">
+          <h2 className="text-lg font-bold text-primary_fg">Create a Playlist</h2>
+          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+            <X size={18} />
+          </button>
+        </div>
+        
+        <div className="p-4">
+          <div className="flex gap-4">
+            <div className="w-1/4">
+              <input
+                type="file"
+                id="playlist-image-input"
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <div
+                onClick={() => document.getElementById("playlist-image-input")?.click()}
+                className="group relative w-full aspect-square rounded-lg flex flex-col justify-center items-center bg-primary bg-opacity-30 border-2 border-dashed border-slate-700 hover:border-slate-500 transition-all cursor-pointer overflow-hidden"
+              >
+                {newPlaylistImage ? (
+                  <>
+                    <img
+                      src={newPlaylistImage}
+                      alt="Playlist Cover"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <Upload className="h-6 w-6 text-white" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Music className="h-10 w-10 text-slate-500 mb-1" />
+                    <span className="text-slate-500 text-xs font-medium">Add Cover</span>
+                  </>
+                )}
+              </div>
+            </div>
+            
+            <div className="w-3/4 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="playlist-name" className="text-xs font-medium text-primary_fg opacity-50 mb-1 block">
+                    Playlist Name
+                  </label>
+                  <input
+                    id="playlist-name"
+                    value={playlistName}
+                    onChange={(e) => setPlaylistName(e.target.value)}
+                    placeholder="Enter Playlist Name"
+                    className="w-full bg-slate-700 border-0 rounded-md text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-vivid transition-all placeholder:text-slate-500"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="playlist-type" className="text-xs font-medium text-slate-400 mb-1 block">
+                    Playlist Type
+                  </label>
+                  <select
+                    id="playlist-type"
+                    value={playlistType ? "true" : "false"}
+                    onChange={(e) => setPlaylistType(e.target.value === "true")}
+                    className="w-full bg-slate-700 border-0 rounded-md text-white px-3 py-2 focus:outline-none focus:ring-1 focus:ring-vivid transition-all"
+                  >
+                    <option value="false">Solo Playlist</option>
+                    <option value="true">Combined Playlist</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-2 mt-2">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-1.5 rounded-md text-sm font-medium text-white bg-slate-700 hover:bg-slate-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => onCreate({
+                    playlist_name: playlistName,
+                    user_id: "",
+                    is_playlist_combined: playlistType,
+                    image_url: newPlaylistImage,
+                  }, newPlaylistImage)}
+                  className="px-4 py-1.5 rounded-md text-sm font-medium text-white bg-vivid bg-opacity-50 hover:bg-opacity-60 transition-colors"
+                >
+                  Create
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 	);
 };
 
