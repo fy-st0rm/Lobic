@@ -398,6 +398,7 @@ function MusicPlayer() {
 			state: MPState.CHANGE_TIME,
 			state_data: seekTime,
 		});
+		enqueueReverse(currentTrack!);
 	};
 
 	const handleSeekMove = (e: React.ChangeEvent<HTMLInputElement>) => {

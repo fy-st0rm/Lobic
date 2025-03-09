@@ -206,8 +206,8 @@ const CreatePlaylistButton: React.FC<CreatePlaylistButtonProps> = ({
 	onClick,
 }) => (
 	<div onClick={onClick}>
-		<div className="relative flex flex-col items-center justify-center bg-primary hover:bg-secondary hover:bg-opacity-50 rounded-[13px] m-0 transition-all p-5 h-[215px]">
-			<div className="bg-secondary w-32 h-32 rounded-full flex items-center justify-center mb-5">
+		<div className="relative flex flex-col items-center justify-center bg-primary hover:bg-secondary hover:bg-opacity-80 rounded-[13px] m-0 transition-all p-5 h-64">
+			<div className="bg-primary_fg bg-opacity-80 w-32 h-32 rounded-full flex items-center justify-center mb-5">
 				<Plus className="w-full h-full text-primary p-5" />
 			</div>
 			<div className="font-bold text-2xl text-primary_fg">Create Playlist</div>
