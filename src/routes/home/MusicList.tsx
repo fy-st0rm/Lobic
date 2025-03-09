@@ -44,7 +44,7 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 	const [isEmpty, setEmpty] = useState<boolean>(true);
 
 	const { appState } = useAppProvider();
-	const { updateMusicState } = useMusicProvider();
+	const { updateMusicState, controlsDisabled } = useMusicProvider();
 	const { enqueue } = useQueueProvider();
 	const { notifyMusicPlayed, registerReloadHandler } = useMusicLists();
 
@@ -77,6 +77,8 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 
 	const handleMusicClick = async (song: Song): Promise<void> => {
 		try {
+			if (controlsDisabled) return;
+
 			setSelectedSongId(song.id);
 			updateMusicState({
 				id: song.id,
@@ -94,6 +96,8 @@ const MusicList: React.FC<MusicListProps> = React.memo(({ list_title }) => {
 	};
 
 	const enqueueAllSongs = (): void => {
+		if (controlsDisabled) return;
+
 		musicItems.forEach((song) => {
 			const track = {
 				id: song.id,

@@ -166,7 +166,7 @@ const Playlist: React.FC = () => {
 
 	const [timestamp, setTimestamp] = useState<number>(Date.now());
 	const { updateQueue } = useQueueProvider();
-	const { clearMusicState } = useMusicProvider();
+	const { clearMusicState, controlsDisabled } = useMusicProvider();
 	const navigate = useNavigate();
 
 	const [userData, setUserData] = useState<User>({
@@ -220,6 +220,8 @@ const Playlist: React.FC = () => {
 	}, [playlistId]);
 
 	const playAllSongs = (): void => {
+		if (controlsDisabled) return;
+
 		clearMusicState();
 		if (playlistData) {
 			const newQueue = playlistData.songs.map((item) => ({

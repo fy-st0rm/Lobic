@@ -52,9 +52,7 @@ const AudioElement = () => {
 
 	// Handling controls access
 	useEffect(() => {
-		if (!musicState.id) {
-			setControlsDisabled(true);
-		} else if (lobbyState.in_lobby && lobbyState.is_host) {
+		if (lobbyState.in_lobby && lobbyState.is_host) {
 			setControlsDisabled(false);
 		} else if (lobbyState.in_lobby && !lobbyState.is_host) {
 			setControlsDisabled(true);

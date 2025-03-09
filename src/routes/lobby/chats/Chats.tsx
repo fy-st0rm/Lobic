@@ -29,7 +29,7 @@ function Chats(): React.ReactElement {
 	const { lobbyState, updateLobbyState } = useLobbyProvider();
 	const { musicState, updateMusicState, clearMusicState } = useMusicProvider();
 	const { getSocket, addMsgHandler } = useSocketProvider();
-	const { updateQueue } = useQueueProvider();
+	const { updateQueue, clearQueue } = useQueueProvider();
 	const { isExtended } = useSidebarState(); // Get the sidebar state
 	const navigate = useNavigate();
 
@@ -176,6 +176,7 @@ function Chats(): React.ReactElement {
 
 			// Clearing the current music when leaving lobby
 			clearMusicState();
+			clearQueue();
 
 			navigate("/lobby");
 		});
