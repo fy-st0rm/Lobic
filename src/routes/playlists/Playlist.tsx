@@ -165,7 +165,7 @@ const Playlist: React.FC = () => {
 	const [isUpdating, setIsUpdating] = useState<boolean>(false); // Upload status
 
 	const [timestamp, setTimestamp] = useState<number>(Date.now());
-	const { updateQueue } = useQueueProvider();
+	const { updateQueue, clearQueue } = useQueueProvider();
 	const { clearMusicState } = useMusicProvider();
 	const navigate = useNavigate();
 
@@ -221,6 +221,7 @@ const Playlist: React.FC = () => {
 
 	const playAllSongs = (): void => {
 		clearMusicState();
+		clearQueue();
 		if (playlistData) {
 			const newQueue = playlistData.songs.map((item) => ({
 				id: item.music_id,

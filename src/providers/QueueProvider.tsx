@@ -143,7 +143,6 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 	const dequeueReverse = () => {
 		if (reverseQueue.length === 0) return null;
 		const [first, ...rest] =  reverseQueue;
-		enqueue(first);
 		setReverseQueue(rest);
 		return first;
 	}
@@ -194,6 +193,7 @@ export const QueueProvider: FC<{ children: React.ReactNode }> = ({
 
 	const clearQueue = () => {
 		updateQueue([]);
+		setReverseQueue([]);
 	};
 
 	return (
