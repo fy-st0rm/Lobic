@@ -1,6 +1,6 @@
 // save-music.js
-import { SERVER_IP } from "@/const";
 import fetch from "node-fetch";
+const SERVER_IP = "f"; // your networks ip adddr here
 
 async function saveMusicRequest() {
 	try {
