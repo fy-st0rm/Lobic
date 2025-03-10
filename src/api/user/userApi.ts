@@ -74,6 +74,7 @@ export const initClientState = async (): Promise<{ user_id: string }> => {
  */
 export const signupUser = async (
 	email: string,
+	username: string,
 	password: string,
 	confirmPassword: string,
 ): Promise<Response> => {
@@ -86,7 +87,8 @@ export const signupUser = async (
 
 	const payload = {
 		email: email,
-		username: email.split("@")[0], // [TODO] might need to change later
+		// username: email.split("@")[0], // [TODO] might need to change later
+		username: username,
 		password: password,
 	};
 

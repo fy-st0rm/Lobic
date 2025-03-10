@@ -7,9 +7,12 @@ import { useAppProvider } from "@/providers/AppProvider";
 
 function Signup() {
 	const [email, setEmail] = useState<string>("");
+	const [userName, setUserName] = useState<string>("");
+
 	const [password, setPassword] = useState<string>("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [confirmPassword, setConfirmPassword] = useState<string>("");
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [isError, setIsError] = useState<boolean>(false);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 
@@ -18,9 +21,8 @@ function Signup() {
 
 	const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-
 		try {
-			await signupUser(email, password, confirmPassword);
+			await signupUser(email, userName, password, confirmPassword);
 			await performLogin(email, password);
 			const userData = await initClientState();
 			updateAppState({ user_id: userData.user_id });
@@ -32,12 +34,10 @@ function Signup() {
 		}
 	};
 
-	const handleLoginRedirect = () => {
-		navigate("/login");
-	};
-	const togglePasswordVisibility = () => {
-		setShowPassword(!showPassword);
-	};
+	const handleLoginRedirect = () => navigate("/login");
+	const togglePasswordVisibility = () => setShowPassword(!showPassword);
+	const toggleConfirmPasswordVisibility = () =>
+		setShowConfirmPassword(!showConfirmPassword);
 
 	return (
 		<div className="relative flex h-screen items-center justify-center">
@@ -68,25 +68,38 @@ function Signup() {
 								}
 								required
 							/>
+							<p className="mb-1 ml-8 text-left font-mono text-sm text-white font-semibold">
+								Username
+							</p>
+							<input
+								type="text"
+								className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+								placeholder="Enter your username"
+								value={userName}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									setUserName(e.target.value)
+								}
+								required
+							/>
 
 							<p className="mb-1 ml-8 text-left font-mono text-sm text-white font-semibold">
 								Password
 							</p>
-							<div className="">
-							<input
-								type={showPassword ? "text" : "password"}
-								className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-								placeholder="Enter your password"
-								value={password}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setPassword(e.target.value)
-								}
-								required
-							/>
-							<button
+							<div className="relative mx-auto w-5/6">
+								<input
+									type={showPassword ? "text" : "password"}
+									className="w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+									placeholder="Enter your password"
+									value={password}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setPassword(e.target.value)
+									}
+									required
+								/>
+								<button
 									type="button"
 									onClick={togglePasswordVisibility}
-									className="absolute top-[183px] right-14 text-gray-500 hover:text-gray-700 focus:outline-none"
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
 									aria-label={showPassword ? "Hide password" : "Show password"}
 								>
 									{showPassword ? (
@@ -100,16 +113,34 @@ function Signup() {
 							<p className="mb-1 ml-8 text-left font-mono text-sm text-white font-semibold">
 								Confirm Password
 							</p>
-							<input
-								type={showPassword ? "text" : "password"}
-								className="mx-auto block w-5/6 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-								placeholder="Confirm your password"
-								value={confirmPassword}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setConfirmPassword(e.target.value)
-								}
-								required
-							/>
+							<div className="relative mx-auto w-5/6">
+								<input
+									type={showConfirmPassword ? "text" : "password"}
+									className="w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-black/60 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+									placeholder="Confirm your password"
+									value={confirmPassword}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setConfirmPassword(e.target.value)
+									}
+									required
+								/>
+								<button
+									type="button"
+									onClick={toggleConfirmPasswordVisibility}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+									aria-label={
+										showConfirmPassword
+											? "Hide confirm password"
+											: "Show confirm password"
+									}
+								>
+									{showConfirmPassword ? (
+										<EyeOff className="h-4 w-4" />
+									) : (
+										<Eye className="h-4 w-4" />
+									)}
+								</button>
+							</div>
 
 							{isError && (
 								<div className="mt-2 flex justify-center gap-1">
