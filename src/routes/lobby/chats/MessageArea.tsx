@@ -5,9 +5,6 @@ import React, { FC, RefObject } from "react";
 // Local
 import { LobbyMembers } from "./LobblersArea";
 
-// Assets
-// TODO: Remove sadit and add a placeholder icon instead
-import sadit from "/sadit.jpg";
 
 export type Message = {
 	user_id: string;
@@ -40,7 +37,7 @@ export const MessageArea: FC<MessageAreaProps> = ({
 				{/* Incoming Message: Profile picture on the left */}
 				{msg.user_id !== currentUserId && (
 					<img
-						src={users[msg.user_id]?.pfp ? users[msg.user_id].pfp : sadit}
+						src={users[msg.user_id]?.pfp ? users[msg.user_id].pfp : ''}
 						alt="User"
 						className="w-9 h-9 rounded-full object-cover "
 					/>
@@ -76,7 +73,7 @@ export const MessageArea: FC<MessageAreaProps> = ({
 				{/* Outgoing Message: Profile picture on the right */}
 				{msg.user_id === currentUserId && (
 					<img
-						src={users[msg.user_id]?.pfp ? users[msg.user_id].pfp : sadit}
+						src={users[msg.user_id]?.pfp ? users[msg.user_id].pfp : ''}
 						alt="User"
 						className="w-9 h-9 rounded-full object-cover ml-3"
 					/>

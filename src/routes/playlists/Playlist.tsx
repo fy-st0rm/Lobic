@@ -19,6 +19,8 @@ import Pencil from "/profile/pencil.svg";
 import Play from "/playlistcontrols/Pause.svg";
 import Trash from "/playlistcontrols/Trash.svg";
 import Add from "/contributor/person-add-svgrepo-com.svg";
+import Remove from "/contributor/remove.svg";
+import { UserRoundPlus } from 'lucide-react';
 import UploadModal from "@/components/UploadModal";
 import { fetchFriends, Friend } from "@/api/friendApi";
 import { AddContibutorFriendList } from "./friendList";
@@ -27,6 +29,7 @@ import {
 	FetchContributorsResponse,
 	removeContributor,
 } from "@/api/playlist/combinedPlaylistApi";
+import { set } from "date-fns";
 
 // Component for playlist cover image and edit functionality
 interface PlaylistCoverProps {
@@ -61,7 +64,6 @@ interface PlaylistInfoProps {
 const PlaylistInfo: React.FC<PlaylistInfoProps> = ({ playlistData }) => (
 	<div className="playlistinfo text-primary_fg">
 		<div className="">
-			+
 			{playlistData?.playlist?.is_playlist_combined
 				? "Combined Playlist"
 				: "Solo Playlist"}
@@ -77,13 +79,27 @@ interface CreatorsInfoProps {
 	username: string;
 	user_uuid: string;
 	songCount: number | undefined;
+	contributor_count: number;
+	contributors: { user_uuid: string; username: string }[];
+	userData: User;
+	playlistId: string;
+	handleRemoveContributor: (userId: string) => Promise<void>;
+	playlistOwnerData: User;
 }
 const CreatorsInfo: React.FC<CreatorsInfoProps> = ({
 	username,
 	user_uuid,
 	songCount,
+	contributor_count,
+	contributors,
+	userData,
+	handleRemoveContributor,
+	playlistOwnerData,
+	playlistId
 }) => {
 	const [profilePicture, setProfilePicture] = useState<string>("/sadit.jpg");
+	const [showContributors, setShowContributors] = useState<boolean>(false);
+
 	useEffect(() => {
 		const fetchProfilePicture = async () => {
 			try {
@@ -106,8 +122,8 @@ const CreatorsInfo: React.FC<CreatorsInfoProps> = ({
 						alt="Creator 1"
 					/>
 				</div>
-				<div className="creatorname text-primary_fg pb-0.5 text-sm font-semibold self-center">
-					{username || "Unknown User"}
+				<div className="creatorname text-primary_fg pb-0.5 text-sm font-semibold self-center cursor-pointer opacity-70 hover:opacity-100 transition-all" onClick={() => { setShowContributors(!showContributors) }}>
+					{username || "Unknown User"}  {!contributor_count ? '' : `& ${contributor_count} others`}
 				</div>
 			</div>
 			<div className="text-white opacity-50 text-[7px] font-bold self-center">
@@ -116,7 +132,28 @@ const CreatorsInfo: React.FC<CreatorsInfoProps> = ({
 			<div className="songcount text-white opacity-50 text-sm font-bold self-center pb-0.5">
 				{songCount || 0} songs
 			</div>
+			{showContributors && (<div className="fixed inset-0 bg-black/20 backdrop-blur-[1px] flex justify-center items-center z-50" onClick={() => setShowContributors(false)}>
+				<div className="bg-secondary h-80 w-96 rounded-md shadow-xl max-w-3xl mx-4 overflow-hidden">
+
+					<div className=" text-primary_fg text-xl font-bold mx-5 my-3">Contributors</div>
+					<div className="h-[0.2px] w-full bg-white opacity-25"></div>
+					<div className="m-2 mt-5">
+						{contributors.map((contributor) => (
+							<ContributorsInfo
+								key={contributor.user_uuid}
+								contributor={contributor}
+								currentUserId={userData.id}
+								playlistId={playlistId || ""}
+								onRemoveContributor={handleRemoveContributor}
+								isCreator={playlistOwnerData.id === userData.id}
+							/>
+						))}
+					</div>
+
+				</div>
+			</div>)}
 		</div>
+
 	);
 };
 
@@ -166,27 +203,26 @@ const ContributorsInfo: React.FC<ContributorsInfoProps> = ({
 		}
 	};
 	return (
-		<div className="flex relative top-[-9px]">
+		<div className="flex relative justify-between top-[-9px] pr-3">
 			<div className="flex gap-1">
 				<div className="">
 					<img
-						className="h-7 w-7 rounded-full m-1"
+						className="h-10 w-10 rounded-full m-1"
 						src={profilePicture}
 						alt={`Contributor ${contributor.username}`}
 					/>
 				</div>
-				<div className="contributorname text-primary_fg pb-0.5 text-sm font-semibold self-center">
+				<div className="contributorname text-white pb-0.5 text-md font-semibold self-center">
 					{contributor.username || "Unknown User"}
 				</div>
 			</div>
 			{isCreator && currentUserId !== contributor.user_uuid && (
-				<div className="cursor-pointer self-center ml-2">
-					<button
-						className="text-red-500 text-sm opacity-80 hover:opacity-100"
+				<div className="cursor-pointer self-center ml-2 h-8 w-8">
+					<img
+						className="text-sm opacity-80 hover:opacity-100"
 						onClick={handleRemoveContributor}
-					>
-						Remove
-					</button>
+						src={Remove}
+					/>
 				</div>
 			)}
 		</div>
@@ -222,9 +258,9 @@ const ControlButtons: React.FC<ControlButtonsProps> = ({
 				className="cursor-pointer self-center "
 				onClick={onAddContributorClick}
 			>
-				<img
+				<UserRoundPlus
 					className="h-8 w-8 transition-all opacity-80 hover:opacity-100"
-					src={Add}
+				
 				/>
 			</div>
 		)}
@@ -436,23 +472,20 @@ const Playlist: React.FC = () => {
 					user_uuid={playlistOwnerData.id}
 					username={playlistOwnerData.username}
 					songCount={playlistData?.songs?.length}
+					contributor_count={contributors.length}
+					contributors={contributors}
+					userData={userData}
+					playlistId={playlistId || ""}
+					handleRemoveContributor={handleRemoveContributor}
+					playlistOwnerData={playlistOwnerData}
 				/>
-				{contributors.map((contributor) => (
-					<ContributorsInfo
-						key={contributor.user_uuid}
-						contributor={contributor}
-						currentUserId={userData.id}
-						playlistId={playlistId || ""}
-						onRemoveContributor={handleRemoveContributor}
-						isCreator={playlistOwnerData.id === userData.id}
-					/>
-				))}
 			</div>
 			<ControlButtons
 				onPlayClick={playAllSongs}
 				onDeleteClick={handleDeletePlaylist}
 				onAddContributorClick={handleAddContributor}
 				isPlaylistCombined={playlistData?.playlist.is_playlist_combined}
+
 			/>
 			<SongContainer
 				playlistId={playlistId || ""}
@@ -486,6 +519,8 @@ const Playlist: React.FC = () => {
 					</div>
 				</div>
 			)}
+
+
 		</>
 	);
 };
