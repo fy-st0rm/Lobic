@@ -41,7 +41,7 @@ export const fetchAllContributors = async (
 ): Promise<FetchContributorsResponse> => {
 	try {
 		const response = await fetch(
-			`${SERVER_IP}/playlist/combined/fetch_all_contributors?playlist_id=${encodeURIComponent(playlist_id)}`,
+			`${SERVER_IP}/playlist/combined/fetch_all_contributors/${encodeURIComponent(playlist_id)}`,
 			{
 				method: "GET",
 				headers: {
