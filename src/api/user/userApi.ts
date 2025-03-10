@@ -77,6 +77,9 @@ export const signupUser = async (
 	password: string,
 	confirmPassword: string,
 ): Promise<Response> => {
+	if (password.length < 8) {
+		throw new Error("Password must be at least 8 characters long");
+	}
 	if (password !== confirmPassword) {
 		throw new Error("Passwords do not match");
 	}

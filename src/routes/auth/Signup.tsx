@@ -112,7 +112,7 @@ function Signup() {
 							/>
 
 							{isError && (
-								<div className="mt-2 flex justify-center">
+								<div className="mt-2 flex justify-center gap-1">
 									<CircleAlert className="relative top-1 mx-[1.8px] text-[#E34234]" />
 									<p className="my-1 text-[#E34234]">{errorMsg}</p>
 								</div>
