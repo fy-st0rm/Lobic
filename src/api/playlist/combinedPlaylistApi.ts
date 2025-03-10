@@ -32,11 +32,10 @@ export const addContributor = async (
 	}
 };
 
-interface FetchContributorsResponse {
+export interface FetchContributorsResponse {
 	playlist_owner: string;
 	contributors: { contributor_user_id: string }[];
 }
-
 export const fetchAllContributors = async (
 	playlist_id: string,
 ): Promise<FetchContributorsResponse> => {

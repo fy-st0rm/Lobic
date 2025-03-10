@@ -1,9 +1,10 @@
 // save-music.js
+import { SERVER_IP } from "@/const";
 import fetch from "node-fetch";
 
 async function saveMusicRequest() {
 	try {
-		const response = await fetch("http://127.0.0.1:8080/save_music", {
+		const response = await fetch(`${SERVER_IP}/save_music`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

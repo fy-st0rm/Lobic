@@ -22,6 +22,11 @@ import Add from "/contributor/person-add-svgrepo-com.svg";
 import UploadModal from "@/components/UploadModal";
 import { fetchFriends, Friend } from "@/api/friendApi";
 import { AddContibutorFriendList } from "./friendList";
+import {
+	fetchAllContributors,
+	FetchContributorsResponse,
+	removeContributor,
+} from "@/api/playlist/combinedPlaylistApi";
 
 // Component for playlist cover image and edit functionality
 interface PlaylistCoverProps {
@@ -56,6 +61,7 @@ interface PlaylistInfoProps {
 const PlaylistInfo: React.FC<PlaylistInfoProps> = ({ playlistData }) => (
 	<div className="playlistinfo text-primary_fg">
 		<div className="">
+			+
 			{playlistData?.playlist?.is_playlist_combined
 				? "Combined Playlist"
 				: "Solo Playlist"}
@@ -114,17 +120,92 @@ const CreatorsInfo: React.FC<CreatorsInfoProps> = ({
 	);
 };
 
+// ContributorsInfo Component
+interface ContributorsInfoProps {
+	contributor: {
+		user_uuid: string;
+		username: string;
+	};
+	currentUserId: string;
+	playlistId: string;
+	onRemoveContributor: (userId: string) => Promise<void>;
+	isCreator: boolean;
+}
+
+const ContributorsInfo: React.FC<ContributorsInfoProps> = ({
+	contributor,
+	currentUserId,
+	playlistId,
+	onRemoveContributor,
+	isCreator,
+}) => {
+	const [profilePicture, setProfilePicture] = useState<string>("/sadit.jpg");
+
+	useEffect(() => {
+		const fetchProfilePicture = async () => {
+			try {
+				const imageUrl: string = await fetchUserProfilePicture(
+					contributor.user_uuid,
+				);
+				setProfilePicture(imageUrl);
+			} catch (error) {
+				console.error("Failed to fetch contributor profile picture:", error);
+				setProfilePicture("/sadit.jpg");
+			}
+		};
+		fetchProfilePicture();
+	}, [contributor.user_uuid]);
+
+	const handleRemoveContributor = async () => {
+		try {
+			await onRemoveContributor(contributor.user_uuid);
+			alert(`Removed ${contributor.username} from playlist`);
+		} catch (error) {
+			console.error("Error removing contributor:", error);
+			alert("Failed to remove contributor");
+		}
+	};
+	return (
+		<div className="flex relative top-[-9px]">
+			<div className="flex gap-1">
+				<div className="">
+					<img
+						className="h-7 w-7 rounded-full m-1"
+						src={profilePicture}
+						alt={`Contributor ${contributor.username}`}
+					/>
+				</div>
+				<div className="contributorname text-primary_fg pb-0.5 text-sm font-semibold self-center">
+					{contributor.username || "Unknown User"}
+				</div>
+			</div>
+			{isCreator && currentUserId !== contributor.user_uuid && (
+				<div className="cursor-pointer self-center ml-2">
+					<button
+						className="text-red-500 text-sm opacity-80 hover:opacity-100"
+						onClick={handleRemoveContributor}
+					>
+						Remove
+					</button>
+				</div>
+			)}
+		</div>
+	);
+};
+
 // Component for control buttons
 interface ControlButtonsProps {
 	onPlayClick: () => void;
 	onDeleteClick: () => Promise<void>;
 	onAddContributorClick: () => void;
+	isPlaylistCombined?: Boolean;
 }
 
 const ControlButtons: React.FC<ControlButtonsProps> = ({
 	onPlayClick,
 	onDeleteClick,
 	onAddContributorClick,
+	isPlaylistCombined,
 }) => (
 	<div className="flex gap-2 mx-10 px-1">
 		<div className="cursor-pointer " onClick={onPlayClick}>
@@ -136,15 +217,17 @@ const ControlButtons: React.FC<ControlButtonsProps> = ({
 				src={Trash}
 			/>
 		</div>
-		<div
-			className="cursor-pointer self-center "
-			onClick={onAddContributorClick}
-		>
-			<img
-				className="h-8 w-8 transition-all opacity-80 hover:opacity-100"
-				src={Add}
-			/>
-		</div>
+		{isPlaylistCombined && (
+			<div
+				className="cursor-pointer self-center "
+				onClick={onAddContributorClick}
+			>
+				<img
+					className="h-8 w-8 transition-all opacity-80 hover:opacity-100"
+					src={Add}
+				/>
+			</div>
+		)}
 	</div>
 );
 
@@ -155,6 +238,12 @@ const Playlist: React.FC = () => {
 	const [playlistData, setPlaylistData] = useState<PlaylistResponse | null>(
 		null,
 	);
+	const [playlistOwnerData, setPlaylistOwnerdata] = useState<User>({
+		id: "",
+		username: "",
+		email: "",
+		pfp: "",
+	});
 	const [playlistCover, setPlaylistCover] = useState<string>(
 		"/playlistimages/playlistimage.png",
 	);
@@ -188,6 +277,50 @@ const Playlist: React.FC = () => {
 		fetchUser();
 	}, [appState.user_id]);
 
+	// Fetch contributors
+	const [contributors, setContributors] = useState<
+		{ user_uuid: string; username: string }[]
+	>([]);
+	useEffect(() => {
+		const loadContributors = async () => {
+			try {
+				if (playlistId) {
+					const contributorData: FetchContributorsResponse =
+						await fetchAllContributors(playlistId);
+					const contributorDetails = await Promise.all(
+						contributorData.contributors.map(async (c) => {
+							const user: User = await getUserData(c.contributor_user_id);
+							return {
+								user_uuid: c.contributor_user_id,
+								username: user.username,
+							};
+						}),
+					);
+					setContributors(contributorDetails);
+				}
+			} catch (error) {
+				console.error("Error fetching contributors:", error);
+			}
+		};
+		loadContributors();
+	}, [playlistId]);
+
+	const handleRemoveContributor = async (contributorId: string) => {
+		if (!playlistId) return;
+		try {
+			await removeContributor({
+				playlist_id: playlistId,
+				contributor_user_id: contributorId,
+			});
+			setContributors((prev) =>
+				prev.filter((c) => c.user_uuid !== contributorId),
+			);
+		} catch (error) {
+			console.error("Error removing contributor:", error);
+			throw error;
+		}
+	};
+
 	// Fetch friends
 	const [friends, setFriends] = useState<Friend[]>([]);
 	const [showFriendsPopup, setShowFriendsPopup] = useState<boolean>(false);
@@ -203,6 +336,7 @@ const Playlist: React.FC = () => {
 		loadFriends();
 	}, [userData.id]);
 
+	//fethPlaylist
 	useEffect(() => {
 		const loadPlaylistData = async () => {
 			try {
@@ -218,6 +352,20 @@ const Playlist: React.FC = () => {
 		};
 		loadPlaylistData();
 	}, [playlistId]);
+
+	useEffect(() => {
+		const loadPlaylistOwnerData = async () => {
+			try {
+				if (playlistData) {
+					const data = await getUserData(playlistData.playlist.user_id);
+					setPlaylistOwnerdata(data);
+				}
+			} catch (error) {
+				console.error("Error:", error);
+			}
+		};
+		loadPlaylistOwnerData();
+	}, [playlistData]);
 
 	const playAllSongs = (): void => {
 		if (controlsDisabled) return;
@@ -285,15 +433,26 @@ const Playlist: React.FC = () => {
 				/>
 				<PlaylistInfo playlistData={playlistData} />
 				<CreatorsInfo
-					user_uuid={userData.id}
-					username={userData.username}
+					user_uuid={playlistOwnerData.id}
+					username={playlistOwnerData.username}
 					songCount={playlistData?.songs?.length}
 				/>
+				{contributors.map((contributor) => (
+					<ContributorsInfo
+						key={contributor.user_uuid}
+						contributor={contributor}
+						currentUserId={userData.id}
+						playlistId={playlistId || ""}
+						onRemoveContributor={handleRemoveContributor}
+						isCreator={playlistOwnerData.id === userData.id}
+					/>
+				))}
 			</div>
 			<ControlButtons
 				onPlayClick={playAllSongs}
 				onDeleteClick={handleDeletePlaylist}
 				onAddContributorClick={handleAddContributor}
+				isPlaylistCombined={playlistData?.playlist.is_playlist_combined}
 			/>
 			<SongContainer
 				playlistId={playlistId || ""}
@@ -305,7 +464,7 @@ const Playlist: React.FC = () => {
 				onFileChange={handleFileChange}
 				onUpload={handleUpload}
 				isUpdating={isUpdating}
-				title="Upload Playlist Cover" // Custom title for playlist
+				title="Upload Playlist Cover"
 			/>
 			{showFriendsPopup && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

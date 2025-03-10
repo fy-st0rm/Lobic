@@ -3,6 +3,7 @@ import { SERVER_IP } from "@/const";
 // Define and export types
 export interface Playlist {
 	playlist_id: string;
+	user_id: string;
 	playlist_name: string;
 	is_playlist_combined: boolean;
 	creation_date_time: string;
