@@ -22,6 +22,12 @@ const ChangePassword = (): React.ReactElement => {
 	const handlePasswordChange = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
+		if (password.length < 8) {
+			setMsg("Password must be at least 8 characters long");
+			setColor("text-red-500");
+			return;
+		}
+
 		if (password !== confirmPass) {
 			setMsg("New password didnt matched with confirm password");
 			setColor("text-red-500");
