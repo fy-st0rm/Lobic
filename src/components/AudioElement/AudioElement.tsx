@@ -155,6 +155,8 @@ const AudioElement = () => {
 		// Getting next track from queue
 		let nextTrack: MusicTrack | null = dequeue();
 
+		console.log("Ended");
+
 		// If there exists a track then play that
 		if (nextTrack) {
 			updateMusicState({
@@ -179,6 +181,8 @@ const AudioElement = () => {
 			image_url: null,
 			state: MPState.EMPTY,
 			state_data: 0,
+			timestamp: 0,
+			duration: 0,
 		});
 	};
 

@@ -439,7 +439,7 @@ function MusicPlayer() {
 				image_url: nextTrack.image_url,
 				state: MPState.CHANGE_MUSIC,
 			});
-			enqueueWhenReversed(currentTrack!);
+			//enqueueWhenReversed(currentTrack!);
 			return;
 		}
 		
