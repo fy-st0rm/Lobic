@@ -206,7 +206,7 @@ const Profile: React.FC = () => {
 				addTempNotif({
 					id: uuidv4(),
 					op_code: OpCode.OK,
-					value: `${friend.username} is now your friend.`,
+					value: `@${friend.username} is now your friend.`,
 				});
 			})
 			.catch((err) => console.error("Failed to add friend:", err));
@@ -219,7 +219,7 @@ const Profile: React.FC = () => {
 				addTempNotif({
 					id: uuidv4(),
 					op_code: OpCode.OK,
-					value: `${friend.username} is not a friend anymore.`,
+					value: `@${friend.username} is not a friend anymore.`,
 				});
 			})
 			.catch((err) => console.error("Failed to remove friend:", err));

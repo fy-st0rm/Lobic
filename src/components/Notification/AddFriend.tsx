@@ -60,7 +60,7 @@ const AddFriend: FC<AddFriendProps> = ({ notif, toastId }): React.ReactElement =
 		addTempNotif({
 			id: uuidv4(),
 			op_code: OpCode.OK,
-			value: `Yeppy! @${userData?.username} is now your friend!`,
+			value: `@${userData?.username} is now your friend!`,
 		});
 	};
 
